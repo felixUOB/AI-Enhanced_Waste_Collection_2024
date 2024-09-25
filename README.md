@@ -33,7 +33,7 @@ based on user behavior.
 recycling activities.
 - Generate detailed reports on environmental impacts.
 
-# Target Customers
+# Stackhodlers
 Municipalities, waste management companies, and environmental organizations seeking to
 improve waste collection efficiency and assess the environmental benefits of recycling
 programs.
@@ -58,10 +58,10 @@ weather, and waste volume.
 - Reporting: Generate reports on environmental impacts.
 
 # Tools and Resources
-- Development Tools: Python, machine learning libraries, and app development
+- Development Tools: **Python**, machine learning libraries, and app development
 frameworks.
-- Infrastructure: Azure VM for hosting and computation.
-- Collaboration and Documentation: GitHub for version control and project management.
+- Infrastructure: **Azure VM** for hosting and computation.
+- Collaboration and Documentation: **GitHub** for version control and project management.
 
 # Challenge
 The primary challenge will be designing a robust and user-friendly application that integrates
@@ -105,4 +105,4 @@ Exceptional Flow:
 
 
 # Gantte Chart
-[Gantte Chart](https://github.com/orgs/spe-uob/projects/161/views/2)
+[Gantte Chart](https://uob-my.sharepoint.com/:x:/g/personal/yj23812_bristol_ac_uk/EfdWH23kdE5HvLSvT2PgaNkBh5i5-XZW6Zx429NoYpNWDw?e=cIhVW5)
