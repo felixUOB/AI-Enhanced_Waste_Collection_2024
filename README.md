@@ -77,23 +77,28 @@ transform waste management practices by combining real-time optimization with de
 environmental impact analysis. This integrated approach will not only improve efficiency but
 also provide valuable data to support sustainability initiatives.
 
-# Information for students
-This is an ambitious project and you will be creating a proof of concept. The full brief will not
-be possible to complete - you will need to work with the client to agree an achievable goal for
-the project. The client has asked that you create this in Python.
-This will suit ambitious students already interested in computer vision and robotics, who are
-prepared to do research into state-of-the-art commercially available solutions.
-This is the 3rd year the client has been involved in SEP, so he is well aware of the stage you
-are at in your degree.
+# User Stories
+As a municipal worker, I want an intuitive and easy to use interface that tells me the information clearly. 
 
-# Why the client is interested in working with you
-I am particularly interested in working with students on this project because of the impressive
-work I've seen from previous student teams. Their innovative solutions and dedication have
-demonstrated a high level of creativity and technical skill, which I believe will be invaluable in
-tackling the challenges of this project. Additionally, the university's guidance and support for
-students will provide a robust framework for development, ensuring that we can leverage
-their expertise and resources effectively. With access to advanced tools and infrastructure
-through the university, students will be well-positioned to contribute meaningfully to
-developing an AI-driven waste management solution that not only optimizes collection but
-also quantifies environmental impacts. This collaboration promises to be both rewarding and
-impactful, driving forward both academic and practical advancements in waste management.
+As a municipal worker, I want a clear root that is easy to follow. 
+
+As an environmental organization, I want to be able to see the reports on environment impacts and see a reduction in the carbon footprint and energy savings.
+
+As a system manager, I want well document and modular code that is easy to maintain.
+
+As a waste management company, I want an increase in efficiency and reduction of carbon footprint.
+
+As a legislator, I want secure code which is compliant with data protection.
+
+# Flow
+Normal FLow:
+1. Open app
+2. Navigate to the screen showing the route
+3. Follow the map
+4. Receive notification if something changes
+
+Exceptional Flow:
+1. Open app
+2. Navigate to the screen showing the route
+3. Go the wrong way
+4. Get diverted
