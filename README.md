@@ -102,3 +102,7 @@ Exceptional Flow:
 2. Navigate to the screen showing the route
 3. Go the wrong way
 4. Get diverted
+
+
+# Gantte Chart
+[Gantte Chart](https://github.com/orgs/spe-uob/projects/161/views/2)
