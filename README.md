@@ -103,6 +103,8 @@ Exceptional Flow:
 3. Go the wrong way
 4. Get diverted
 
+# Kanban Chart
+[Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
 
 # Gantte Chart
 [Gantte Chart](https://uob-my.sharepoint.com/:x:/g/personal/yj23812_bristol_ac_uk/EfdWH23kdE5HvLSvT2PgaNkBh5i5-XZW6Zx429NoYpNWDw?e=cIhVW5)
