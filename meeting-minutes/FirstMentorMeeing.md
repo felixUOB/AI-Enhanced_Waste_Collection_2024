@@ -1,3 +1,4 @@
+#Meeting 27/09/2024
 * determine what they want for the MVP
 * git is important
 * start early
