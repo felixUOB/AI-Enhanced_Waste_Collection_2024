@@ -12,12 +12,11 @@ Each section will have what we believe you would like from this product with som
 
 ## Preparatory Route Planning and Variables
 
-In this section we are of the understanding that you would like a personalised route per collection truck for a certain area that
-is realtime and updates as circumstances change which takes into account Behavioural Patterns, Load Capacity and Environmental Impacts.
+In this section we are of the understanding that you would like a personalised route per collection truck for a certain area which takes into account proactive data: Behavioural Patterns, Load Capacity and Environmental Impacts.
 
 Questions
- - Are there any other variables you would like to take into account in preparatory route planning
- - How large is the scope of the area to be covered?
+ - Are there any other variables to take into account in preparatory route planning?
+ - How large is the scope of the area being covered?
  - How many routes will need to be calculated daily?
 
 
@@ -36,12 +35,11 @@ Questions
 For statistical analysis we belive you want in-depth analysis of relevant ecological metrics displayed in a simplified manner.
 
 Questions
- - Would you like reports in-app or send externally.
-
+ - In-app or send externally?
 
 ## Optimizations
 
-To optimize routes in realtime, metrics such as traffic and weather could be used as to recude overall drive time.
+To optimize routes in realtime metrics such as traffic and weather will be used to edit routes to ensure travel time is kept to a minimum.
 
 ## Scheduling
 
@@ -60,6 +58,6 @@ Company Policy - If there are any existing programming practices or methods we m
 
 Data Sensitivity/Capture - Is the data sensitive and will it be provided or obtained online.
 
-Intellectual Property - Contract sent after meeting
+Intellectual Property - Contract sent after meeting.
 
 
