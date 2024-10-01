@@ -81,11 +81,11 @@ also provide valuable data to support sustainability initiatives.
 # User Stories
 As a municipal worker, I want an intuitive and easy to use interface that tells me the information clearly. 
 
-As a municipal worker, I want a clear root that is easy to follow. 
+As a municipal worker, I want a clear route that is easy to follow. 
 
 As an environmental organization, I want to be able to see the reports on environment impacts and see a reduction in the carbon footprint and energy savings.
 
-As a system manager, I want well document and modular code that is easy to maintain.
+As a system manager, I want well documented and modular code that is easy to maintain.
 
 As a waste management company, I want an increase in efficiency and reduction of carbon footprint.
 
