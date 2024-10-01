@@ -34,7 +34,7 @@ based on user behavior.
 recycling activities.
 - Generate detailed reports on environmental impacts.
 
-# Stackhodlers
+# Stakeholders
 Municipalities, waste management companies, and environmental organizations seeking to
 improve waste collection efficiency and assess the environmental benefits of recycling
 programs.
