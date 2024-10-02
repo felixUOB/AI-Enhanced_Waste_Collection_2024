@@ -9,3 +9,7 @@ https://www.cyberdb.co/the-role-of-technology-in-modern-waste-management-efficie
 * can promote innovative waste management by helping with decision-making tasks
 * analyze info to find patterns and determine the best routes for waste collectin
 * predict future waste production and improve recycling operations
+
+
+# existing APIS
+https://developers.google.com/maps/documentation/route-optimization/overview
