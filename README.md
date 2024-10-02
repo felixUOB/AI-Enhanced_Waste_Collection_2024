@@ -22,17 +22,45 @@ integrated approach will enhance efficiency in waste management and provide valu
 insights into environmental performance.
 
 # Objectives
-- Develop an AI-Driven Waste Collection Scheduling App:
-- Optimize waste collection scheduling and route planning in real-time using AI
-algorithms.
-- Utilize historical data to predict peak waste collection times and personalize schedules
-based on user behavior.
-- Provide a user-friendly interface for scheduling and notifications.
-- Create Environmental Impact Quantification Tools:
-- Carbon Footprint and Energy Savings Calculation:
-- Analyze data to estimate reductions in carbon footprint and energy savings from
-recycling activities.
-- Generate detailed reports on environmental impacts.
+Develop an AI-Driven Waste Collection Scheduling App. This proposal aims to tackle Size main components:
+- Route Planning and Variables
+- User Interface
+- Data Reports
+- Optimizations
+- Scheduling
+
+# Preparatory Route Planning and Variables
+
+In this section, we understand you would like a personalised route per collection truck for a certain area. This route will be optimised by considering different data such as behavioural patterns, load capacity, and environmental impacts.
+
+# User Interface
+
+For the UI we believe that you would like a simple-to-operate application in which you can view routes (similar to google maps), route metrics (speed/time, etc.), environmental impact reports, and receive notifications enabling hands-free use whilst driving. User accounts could be used to access the app to differentiate different driver routes and allow varying access levels to only show statistical reports to certain accounts if the data is sensitive and needs to be restricted for some users.
+
+This will be for OS and Android.
+
+# Data Reports
+
+For statistical analysis, we believe you want an in-depth analysis of relevant ecological metrics displayed in a simplified manner. These could involve fuel consumption, speed, carbon footprint, carbon and energy saving.
+
+# Optimisations
+
+To optimize routes in real-time, metrics based on traffic, load volume and weather will be used to edit routes to ensure travel time is kept to a minimum and the environmental impacts are minimised.
+The metrics we will use:
+- traffic
+- weight of the load
+- weather
+- areas that their is the most waste
+
+The metrics we aim to minimise:
+- fuel consumption
+- cost
+- emissions
+- carbon footprint
+
+# Prediction
+
+We will use data analysis to predict where the most waste is.
 
 # Stakeholders
 Municipalities, waste management companies, and environmental organizations seeking to
