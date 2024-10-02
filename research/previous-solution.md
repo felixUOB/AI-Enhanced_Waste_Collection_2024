@@ -13,3 +13,7 @@ https://www.cyberdb.co/the-role-of-technology-in-modern-waste-management-efficie
 
 # existing APIS
 https://developers.google.com/maps/documentation/route-optimization/overview
+
+# Route planner app:
+
+- Locate2u
