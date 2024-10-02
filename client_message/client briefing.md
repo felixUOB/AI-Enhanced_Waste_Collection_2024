@@ -2,7 +2,7 @@
 
  
 
-a. Sources of Data: 
+## a. Sources of Data: ## 
 
 • Client based Data: Initial datasets include waste collection records, such as pickup schedules and the volume of plastic waste collected from households, along with user interactions via the app. 
 
@@ -16,7 +16,7 @@ Initial suggestion: Mock data (mostly.ai, mockaroo.com, workik.com, tonic.ai)
 
  
 
-b. Data Sensitivity: 
+## b. Data Sensitivity: 
 
 • Sensitive Data: It’s essential to anonymize and protect user information, such as pickup addresses and recycling history. 
 
@@ -50,9 +50,9 @@ Application Platform Development:
 
  
 
-Projected Scale of the Application: 
+# Projected Scale of the Application: 
 
-a. Route Generation: 
+## a. Route Generation: 
 
 • Initial Phase: An expectation of generating 25-50 routes per day during the initial rollout, focusing on select areas in urban Chennai. 
 
@@ -60,7 +60,7 @@ a. Route Generation:
 
  
 
-b. Coverage Area: 
+## b. Coverage Area: 
 
 • Initial Rollout: The service will cover an area of approximately 300-400 square kilometers, starting in Chennai. 
 
