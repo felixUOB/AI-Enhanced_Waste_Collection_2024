@@ -20,7 +20,7 @@
 * Make sure content of application do not offend anyone
 * NO COPYRIGHTS
 * App must include :
-* - Ability to block user
+  - Ability to block user
   - Mechanism to report user
   - method to filter offensive content
 * This project is not targeted at kids
