@@ -9,3 +9,4 @@
 *  Testing possible
 *  https://reactnative.dev/docs/getting-started to learn the basics of the language
 *  Better to use with Expo (a framework)
+*  App Development 
