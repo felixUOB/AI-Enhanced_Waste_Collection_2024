@@ -30,4 +30,5 @@
 * Apps must only use public APIs and is functional in IPv6-only networks
 * Apps cannot read or write data outside itself
 * Most of the requirements is up to the person who submits the application
+* https://developer.apple.com/app-store/review/guidelines/#introduction for extensive requirements
   
