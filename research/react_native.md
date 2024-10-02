@@ -29,5 +29,5 @@
 * Unique application name!!
 * Apps must only use public APIs and is functional in IPv6-only networks
 * Apps cannot read or write data outside itself
-* Most of the requirements is up to the submission of the application
+* Most of the requirements is up to the person who submits the application
   
