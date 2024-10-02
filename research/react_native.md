@@ -7,5 +7,5 @@
 *  Used by facebook, discord, …
 *  https://github.com/facebook/react-native for more info
 *  Testing possible
-*  https://reactnative.dev/docs/getting-started
+*  https://reactnative.dev/docs/getting-started to learn the basics of the language
 *  Better to use with Expo (a framework)
