@@ -92,20 +92,6 @@ frameworks.
 - Infrastructure: **Azure VM** for hosting and computation.
 - Collaboration and Documentation: **GitHub** for version control and project management.
 
-# Challenge
-The primary challenge will be designing a robust and user-friendly application that integrates
-AI-driven scheduling with environmental impact reporting. Ensuring that the app is intuitive
-for users while providing sophisticated functionality requires careful planning and execution.
-Developing effective AI algorithms for both route optimization and impact quantification will
-be crucial. Additionally, achieving seamless integration between the app and impact
-reporting tools will be essential for delivering comprehensive insights.
-
-# Conclusion
-The AI-Enhanced Waste Collection and Environmental Impact Management System aims to
-transform waste management practices by combining real-time optimization with detailed
-environmental impact analysis. This integrated approach will not only improve efficiency but
-also provide valuable data to support sustainability initiatives.
-
 # User Stories
 As a municipal worker, I want an intuitive and easy to use interface that tells me the information clearly. 
 
