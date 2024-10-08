@@ -6,4 +6,5 @@ https://www.youtube.com/watch?v=qN_0EZ8M20Q
 * https://www.w3schools.com/django/index.php for extensive use i.e. app creation, table creation etc
 * We are coding django using VS Code. We should try to keep this platform uniform in case there are different libraries in VS Code and other coding platforms
 * Use pip list to confirm django is installed
+* Everone should try to get to the main django webpage to see if their django is working properly.
   
