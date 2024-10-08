@@ -7,4 +7,4 @@ https://www.youtube.com/watch?v=qN_0EZ8M20Q
 * We are coding django using VS Code. We should try to keep this platform uniform in case there are different libraries in VS Code and other coding platforms
 * Use pip list to confirm django is installed
 * Everone should try to get to the main django webpage to see if their django is working properly.
-  
+* I used global python interpreter. However, if it does not work, the virtual environment python interpreter has to be used
