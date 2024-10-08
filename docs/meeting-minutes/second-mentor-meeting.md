@@ -1,27 +1,27 @@
-04/10/2024 - Meeting minutes:
-Meeting moved to Tuesdays at 11am
-•	Look for a free map API
-•	Front end framework: Look into flutter instead of react native
-•	Backend framework: jango, flask
-•	Google how to set up the framework when you decide so that you can get the skeleton code
-•	Design session
-•	Choose database option (go with what is quite common)
-•	Have a look at the marine conservation app (similar framework) and got a very good mark (look at readme and kanban board)
-•	Everyone should do a bit of everything so that they understand both the backend and the frontend
-Note:
-•	Each week 
-Goal for next week:
-•	Choose the framework
-•	Go through the setup files (quickstart guide) by TUESDAY
-•	Start marking on equal work load
-•	Determine the features of the minimum viable product
-Feedback from last week:
-•	22nd 
-•	Stakeholders needs more details  look in the workbooks
-•	Repeated content 
-•	Unnecessary sections: conclusion, challenges, value propositions (put them in the presentation)
-•	ReadMe should be quite succinct
-•	Always add a description, label, milestone for each issue  put them all on mvp
-o	Kanban issues should be quite specific i.e. implement x, fix this bug
-•	Backlog being assigned isn’t as important
+# Meeting Minutes - 04/10/2024
 
+### Schedule Update
+- **Weekly Meeting**: Now on Tuesdays at 11am
+
+### Discussion Points
+- **Map API**: Search for a free API.
+- **Frontend Framework**: Explore Flutter instead of React Native.
+- **Backend Framework**: Consider Django or Flask.
+- **Setup Guide**: Research framework setup for skeleton code.
+- **Design**: Plan a session.
+- **Database**: Choose a common option.
+- **Reference**: Review the marine conservation app (check README and Kanban).
+- **Skill Sharing**: All members should work on both frontend and backend tasks.
+
+### Goal for Next Week
+- **Framework Choice**: Finalize by Tuesday.
+- **Setup Files**: Complete setup using quickstart guides.
+- **Workload**: Ensure equal task distribution.
+- **MVP Features**: Define core features.
+
+### Feedback from Last Week
+- **Stakeholders**: Provide more details as per workbook.
+- **Content**: Avoid repetition, move extra sections to presentations.
+- **README**: Keep it succinct.
+- **Issue Management**: Add descriptions, labels, and milestones.
+- **Kanban**: Make issues specific (e.g., "implement X" or "fix this bug").
