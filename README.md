@@ -17,7 +17,7 @@ This project aims to combine these two elements and create a comprehensive AI-dr
 
 **The user interface:**This route will be displayed to specific users via the mobile application on a map. The user will receive notifications and audio prompts enabling hands-free use whilst driving. The report will also be available in the app to certain account types. 
 
-##Stokeholds
+## Stakeholders
 
 **Waste collectors:**
 	• Involvement: They are the primary users of the app, interacting directly with the mobile applications while on duty collecting waste.
@@ -61,14 +61,14 @@ As a **household/business**, I want an **appropriate frequency of waste collecti
 As a **household/business**, I want the **waste collection vehicles to have the most efficient routes**, so that they are **off the roads as soon as possible and not contributing to congestion**. 
 
 
-# Value Proposition
+## Value Proposition
 This project delivers a holistic solution that not only optimizes waste collection routes
 through AI but also provides actionable insights into the environmental impact of recycling
 activities. By integrating scheduling with impact reporting, the system supports better
 decision-making and enhances sustainability efforts. The unique combination of real-time
 optimization and detailed impact quantification sets this project apart in the market.
 
-# Flow
+## Flow
 Normal FLow:
 1. Open app
 2. Navigate to the screen showing the route
@@ -81,19 +81,19 @@ Exceptional Flow:
 3. Go the wrong way
 4. Get diverted
 
-# Tools and Resources
+## Tools and Resources
 - Development Tools: **Python**, machine learning libraries, and app development
 frameworks.
 - Infrastructure: **Azure VM** for hosting and computation.
 - Collaboration and Documentation: **GitHub** for version control and project management.
 
-# Kanban Chart
+## Kanban Chart
 [Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
 
-# Gantte Chart
+## Gantte Chart
 [Gantte Chart](https://uob-my.sharepoint.com/:x:/g/personal/yj23812_bristol_ac_uk/EfdWH23kdE5HvLSvT2PgaNkBh5i5-XZW6Zx429NoYpNWDw?e=cIhVW5)
 
-# Team Members
+## Team Members
 | Members                      | Email                                                 |
 | ---------------------------- | ----------------------------------------------------- |
 | Alex Gordon                  | [em23081@bristol.ac.uk](mailto:em23081@bristol.ac.uk) |
