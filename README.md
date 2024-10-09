@@ -1,6 +1,6 @@
 # 2024-AIEnhancedWasteCollection
 
-Contents
+## Contents
 
 ## Project proposal
 In the realm of waste management, there is significant need to optimise systems to streamline waste collection as well as assess and reduce the environmental impact. 
