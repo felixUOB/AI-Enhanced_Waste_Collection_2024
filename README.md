@@ -19,6 +19,10 @@ This project aims to combine these two elements and create a comprehensive AI-dr
 
 ## Stakeholders
 
+**SpaceNXT (RecycleNXT)**
+- Involvement : RecycleNXT is a branch of SpaceNXT, the company patnering with the Computer Science department of University  of Bristol. This stakeholder will provide guidance, help and advise on the creation of the AI Waste Collection Application, such that said application will be in line with their company rules and regulations
+- Use for the system: RecycleNXT will utilise the application in a province of India, if this proof of concept is successful. RecycleNXT wants an application that provides an optimal that uses less fuel, collects data regarding user's waste collection , and an AI that could predict results based on previous waste collection. 
+
 **Waste collectors:**
 * Involvement: They are the primary users of the app, interacting directly with the mobile applications while on duty collecting waste.
 * Use for the system: The waste collectors will follow the routes shown on the maps in order to collect the waste. They will also be logging information about the amount of waste they are collecting.
