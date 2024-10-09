@@ -15,25 +15,29 @@ This project aims to combine these two elements and create a comprehensive AI-dr
 
 **Generating reports:** In depth analysis of relevant ecological metrics, performed using AI analysis, collated into a comprehensive report. These will involve fuel consumption, time saved, carbon footprint, carbon and energy saving.
 
-**The user interface:**This route will be displayed to specific users via the mobile application on a map. The user will receive notifications and audio prompts enabling hands-free use whilst driving. The report will also be available in the app to certain account types. 
+**The user interface:** This route will be displayed to specific users via the mobile application on a map. The user will receive notifications and audio prompts enabling hands-free use whilst driving. The report will also be available in the app to certain account types. 
 
 ## Stakeholders
 
 **Waste collectors:**
-	• Involvement: They are the primary users of the app, interacting directly with the mobile applications while on duty collecting waste.
-	• Use for the system: The waste collectors will follow the routes shown on the maps in order to collect the waste. They will also be logging information about the amount of waste they are collecting.
+* Involvement: They are the primary users of the app, interacting directly with the mobile applications while on duty collecting waste.
+* Use for the system: The waste collectors will follow the routes shown on the maps in order to collect the waste. They will also be logging information about the amount of waste they are collecting.
+
 **City councils/Municipalities:**
-	• Involvement: City councils are responsible for contracting waste management companies, organising collection and employment and training of the waste collectors. 
-	• Use of the system: They are likely to want to use the application to plan waste collection in their city to get the most efficient results and save money.
+* Involvement: City councils are responsible for contracting waste management companies, organising collection and employment and training of the waste collectors. 
+* Use of the system: They are likely to want to use the application to plan waste collection in their city to get the most efficient results and save money.
+
 **Waste management companies:**
-	• Involvement: Private waste managing companies, similarly to the city council, are responsible for organising collection.
-	• Use of the system: They will be using the system to plan their routes and make sure they are being as efficient as possible.
+* Involvement: Private waste managing companies, similarly to the city council, are responsible for organising collection.
+* Use of the system: They will be using the system to plan their routes and make sure they are being as efficient as possible.
+
 **Environmental organisations:**
-	• Involvement: Interested in viewing and using the reports to help monitor waste companies and inform decisions and legislations around waste collection and carbon emissions
-	• Use of the system: The environmental organisation will access the reports to gather information about the carbon footprint, emissions and carbon and energy saving, which will help them monitor and protect the environment.
+* Involvement: Interested in viewing and using the reports to help monitor waste companies and inform decisions and legislations around waste collection and carbon emissions
+* Use of the system: The environmental organisation will access the reports to gather information about the carbon footprint, emissions and carbon and energy saving, which will help them monitor and protect the environment.
+
 **Households and businesses:**
-	• Involvement: Whilst not directly involved they will be generating the waste and putting it out for collection.
-	• Use of the system: Whist not directly using the system they will be contributing to the data, patterns and behaviours that allow the prediction algorithms to work. 
+* Involvement: Whilst not directly involved they will be generating the waste and putting it out for collection.
+* Use of the system: Whist not directly using the system they will be contributing to the data, patterns and behaviours that allow the prediction algorithms to work. 
 
 ## User stories
 As a **waste collector**, I want to be able to **view the routes easily** so that I can **follow them and collect the waste**.
@@ -62,11 +66,7 @@ As a **household/business**, I want the **waste collection vehicles to have the 
 
 
 ## Value Proposition
-This project delivers a holistic solution that not only optimizes waste collection routes
-through AI but also provides actionable insights into the environmental impact of recycling
-activities. By integrating scheduling with impact reporting, the system supports better
-decision-making and enhances sustainability efforts. The unique combination of real-time
-optimization and detailed impact quantification sets this project apart in the market.
+This project delivers a holistic solution that not only optimizes waste collection routes through AI but also provides actionable insights into the environmental impact of recycling activities. By integrating scheduling with impact reporting, the system supports better decision-making and enhances sustainability efforts. The unique combination of real-time optimization and detailed impact quantification sets this project apart in the market.
 
 ## Flow
 Normal FLow:
