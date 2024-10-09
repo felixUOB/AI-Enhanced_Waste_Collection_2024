@@ -9,7 +9,7 @@ https://www.youtube.com/watch?v=qN_0EZ8M20Q
 * Everone should try to get to the main django webpage to see if their django is working properly.
 * I used global python interpreter. However, if it does not work, the virtual environment python interpreter has to be used
 
-## WHat files in app for django does
+## What files in app for django does
 * models.py: This file defines the data models for the app, including the fields and behavior of the data. It is used to interact with the database using the built-in Django ORM.
 * views.py: This file defines the views for the app, which handle specific requests and return a response. A view is a Python function that defines how to handle a specific URL.
 * urls.py: This file defines the URLs for the app, including the mapping between URLs and views. It is used to control how URLs are handled by the app.
