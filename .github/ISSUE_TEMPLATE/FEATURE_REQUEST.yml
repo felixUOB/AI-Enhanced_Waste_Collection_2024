@@ -1,0 +1,30 @@
+name: "Feature Request"
+description: Miscellaneous issue, not a bug or feature request
+title: "[Feature] - <title>"
+labels: ["feature"]
+projects: ["spe-uob/2024-AIEnhancedWasteCollection"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for filling out a feature request form for AI-Enhanced Waste Collection. Please fill in the following information.
+  - type: markdown
+    attributes:
+      value: |
+        Please add all relevant issue metadata. Including: assignees, labels, milestone and relevant branches/pull requests.
+  - type: textarea
+    id: description
+    attributes:
+      label: "Feature Description"
+      description: Please enter an description of the feature you would like to add
+      placeholder: The feature ...
+    validations:
+      required: true
+  - type: textarea
+    id: additional-information
+    attributes:
+      label: "Additional Information"
+      description: Please add any additional information
+      placeholder: Additional information ...
+    validations:
+      required: false

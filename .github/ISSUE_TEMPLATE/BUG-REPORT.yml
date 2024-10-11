@@ -1,0 +1,64 @@
+name: "Bug Report"
+description: "Create a new ticket for a bug."
+title: "[BUG] - <title>"
+labels: ["bug"]
+projects: ["spe-uob/2024-AIEnhancedWasteCollection"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for filling out a bug report form for AI-Enhanced Waste Collection. Please fill in the following information.
+  - type: markdown
+    attributes:
+      value: |
+        Please add all relevant issue metadata, including: assignees, labels, milestones, and relevant branches/pull requests.
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "Please enter a description of the bug"
+      placeholder: "The bug ..."
+    validations:
+      required: true
+  - type: textarea
+    id: reproducible
+    attributes:
+      label: "Reproduction Steps"
+      description: "How do you get to the bug?"
+      placeholder: "Steps to the bug ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: "Expected Behavior"
+      description: "What did you want to happen?"
+      placeholder: "I expected ..."
+    validations:
+      required: true
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: "Screenshots"
+      description: "If applicable, add screenshots to help explain your problem."
+      value: |
+        ![DESCRIPTION](LINK.png)
+      render: bash
+    validations:
+      required: false
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment"
+      description: "Please provide information about your environment (e.g., OS, browser, etc.)."
+      placeholder: "Environment details ..."
+    validations:
+      required: false
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: "Additional Information"
+      description: "Please provide any additional information or context."
+      placeholder: "Additional information ..."
+    validations:
+      required: false
