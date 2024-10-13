@@ -128,4 +128,3 @@ frameworks.
 ## **Architecture Diagram**
 
 <img width="947" alt="Screenshot 2024-10-09 at 15 10 10" src="https://github.com/user-attachments/assets/47126bfd-216d-4ed0-af83-25c644637679">
-
