@@ -1,11 +1,26 @@
 # 2024-AIEnhancedWasteCollection
 
-## Contents
+## **Contents**
+- [Project proposal](#project-proposal)
+- [Stakeholders](#stakeholders)
+- [User stories](#user-stories)
+- [Value Proposition](#value-Proposition)
+- [Flow](#flow)
+- [Tools and Resources](#tools-and-Resources)
+- [Kanban Chart](#kanban-Chart)
+- [Gantte Chart](#gantte-Chart)
+- [User Stories](#user-stories)
+- [Team Members](#team-Members)
+- [Supporting Mentor](#supporting-Mentor)
+- [Architecture Diagram ](#architecture-Diagram)
 
-## Project proposal
+
+## **Project proposal**
 In the realm of waste management, there is significant need to optimise systems to streamline waste collection as well as assess and reduce the environmental impact. 
 Current solution focus on either the logistics of waste collection or reporting the impact but there is a lack of integration between the two. 
 This project aims to combine these two elements and create a comprehensive AI-driven mobile application, compatible with both Android and iOS platforms for optimizing waste collection and a comprehensive system for quantifying environmental impacts, including carbon footprint reduction and energy savings. This integrated approach will enhance efficiency in waste management and provide valuable insights into environmental performance.
+
+
 
 **The core functionality of this application revolves around:**
 
@@ -17,7 +32,7 @@ This project aims to combine these two elements and create a comprehensive AI-dr
 
 **The user interface:** This route will be displayed to specific users via the mobile application on a map. The user will receive notifications and audio prompts enabling hands-free use whilst driving. The report will also be available in the app to certain account types. 
 
-## Stakeholders
+## **Stakeholders**
 
 **SpaceNXT (RecycleNXT):**
 - Involvement : RecycleNXT is a branch of SpaceNXT, the company patnering with the Computer Science department of University  of Bristol. This stakeholder will provide guidance, help and advise on the creation of the AI Waste Collection Application, such that said application will be in line with their company rules and regulations
@@ -69,10 +84,10 @@ As a **household/business**, I want an **appropriate frequency of waste collecti
 As a **household/business**, I want the **waste collection vehicles to have the most efficient routes**, so that they are **off the roads as soon as possible and not contributing to congestion**. 
 
 
-## Value Proposition
+## **Value Proposition**
 This project delivers a holistic solution that not only optimizes waste collection routes through AI but also provides actionable insights into the environmental impact of recycling activities. By integrating scheduling with impact reporting, the system supports better decision-making and enhances sustainability efforts. The unique combination of real-time optimization and detailed impact quantification sets this project apart in the market.
 
-## Flow
+## **Flow**
 Normal FLow:
 1. Open app
 2. Navigate to the screen showing the route
@@ -85,19 +100,19 @@ Exceptional Flow:
 3. Go the wrong way
 4. Get diverted
 
-## Tools and Resources
+## **Tools and Resources**
 - Development Tools: **Python**, machine learning libraries, and app development
 frameworks.
 - Infrastructure: **Azure VM** for hosting and computation.
 - Collaboration and Documentation: **GitHub** for version control and project management.
 
-## Kanban Chart
+## **Kanban Chart**
 [Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
 
-## Gantte Chart
+## **Gantte Chart**
 [Gantte Chart](https://uob-my.sharepoint.com/:x:/g/personal/yj23812_bristol_ac_uk/EfdWH23kdE5HvLSvT2PgaNkBh5i5-XZW6Zx429NoYpNWDw?e=cIhVW5)
 
-## Team Members
+## **Team Members**
 | Members                      | Email                                                 |
 | ---------------------------- | ----------------------------------------------------- |
 | Alex Gordon                  | [em23081@bristol.ac.uk](mailto:em23081@bristol.ac.uk) |
@@ -107,10 +122,9 @@ frameworks.
 | Katie Pambakian              | [yj23812@bristol.ac.uk](mailto:yj23812@bristol.ac.uk) |
 | Marek Janiec                 | [qx23239@bristol.ac.uk](mailto:qx23239@bristol.ac.uk) |
 
-## Supporting Mentor 
+## **Supporting Mentor**
 - Matthew Cudby
 
-# Architecture Diagram 
+## **Architecture Diagram**
 
 <img width="947" alt="Screenshot 2024-10-09 at 15 10 10" src="https://github.com/user-attachments/assets/47126bfd-216d-4ed0-af83-25c644637679">
-
