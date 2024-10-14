@@ -1,5 +1,9 @@
 # Unnecessary system file for macOS
 .DS_Store
 
+*.pyc
+__pycache__
+db.sqlite3
+
 # IDE-specific settings files (JetBrains), exclude from the project
 .idea
