@@ -75,11 +75,20 @@ WSGI_APPLICATION = 'ewc.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# Database for postgresql (psycopg2)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": 'database_name',
+        "USER": 'username',
+        "PASSWORD": 'password',
+        "HOST": 'Azure_vm_ip',
+        "PORT": "5432",
     }
+    # pip install psycopg2-binary
+    # python manage.py migrate
+    # python manage.py runserver : check connection btw Django - PostgreSQL
 }
 
 
