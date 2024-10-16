@@ -1,8 +1,8 @@
+# serializers.py
 from rest_framework import serializers
-from .models import Person
+from .models import ewc
 
-# Example Serializer
-class PersonSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Person
-    fields = '__all__'
+class ewcSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ewc
+        fields = ['id', 'name', 'description', 'created_at']

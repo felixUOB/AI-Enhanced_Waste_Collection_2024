@@ -20,7 +20,7 @@ from rest_framework import routers
 from ewc_web import views
 
 router = routers.DefaultRouter()
-router.register(r'ewc_web', views.PersonView)
+router.register(r'ewc_web', views.ewcViewSet, basename='ewc_web')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

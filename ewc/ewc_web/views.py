@@ -1,11 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import viewsets
-from .models import Person
-from .serializers import PersonSerializer
+from .serializers import ewcSerializer
+from.models import ewc
 
-# Create your views here.
-
-# Example view
-class PersonView(viewsets.ModelViewSet):
-    queryset = Person.objects.all().order_by('firstName')
-    serializer_class = PersonSerializer
+class ewcViewSet(viewsets.ModelViewSet):
+    queryset = ewc.objects.all()
+    serializer_class = ewcSerializer
