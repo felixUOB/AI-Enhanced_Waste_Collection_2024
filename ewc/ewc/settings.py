@@ -10,12 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+from pathlib import Path
 import os
 from os import getenv
-from pathlib import Path
-from datetime import timedelta
+from dotenv import load_dotenv
 from urllib.parse import urlparse
-from dotenv import load_dotenv # pip install python-dotenv
+
+# Load the .env file
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -81,11 +82,8 @@ WSGI_APPLICATION = 'ewc.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-
-# Database for postgresql (psycopg2)
-
-tmpPostgres = urlparse(getenv("DATABASE_URL"))
-
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+# Database configuration
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -93,10 +91,7 @@ DATABASES = {
         'USER': tmpPostgres.username,
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
-        'PORT': tmpPostgres.port or 5432,
-        'OPTIONS': {
-            'sslmode': 'require',
-        }
+        'PORT': 5432,
     }
 }
     # pip install psycopg2-binary
