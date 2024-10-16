@@ -9,4 +9,4 @@ db.sqlite3
 .idea
 
 # Django Secure
-ewc/.env
+*.env
