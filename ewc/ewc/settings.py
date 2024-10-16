@@ -10,7 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import os
+from os import getenv
 from pathlib import Path
+from datetime import timedelta
+from urllib.parse import urlparse
+from dotenv import load_dotenv # pip install python-dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +26,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-krd=e0414sviv)uqbj(bz=8y4o4rv7t6h&%tz7ux1aba0z*%*b'
+SECRET_KEY = getenv('DJANGO_SECRET_KEY')
+# 'django-insecure-krd=e0414sviv)uqbj(bz=8y4o4rv7t6h&%tz7ux1aba0z*%*b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -77,19 +83,25 @@ WSGI_APPLICATION = 'ewc.wsgi.application'
 
 
 # Database for postgresql (psycopg2)
+
+tmpPostgres = urlparse(getenv("DATABASE_URL"))
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": 'database_name',
-        "USER": 'username',
-        "PASSWORD": 'password',
-        "HOST": 'Azure_vm_ip',
-        "PORT": "5432",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': tmpPostgres.port or 5432,
+        'OPTIONS': {
+            'sslmode': 'require',
+        }
     }
+}
     # pip install psycopg2-binary
     # python manage.py migrate
     # python manage.py runserver : check connection btw Django - PostgreSQL
-}
 
 
 # Password validation
