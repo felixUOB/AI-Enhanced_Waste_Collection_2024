@@ -16,14 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework import routers
-from ewc_web import views
+# from rest_framework import routers
+# from ewc_web import views
 
-router = routers.DefaultRouter()
-router.register(r'ewc_web', views.ewcViewSet, basename='ewc_web')
+# router = routers.DefaultRouter()
+# router.register(r'ewc_web', views.ewcViewSet, basename='ewc_web')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    # path('', include(router.urls)),
     #path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),
 ]
