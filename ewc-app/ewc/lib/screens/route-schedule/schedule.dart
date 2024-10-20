@@ -14,14 +14,20 @@ class Schedule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: SafeArea(
-        child: ListView.builder(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.grey[300],
+        appBar: const PreferredSize(
+            preferredSize: Size.fromHeight(80),
+            child: Center(
+              heightFactor: 1.5,
+              child: Text('Schedule', style: TextStyle(fontSize: 32, fontFamily: 'Questrial')))
+            ),
+        body: ListView.builder(
             itemCount: routes.length,
             itemBuilder: (BuildContext context, int index) {
               return Container(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
                     color: Colors.cyan, borderRadius: BorderRadius.circular(12)
                 ),
