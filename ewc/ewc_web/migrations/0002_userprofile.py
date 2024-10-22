@@ -7,15 +7,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
+    # Defines the migration dependencies (the previous migration files this one depends on)
     dependencies = [
-        ("ewc_web", "0001_initial"),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ("ewc_web", "0001_initial"), # Depends on the initial migration of 'ewc_web' app
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL), # Depends on the User model
     ]
 
+    # Operations to apply to the database (in this case, creating the UserProfile model)
     operations = [
         migrations.CreateModel(
             name="UserProfile",
             fields=[
+                # Auto-generated primary key field
                 (
                     "id",
                     models.BigAutoField(
@@ -28,6 +31,7 @@ class Migration(migrations.Migration):
                 ("phone_number", models.CharField(blank=True, max_length=15)),
                 ("address", models.TextField(blank=True)),
                 (
+                    # User's preferred pickup frequency with predefined choices
                     "pickup_frequency",
                     models.CharField(
                         choices=[
@@ -39,6 +43,7 @@ class Migration(migrations.Migration):
                         max_length=20,
                     ),
                 ),
+                # Type of waste the user prefers to manage, with predefined choices
                 (
                     "waste_type_preference",
                     models.CharField(
@@ -51,12 +56,15 @@ class Migration(migrations.Migration):
                         max_length=100,
                     ),
                 ),
+                # Tracks the user's carbon savings (default is 0.0)
                 ("carbon_savings", models.FloatField(default=0.0)),
+                # User's notification preferences (default is true)
                 ("notification_preferences", models.BooleanField(default=True)),
+                # Links the UserProfile to the User model with a one-to-one relationship
                 (
                     "user",
                     models.OneToOneField(
-                        on_delete=django.db.models.deletion.CASCADE,
+                        on_delete=django.db.models.deletion.CASCADE, # Deletes the profile if the user is deleted
                         to=settings.AUTH_USER_MODEL,
                     ),
                 ),

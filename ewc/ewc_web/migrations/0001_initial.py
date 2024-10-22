@@ -7,13 +7,17 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
+    # Specifies that this is the initial migration
     initial = True
 
+    # Defines the dependencies for the migration
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
+    # Defines the operations (changes) to be applied to the database
     operations = [
+        # Create the CollectionPoint model/table in the database
         migrations.CreateModel(
             name="CollectionPoint",
             fields=[
@@ -26,12 +30,14 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
+                # Adds fields for location name, latitude, longitude, and address
                 ("location_name", models.CharField(max_length=255)),
                 ("latitude", models.FloatField()),
                 ("longitude", models.FloatField()),
                 ("address", models.CharField(max_length=255)),
             ],
         ),
+        # Create the JourneyMetric model/table in the database
         migrations.CreateModel(
             name="JourneyMetric",
             fields=[
@@ -44,10 +50,12 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
+                # Adds fields for CO2 emissions, fuel used, distance traveled, and journey date
                 ("co2_emissions", models.FloatField()),
                 ("fuel_used", models.FloatField()),
                 ("distance_traveled", models.FloatField()),
                 ("journey_date", models.DateTimeField(auto_now_add=True)),
+                # Foreign key relationship to the CollectionPoint model
                 (
                     "collection_point",
                     models.ForeignKey(
@@ -55,6 +63,7 @@ class Migration(migrations.Migration):
                         to="ewc_web.collectionpoint",
                     ),
                 ),
+                # Foreign key relationship to the User model
                 (
                     "user",
                     models.ForeignKey(
@@ -64,6 +73,7 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
+        # Create the WastePrediction model/table in the database
         migrations.CreateModel(
             name="WastePrediction",
             fields=[
@@ -76,9 +86,11 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
+                # Adds fields for predicted weight, predicted date, and actual weight (optional)
                 ("predicted_weight", models.FloatField()),
                 ("predicted_date", models.DateField()),
                 ("actual_weight", models.FloatField(blank=True, null=True)),
+                # Foreign key relationship to the CollectionPoint model
                 (
                     "collection_point",
                     models.ForeignKey(
