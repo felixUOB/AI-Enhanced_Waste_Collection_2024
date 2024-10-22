@@ -1,3 +1,4 @@
+import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:flutter/material.dart';
 import 'screens/login/login.dart';
 
@@ -8,9 +9,14 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      title: 'EWC App',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 34, 255, 251)),
+      ),
+      home: MetricsPage(),
     );
   }
 }
