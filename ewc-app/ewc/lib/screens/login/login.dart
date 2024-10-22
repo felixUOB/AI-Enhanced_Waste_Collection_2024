@@ -1,27 +1,36 @@
-import 'package:flutter/material.dart';
-import 'package:ewc/widgets/login_textfeild.dart';
+import 'package:ewc/imports/imports.dart';
+
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+
+  //TXT Controllers
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: const SafeArea(
+      body: SafeArea(
         child: Center(
           child: Column(
             children: [
-              SizedBox(height: 100,),
+              const SizedBox(height: 120,),
 
-              // Lock Logo
-              Icon(Icons.lock,
-                size: 100,
-              ),
+//-------------RECYCLENXT LOGO----------------------
 
-              //'Welcome back'
-              SizedBox(height: 50,),
-              Text(
+              const SizedBox(height: 50,),
+              Image.asset(
+                "assets/RecycleNXT-Logo_Update_Black.png",
+                scale: 8,
+                ),
+
+//-------------WELCOME BACK TXT-FELILD----------------------
+
+              const SizedBox(height: 50,),
+              const Text(
                 "Welcome Back!",
                 style: TextStyle(
                   fontFamily: 'Questrial',
@@ -29,19 +38,61 @@ class LoginPage extends StatelessWidget {
                 )
               ),
 
-              SizedBox(height: 30,),
+              const SizedBox(height: 30,),
+
+//-------------USERNAME TXT-FEILD----------------------
 
               //username txtfld
-              LoginTextfeild(),
+              LoginTextfeild(
+                controller: usernameController,
+                hintText: "Username",
+                
+                obscured: false,
+              ),
 
-              SizedBox(height: 10,),
+              const SizedBox(height: 10,),
 
-              //password txtfld
-              LoginTextfeild(),
-              //'forgot password?'
+//-------------PASSWORD TXT-FEILD----------------------
 
-              //not a member, register now
+              LoginTextfeild(
+                controller: passwordController,
+                hintText: "Password",
+                obscured: true,
+              ),
 
+//-------------HYPERLINK-------------------------------
+
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    HyperLinkText(
+                      string1: "",
+                      hyperString: "Forgot Password?", 
+                      string2: "",
+                      link: Uri.parse("https://en.wikipedia.org/wiki/Lamia"), // <- NEEDS TO LINK TO PASSWORD RESET FUNCTION
+                      )
+                  ],
+                )
+                ),
+
+//-------------LOGIN BUTTON---------------------
+
+              LoginButton(
+                text1: "Sign In",
+              ),
+              const SizedBox(height: 10,),
+            
+//-------------HYPERLINK----------------------
+
+              HyperLinkText(
+                string1: "Not a member?", 
+                hyperString: "Register Here.",
+                string2: "",
+                link: Uri.parse("https://spacenxtlabs.com"), // <- NEEDS TO LINK TO REGISTRATION FUNCTION
+                ),
             ],
           ),
         ),
