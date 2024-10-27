@@ -14,7 +14,7 @@ class App extends StatelessWidget {
       title: 'EWC App',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 34, 255, 251)),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 255, 255, 255)),
       ),
       home: MetricsPage(),
     );
