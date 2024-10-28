@@ -17,6 +17,9 @@ class Schedule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
+
+// ------------Top app bar------------
+
       appBar: AppBar(
         backgroundColor: Colors.grey[300],
         centerTitle: true,
@@ -24,6 +27,8 @@ class Schedule extends StatelessWidget {
         title: const Text('Schedule',
             style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
       ),
+
+// ------------List of stops------------
       body: SafeArea(
           child: ScheduleStopList(content: routes)),
     );
