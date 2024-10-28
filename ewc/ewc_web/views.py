@@ -1,11 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import viewsets
-from .models import Person
-from .serializers import PersonSerializer
+from .models import UserProfile, CollectionPoint, JourneyMetric, WastePrediction
+from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer
 
-# Create your views here.
+def home(request):
+    return render(request, 'ewc_app/home.html')
 
-# Example view
-class PersonView(viewsets.ModelViewSet):
-    queryset = Person.objects.all().order_by('firstName')
-    serializer_class = PersonSerializer
+class UserProfileViewSet(viewsets.ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+
+class CollectionPointViewSet(viewsets.ModelViewSet):
+    queryset = CollectionPoint.objects.all()
+    serializer_class = CollectionPointSerializer
+
+class JourneyMetricViewSet(viewsets.ModelViewSet):
+    queryset = JourneyMetric.objects.all()
+    serializer_class = JourneyMetricSerializer
+
+class WastePredictionViewSet(viewsets.ModelViewSet):
+    queryset = WastePrediction.objects.all()
+    serializer_class = WastePredictionSerializer
+
