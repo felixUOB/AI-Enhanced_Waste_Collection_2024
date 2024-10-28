@@ -1,7 +1,9 @@
 
 import 'package:ewc/screens/metrics/graphs/bar-graph/bar_graph.dart';
 import 'package:ewc/screens/metrics/graphs/line-graph/line_graph.dart';
+import 'package:ewc/screens/metrics/graphs/pie-chart/pie_chart.dart';
 import 'package:ewc/screens/metrics/widgets/square.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class MetricsPage extends StatefulWidget{
@@ -17,7 +19,7 @@ class _MetricsPageState extends State<MetricsPage>{
   Widget build(BuildContext context){
 
     // Holds the Titles for the widgets 
-    final List metrics = ['Carbon Footprint Bar Graph', 'Fuel Consumption', 'Carbon Footprint Line Graph'];
+    final List metrics = ['Carbon Footprint Bar Graph', 'Fuel Consumption', 'Carbon Footprint Line Graph', 'Fuel Consumption Pie Chart'];
 
     // list of the graphs
     // read database to get these values
@@ -44,6 +46,7 @@ class _MetricsPageState extends State<MetricsPage>{
       barGraph(carbonFootPrintData), 
       barGraph(fuelConsumptionData), 
       lineGraph(carbonFootPrintData),
+      pieChart(fuelConsumptionData),
       ];
 
 
@@ -90,6 +93,17 @@ Widget lineGraph(List<double> data){
       height: 200,
       child: MyLineGraph(
         weeklySummary: data,
+      ),
+    ),
+  );
+}
+
+Widget pieChart(List<double> data){
+  return Center(
+    child: SizedBox(
+      height: 200,
+      child: MyPieChart(
+        sectors: data
       ),
     ),
   );
