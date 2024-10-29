@@ -35,14 +35,14 @@ class ScheduleStopList extends StatelessWidget {
 
                 Expanded(
                   child: Text(
-                    '${content[index][0]}', textAlign: TextAlign.left)
+                    content[index][0].toString(), textAlign: TextAlign.left)
                 ),
 
 // ------------Minutes text------------
 
                 Expanded(
                   child: Text(
-                    '${content[index][1]} mins', textAlign: TextAlign.right)
+                    '${content[index][1].toString()} mins', textAlign: TextAlign.right)
                 )
               ]
             ),
