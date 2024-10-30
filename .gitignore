@@ -7,3 +7,6 @@ db.sqlite3
 
 # IDE-specific settings files (JetBrains), exclude from the project
 .idea
+
+# Django Secure
+*.env

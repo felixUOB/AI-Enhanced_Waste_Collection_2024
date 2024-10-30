@@ -17,13 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from ewc_web import views
+from ewc_web.views import UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet
+
 
 router = routers.DefaultRouter()
-router.register(r'ewc_web', views.PersonView)
+router.register(r'user_profiles', UserProfileViewSet, basename='userprofile')
+router.register(r'collection_points', CollectionPointViewSet, basename='collectionpoint')
+router.register(r'journey_metrics', JourneyMetricViewSet, basename='journeymetric')
+router.register(r'waste_predictions', WastePredictionViewSet, basename='wasteprediction')
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # path('api/', include('ewc.urls')),
     path('', include(router.urls)),
-    #path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),
+    # path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),
 ]
