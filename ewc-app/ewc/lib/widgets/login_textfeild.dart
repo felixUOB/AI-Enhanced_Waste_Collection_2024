@@ -15,26 +15,26 @@ class LoginTextfeild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                  child: TextField(
-                    controller: controller,
-                    obscureText: obscured,
-                    decoration: InputDecoration(
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white)
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black)
-                      ),
-                      fillColor: const Color.fromARGB(250, 240, 240, 240),
-                      filled: true,
-                      hintText: hintText,
-                      hintStyle: TextStyle(
-                        color: Colors.grey[400],
-                        fontFamily: "Questrial",
-                      )
-                    ),
-                  ),
-              );
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: TextField(
+          controller: controller,
+          obscureText: obscured,
+          decoration: InputDecoration(
+            enabledBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.white)
+            ),
+            focusedBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black)
+            ),
+            fillColor: const Color.fromARGB(250, 240, 240, 240),
+            filled: true,
+            hintText: hintText,
+            hintStyle: TextStyle(
+              color: Colors.grey[400],
+              fontFamily: "Questrial",
+            )
+          ),
+        ),
+    );
   }
 }

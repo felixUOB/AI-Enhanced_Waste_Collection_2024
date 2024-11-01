@@ -1,0 +1,25 @@
+name: Continuous Integration - Flutter
+
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  test:
+    runs-on: ubuntu-linux
+    defaults:
+        run:
+          working-directory: "./ewc-app"    
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+      - name: Setup and Install Flutter
+        uses: subosito/flutter-action@v2
+      - name: Install Flutter Dependencies
+        run: flutter pub get
+      - name: Run Static Code Analysis
+        run : flutter analyze
+      - name: Run Flutter Tests
+        run: flutter test
