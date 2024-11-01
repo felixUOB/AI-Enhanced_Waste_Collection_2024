@@ -8,8 +8,6 @@ class LoginButton extends StatelessWidget {
     required this.text1
     });
 
-
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -23,7 +21,7 @@ class LoginButton extends StatelessWidget {
       child: Center(
         child: Text(
           " $text1",
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 15,
             color: Colors.white,
             fontFamily: "Questrial",
