@@ -5,25 +5,27 @@ import 'screens/login/login.dart';
 
 ThemeManager themeManager = ThemeManager();
 
-void main() => runApp(const App());
+void main() => runApp(const App()); //Runs application root
 
 class App extends StatefulWidget {
   const App({super.key});
 
   @override
-  State<StatefulWidget> createState() {
+  State<StatefulWidget> createState() { //Creates initial state of app
     return myAppState();
   }
 }
 
 class myAppState extends State<App>{
 
+//When State closes this function is called to remove listener
   @override
   void dispose() {
     themeManager.removeListener(themeListener);
     super.dispose();
   }
 
+//Initialising App State with a listener 
   @override
   void initState() {
     themeManager.addListener(themeListener);
