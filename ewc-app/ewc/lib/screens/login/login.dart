@@ -100,11 +100,12 @@ class LoginPage extends StatelessWidget {
                 const SizedBox(height: 20,),
                 // ignore: prefer_const_constructors
                 Padding(
-                  padding: EdgeInsets.all(25),
+                  padding: const EdgeInsets.all(25),
                   child:
                     // ignore: prefer_const_constructors
                     Align(
                       alignment: Alignment.topRight, 
+                      // ignore: prefer_const_constructors
                       child: ThemeSwitch(),
                     )
                 )

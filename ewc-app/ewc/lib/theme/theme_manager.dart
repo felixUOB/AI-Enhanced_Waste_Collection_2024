@@ -3,13 +3,8 @@ import 'package:ewc/imports/imports.dart';
 class ThemeManager with ChangeNotifier{
   ThemeMode themeMode = ThemeMode.light;
 
-  getThemeMode(){
-    return themeMode;
-  }
-
-
-  toggleTheme(bool isDark){
-    if (isDark == true){
+  toggleTheme(bool dark){
+    if (dark == true){
       themeMode = ThemeMode.dark;
     } else {
       themeMode = ThemeMode.light;

@@ -28,9 +28,10 @@ class HyperLinkText extends StatelessWidget {
                     ),
                     TextSpan(
                       style: const TextStyle(
-                        color: Colors.blue,
+                        fontFamily: "Questrial",
                         fontSize: 15,
-                        ),
+                        color: Colors.blue,
+                      ),
                       text: " $hyperString",
                       recognizer: TapGestureRecognizer()..onTap = () async {
                         if(await canLaunchUrl(link)){
@@ -43,7 +44,7 @@ class HyperLinkText extends StatelessWidget {
                       }
                     ),
                     TextSpan(
-                      style: Theme.of(context).textTheme.bodySmall,
+                      style: Theme.of(context).textTheme.bodyMedium,
                       text: " $string2"
                     ),
                   ]
