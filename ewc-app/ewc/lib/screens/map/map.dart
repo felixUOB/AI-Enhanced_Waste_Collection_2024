@@ -93,7 +93,7 @@ class _MapPage extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('RecycleNXT',
+      appBar: AppBar(title: const Text('RecycleNXT',
       style:TextStyle(fontFamily: 'Questrial', fontSize: 22),
       ),
       ),
@@ -105,30 +105,48 @@ class _MapPage extends State<MapPage> {
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
   return FlutterMap(
-    options: MapOptions(
+    options: const MapOptions(
       initialCenter: LatLng(51.4492, -2.5879),
       initialZoom: 14,
       interactionOptions:
-        const InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
+        InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
     ),
+    
     children: [
-      // Adds the OpenStreetMap tile layer to the map
-      openStreetMapTileLayer,
-      
-      // Layer to display the route between route points fetched from API
-      PolylineLayer(
-        polylines: [
-          Polyline(
-            points: _routePoints, 
-            strokeWidth: 4.0, 
-            color: Colors.blue
-            ),
-        ],
-        
-      ),
-      
-      // Layer to display a marker on the map
-      MarkerLayer(markers: [
+      openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+      _routePolylineLayer(), // Polyline layer for route
+      _markerLayer(), // Marker layer for map points
+    ],
+    
+  );
+}
+
+
+  // Tile layer for OpenStreetMap tiles
+  TileLayer get openStreetMapTileLayer => TileLayer(
+    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+  );
+
+
+  // Creating Polyline layer for route display
+  Widget _routePolylineLayer() {
+    return PolylineLayer(
+      polylines: [
+        Polyline(
+          points: _routePoints,
+          strokeWidth: 4.0,
+          color: Colors.blue,
+        ),
+      ],
+    );
+  }
+
+
+  // Creating Marker layer with a single marker
+  Widget _markerLayer() {
+    return const MarkerLayer(
+      markers: [
         Marker(
           point: LatLng(51.4516, -2.5810),
           width: 60,
@@ -136,18 +154,12 @@ class _MapPage extends State<MapPage> {
           alignment: Alignment.bottomCenter,
           child: Icon(
             Icons.location_pin,
-            size:60,
+            size: 60,
             color: Colors.red,
+          ),
+        ),
+      ],
+    );
+  }
 
-        )),
-      ])
-    ],
-  );
 }
-}
-
-// Tile layer for OpenStreetMap tiles
-TileLayer get openStreetMapTileLayer => TileLayer(
-  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-  userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-);
