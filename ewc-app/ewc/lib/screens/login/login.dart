@@ -46,7 +46,6 @@ class LoginPage extends StatelessWidget {
               LoginTextfeild(
                 controller: usernameController,
                 hintText: "Username",
-                
                 obscured: false,
               ),
 

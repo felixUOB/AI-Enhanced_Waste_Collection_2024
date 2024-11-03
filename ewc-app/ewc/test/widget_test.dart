@@ -5,54 +5,104 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:ewc/imports/imports.dart';
+import 'package:ewc/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('LoginTextField has correct styling', (WidgetTester tester) async{
+    final controller = TextEditingController();
+    
     await tester.pumpWidget(
       MaterialApp(
-        home: CounterApp(),
+        home:Scaffold(
+          body: LoginTextfeild(
+            controller: controller, 
+            hintText: 'Email', 
+            obscured: false,
+            ),
+        ),
       ),
-      
     );
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    // verify background color
+    final textFieldDectoration = tester.widget<TextField>(find.byType(TextField)).decoration;
+    expect(textFieldDectoration?.fillColor, const Color.fromARGB(250, 240, 240, 240));
+
+    // verify focused border color
+    final borderSide = (textFieldDectoration?.focusedBorder as OutlineInputBorder).borderSide;
+    expect(borderSide.color, Colors.black);
+  }
+  );
+  testWidgets('LoginTextField displays hint and obscures text correctly', (WidgetTester tester) async {
+    final controller = TextEditingController();
+    
+    await tester.pumpWidget(
+      MaterialApp(
+        home:Scaffold(
+          body: LoginTextfeild(
+            controller: controller, 
+            hintText: 'Email', 
+            obscured: true,
+            ),
+        ),
+      ),
+    );
+
+    // check if the hint text is displayed
+    expect(find.text('Email'), findsOneWidget);
+
+    // check if the text field is initially obscured
+    final textField = tester.widget<TextField>(find.byType(TextField));
+    expect(textField.obscureText, isTrue);
+  });
+
+  testWidgets('LoginTextField accepts input', (WidgetTester tester) async {
+    final controller = TextEditingController();
+    
+    await tester.pumpWidget(
+      MaterialApp(
+        home:Scaffold(
+          body: LoginTextfeild(
+            controller: controller, 
+            hintText: 'Email', 
+            obscured: false,
+            ),
+        ),
+      ),
+    );
+
+    // Enter text into the text field
+    await tester.enterText(find.byType(TextField), 'testuser');
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('1'), findsOneWidget);
+    // check if the controller's text matches the entered text
+    expect(controller.text, 'testuser');
   });
-}
 
-class CounterApp extends StatefulWidget {
-  @override
-  _CounterAppState createState() => _CounterAppState();
-}
+  // testWidgets('Tapping "Forgot Password?" triggers onTap callback', (WidgetTester tester) async{
 
-class _CounterAppState extends State<CounterApp> {
-  int counter = 0;
+  //   await tester.pumpWidget(
+  //     MaterialApp(
+  //       home: Scaffold(
+  //         body: HyperLinkText(
+  //           string1: '',
+  //           hyperString: 'Forgot Password?',
+  //           string2: '',
+  //           link: Uri.parse('https://en.wikipedia.org/wiki/Lamia'),
+  //         )
+  //       )
+  //       )
+  //   );
+  //   await tester.pump();
+  //   // certify that the "Forgot password" text is present
+  //   expect(find.text('Forgot Password?'), findsOneWidget);
 
-  void _incrementCounter() {
-    setState(() {
-      counter++;
-    });
-  }
+  //   // simulate a tap on the "Forogto password" link
+  //   await tester.tap(find.text('Forgot Password?'));
+  //   await tester.pumpAndSettle();
+  // });
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Counter App')),
-      body: Center(child: Text('$counter', key: Key('counter'))),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        child: Icon(Icons.add),
-      ),
-    );
-  }
 }
