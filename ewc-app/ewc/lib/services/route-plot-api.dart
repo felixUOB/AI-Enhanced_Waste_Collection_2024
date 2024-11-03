@@ -16,6 +16,8 @@ class RouteService {
     final List<ORSCoordinate> routeCoordinates = await client.directionsRouteCoordsGet(
       startCoordinate: ORSCoordinate(latitude: startLat, longitude: startLng), 
       endCoordinate: ORSCoordinate(latitude: endLat, longitude: endLng),
+      // Setting profile for heavy goods vehicles (HGV), suitable for routing large trucks,
+      profileOverride: ORSProfile.drivingHgv,
     );
 
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map

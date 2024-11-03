@@ -27,10 +27,29 @@ class _MapPage extends State<MapPage> {
 
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
-    await dotenv.load(fileName: '.env'); // Load the .env file
-    // Initialize RouteService with API key
+    // await dotenv.load(fileName: '.env'); // Load the .env file
+    // // Initialize RouteService with API key
+
+    try {
+      // Attempt to load the .env file
+      await dotenv.load(fileName: '.env');
+
+      // Check if the API key exists in .env; show an error message if not
+      final apiKey = dotenv.env['API_KEY'];
+      if (apiKey == null || apiKey.isEmpty) {
+        throw Exception("API key missing in .env file.");
+      }
+    // Initialize RouteService with the valid API key
     _routeService = RouteService(dotenv.env['API_KEY']!);
-    _fetchRoute();
+    await _fetchRoute();
+
+    } catch (e) {
+      // Log the error and provide feedback
+      print("Error initializing environment and service: $e Failed to initialize map service. Please check API key");
+      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
+    }
+
+
   }
 
   // Fetches rout data from the API
@@ -48,6 +67,26 @@ class _MapPage extends State<MapPage> {
       _routePoints.addAll(route);
     });
   }
+
+
+  // Displays an error dialog with the provided message
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
 
   // Builds the main UI for the map screen
