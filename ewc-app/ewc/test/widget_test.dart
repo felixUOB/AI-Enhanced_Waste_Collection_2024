@@ -6,13 +6,15 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:ewc/imports/imports.dart';
-import 'package:ewc/screens/login/login.dart';
-import 'package:flutter/material.dart';
+import 'package:ewc/widgets/schedule_stoplist.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 
 void main() {
-  testWidgets('LoginTextField has correct styling', (WidgetTester tester) async{
+
+  // input page tests
+  group('InputPage Widget Tests', (){
+    testWidgets('LoginTextField has correct styling', (WidgetTester tester) async{
     final controller = TextEditingController();
     
     await tester.pumpWidget(
@@ -104,5 +106,72 @@ void main() {
   //   await tester.tap(find.text('Forgot Password?'));
   //   await tester.pumpAndSettle();
   // });
+  }
+  );
+  
+
+  // schedule page tests
+
+  group('SchedulePage Widget Tests', (){
+    final List<List<Object>> sampleContent = [
+        ["Stop 1", 5],
+        ["Stop 2", 10],
+        ["Stop 3", 15],
+      ];
+    testWidgets('Renders the correct number of list items', (WidgetTester tester) async {
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home:Scaffold(
+            body: ScheduleStopList(
+              content: sampleContent
+              )
+          ),
+        ),
+      );
+
+      expect(find.byType(Container), findsNWidgets(sampleContent.length));
+    });
+
+    testWidgets('minutes and text displayed', (WidgetTester tester) async {
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home:Scaffold(
+            body: ScheduleStopList(
+              content: sampleContent
+              )
+          ),
+        ),
+      );
+
+      for (var item in sampleContent){
+        expect(find.text(item[0].toString()), findsOneWidget);
+        expect(find.text('${item[1].toString()} mins'), findsOneWidget);
+      }
+      
+    });
+    testWidgets('applied correct padding, margin and test style', (WidgetTester tester) async {
+      
+      await tester.pumpWidget(
+        MaterialApp(
+          home:Scaffold(
+            body: ScheduleStopList(
+              content: sampleContent
+              )
+          ),
+        ),
+      );
+
+      final container = tester.widget<Container>(find.byType(Container).first);
+
+      expect(container.padding, const EdgeInsets.all(15));
+      expect(container.margin, const EdgeInsets.only(left:12, right: 12, bottom: 12));
+      
+    });
+    
+  });
+
+  
 
 }
