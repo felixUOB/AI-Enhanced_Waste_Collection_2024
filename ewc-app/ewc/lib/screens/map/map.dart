@@ -52,7 +52,7 @@ class _MapPage extends State<MapPage> {
 
   }
 
-  // Fetches rout data from the API
+  // Fetches route data from the API
   Future<void> _fetchRoute() async {
     const startLat = 51.4553, startLng = -2.6050;
     const endLat = 51.4492, endLng = -2.5810;
