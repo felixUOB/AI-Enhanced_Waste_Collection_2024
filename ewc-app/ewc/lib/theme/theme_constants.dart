@@ -1,8 +1,10 @@
 import 'package:ewc/imports/imports.dart';
 
+const spaceNXTGreen = Color.fromARGB(255, 32, 156, 132);
+//Section to create default theme for application - needs further input from team
 ThemeData lightTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
-    primary: Colors.green,
+    primary: spaceNXTGreen,
     seedColor: Colors.white,
     brightness: Brightness.light,
     surface: Colors.grey[300],
@@ -28,7 +30,7 @@ ThemeData lightTheme = ThemeData(
 
 ThemeData darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
-    primary: Colors.green,
+    primary: spaceNXTGreen,
     seedColor: Colors.black,
     brightness: Brightness.dark,
     surface: Colors.grey[900],
