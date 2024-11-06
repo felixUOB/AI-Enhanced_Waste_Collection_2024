@@ -1,3 +1,4 @@
+import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 
 class LoginTextfeild extends StatelessWidget {
@@ -31,13 +32,11 @@ class LoginTextfeild extends StatelessWidget {
                         fillColor: const Color.fromARGB(250, 240, 240, 240),
                         filled: true,
                         hintText: hintText,
-                        hintStyle: TextStyle(
-                          color: Colors.grey[400],
-                          fontFamily: "Questrial",
+                        hintStyle: hiddenTextStyleMedium,
                         )
                     ),
                   ),
-              ));
+              );
     
   }
 }

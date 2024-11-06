@@ -1,7 +1,9 @@
 import 'package:ewc/imports/imports.dart';
 
 const spaceNXTGreen = Color.fromARGB(255, 32, 156, 132);
-//Section to create default theme for application - needs further input from team
+
+//----------------VARIABLE THEMES - LIGHT AND DARK----------------------------
+
 ThemeData lightTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     primary: spaceNXTGreen,
@@ -14,6 +16,7 @@ ThemeData lightTheme = ThemeData(
         color: Colors.black,
         fontFamily: "Questrial",
         fontSize: 15,
+
        ),
        bodySmall: TextStyle(
         color: Colors.black,
@@ -25,6 +28,7 @@ ThemeData lightTheme = ThemeData(
         fontFamily: "Questrial",
         fontSize: 17,
        ),
+       
     )
 );
 
@@ -51,5 +55,32 @@ ThemeData darkTheme = ThemeData(
         fontFamily: "Questrial",
         fontSize: 17,
        ),
+
   )
+);
+
+//------------SECTION FOR CONSTANT TEXT COLOURS--------------------
+
+const constWhiteTextMedium = TextStyle(
+  color: Colors.white,
+  fontFamily: "Questrial",
+  fontSize: 15,
+);
+
+const constBlackTextMedium = TextStyle(
+  color: Colors.black,
+  fontFamily: "Questrial",
+  fontSize: 15,
+);
+
+final hiddenTextStyleMedium = TextStyle(
+  color: Colors.grey[400],
+  fontFamily: "Questrial",
+  fontSize: 15,
+);
+
+const hyperLinkTextStyleMedium = TextStyle(
+  color: Colors.blue,
+  fontFamily: "Questrial",
+  fontSize: 15,
 );
