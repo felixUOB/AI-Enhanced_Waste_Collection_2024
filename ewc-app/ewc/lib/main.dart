@@ -1,6 +1,5 @@
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:flutter/material.dart';
-import 'screens/login/login.dart';
 
 void main() => runApp(const App());
 

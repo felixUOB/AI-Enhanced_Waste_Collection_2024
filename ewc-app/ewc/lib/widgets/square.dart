@@ -18,15 +18,17 @@ class MySquare extends StatelessWidget{
           Text(title),
           Container(
             height: 300,
-          
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               color: Colors.deepPurple[200],
             ),
-            child: Center(
+            child: Padding(
+               padding: const EdgeInsets.symmetric(horizontal: 16.0), 
+              child: Center(
               // the graph
               child: child,
               ),
+          ),
           ),
         ],
       ),

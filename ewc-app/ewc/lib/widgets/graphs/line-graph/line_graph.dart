@@ -1,5 +1,5 @@
 
-import 'package:ewc/screens/metrics/graphs/line-graph/line_data.dart';
+import 'package:ewc/widgets/graphs/line-graph/line_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
@@ -25,7 +25,9 @@ class MyLineGraph extends StatelessWidget{
     );
     myLineData.initializeBarData();
     
-    return LineChart(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25.0), 
+      child: LineChart(
         LineChartData(
           lineBarsData: [
             LineChartBarData(
@@ -41,7 +43,6 @@ class MyLineGraph extends StatelessWidget{
           borderData: FlBorderData(
             border: const Border(
               bottom: BorderSide(),
-              left:BorderSide(),
             ),),
           gridData: FlGridData(show: false),
           titlesData: FlTitlesData(
@@ -51,7 +52,8 @@ class MyLineGraph extends StatelessWidget{
             rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
           )
         ),
-      );
+      ),
+    );
   }
 }
 SideTitles get _bottomTitles => SideTitles(
@@ -86,8 +88,10 @@ SideTitles get _bottomTitles => SideTitles(
     case 6:
       text = const Text('S', style: style);
       break;
+    default:
+      text = Text('', style: style);
   }
-
     return text;
   },
+  interval: 1,
 );

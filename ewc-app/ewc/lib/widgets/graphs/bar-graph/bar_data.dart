@@ -1,4 +1,4 @@
-import 'package:ewc/screens/metrics/graphs/bar-graph/individual_bar.dart';
+import 'package:ewc/widgets/graphs/bar-graph/individual_bar.dart';
 
 // class storing the structure of the data in the graph 
 

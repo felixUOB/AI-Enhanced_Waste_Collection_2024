@@ -1,9 +1,8 @@
 
-import 'package:ewc/screens/metrics/graphs/bar-graph/bar_graph.dart';
-import 'package:ewc/screens/metrics/graphs/line-graph/line_graph.dart';
-import 'package:ewc/screens/metrics/graphs/pie-chart/pie_chart.dart';
-import 'package:ewc/screens/metrics/widgets/square.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:ewc/widgets/graphs/bar-graph/bar_graph.dart';
+import 'package:ewc/widgets/graphs/line-graph/line_graph.dart';
+import 'package:ewc/widgets/graphs/pie-chart/pie_chart.dart';
+import 'package:ewc/widgets/square.dart';
 import 'package:flutter/material.dart';
 
 class MetricsPage extends StatefulWidget{

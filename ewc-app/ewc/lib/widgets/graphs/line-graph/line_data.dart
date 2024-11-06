@@ -1,5 +1,5 @@
 
-import 'package:ewc/screens/metrics/graphs/line-graph/chart_data.dart';
+import 'package:ewc/widgets/graphs/line-graph/chart_data.dart';
 
 // class storing the structure of the data in the graph 
 
