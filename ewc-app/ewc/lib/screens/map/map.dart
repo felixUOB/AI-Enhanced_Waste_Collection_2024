@@ -3,6 +3,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../services/route-plot-api.dart';
+import 'package:ewc/widgets/destination_marker_layer.dart';
+import 'package:ewc/widgets/route_polyline_layer.dart';
+
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget{
   const MapPage({super.key});
@@ -114,8 +117,10 @@ class _MapPage extends State<MapPage> {
     
     children: [
       openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-      _routePolylineLayer(), // Polyline layer for route
-      _markerLayer(), // Marker layer for map points
+      RoutePolylineLayer(routePoints : _routePoints),
+      DestinationMarker(location: LatLng(51.4516, -2.5810)),
+    
+
     ],
     
   );
@@ -129,37 +134,5 @@ class _MapPage extends State<MapPage> {
   );
 
 
-  // Creating Polyline layer for route display
-  Widget _routePolylineLayer() {
-    return PolylineLayer(
-      polylines: [
-        Polyline(
-          points: _routePoints,
-          strokeWidth: 4.0,
-          color: Colors.blue,
-        ),
-      ],
-    );
-  }
-
-
-  // Creating Marker layer with a single marker
-  Widget _markerLayer() {
-    return const MarkerLayer(
-      markers: [
-        Marker(
-          point: LatLng(51.4516, -2.5810),
-          width: 60,
-          height: 60,
-          alignment: Alignment.bottomCenter,
-          child: Icon(
-            Icons.location_pin,
-            size: 60,
-            color: Colors.red,
-          ),
-        ),
-      ],
-    );
-  }
 
 }
