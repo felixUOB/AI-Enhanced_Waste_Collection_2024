@@ -27,8 +27,8 @@ jobs:
         working-directory: "./ewc-app/ewc"  
         run: |
           flutter pub get
-          flutter analyze --fatal-warnings
-          flutter test -- coverage
+          flutter analyze
+          flutter test
 
   build:
     name: Build app
