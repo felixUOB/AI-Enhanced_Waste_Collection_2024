@@ -1,4 +1,6 @@
-import 'package:ewc/screens/metrics/metrics.dart';
+import 'package:ewc/screens/login/forgot-password.dart';
+import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/screens/login/register-user.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +46,8 @@ class myAppState extends State<App>{
     return MaterialApp(
       title: "EWC",
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: RegisterUser(),
+      //home: LoginPage(),
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeManager.themeMode
