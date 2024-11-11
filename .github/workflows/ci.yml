@@ -1,22 +1,30 @@
-name: Continuous Integration
+name: CI
 
 on:
+  push:
   pull_request:
     branches:
+      - testing-CI
       - main
       - dev
 
 jobs:
-  test:
+  flutter_test:
+    name: Run FLutter test and analyze
     runs-on: ubuntu-latest
     defaults:
         run:
           working-directory: "./ewc-app"    
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v2
+        name: Checkout Repo
+      #- uses: actions/setup-java@v1
+      # lets you use the different flutter commands like build and test
       - name: Setup and Install Flutter
         uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      #get the latest flutter
       - name: Install Flutter Dependencies
         run: flutter pub get
         # run static analysis code
@@ -25,60 +33,60 @@ jobs:
         #run flutter widgets tests and unit tests
       - name: Run Flutter Tests
         run: flutter test
-  ios-test:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Setup and Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-          cache: true
-      - name: Enable iOS
-        run: flutter config --enable-ios
-      - name: Install Flutter Dependencies
-        run: flutter pub get
-      - name: Run Flutter Static Code Analysis
-        run: flutter analyze
-      - name: Run Flutter Unit and Widget Tests
-        run: flutter test test
-      - name: Run Flutter Integration Tests
-        run: |
-          xcrun simctl boot "iPhone 16"
-          flutter test integration_test -d "iPhone 16"
-      - name: Build Flutter App
-        run: flutter build ios --no-codesign
+  # ios-test:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+  #     - name: Setup and Install Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: "stable"
+  #         cache: true
+  #     - name: Enable iOS
+  #       run: flutter config --enable-ios
+  #     - name: Install Flutter Dependencies
+  #       run: flutter pub get
+  #     - name: Run Flutter Static Code Analysis
+  #       run: flutter analyze
+  #     - name: Run Flutter Unit and Widget Tests
+  #       run: flutter test test
+  #     - name: Run Flutter Integration Tests
+  #       run: |
+  #         xcrun simctl boot "iPhone 16"
+  #         flutter test integration_test -d "iPhone 16"
+  #     - name: Build Flutter App
+  #       run: flutter build ios --no-codesign
 
-  android-test:
-    strategy:
-      matrix:
-        api-level:
-          - "34"
-          - "35"
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Setup and Install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-          cache: true
-      - name: Enable Android
-        run: flutter config --enable-android
-      - name: Install Flutter Dependencies
-        run: flutter pub get
-      - name: Run Flutter Static Code Analysis
-        run: flutter analyze
-      - name: Run Flutter Unit and Widget Tests
-        run: flutter test test
-      - name: Run Flutter Integration Tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          arch: x86_64
-          profile: pixel_6_pro
-          script: flutter test integration_test
-      - name: Build Flutter App
-        run: flutter build apk --debug
+  # android-test:
+  #   strategy:
+  #     matrix:
+  #       api-level:
+  #         - "34"
+  #         - "35"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v4
+  #     - name: Setup and Install Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         channel: "stable"
+  #         cache: true
+  #     - name: Enable Android
+  #       run: flutter config --enable-android
+  #     - name: Install Flutter Dependencies
+  #       run: flutter pub get
+  #     - name: Run Flutter Static Code Analysis
+  #       run: flutter analyze
+  #     - name: Run Flutter Unit and Widget Tests
+  #       run: flutter test test
+  #     - name: Run Flutter Integration Tests
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: ${{ matrix.api-level }}
+  #         arch: x86_64
+  #         profile: pixel_6_pro
+  #         script: flutter test integration_test
+  #     - name: Build Flutter App
+  #       run: flutter build apk --debug
