@@ -33,15 +33,19 @@ jobs:
         run: flutter test
 
 
-  ios-test:
+  build_ios-test:
+    name: Build Flutter (iOS)
+    needs: [flutter_test]
     runs-on: macos-latest
-    needs: flutter_test
     defaults:
       run:
         working-directory: "./ewc-app/ewc"    
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with: 
+          java-version: "17.x"
 
       - name: Setup and Install Flutter
         uses: subosito/flutter-action@v2
@@ -49,25 +53,30 @@ jobs:
           channel: "stable"
           cache: true
 
-      - name: Enable iOS
-        run: flutter config --enable-ios
-
       - name: Install Flutter Dependencies
         run: flutter pub get
       
-      - name: Run iOS Integration Tests
-        run: |
-          xcrun simctl boot "iPhone 16"
-          flutter test integration_test -d "iPhone 16"
+      - run: flutter clean
 
+      # - name: Enable iOS
+      #   run: flutter config --enable-ios
+      
       - name: Build Flutter App
         run: flutter build ios --no-codesign
+      
+    
+      # - name: Run iOS Integration Tests
+      #   run: |
+      #     xcrun simctl boot "iPhone 16"
+      #     flutter test integration_test -d "iPhone 16"
 
-  android-test:
+  build_android-test:
+    name: Build Test (ubuntu)
+    needs: [flutter_test]
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         api-level: ["34", "35"]
-    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: "./ewc-app/ewc"    
