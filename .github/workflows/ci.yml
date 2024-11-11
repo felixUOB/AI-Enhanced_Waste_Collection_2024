@@ -12,74 +12,81 @@ jobs:
     name: Run FLutter test and analyze
     runs-on: ubuntu-latest
     defaults:
-        run:
-          working-directory: "./ewc-app/ewc"    
+      run:
+        working-directory: "./ewc-app/ewc"    
     steps:
-      - uses: actions/checkout@v2
-        name: Checkout Repo
-      #- uses: actions/setup-java@v1
-      # lets you use the different flutter commands like build and test
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
       - name: Setup and Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
-      #get the latest flutter
+
       - name: Install Flutter Dependencies
         run: flutter pub get
-        # run static analysis code
+
       - name: Run Static Code Analysis
-        run : flutter analyze
-        #run flutter widgets tests and unit tests
+        run: flutter analyze
+
       - name: Run Flutter Tests
         run: flutter test
+
+
   ios-test:
     runs-on: macos-latest
+    needs: flutter_test
+    defaults:
+      run:
+        working-directory: "./ewc-app/ewc"    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
       - name: Setup and Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
           cache: true
+
       - name: Enable iOS
         run: flutter config --enable-ios
+
       - name: Install Flutter Dependencies
         run: flutter pub get
-      - name: Run Flutter Static Code Analysis
-        run: flutter analyze
-      - name: Run Flutter Unit and Widget Tests
-        run: flutter test test
-      - name: Run Flutter Integration Tests
+      
+      - name: Run iOS Integration Tests
         run: |
           xcrun simctl boot "iPhone 16"
           flutter test integration_test -d "iPhone 16"
+
       - name: Build Flutter App
         run: flutter build ios --no-codesign
 
   android-test:
     strategy:
       matrix:
-        api-level:
-          - "34"
-          - "35"
+        api-level: ["34", "35"]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "./ewc-app/ewc"    
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
+
       - name: Setup and Install Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
           cache: true
+
       - name: Enable Android
         run: flutter config --enable-android
+
       - name: Install Flutter Dependencies
         run: flutter pub get
-      - name: Run Flutter Static Code Analysis
-        run: flutter analyze
-      - name: Run Flutter Unit and Widget Tests
-        run: flutter test test
+      
       - name: Run Flutter Integration Tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
