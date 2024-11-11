@@ -41,9 +41,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'ewc_web',
+    'corsheaders',  # Added for CORS configuration
 ]
 
+if DEBUG:
+    # Allow all domains in development environment
+    CORS_ORIGIN_ALLOW_ALL = True
+else:
+    # Restrict to specific domains in production environment
+    CORS_ORIGIN_ALLOW_ALL = False
+    CORS_ALLOWED_ORIGINS = [
+        "https://yourdomain.com",
+        "https://anothertrusteddomain.com"
+    ]
+
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Added CORS middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
