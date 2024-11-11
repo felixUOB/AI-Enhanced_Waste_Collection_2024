@@ -1,11 +1,7 @@
-from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics
 from .models import UserProfile, CollectionPoint, JourneyMetric, WastePrediction
-from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer
-
-# Home view function
-def home(request):
-    return render(request, 'ewc_app/home.html')
+from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer, UserRegistrationSerializer
+from django.contrib.auth.models import User
 
 # User Profile ViewSet
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -30,3 +26,9 @@ class WastePredictionViewSet(viewsets.ModelViewSet):
     queryset = WastePrediction.objects.all()
     serializer_class = WastePredictionSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
+
+# Registration view
+class UserRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserRegistrationSerializer
+    permission_classes = [permissions.AllowAny]  # Accessible to anyone
