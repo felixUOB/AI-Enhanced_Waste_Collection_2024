@@ -84,6 +84,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: "11"
+
       - name: Setup and Install Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -103,5 +108,6 @@ jobs:
           arch: x86_64
           profile: pixel_6_pro
           script: flutter test integration_test
+          
       - name: Build Flutter App
         run: flutter build apk --debug
