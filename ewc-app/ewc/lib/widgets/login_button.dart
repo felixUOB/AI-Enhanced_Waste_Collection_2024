@@ -1,14 +1,13 @@
+import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 
 class LoginButton extends StatelessWidget {
   final String text1;
 
-  LoginButton({
+  const LoginButton({
     super.key,
     required this.text1
     });
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -23,11 +22,7 @@ class LoginButton extends StatelessWidget {
       child: Center(
         child: Text(
           " $text1",
-          style: TextStyle(
-            fontSize: 15,
-            color: Colors.white,
-            fontFamily: "Questrial",
-          ),
+          style: constWhiteTextMedium,
           ),
       ),
     )
