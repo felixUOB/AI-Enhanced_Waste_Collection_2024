@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-linux
+    runs-on: ubuntu-latest
     defaults:
         run:
           working-directory: "./ewc-app"    
@@ -19,8 +19,10 @@ jobs:
         uses: subosito/flutter-action@v2
       - name: Install Flutter Dependencies
         run: flutter pub get
+        # run static analysis code
       - name: Run Static Code Analysis
         run : flutter analyze
+        #run flutter widgets tests and unit tests
       - name: Run Flutter Tests
         run: flutter test
   ios-test:
@@ -49,12 +51,12 @@ jobs:
         run: flutter build ios --no-codesign
 
   android-test:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         api-level:
           - "34"
           - "35"
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
