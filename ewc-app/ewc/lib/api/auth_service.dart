@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
   final storage = FlutterSecureStorage();
@@ -84,4 +85,36 @@ class AuthService {
 
     return response;
   }
+
+  // Add registration method
+Future<void> register({
+  required String username,
+  required String password,
+  String? email,
+  String? phoneNumber,
+  String? address,
+  // Additional fields if needed
+}) async {
+  final response = await http.post(
+    Uri.parse('$baseUrl/register/'),
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode({
+      'username': username,
+      'password': password,
+      'email': email ?? '',
+      'phone_number': phoneNumber ?? '',
+      'address': address ?? '',
+      // Include additional fields if necessary
+    }),
+  );
+
+  if (response.statusCode == 201) {
+    // Perform additional actions upon successful registration
+  } else {
+    var data = jsonDecode(response.body);
+    throw Exception('Failed to register: ${data.toString()}');
+  }
+}
+
+
 }
