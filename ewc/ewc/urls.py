@@ -26,10 +26,12 @@ router.register(r'collection_points', CollectionPointViewSet, basename='collecti
 router.register(r'journey_metrics', JourneyMetricViewSet, basename='journeymetric')
 router.register(r'waste_predictions', WastePredictionViewSet, basename='wasteprediction')
 
+# python manage.py makemigrations
+# python manage.py migrate
+# python manage.py runserver
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('api/', include('ewc.urls')),
-    path('', include(router.urls)),
-    # path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api/', include(router.urls)),  # path('api/', include('ewc.urls')),
+    path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),
 ]
