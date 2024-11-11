@@ -65,14 +65,14 @@ class RegisterPage extends StatelessWidget {
                 // Additional user information input fields (optional)
                 LoginTextfeild(
                   controller: phoneNumberController,
-                  hintText: "Phone Number (Optional)",
+                  hintText: "Phone Number",
                   obscured: false,
                 ),
                 const SizedBox(height: 10,),
 
                 LoginTextfeild(
                   controller: addressController,
-                  hintText: "Address (Optional)",
+                  hintText: "Address",
                   obscured: false,
                 ),
                 const SizedBox(height: 10,),
