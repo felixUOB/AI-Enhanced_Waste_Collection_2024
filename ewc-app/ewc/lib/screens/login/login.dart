@@ -2,6 +2,7 @@ import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart'; // Add AuthService import
 import 'package:flutter/material.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart'; // Import Schedule Page
+import 'package:ewc/screens/register/register.dart'; // Import the signup page
 
 
 class LoginPage extends StatelessWidget {
@@ -62,7 +63,7 @@ class LoginPage extends StatelessWidget {
                           string1: "",
                           hyperString: "Forgot Password?",
                           string2: "",
-                          link: Uri.parse("https://en.wikipedia.org/wiki/Lamia"), // Link to password reset function
+                          // link: Uri.parse("https://en.wikipedia.org/wiki/Lamia"), // Link to password reset function
                         )
                       ],
                     )
@@ -84,7 +85,8 @@ class LoginPage extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) => Schedule(), // Moving pages
                           ),
-                      } catch (e) {
+                        );
+                        } catch (e) {
                         // Error handling: for example, display a warning message to the user if login fails
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -101,7 +103,14 @@ class LoginPage extends StatelessWidget {
                     string1: "Not a member?",
                     hyperString: "Register Here.",
                     string2: "",
-                    link: Uri.parse("https://spacenxtlabs.com"), // Link to registration function
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterPage(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
