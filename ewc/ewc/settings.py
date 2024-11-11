@@ -44,6 +44,15 @@ INSTALLED_APPS = [
     'corsheaders',  # Added for CORS configuration
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
 if DEBUG:
     # Allow all domains in development environment
     CORS_ORIGIN_ALLOW_ALL = True
