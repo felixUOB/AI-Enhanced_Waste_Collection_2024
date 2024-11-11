@@ -36,8 +36,8 @@ class MyLineGraph extends StatelessWidget{
               dotData: FlDotData(
                 show:false,
               ),
-
-              color: Colors.red,
+              // #077b41
+              color: Color(0xFF077b41)
             ),
           ],
           borderData: FlBorderData(

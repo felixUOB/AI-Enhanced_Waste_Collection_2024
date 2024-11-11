@@ -54,13 +54,13 @@ class MyBarGraph extends StatelessWidget{
             barRods: [
               BarChartRodData(
                 toY: data.y, 
-                color: Colors.grey.shade800, 
+                color: Color(0xFF077b41), 
                 width: 25,
                 borderRadius: BorderRadius.circular(4),
                 backDrawRodData: BackgroundBarChartRodData(
                   show:true,
                   toY: 10,
-                  color: Colors.grey.shade100,
+                  color: Colors.grey.shade300,
                 )
               )
               
@@ -70,7 +70,6 @@ class MyBarGraph extends StatelessWidget{
       )
     );
   }
-
 }
 
 Widget getBottomTitles(double value, TitleMeta meta){
