@@ -1,12 +1,16 @@
 import 'package:ewc/imports/imports.dart';
+import 'package:ewc/api/auth_service.dart'; // Add AuthService import
+import 'package:flutter/material.dart';
+import 'package:ewc/screens/register/register.dart'; // Import the signup page
+import '../map/map.dart'; // Import map page
+
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  //TXT Controllers
+  // TXT Controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
