@@ -26,6 +26,11 @@ class WastePredictionSerializer(serializers.ModelSerializer):
         model = WastePrediction
         fields = '__all__'  # Serialize all fields in the WastePrediction model
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'password')
+
 # Register set-up
 class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)

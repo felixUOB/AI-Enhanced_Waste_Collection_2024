@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, generics
 from .models import UserProfile, CollectionPoint, JourneyMetric, WastePrediction
-from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer, UserRegistrationSerializer
+from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer, UserRegistrationSerializer, UserSerializer
 from django.contrib.auth.models import User
 
 # User Profile ViewSet
@@ -31,4 +31,9 @@ class WastePredictionViewSet(viewsets.ModelViewSet):
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
-    permission_classes = [permissions.AllowAny]  # Accessible to anyone
+    permission_classes = [permissions.AllowAny]  # Accessible to anyone    
+
+class UserListView(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
