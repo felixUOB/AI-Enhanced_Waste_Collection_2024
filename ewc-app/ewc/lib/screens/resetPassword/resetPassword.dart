@@ -31,10 +31,10 @@ class ResetPasswordPage extends StatelessWidget {
                   //-------------WELCOME BACK TXT-FIELD----------------------
                   const SizedBox(height: 50,),
                   Text(
-                    "Reset Password!",
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    "Please enter email associated with your account.",
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  const SizedBox(height: 30,),
+                  const SizedBox(height: 20,),
 
                   //-------------USERNAME TXT-FIELD----------------------
                   LoginTextfeild(
@@ -51,7 +51,7 @@ class ResetPasswordPage extends StatelessWidget {
                     text1: "Send Reset Link",
                     onPressed: () async {
                       try {
-                        var responseBool = await AuthService().checkEmailString(
+                        var responseBool = await AuthService().checkEmail(
                          emailController.text
                         );
                         if (responseBool){
@@ -64,10 +64,9 @@ class ResetPasswordPage extends StatelessWidget {
                           ));
                         }
                       } catch (e) {
-                        // Error handling: for example, display a warning message to the user if login fails
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Email Error: $e'),
+                            content: Text('Request unsuccessful. Details: $e'),
                           ),
                         );
                       }
