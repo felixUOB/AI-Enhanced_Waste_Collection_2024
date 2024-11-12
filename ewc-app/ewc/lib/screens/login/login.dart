@@ -1,7 +1,8 @@
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart'; // Add AuthService import
 import 'package:flutter/material.dart';
-import 'package:ewc/screens/register/register.dart'; // Import map page
+import 'package:ewc/screens/register/register.dart';
+import 'package:ewc/screens/resetPassword/resetPassword.dart';
 
 import '../map/map.dart'; // Import the signup page
 
@@ -64,7 +65,10 @@ class LoginPage extends StatelessWidget {
                           string1: "",
                           hyperString: "Forgot Password?",
                           string2: "",
-                          // link: Uri.parse("https://en.wikipedia.org/wiki/Lamia"), // Link to password reset function
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ResetPasswordPage())
+                            ),
                         )
                       ],
                     )

@@ -2,6 +2,7 @@ import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'screens/login/login.dart';
+import 'screens/resetPassword/resetPassword.dart';
 
 ThemeManager themeManager = ThemeManager();
 
