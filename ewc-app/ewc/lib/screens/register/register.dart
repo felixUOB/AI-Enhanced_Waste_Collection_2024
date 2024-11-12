@@ -8,6 +8,7 @@ class RegisterPage extends StatelessWidget {
   // Text controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final emailController = TextEditingController();
 
   // Additional user information controllers
@@ -62,6 +63,14 @@ class RegisterPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10,),
 
+                // Confirm Password input field
+                LoginTextfeild(
+                  controller: confirmPasswordController,
+                  hintText: "Confirm Password",
+                  obscured: true,
+                ),
+                const SizedBox(height: 10,),
+
                 // Additional user information input fields (optional)
                 LoginTextfeild(
                   controller: phoneNumberController,
@@ -82,6 +91,16 @@ class RegisterPage extends StatelessWidget {
                 LoginButton(
                   text1: "Register",
                   onPressed: () async {
+                    // Add password verification logic
+                    if (passwordController.text != confirmPasswordController.text) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Passwords do not match. Please try again.'),
+                        ),
+                      );
+                      return;
+                    }
+
                     try {
                       await AuthService().register(
                         username: usernameController.text,
