@@ -1,8 +1,9 @@
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart'; // Add AuthService import
 import 'package:flutter/material.dart';
-import 'package:ewc/screens/route-schedule/schedule.dart'; // Import Schedule Page
-import 'package:ewc/screens/register/register.dart'; // Import the signup page
+import 'package:ewc/screens/register/register.dart'; // Import map page
+
+import '../map/map.dart'; // Import the signup page
 
 
 class LoginPage extends StatelessWidget {
@@ -83,7 +84,7 @@ class LoginPage extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Schedule(), // Moving pages
+                            builder: (context) => MapPage(), // Moving pages
                           ),
                         );
                         } catch (e) {
