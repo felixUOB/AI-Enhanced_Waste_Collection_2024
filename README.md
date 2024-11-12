@@ -149,7 +149,7 @@ First, clone the repository using `https://github.com/spe-uob/2024-AIEnhancedWas
   DATABASE_PORT = "YOUR_DJANGO_SECRET_KEY"
   ```
 
-- To launch the local development server, execute: `python manage.py runserver 8000`
+- To launch the local development server, execute: `python manage.py runserver`
 
 ## **Kanban Chart**
 [Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
