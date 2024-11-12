@@ -1,7 +1,9 @@
-import 'dart:ffi';
+
 
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart';
+import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/screens/map/map.dart';
 import 'package:flutter/material.dart';
 
 class ResetPasswordPage extends StatelessWidget {
@@ -47,28 +49,29 @@ class ResetPasswordPage extends StatelessWidget {
                   const SizedBox(height: 20,),
                   LoginButton(
                     text1: "Send Reset Link",
-                    onPressed: Placeholder.new,
-                    // () async {
-                    //   try {
-                    //     await AuthService().makeAuthenticatedRequest(
-                    //       usernameController.text,
-                    //     );
-                    //     // Navigate to the schedule page after successful login
-                    //     Navigator.pushReplacement(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => MapPage(), // Moving pages
-                    //       ),
-                    //     );
-                    //     } catch (e) {
-                    //     // Error handling: for example, display a warning message to the user if login fails
-                    //     ScaffoldMessenger.of(context).showSnackBar(
-                    //       SnackBar(
-                    //         content: Text('Login failed: $e'),
-                    //       ),
-                    //     );
-                    //   }
-                    // },
+                    onPressed: () async {
+                      try {
+                        var responseBool = await AuthService().checkEmailString(
+                         emailController.text
+                        );
+                        if (responseBool){
+                          print("DEVELOPMENT PRINT");
+                          //ADD FUNCTIONALITY TO SEND RESET EMAIL TO REGISTERED EMAIL
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No account registered to email.'),
+                          ));
+                        }
+                      } catch (e) {
+                        // Error handling: for example, display a warning message to the user if login fails
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Email Error: $e'),
+                          ),
+                        );
+                      }
+                    },
                   ),
                   const SizedBox(height: 10,),
 

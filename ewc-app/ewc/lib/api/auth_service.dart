@@ -1,3 +1,5 @@
+
+
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -5,7 +7,24 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class AuthService {
   final storage = FlutterSecureStorage();
   final String baseUrl = 'http://127.0.0.1:8000/api';
+  final String adminUrl = 'http://127.0.0.1:8000/admin';
 
+
+  Future<bool> checkEmailString(String email) async {
+      final response = await http.get(
+        Uri.parse("http://127.0.0.1:8000/check-email/?email=$email"),
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      );
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print(data);
+        return data['exists'] ?? false;
+      } else {
+        throw Exception('Failed to check email');
+      }
+  }
 
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
@@ -116,6 +135,4 @@ Future<void> register({
     throw Exception('Failed to register: ${data.toString()}');
   }
 }
-
-
 }
