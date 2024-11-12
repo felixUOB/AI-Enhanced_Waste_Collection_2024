@@ -7,6 +7,10 @@
 - [Value Proposition](#value-Proposition)
 - [Flow](#flow)
 - [Tools and Resources](#tools-and-Resources)
+- [**Getting Started**](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [App](#app)
+  - [Backend](#backend)
 - [Kanban Chart](#kanban-Chart)
 - [Gantte Chart](#gantte-Chart)
 - [User Stories](#user-stories)
@@ -105,6 +109,47 @@ Exceptional Flow:
 frameworks.
 - Infrastructure: **Azure VM** for hosting and computation.
 - Collaboration and Documentation: **GitHub** for version control and project management.
+
+## Getting Started
+
+### Prerequisites
+
+### Prerequisites
+
+To build this application, you’ll need the following tools:
+
+- Android Studio (for Android App) [Offical Documentation](https://developer.android.com/studio/install)
+- XCode (for iOS App) [Offical Documentation](https://developer.apple.com/documentation/safari-developer-tools/installing-xcode-and-simulators)
+- Flutter SDK [Offical Documentation](https://docs.flutter.dev/get-started/install)
+- Python 3.12 [Offical Documentation](https://wiki.python.org/moin/BeginnersGuide/Download)
+
+First, clone the repository using `https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git` or `git@github.com:spe-uob/2024-AIEnhancedWasteCollection.git`.
+
+### App
+
+
+### Backend
+- Move to the ewc directory by running `cd ewc`
+- Install all required dependencies using `pip install -r requirements.txt`
+- Make sure that you have a .env file containing all necessary secrets for the app to function properly. This file should be located in the ewc directory. The following secrets are expected to be included:
+
+- DJANGO_SECRET_KEY
+- DATABASE_USERNAME
+- DATABASE_PASSWORD
+- DATABASE_HOST
+- DATABASE_PORT
+
+  Exmaple `.env` file:
+
+  ```python
+  DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
+  DATABASE_USERNAME = "YOUR_DJANGO_SECRET_KEY"
+  DATABASE_PASSWORD = "YOUR_DJANGO_SECRET_KEY"
+  DATABASE_HOST = "YOUR_DJANGO_SECRET_KEY"
+  DATABASE_PORT = "YOUR_DJANGO_SECRET_KEY"
+  ```
+
+- To launch the local development server, execute: `python manage.py runserver 8000`
 
 ## **Kanban Chart**
 [Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
