@@ -8,26 +8,31 @@ class AuthService {
 
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/token/'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'username': username, 'password': password}),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/token/'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'username': username, 'password': password}),
+      );
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      String accessToken = data['access'];
-      String refreshToken = data['refresh'];
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        String accessToken = data['access'];
+        String refreshToken = data['refresh'];
 
-      // Store access and refresh tokens securely
-      await storage.write(key: 'accessToken', value: accessToken);
-      await storage.write(key: 'refreshToken', value: refreshToken);
-    } else {
-      throw Exception('Failed to login');
+        // Store access and refresh tokens securely
+        await storage.write(key: 'accessToken', value: accessToken);
+        await storage.write(key: 'refreshToken', value: refreshToken);
+      } else {
+        throw Exception('Failed to login');
+      }
+    } catch (e) {
+      // Catch network or connectivity issues
+      throw Exception('Network error: Unable to login. Details: $e');
     }
   }
 
-  // Access token refresh method: Use refresh token
+// Access token refresh method: Use refresh token
   Future<void> refreshAccessToken() async {
     final refreshToken = await storage.read(key: 'refreshToken');
 
@@ -44,14 +49,17 @@ class AuthService {
 
         // Store the new access token securely
         await storage.write(key: 'accessToken', value: newAccessToken);
+      } else if (response.statusCode == 401) {
+        // Handle case where refresh token is invalid or expired
+        await storage.delete(key: 'refreshToken');
+        throw Exception('Refresh token expired. Please log in again.');
       } else {
-        throw Exception('Failed to refresh access token');
+        throw Exception('Failed to refresh access token. Status code: ${response.statusCode}');
       }
     } else {
       throw Exception('No refresh token available');
     }
   }
-
   // Method to make an authenticated request
   Future<http.Response> makeAuthenticatedRequest(String endpoint) async {
     String? accessToken = await storage.read(key: 'accessToken');
