@@ -90,9 +90,9 @@ class AuthService {
 Future<void> register({
   required String username,
   required String password,
-  String? email,
-  String? phoneNumber,
-  String? address,
+  required email,
+  required phoneNumber,
+  required address,
   // Additional fields if needed
 }) async {
   final response = await http.post(
