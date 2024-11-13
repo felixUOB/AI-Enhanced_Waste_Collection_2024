@@ -61,7 +61,7 @@ jobs:
         working-directory: "./ewc-app/ewc" 
       
       - name: Build iOS app
-        if: ${{ matrix.os == 'macos-11' }}
+        if: ${{ matrix.os == 'macos-latest' }}
         run: |
           echo "Building iOS..."
           flutter pub get
