@@ -1,8 +1,7 @@
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart'; // Add AuthService import
-import 'package:flutter/material.dart';
+import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:ewc/screens/register/register.dart'; // Import the signup page
-import '../map/map.dart'; // Import map page
 
 
 class LoginPage extends StatelessWidget {
@@ -16,108 +15,125 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child:SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Stack(
             children: [
               Center(
                 child: Column(
                   children: [
 
-  //-------------RECYCLENXT LOGO----------------------
-
+                    //-------------RECYCLENXT LOGO----------------------
                     const SizedBox(height: 170,),
                     Image.asset(
                       "assets/RecycleNXT-Logo_Update_Black.png",
                       scale: 8,
-                      ),
+                    ),
 
-  //-------------WELCOME BACK TXT-FELILD----------------------
-
+                    //-------------WELCOME BACK TXT-FIELD----------------------
                     const SizedBox(height: 50,),
                     Text(
                       "Welcome Back!",
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
-
                     const SizedBox(height: 30,),
 
-  //-------------USERNAME TXT-FEILD----------------------
-
-                    //username txtfld
-                    LoginTextfeild(
+                    //-------------USERNAME TXT-FIELD----------------------
+                    LoginTextfield(
                       controller: usernameController,
                       hintText: "Username",
-
                       obscured: false,
                     ),
-
                     const SizedBox(height: 10,),
 
-  //-------------PASSWORD TXT-FEILD----------------------
-
-                    LoginTextfeild(
+                    //-------------PASSWORD TXT-FIELD----------------------
+                    LoginTextfield(
                       controller: passwordController,
                       hintText: "Password",
                       obscured: true,
                     ),
 
-  //-------------HYPERLINK-------------------------------
-
+                    //-------------HYPERLINK: FORGOT PASSWORD----------------------
                     const SizedBox(height: 10),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          HyperLinkText(
-                            string1: "",
-                            hyperString: "Forgot Password?",
-                            string2: "",
-                            link: Uri.parse("https://en.wikipedia.org/wiki/Lamia"), // <- NEEDS TO LINK TO PASSWORD RESET FUNCTION
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            HyperLinkText(
+                              string1: "",
+                              hyperString: "Forgot Password?",
+                              string2: "",
+                              // link: Uri.parse("https://en.wikipedia.org/wiki/Lamia"), // Link to password reset function
                             )
-                        ],
-                      )
-                      ),
+                          ],
+                        )
+                    ),
 
-  //-------------LOGIN BUTTON---------------------------------
-
+                    //-------------LOGIN BUTTON---------------------------------
+                    const SizedBox(height: 20,),
                     LoginButton(
                       text1: "Sign In",
+                      onPressed: () async {
+                        try {
+                          await AuthService().login(
+                              usernameController.text,
+                              passwordController.text
+                          );
+                          // Navigate to the schedule page after successful login
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MainNavigationBar(), // Moving pages
+                            ),
+                          );
+                        } catch (e) {
+                          // Error handling: for example, display a warning message to the user if login fails
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Login failed: $e'),
+                            ),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(height: 10,),
 
-  //-------------HYPERLINK-------------------------------------
-
+                    //-------------HYPERLINK: REGISTER-------------------------------------
                     HyperLinkText(
                       string1: "Not a member?",
                       hyperString: "Register Here.",
                       string2: "",
-                      link: Uri.parse("https://spacenxtlabs.com"), // <- NEEDS TO LINK TO REGISTRATION FUNCTION
-                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterPage(),
+                          ),
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
-  //----------------THEME SWITCH------------------------------
-              // ignore: prefer_const_constructors
+
+              //----------------THEME SWITCH------------------------------
               Column(
-                // ignore: prefer_const_literals_to_create_immutables
                 children: [
                   const SizedBox(height: 20,),
-                  // ignore: prefer_const_constructors
                   Padding(
-                    padding: const EdgeInsets.all(25),
-                    child:
-                      // ignore: prefer_const_constructors
+                      padding: const EdgeInsets.all(25),
+                      child:
                       Align(
                         alignment: Alignment.topRight,
-                        // ignore: prefer_const_constructors
                         child: ThemeSwitch(),
                       )
                   )
-            ],)
-          ]),
+                ],
+              )
+            ]
+          )
         )
       )
-    );     
+    );
   }
 }
