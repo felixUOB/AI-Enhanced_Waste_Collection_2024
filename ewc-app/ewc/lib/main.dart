@@ -1,4 +1,3 @@
-import 'package:ewc/screens/login/forgot-password.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
@@ -45,7 +44,7 @@ class myAppState extends State<App>{
     return MaterialApp(
       title: "EWC",
       debugShowCheckedModeBanner: false,
-      home: ForgotPassword(),
+      home: LoginPage(),
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeManager.themeMode
