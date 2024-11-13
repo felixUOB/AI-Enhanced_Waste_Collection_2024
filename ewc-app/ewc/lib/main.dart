@@ -1,6 +1,5 @@
 import 'package:ewc/screens/login/forgot-password.dart';
 import 'package:ewc/screens/login/login.dart';
-import 'package:ewc/screens/login/register-user.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';

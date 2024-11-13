@@ -14,7 +14,8 @@ class _ForgotPassword extends State<ForgotPassword>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
+      body: SingleChildScrollView(
+        child: SafeArea(
         child: Stack(
           children: [
             Center(
@@ -122,6 +123,7 @@ class _ForgotPassword extends State<ForgotPassword>{
                 )
           ],)
         ]),
+      )
     )
     );     
   }
