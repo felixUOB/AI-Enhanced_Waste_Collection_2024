@@ -1,5 +1,7 @@
-import 'package:ewc/widgets/schedule_stoplist.dart';
 import 'package:flutter/material.dart';
+import '../../widgets/schedule_stoplist.dart';
+
+
 
 class Schedule extends StatelessWidget {
   // Hardcoded 'stop name' and 'minutes until stop reached' data
