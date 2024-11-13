@@ -16,6 +16,7 @@ class _NavigationBarState extends State<MainNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Set the body of the scaffold to be the selected screen
       body: IndexedStack(
       index: currentPageIndex,
       children: const [
@@ -26,13 +27,20 @@ class _NavigationBarState extends State<MainNavigationBar> {
     ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
+          // This function is ran when the user clicks a tab on the navigation bar
+          // The parameter 'index' corresponds to which of the 3 buttons the user has clicked:
+          //   Metrics page - 0
+          //   Map page - 1
+          //   Schedule page - 2
+
           setState(() {
             currentPageIndex = index;
           });
         },
         selectedIndex: currentPageIndex,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide, // Hide icon labels
         destinations: const <Widget> [
+          // This array tells the navigation bar which icons it needs to display
 
           // Metrics page icon
           NavigationDestination(
