@@ -1,6 +1,5 @@
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/widgets/schedule_stoplist.dart';
-import 'package:flutter/services.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 
 class CustomTimelineTile extends StatelessWidget{
@@ -19,7 +18,6 @@ class CustomTimelineTile extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return SizedBox(
       height: 200,
       child: TimelineTile(

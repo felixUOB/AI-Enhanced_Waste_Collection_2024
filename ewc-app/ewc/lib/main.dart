@@ -1,7 +1,4 @@
 import 'package:ewc/screens/login/login.dart';
-import 'package:ewc/screens/map/map.dart';
-import 'package:ewc/screens/metrics/metrics.dart';
-import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +12,11 @@ class App extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() { //Creates initial state of app
-    return myAppState();
+    return MyAppState();
   }
 }
 
-class myAppState extends State<App>{
+class MyAppState extends State<App>{
 
 //When State closes this function is called to remove listener
   @override
@@ -42,12 +39,14 @@ class myAppState extends State<App>{
     }
   }
 
+  // main build method
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "EWC",
       debugShowCheckedModeBanner: false,
-      home: Schedule(),
+      home: LoginPage(), // main page 
+      // theme management
       theme: AppTheme().lightTheme,
       darkTheme:  AppTheme().darkTheme,
       themeMode: themeManager.themeMode

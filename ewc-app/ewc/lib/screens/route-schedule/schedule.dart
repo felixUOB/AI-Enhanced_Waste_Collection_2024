@@ -25,6 +25,7 @@ class Schedule extends StatelessWidget {
         title: Text('Schedule',
             style: Theme.of(context).textTheme.titleLarge),
             //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
+        // dark vs light mode toggle
         actions: [
           SafeArea(
           child: Container(
@@ -48,7 +49,7 @@ class Schedule extends StatelessWidget {
           ],
       ),
 // ------------List of stops------------
-
+      // makes a scrollable list
       body: Scaffold(
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 50.0),
@@ -56,23 +57,21 @@ class Schedule extends StatelessWidget {
             itemCount: routes.length,
             itemBuilder: (BuildContext context, int index){
               return CustomTimelineTile(
-                inPast: checkTimeLabel(routes[index]), 
+                inPast: checkTimeLabel(routes[index]), // checks if its in the past or in the future
                 isFirst: (index == 0) ? true : false, // if it is the first index set the property to true
-                isLast: (index == routes.length-1) ? true : false,
+                isLast: (index == routes.length-1) ? true : false, // checks if its the last in the list
                 eventCard: Row(
                   children: [
 // ------------Stop name text------------
                   Expanded(
                     child: Text(
-                      routes[index].label, textAlign: TextAlign.left,
+                      routes[index].label, textAlign: TextAlign.left, // display the stop name
                       style: AppTheme().constWhiteTextLarge)
                   ),
-
 // ------------Minutes text------------
-
                   Expanded(
                     child: Text(
-                      DateFormat('kk:mm').format(routes[index].time),
+                      DateFormat('kk:mm').format(routes[index].time), // display the stop time
                       textAlign: TextAlign.right,
                       style: AppTheme().constWhiteTextLarge,
                       )
@@ -88,15 +87,16 @@ class Schedule extends StatelessWidget {
   }
 }
 
+// data structure for the stop
 class RouteStop {
   final String label;
   final DateTime time;
   RouteStop({required this.label, required this.time});
 }
 
+// checkTimeLabel returns true if the time given to it is before the current time
 bool checkTimeLabel(RouteStop timeLable){
   DateTime now = DateTime.now();
-  print(now);
   if (timeLable.time.isBefore(now)){
     return true;
   }else{

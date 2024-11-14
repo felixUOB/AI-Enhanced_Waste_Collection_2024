@@ -16,22 +16,8 @@ class MetricsPage extends StatefulWidget{
 class _MetricsPageState extends State<MetricsPage>{
   @override
   Widget build(BuildContext context){
-
-    // Holds the Titles for the widgets 
-    final List metrics = ['Carbon Footprint Bar Graph', 'Fuel Consumption', 'Carbon Footprint Line Graph', 'Fuel Consumption Pie Chart'];
-
-    // list of the graphs
-    // read database to get these values
+    // sample data
     List<double> carbonFootPrintData= [
-      2.4,
-      2.4,
-      3.2,
-      4.5,
-      6.7,
-      6.7,
-      5.4
-    ];
-    List<double> fuelConsumptionData= [
       2.4,
       2.4,
       3.2,
@@ -43,8 +29,8 @@ class _MetricsPageState extends State<MetricsPage>{
     return Scaffold(
       appBar: AppBar(
         elevation: 2.0,
-        //backgroundColor: Theme.of(context).canvasColor,
         title: Text('Metrics Page', style: Theme.of(context).textTheme.titleLarge),
+        // make the toggle for light vs dark mode
         actions: [
           SafeArea(
           child: Container(
@@ -67,6 +53,8 @@ class _MetricsPageState extends State<MetricsPage>{
           ))// ignore: prefer_const_constructor 
           ],
       ),
+
+      // display the graphs as a scrollable list
       body: ListView(
         children: [Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -167,6 +155,7 @@ class _MetricsPageState extends State<MetricsPage>{
   }
 }
 
+// widget box for each of the graphs
 Widget _buildTile(Widget child, BuildContext context){
   return Material(
     elevation: 14.0,
