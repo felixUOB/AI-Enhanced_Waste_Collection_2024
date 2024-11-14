@@ -125,7 +125,10 @@ To build this application, you’ll need the following tools:
 First, clone the repository using `https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git` or `git@github.com:spe-uob/2024-AIEnhancedWasteCollection.git`.
 
 ### App
-
+- Navigate to the Flutter root directory: `cd ewc-app`
+- Launch an iOS or Android emulator.
+- Install all the necessary dependencies: `flutter pub get`
+- Start the application: `flutter run'
 
 ### Backend
 - Move to the ewc directory by running `cd ewc`
