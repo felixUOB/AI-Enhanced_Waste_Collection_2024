@@ -141,7 +141,7 @@ First, clone the repository using `https://github.com/spe-uob/2024-AIEnhancedWas
 - DATABASE_HOST
 - DATABASE_PORT
 
-  Exmaple `.env` file:
+  Example `.env` file:
 
   ```python
   DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
