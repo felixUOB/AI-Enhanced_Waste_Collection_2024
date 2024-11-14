@@ -1,5 +1,3 @@
-import 'package:ewc/main.dart';
-import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/widgets/graphs/bar-graph/bar_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
