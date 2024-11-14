@@ -22,7 +22,7 @@ class LoginButton extends StatelessWidget {
       child: Center(
         child: Text(
           " $text1",
-          style: constWhiteTextMedium,
+          style: AppTheme().constWhiteTextMedium,
           ),
       ),
     )

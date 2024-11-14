@@ -1,5 +1,7 @@
 import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
+import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
@@ -45,9 +47,9 @@ class myAppState extends State<App>{
     return MaterialApp(
       title: "EWC",
       debugShowCheckedModeBanner: false,
-      home: MetricsPage(),
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      home: Schedule(),
+      theme: AppTheme().lightTheme,
+      darkTheme:  AppTheme().darkTheme,
       themeMode: themeManager.themeMode
     );
   }

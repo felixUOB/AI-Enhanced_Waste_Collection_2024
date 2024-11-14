@@ -1,3 +1,5 @@
+import 'package:ewc/main.dart';
+import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/widgets/graphs/bar-graph/bar_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -54,13 +56,13 @@ class MyBarGraph extends StatelessWidget{
             barRods: [
               BarChartRodData(
                 toY: data.y, 
-                color: Color(0xFF077b41), 
+                color: Theme.of(context).colorScheme.primary, 
                 width: 25,
                 borderRadius: BorderRadius.circular(4),
                 backDrawRodData: BackgroundBarChartRodData(
                   show:true,
                   toY: 10,
-                  color: Colors.grey.shade300,
+                  color: Colors.grey.shade400,
                 )
               )
               
