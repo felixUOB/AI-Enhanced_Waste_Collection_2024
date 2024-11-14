@@ -5,6 +5,8 @@ from .models import UserProfile, CollectionPoint, JourneyMetric, WastePrediction
 from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer, UserRegistrationSerializer, UserSerializer
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.contrib.auth import views as auth_views
+
 
 
 # User Profile ViewSet
@@ -41,6 +43,10 @@ class UserListView(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser]
+
+class ResetPasswordView(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+
 
 class CheckEmailView(APIView):
     permission_classes = [permissions.AllowAny]

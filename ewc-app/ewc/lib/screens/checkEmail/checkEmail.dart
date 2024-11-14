@@ -2,12 +2,13 @@
 
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart';
+import 'package:ewc/screens/checkEmail/resetPassword.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:flutter/material.dart';
 
-class ResetPasswordPage extends StatelessWidget {
-  ResetPasswordPage({super.key});
+class CheckEmailPage extends StatelessWidget {
+  CheckEmailPage({super.key});
 
     final emailController = TextEditingController();
 
@@ -28,7 +29,7 @@ class ResetPasswordPage extends StatelessWidget {
                     scale: 8,
                   ),
 
-                  //-------------WELCOME BACK TXT-FIELD----------------------
+                  //-------------EMAIL INFO TXT-FIELD----------------------
                   const SizedBox(height: 50,),
                   Text(
                     "Please enter email associated with your account.",
@@ -55,8 +56,7 @@ class ResetPasswordPage extends StatelessWidget {
                          emailController.text
                         );
                         if (responseBool){
-                          print("DEVELOPMENT PRINT");
-                          //ADD FUNCTIONALITY TO SEND RESET EMAIL TO REGISTERED EMAIL
+                          await launchPasswordReset();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -107,5 +107,16 @@ class ResetPasswordPage extends StatelessWidget {
         )
       )
     );
+  }
+}
+
+Future<void> launchPasswordReset() async {
+    final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
+  
+  if (await canLaunchUrl(resetUri)) {
+    print("LAUNCHING");
+    await launchUrl(resetUri, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch password reset URL';
   }
 }

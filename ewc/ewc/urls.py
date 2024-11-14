@@ -20,8 +20,10 @@ from django.http import JsonResponse
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from ewc_web.views import CheckEmailView, UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet, UserRegistrationView, UserListView
+from ewc_web.views import CheckEmailView, UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet, UserRegistrationView, ResetPasswordView
 from ewc_web import views
+from django.contrib.auth import views as auth_views
+
 
 # Router configuration for REST API endpoints
 router = routers.DefaultRouter()
@@ -37,5 +39,13 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
+
+# -----------PASSWORD RESET ENDPOINTS--------------
+    
     path('check-email/', views.CheckEmailView.as_view(), name='check-email'),
+    path('reset_password/', auth_views.PasswordResetView.as_view(), name="password_reset"),
+    path('reset_password_sent/', auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path('reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
+    path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
+
     ]
