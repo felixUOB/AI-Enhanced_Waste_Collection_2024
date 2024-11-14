@@ -6,6 +6,7 @@ from .serializers import UserProfileSerializer, CollectionPointSerializer, Journ
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetView
 
 
 
@@ -56,7 +57,7 @@ class CheckEmailView(APIView):
     
 
         if not email:
-            return Response({'success': False, 'message': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'success': False, 'message': 'Email is required'})
 
         # Check if the email exists in the User model
         email_exists = User.objects.filter(email=email).exists()
