@@ -20,7 +20,7 @@ from django.http import JsonResponse
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from ewc_web.views import UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet, UserRegistrationView, ResetPasswordView
+from ewc_web.views import UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet, UserRegistrationView
 from ewc_web import views
 from django.contrib.auth import views as auth_views
 

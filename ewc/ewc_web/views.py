@@ -40,15 +40,6 @@ class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]  # Accessible to anyone    
 
-class UserListView(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
-
-class ResetPasswordView(generics.ListAPIView):
-    permission_classes = [permissions.AllowAny]
-
-
 class CheckEmailView(APIView):
     permission_classes = [permissions.AllowAny]
 

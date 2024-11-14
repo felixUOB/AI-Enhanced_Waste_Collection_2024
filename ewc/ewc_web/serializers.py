@@ -55,12 +55,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ('username', 'password', 'email', 'phone_number', 'address',
                   'pickup_frequency', 'waste_type_preference', 'notification_preferences')
 
-    def create(self, resquest):
+    def create(self, request):
         user_data = {
-            'username': resquest['username'],
-            'email': resquest.get('email', '')
+            'username': request['username'],
+            'email': request.get('email', '')
         }
-        password = resquest.pop('password')
+        password = request.pop('password')
         user = User(**user_data)
         user.set_password(password)
         user.save()
@@ -68,11 +68,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # UserProfile 생성
         UserProfile.objects.create(
             user=user,
-            phone_number=resquest.get('phone_number', ''),
-            address=resquest.get('address', ''),
-            pickup_frequency=resquest.get('pickup_frequency', 'weekly'),
-            waste_type_preference=resquest.get('waste_type_preference', 'general'),
-            notification_preferences=resquest.get('notification_preferences', True)
+            phone_number=request.get('phone_number', ''),
+            address=request.get('address', ''),
+            pickup_frequency=request.get('pickup_frequency', 'weekly'),
+            waste_type_preference=request.get('waste_type_preference', 'general'),
+            notification_preferences=request.get('notification_preferences', True)
         )
 
         return user
