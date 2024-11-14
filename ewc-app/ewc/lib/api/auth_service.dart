@@ -3,12 +3,15 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:ewc/imports/imports.dart';
+
 
 class AuthService {
   final storage = FlutterSecureStorage();
   final String baseUrl = 'http://127.0.0.1:8000';
   final String apiUrl = 'http://127.0.0.1:8000/api';
   final String adminUrl = 'http://127.0.0.1:8000/admin';
+
 
 
   Future<bool> checkEmail(String email) async {
@@ -139,4 +142,15 @@ Future<void> register({
     throw Exception('Failed to register: ${data.toString()}');
   }
 }
+}
+
+Future<void> launchPasswordReset() async {
+    final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
+  
+  if (await canLaunchUrl(resetUri)) {
+    print("LAUNCHING");
+    await launchUrl(resetUri, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch password reset URL';
+  }
 }

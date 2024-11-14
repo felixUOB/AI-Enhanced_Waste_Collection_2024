@@ -1,10 +1,8 @@
-import 'package:ewc/screens/checkEmail/checkEmail.dart';
-import 'package:ewc/screens/checkEmail/resetPassword.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 import 'screens/login/login.dart';
-import 'screens/checkEmail/resetPassword.dart';
+
 ThemeManager themeManager = ThemeManager();
 
 void main() => runApp(const App()); //Runs application root
@@ -46,7 +44,7 @@ class myAppState extends State<App>{
     return MaterialApp(
       title: "EWC",
       debugShowCheckedModeBanner: false,
-      home: CheckEmailPage(),
+      home: LoginPage(),
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeManager.themeMode

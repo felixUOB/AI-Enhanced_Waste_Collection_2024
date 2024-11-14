@@ -1,6 +1,5 @@
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart'; // Add AuthService import
-import 'package:ewc/screens/checkEmail/checkEmail.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/screens/register/register.dart';
 
@@ -65,10 +64,7 @@ class LoginPage extends StatelessWidget {
                           string1: "",
                           hyperString: "Forgot Password?",
                           string2: "",
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => CheckEmailPage())
-                            ),
+                          onTap: launchPasswordReset
                         )
                       ],
                     )
