@@ -112,7 +112,6 @@ frameworks.
 
 ## Getting Started
 
-### Prerequisites
 
 ### Prerequisites
 
@@ -150,6 +149,16 @@ First, clone the repository using `https://github.com/spe-uob/2024-AIEnhancedWas
   ```
 
 - To launch the local development server, execute: `python manage.py runserver`
+
+### Flutter APIs
+Navigate to the root directory of the Flutter project `cd ewc-app/ewc`
+
+- Please make sure that you have a `.env` file and add the necessary enviroment variables to it in a key-value format.
+
+    Example `.env` file: 
+
+    `API_KEY = "YOUR_ORS_SECRET_KEY"`
+ 
 
 ## **Kanban Chart**
 [Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
