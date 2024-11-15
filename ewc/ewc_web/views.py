@@ -2,6 +2,8 @@ from rest_framework import viewsets, permissions, generics
 from .models import UserProfile, CollectionPoint, JourneyMetric, WastePrediction
 from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer, UserRegistrationSerializer
 from django.contrib.auth.models import User
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 # User Profile ViewSet
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -32,3 +34,19 @@ class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]  # Accessible to anyone
+
+# Retrieves a given collection point record by its ID
+@api_view(['GET'])
+def get_colllection_points(request,collection_points_id):
+    try:
+        collection_points = CollectionPoint.objects.get(id=collection_points_id)
+        data = {
+            'id': collection_points.id,
+            'name': collection_points.location_name,
+            'address': collection_points.address,
+            'latitude': collection_points.latitude,
+            'longitude': collection_points.longitude,
+        }
+        return Response(data)
+    except CollectionPoint.DoesNotExist:
+        return Response({'error: Collection Point does not exist'}, status=404)
