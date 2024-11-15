@@ -8,7 +8,7 @@ import 'package:ewc/imports/imports.dart';
 
 class AuthService {
   final storage = FlutterSecureStorage();
-  final String baseUrl = 'http://127.0.0.1:8000';
+  final String baseUrl = 'http://127.0.0.1:8000/api';
   final String apiUrl = 'http://127.0.0.1:8000/api';
   final String adminUrl = 'http://127.0.0.1:8000/admin';
 
