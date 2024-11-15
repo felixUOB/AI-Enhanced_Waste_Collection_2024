@@ -8,7 +8,6 @@ import 'package:ewc/imports/imports.dart';
 
 class AuthService {
   final storage = FlutterSecureStorage();
-  final String baseUrl = 'http://127.0.0.1:8000/api';
   final String apiUrl = 'http://127.0.0.1:8000/api';
   final String adminUrl = 'http://127.0.0.1:8000/admin';
 
@@ -16,7 +15,7 @@ class AuthService {
 
   Future<bool> checkEmail(String email) async {
       final response = await http.get(
-        Uri.parse("$baseUrl/check-email/?email=$email"),
+        Uri.parse("$apiUrl/check-email/?email=$email"),
         headers: {
           'Content-Type': 'application/json',
         }
@@ -37,7 +36,7 @@ class AuthService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/token/'),
+        Uri.parse('$apiUrl/token/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username, 'password': password}),
       );
