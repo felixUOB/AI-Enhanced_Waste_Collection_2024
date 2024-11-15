@@ -1,6 +1,5 @@
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart';
-import 'package:flutter/material.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
