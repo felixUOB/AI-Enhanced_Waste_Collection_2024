@@ -37,15 +37,15 @@ class UserRegistrationView(generics.CreateAPIView):
 
 # Retrieves a given collection point record by its ID
 @api_view(['GET'])
-def get_colllection_points(request,collection_points_id):
+def get_collection_point(request,collection_point_id):
     try:
-        collection_points = CollectionPoint.objects.get(id=collection_points_id)
+        collection_point = CollectionPoint.objects.get(id=collection_point_id)
         data = {
-            'id': collection_points.id,
-            'name': collection_points.location_name,
-            'address': collection_points.address,
-            'latitude': collection_points.latitude,
-            'longitude': collection_points.longitude,
+            'id': collection_point.id,
+            'name': collection_point.location_name,
+            'address': collection_point.address,
+            'latitude': collection_point.latitude,
+            'longitude': collection_point.longitude,
         }
         return Response(data)
     except CollectionPoint.DoesNotExist:
