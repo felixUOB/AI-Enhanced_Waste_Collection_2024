@@ -8,6 +8,7 @@ class RegisterPage extends StatelessWidget {
   // Text controllers
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
   final emailController = TextEditingController();
 
   // Additional user information controllers
@@ -39,7 +40,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 30,),
 
                 // Username input field
-                LoginTextfeild(
+                LoginTextfield(
                   controller: usernameController,
                   hintText: "Username",
                   obscured: false,
@@ -47,7 +48,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 10,),
 
                 // Email input field
-                LoginTextfeild(
+                LoginTextfield(
                   controller: emailController,
                   hintText: "Email",
                   obscured: false,
@@ -55,22 +56,30 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 10,),
 
                 // Password input field
-                LoginTextfeild(
+                LoginTextfield(
                   controller: passwordController,
                   hintText: "Password",
                   obscured: true,
                 ),
                 const SizedBox(height: 10,),
 
+                // Confirm Password input field
+                LoginTextfield(
+                  controller: confirmPasswordController,
+                  hintText: "Confirm Password",
+                  obscured: true,
+                ),
+                const SizedBox(height: 10,),
+
                 // Additional user information input fields (optional)
-                LoginTextfeild(
+                LoginTextfield(
                   controller: phoneNumberController,
                   hintText: "Phone Number",
                   obscured: false,
                 ),
                 const SizedBox(height: 10,),
 
-                LoginTextfeild(
+                LoginTextfield(
                   controller: addressController,
                   hintText: "Address",
                   obscured: false,
@@ -82,6 +91,16 @@ class RegisterPage extends StatelessWidget {
                 LoginButton(
                   text1: "Register",
                   onPressed: () async {
+                    // Add password verification logic
+                    if (passwordController.text != confirmPasswordController.text) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Passwords do not match. Please try again.'),
+                        ),
+                      );
+                      return;
+                    }
+
                     try {
                       await AuthService().register(
                         username: usernameController.text,

@@ -1,7 +1,7 @@
+import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
-import 'screens/login/login.dart';
 
 ThemeManager themeManager = ThemeManager();
 

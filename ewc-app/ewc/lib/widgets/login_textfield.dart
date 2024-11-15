@@ -1,12 +1,12 @@
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 
-class LoginTextfeild extends StatelessWidget {
+class LoginTextfield extends StatelessWidget {
   final dynamic controller;
   final String hintText;
   final bool obscured;
 
-  LoginTextfeild({
+  LoginTextfield({
     super.key,
     required this.controller,
     required this.hintText,
