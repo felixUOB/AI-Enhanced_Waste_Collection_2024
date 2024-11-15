@@ -129,7 +129,7 @@ class _MetricsPageState extends State<MetricsPage>{
                         children: <Widget>[
                           Column(
                             children: [
-                              Text('Carbon Footprint Pi Graph',
+                              Text('Carbon Footprint Pie Graph',
                               style: Theme.of(context).textTheme.titleMedium),
                               Padding(padding: EdgeInsets.only(bottom: 4.0)),
                               SizedBox(

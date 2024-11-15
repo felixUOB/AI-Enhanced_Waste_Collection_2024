@@ -1,6 +1,9 @@
 import 'package:ewc/imports/imports.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class ForgotPassword extends StatefulWidget {
+  const ForgotPassword({super.key});
+
   @override
   _ForgotPassword createState() => _ForgotPassword();
 }
@@ -69,7 +72,7 @@ class _ForgotPassword extends State<ForgotPassword>{
                           string1: "",
                           hyperString: "Already a user?", 
                           string2: "",
-                          link: Uri.parse("https://en.wikipedia.org/wiki/Lamia"), // <- NEEDS TO LINK BACK TO LOGIN PAGE
+                          onTap: () => launchUrlString("https://spacenxtlabs.com"), // <- NEEDS TO LINK BACK TO LOGIN PAGE
                           )
                       ],
                     )
@@ -99,7 +102,7 @@ class _ForgotPassword extends State<ForgotPassword>{
                     string1: "Not a member?", 
                     hyperString: "Register Here.",
                     string2: "",
-                    link: Uri.parse("https://spacenxtlabs.com"), // <- NEEDS TO LINK TO REGISTRATION FUNCTION
+                    onTap: () => launchUrlString("https://spacenxtlabs.com"), // <- NEEDS TO LINK TO REGISTRATION FUNCTION
                     ),
                 ],
               ),

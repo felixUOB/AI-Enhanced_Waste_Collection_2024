@@ -2,8 +2,6 @@ import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/widgets/timeline_tile.dart';
 import 'package:ewc/imports/imports.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/material.dart';
-import '../../widgets/schedule_stoplist.dart';
 
 class Schedule extends StatelessWidget {
   // Hardcoded 'stop name' and 'minutes until stop reached' data
