@@ -1,8 +1,14 @@
 import 'package:ewc/imports/imports.dart';
 import 'package:ewc/api/auth_service.dart'; // Add AuthService import
+import 'package:flutter/material.dart';
+import 'package:ewc/screens/register/register.dart';
+
+import '../map/map.dart'; // Import the signup page
+
 import 'package:ewc/screens/login/forgot-password.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:ewc/screens/register/register.dart'; // Import the signup page
+
 
 
 class LoginPage extends StatelessWidget {
@@ -53,28 +59,22 @@ class LoginPage extends StatelessWidget {
                       obscured: true,
                     ),
 
-                    //-------------HYPERLINK: FORGOT PASSWORD----------------------
-                    const SizedBox(height: 10),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            HyperLinkText(
-                              string1: "",
-                              hyperString: "Forgot Password?",
-                              string2: "",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ForgotPassword(),
-                                  ),
-                                );
-                              }
-                            )
-                          ],
+
+                  //-------------HYPERLINK: FORGOT PASSWORD----------------------
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        HyperLinkText(
+                          string1: "",
+                          hyperString: "Forgot Password?",
+                          string2: "",
+                          onTap: launchPasswordReset
                         )
+                       ]
+                      )
                     ),
 
                     //-------------LOGIN BUTTON---------------------------------
