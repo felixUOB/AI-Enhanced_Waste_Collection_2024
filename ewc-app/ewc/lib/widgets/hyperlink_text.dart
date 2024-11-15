@@ -1,3 +1,4 @@
+import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -6,7 +7,7 @@ class HyperLinkText extends StatelessWidget {
   final String string1;
   final String hyperString;
   final String string2;
-  final Uri link;
+  final VoidCallback? onTap; // Add an onTap callback for register
 
 
   HyperLinkText({
@@ -14,7 +15,7 @@ class HyperLinkText extends StatelessWidget {
     required this.string1,
     required this.hyperString,
     required this.string2,
-    required this.link,
+    this.onTap,
     });
 
   @override
@@ -23,24 +24,17 @@ class HyperLinkText extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      style: TextStyle(color: Colors.black),
+                      style: Theme.of(context).textTheme.bodyMedium,
                       text: string1
                     ),
                     TextSpan(
-                      style: const TextStyle(color: Colors.blue),
+                      style: hyperLinkTextStyleMedium,
                       text: " $hyperString",
-                      recognizer: TapGestureRecognizer()..onTap = () async {
-                        if(await canLaunchUrl(link)){
-                          await launchUrl(
-                            link, 
-                          );
-                        } else {
-                          throw "Cannot load URL";
-                        }
-                      }
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = onTap,
                     ),
                     TextSpan(
-                      style: TextStyle(color: Colors.black),
+                      style: Theme.of(context).textTheme.bodyMedium,
                       text: " $string2"
                     ),
                   ]
