@@ -1,5 +1,5 @@
 import 'package:ewc/imports/imports.dart';
-import 'package:url_launcher/url_launcher_string.dart';
+import '../register/register.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -31,7 +31,7 @@ class _ForgotPassword extends State<ForgotPassword>{
                     scale: 8,
                     ),
             
-//-------------WELCOME BACK TXT-FELILD----------------------
+//-------------WELCOME BACK TXT-FIELD----------------------
             
                   const SizedBox(height: 50,),
                   Text(
@@ -41,10 +41,10 @@ class _ForgotPassword extends State<ForgotPassword>{
             
                   const SizedBox(height: 30,),
             
-//-------------USERNAME TXT-FEILD----------------------
+//-------------USERNAME TXT-FIELD----------------------
             
                   //username txtfld
-                  LoginTextfeild(
+                  LoginTextfield(
                     controller: usernameController,
                     hintText: "Email",
                     obscured: false,
@@ -52,9 +52,9 @@ class _ForgotPassword extends State<ForgotPassword>{
             
                   const SizedBox(height: 10,),
             
-//-------------PASSWORD TXT-FEILD----------------------
+//-------------PASSWORD TXT-FIELD----------------------
                   if (isVisible)
-                    LoginTextfeild(
+                    LoginTextfield(
                       controller: passwordController,
                       hintText: "Password",
                       obscured: true,
@@ -72,21 +72,23 @@ class _ForgotPassword extends State<ForgotPassword>{
                           string1: "",
                           hyperString: "Already a user?", 
                           string2: "",
-                          onTap: () => launchUrlString("https://spacenxtlabs.com"), // <- NEEDS TO LINK BACK TO LOGIN PAGE
-                          )
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        )
                       ],
                     )
                     ),
-            
+
 //-------------LOGIN BUTTON---------------------------------
-            
+
                   LoginButton(
                     text1: "Reset Password",
                     // function that sends a request to reset the password
                     onPressed: (){
                       // refresh the page to make the password field visible
                       // check to see if the email entered is registered in the database
-                      // if it is 
+                      // if it is
                       setState(() {
                         isVisible = true; // make the password field visible and update the database
                       });
@@ -95,15 +97,22 @@ class _ForgotPassword extends State<ForgotPassword>{
                     },
                   ),
                   const SizedBox(height: 10,),
-                
+
 //-------------HYPERLINK-------------------------------------
-                
+
                   HyperLinkText(
-                    string1: "Not a member?", 
+                    string1: "Not a member?",
                     hyperString: "Register Here.",
                     string2: "",
-                    onTap: () => launchUrlString("https://spacenxtlabs.com"), // <- NEEDS TO LINK TO REGISTRATION FUNCTION
-                    ),
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RegisterPage(),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

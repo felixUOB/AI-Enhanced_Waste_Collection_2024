@@ -40,7 +40,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 30,),
 
                 // Username input field
-                LoginTextfeild(
+                LoginTextfield(
                   controller: usernameController,
                   hintText: "Username",
                   obscured: false,
@@ -48,7 +48,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 10,),
 
                 // Email input field
-                LoginTextfeild(
+                LoginTextfield(
                   controller: emailController,
                   hintText: "Email",
                   obscured: false,
@@ -56,7 +56,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 10,),
 
                 // Password input field
-                LoginTextfeild(
+                LoginTextfield(
                   controller: passwordController,
                   hintText: "Password",
                   obscured: true,
@@ -64,7 +64,7 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 10,),
 
                 // Confirm Password input field
-                LoginTextfeild(
+                LoginTextfield(
                   controller: confirmPasswordController,
                   hintText: "Confirm Password",
                   obscured: true,
@@ -72,14 +72,14 @@ class RegisterPage extends StatelessWidget {
                 const SizedBox(height: 10,),
 
                 // Additional user information input fields (optional)
-                LoginTextfeild(
+                LoginTextfield(
                   controller: phoneNumberController,
                   hintText: "Phone Number",
                   obscured: false,
                 ),
                 const SizedBox(height: 10,),
 
-                LoginTextfeild(
+                LoginTextfield(
                   controller: addressController,
                   hintText: "Address",
                   obscured: false,
