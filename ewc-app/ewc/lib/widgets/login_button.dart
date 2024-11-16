@@ -25,9 +25,9 @@ class LoginButton extends StatelessWidget {
         ),
         onPressed: onPressed, // Set onPressed action
         child: Text(
-          text1,
-          style: constWhiteTextMedium,
-        ),
+          " $text1",
+          style: AppTheme().constWhiteTextMedium,
+          ),
       ),
     );
   }

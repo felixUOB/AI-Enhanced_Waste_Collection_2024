@@ -20,24 +20,24 @@ class HyperLinkText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      text: string1
-                    ),
-                    TextSpan(
-                      style: hyperLinkTextStyleMedium,
-                      text: " $hyperString",
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = onTap,
-                    ),
-                    TextSpan(
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      text: " $string2"
-                    ),
-                  ]
-                )
+      text: TextSpan(
+        children: [
+          TextSpan(
+            style: Theme.of(context).textTheme.bodyMedium,
+            text: string1
+          ),
+          TextSpan(
+            style: AppTheme().hyperLinkTextStyleMedium,
+            text: " $hyperString",
+            recognizer: TapGestureRecognizer()
+              ..onTap = onTap,
+          ),
+          TextSpan(
+            style: Theme.of(context).textTheme.bodyMedium,
+            text: " $string2"
+          ),
+        ]
+      )
     );
   }
 }

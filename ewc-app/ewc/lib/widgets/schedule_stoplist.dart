@@ -1,54 +1,27 @@
 import 'package:flutter/material.dart';
 
 class ScheduleStopList extends StatelessWidget {
-  // List content
-  final List<List<Object>> content;
 
-  const ScheduleStopList(
-    {
+  final bool inPast;
+  final child;
+
+  const ScheduleStopList({
       super.key,
-      required this.content
-    }
-  );
+      required this.inPast,
+      required this.child,
+    });
 
+  // creates the box that will display the information about each of the stops
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: content.length,
-
-      // itemBuilder to describe how each list item is built
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-
-          padding: const EdgeInsets.all(15),
-          margin: const EdgeInsets.only(left:12, right:12, bottom: 12),
-
-          decoration: BoxDecoration(
-            color: Colors.cyan, borderRadius: BorderRadius.circular(12)
-          ),
-
-          child: DefaultTextStyle.merge(
-            child: Row(
-              children: [
-
-// ------------Stop name text------------
-
-                Expanded(
-                  child: Text(
-                    content[index][0].toString(), textAlign: TextAlign.left)
-                ),
-
-// ------------Minutes text------------
-
-                Expanded(
-                  child: Text(
-                    '${content[index][1].toString()} mins', textAlign: TextAlign.right)
-                )
-              ]
-            ),
-          style: const TextStyle(fontSize: 24, fontFamily: 'Questrial'),)
-        );
-      }
+    return Container(
+      margin: const EdgeInsets.all(25),
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: inPast ? Theme.of(context).colorScheme.primary: Theme.of(context).colorScheme.secondary, //different colour depending on if it has already happened or not
+        borderRadius: BorderRadius.circular(8),
+        ),
+      child: child,
     );
   }
 }

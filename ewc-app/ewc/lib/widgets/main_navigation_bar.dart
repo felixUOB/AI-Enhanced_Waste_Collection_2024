@@ -19,7 +19,7 @@ class _NavigationBarState extends State<MainNavigationBar> {
       // Set the body of the scaffold to be the selected screen
       body: IndexedStack(
       index: currentPageIndex,
-      children: const [
+      children: [
         MetricsPage(),
         MapPage(),
         Schedule()

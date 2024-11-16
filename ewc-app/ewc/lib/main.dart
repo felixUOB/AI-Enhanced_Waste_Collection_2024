@@ -12,11 +12,11 @@ class App extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() { //Creates initial state of app
-    return myAppState();
+    return MyAppState();
   }
 }
 
-class myAppState extends State<App>{
+class MyAppState extends State<App>{
 
 //When State closes this function is called to remove listener
   @override
@@ -39,14 +39,16 @@ class myAppState extends State<App>{
     }
   }
 
+  // main build method
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "EWC",
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      home: LoginPage(), // main page 
+      // theme management
+      theme: AppTheme().lightTheme,
+      darkTheme:  AppTheme().darkTheme,
       themeMode: themeManager.themeMode
     );
   }
