@@ -22,6 +22,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+      - name: Secrets
+        run: |
+          touch .env
+          echo API_KEY=${API_KEY} >> .env
+        env: 
+          api_key: ${{ secrets.API_KEY }}
 
       - name: Run format, analyze, test
         working-directory: "./ewc-app/ewc"  
@@ -34,10 +40,13 @@ jobs:
     name: Build app
     needs: [flutter_test]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: "./ewc-app/ewc" 
     strategy:
       matrix: 
         os: [ubuntu-latest, macos-latest]
-    steps: 
+    steps:
       - name: Checkout Respository 
         uses: actions/checkout@v2
 
@@ -49,6 +58,12 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+      - name: Secrets
+        run: |
+          touch .env
+          echo API_KEY=${API_KEY} >> .env
+        env: 
+          api_key: ${{ secrets.API_KEY }}
       
       - name: Build Android app
         if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -58,7 +73,6 @@ jobs:
           flutter pub get
           flutter build apk --no-pub
           flutter build appbundle --no-pub 
-        working-directory: "./ewc-app/ewc" 
       
       - name: Build iOS app
         if: ${{ matrix.os == 'macos-latest' }}
@@ -67,7 +81,8 @@ jobs:
           flutter pub get
           flutter clean
           flutter build ios --no-codesign
-        working-directory: "./ewc-app/ewc"  
+        
+         
 
   # build_ios-test:
   #   name: Build Flutter (iOS)
