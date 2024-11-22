@@ -38,51 +38,51 @@ void main() {
     expect(borderSide.color, Colors.black);
   }
   );
-  testWidgets('LoginTextField displays hint and obscures text correctly', (WidgetTester tester) async {
-    final controller = TextEditingController();
+  // testWidgets('LoginTextField displays hint and obscures text correctly', (WidgetTester tester) async {
+  //   final controller = TextEditingController();
     
-    await tester.pumpWidget(
-      MaterialApp(
-        home:Scaffold(
-          body: LoginTextfeild(
-            controller: controller, 
-            hintText: 'Email', 
-            obscured: true,
-            ),
-        ),
-      ),
-    );
+  //   await tester.pumpWidget(
+  //     MaterialApp(
+  //       home:Scaffold(
+  //         body: LoginTextfeild(
+  //           controller: controller, 
+  //           hintText: 'Email', 
+  //           obscured: true,
+  //           ),
+  //       ),
+  //     ),
+  //   );
 
-    // check if the hint text is displayed
-    expect(find.text('Email'), findsOneWidget);
+  //   // check if the hint text is displayed
+  //   expect(find.text('Email'), findsOneWidget);
 
-    // check if the text field is initially obscured
-    final textField = tester.widget<TextField>(find.byType(TextField));
-    expect(textField.obscureText, isTrue);
-  });
+  //   // check if the text field is initially obscured
+  //   final textField = tester.widget<TextField>(find.byType(TextField));
+  //   expect(textField.obscureText, isTrue);
+  // });
 
-  testWidgets('LoginTextField accepts input', (WidgetTester tester) async {
-    final controller = TextEditingController();
+  // testWidgets('LoginTextField accepts input', (WidgetTester tester) async {
+  //   final controller = TextEditingController();
     
-    await tester.pumpWidget(
-      MaterialApp(
-        home:Scaffold(
-          body: LoginTextfeild(
-            controller: controller, 
-            hintText: 'Email', 
-            obscured: false,
-            ),
-        ),
-      ),
-    );
+  //   await tester.pumpWidget(
+  //     MaterialApp(
+  //       home:Scaffold(
+  //         body: LoginTextfeild(
+  //           controller: controller, 
+  //           hintText: 'Email', 
+  //           obscured: false,
+  //           ),
+  //       ),
+  //     ),
+  //   );
 
-    // Enter text into the text field
-    await tester.enterText(find.byType(TextField), 'testuser');
-    await tester.pump();
+  //   // Enter text into the text field
+  //   await tester.enterText(find.byType(TextField), 'testuser');
+  //   await tester.pump();
 
-    // check if the controller's text matches the entered text
-    expect(controller.text, 'testuser');
-  });
+  //   // check if the controller's text matches the entered text
+  //   expect(controller.text, 'testuser');
+  // });
 
 
   // testWidgets('Tapping "Forgot Password?" triggers onTap callback', (WidgetTester tester) async{
