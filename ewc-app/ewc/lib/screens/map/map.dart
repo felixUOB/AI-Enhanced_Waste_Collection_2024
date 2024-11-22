@@ -5,6 +5,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../services/route-plot-api.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget{
@@ -26,6 +28,20 @@ class _MapPage extends State<MapPage> {
     super.initState();
     _initializeEnvAndService();
 
+  }
+  // Retrieve latitude and longitude of a collection point by its id
+  Future<LatLng> _getCollectionPoint(int collection_point_id) async {
+    final url = 'http://127.0.0.1:8000/api/collection_points/$collection_point_id';
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final lat = data['latitude'];
+      final lng = data['longitude'];
+      return LatLng(lat, lng);
+    } else {
+      throw Exception('Failed to load collection point');
+    }
   }
 
   // This function loads .env and initializes RouteService asynchronously
