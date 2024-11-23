@@ -7,10 +7,17 @@ import 'package:ewc/api/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
-  // TXT Controllers
+  @override
+  State<StatefulWidget> createState() {
+    return LoginPageState();
+  }
+}
+
+class LoginPageState extends State<LoginPage>{
+
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -69,7 +76,7 @@ class LoginPage extends StatelessWidget {
                           string2: "",
                           onTap: launchPasswordReset
                         )
-                       ]
+                      ]
                       )
                     ),
 
@@ -83,6 +90,7 @@ class LoginPage extends StatelessWidget {
                               usernameController.text,
                               passwordController.text
                           );
+                          if (!mounted) 
                           // Navigate to the schedule page after successful login
                           Navigator.pushReplacement(
                             context,
