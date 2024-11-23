@@ -5,6 +5,7 @@ import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/theme_switch.dart';
 import 'package:ewc/api/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
+
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
 

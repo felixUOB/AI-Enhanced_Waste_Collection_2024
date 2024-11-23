@@ -1,6 +1,7 @@
-import 'package:ewc/imports/imports.dart';
 import 'package:ewc/widgets/schedule_stoplist.dart';
 import 'package:timeline_tile/timeline_tile.dart';
+import 'package:flutter/material.dart';
+
 
 class CustomTimelineTile extends StatelessWidget{
   final bool isFirst;
