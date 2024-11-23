@@ -1,5 +1,9 @@
-import 'package:ewc/imports/imports.dart';
 import '../register/register.dart';
+import 'package:flutter/material.dart';
+import 'package:ewc/widgets/login_textfield.dart';
+import 'package:ewc/widgets/login_button.dart';
+import 'package:ewc/widgets/hyperlink_text.dart';
+import 'package:ewc/widgets/theme_switch.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});

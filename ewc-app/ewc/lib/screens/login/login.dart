@@ -1,13 +1,11 @@
-import 'package:ewc/imports/imports.dart';
-import 'package:ewc/api/auth_service.dart'; // Add AuthService import
 import 'package:flutter/material.dart';
+import 'package:ewc/widgets/login_textfield.dart';
+import 'package:ewc/widgets/login_button.dart';
+import 'package:ewc/widgets/hyperlink_text.dart';
+import 'package:ewc/widgets/theme_switch.dart';
+import 'package:ewc/api/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
-
-import '../map/map.dart'; // Import the signup page
-
-import 'package:ewc/screens/login/forgot-password.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
-import 'package:ewc/screens/register/register.dart'; // Import the signup page
 
 
 
