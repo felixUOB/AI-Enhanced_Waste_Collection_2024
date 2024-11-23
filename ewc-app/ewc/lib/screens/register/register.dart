@@ -1,6 +1,8 @@
-import 'package:ewc/imports/imports.dart';
-import 'package:ewc/api/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:ewc/widgets/login_textfield.dart';
+import 'package:ewc/widgets/login_button.dart';
+import 'package:ewc/widgets/hyperlink_text.dart';
+import 'package:ewc/api/auth_service.dart';
 
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});

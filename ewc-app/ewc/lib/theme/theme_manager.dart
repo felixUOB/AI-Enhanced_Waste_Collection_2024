@@ -1,5 +1,4 @@
-import 'package:ewc/imports/imports.dart';
-
+import 'package:flutter/material.dart';
 
 //Theme manager for controlling themeMode value
 class ThemeManager with ChangeNotifier{

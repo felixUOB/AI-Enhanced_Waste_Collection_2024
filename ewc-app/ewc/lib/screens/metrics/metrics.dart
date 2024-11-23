@@ -2,8 +2,9 @@
 import 'package:ewc/widgets/graphs/bar-graph/bar_graph.dart';
 import 'package:ewc/widgets/graphs/line-graph/line_graph.dart';
 import 'package:ewc/widgets/graphs/pie-chart/pie_chart.dart';
-import 'package:ewc/imports/imports.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter/material.dart';
+import 'package:ewc/widgets/theme_switch.dart';
 
 class MetricsPage extends StatefulWidget{
 
