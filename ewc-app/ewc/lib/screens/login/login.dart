@@ -85,22 +85,22 @@ class LoginPageState extends State<LoginPage>{
                     LoginButton(
                       text1: "Sign In",
                       onPressed: () async {
+                        final navigator = Navigator.of(context);
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         try {
                           await AuthService().login(
                               usernameController.text,
                               passwordController.text
                           );
-                          if (!mounted) 
                           // Navigate to the schedule page after successful login
-                          Navigator.pushReplacement(
-                            context,
+                          navigator.pushReplacement(
                             MaterialPageRoute(
                               builder: (context) => MainNavigationBar(), // Moving pages
                             ),
                           );
                         } catch (e) {
                           // Error handling: for example, display a warning message to the user if login fails
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMessenger.showSnackBar(
                             SnackBar(
                               content: Text('Login failed: $e'),
                             ),

@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 class RoutePolylineLayer extends StatelessWidget{
   final List<LatLng> routePoints;
 
+  // ignore: prefer_const_constructors_in_immutables
   RoutePolylineLayer({
     super.key,
     required this.routePoints,

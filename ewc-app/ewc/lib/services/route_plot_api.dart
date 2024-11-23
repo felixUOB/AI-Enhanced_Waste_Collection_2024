@@ -47,7 +47,7 @@ class RouteService {
       // Debugging error log
       print('Error fetching route: $e');
       // Rethrow the exception to allow higher-level handlers to manage it
-      throw e;
+      rethrow;
     }
   }
 

@@ -102,8 +102,10 @@ class RegisterPage extends StatelessWidget {
                       );
                       return;
                     }
-
+                    final navigator = Navigator.of(context);
+                    final scaffoldMessenger = ScaffoldMessenger.of(context);
                     try {
+                
                       await AuthService().register(
                         username: usernameController.text,
                         password: passwordController.text,
@@ -113,15 +115,15 @@ class RegisterPage extends StatelessWidget {
                         // Include additional fields if necessary
                       );
                       // Navigate to the login page after registration
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      navigator.pop;
+                      scaffoldMessenger.showSnackBar(
                         SnackBar(
                           content: Text('Registration successful! Please log in.'),
                         ),
                       );
                     } catch (e) {
                       // Error handling
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      scaffoldMessenger.showSnackBar(
                         SnackBar(
                           content: Text('Registration failed: $e'),
                         ),

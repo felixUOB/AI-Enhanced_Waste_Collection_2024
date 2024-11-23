@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ScheduleStopList extends StatelessWidget {
 
   final bool inPast;
+  // ignore: prefer_typing_uninitialized_variables
   final child;
 
   const ScheduleStopList({

@@ -4,7 +4,9 @@ class MySquare extends StatelessWidget{
   final Widget child;
   final String title;
 
+  // ignore: prefer_const_constructors_in_immutables
   MySquare({
+    super.key, 
     required this.title,
     required this.child
     });

@@ -49,7 +49,6 @@ class _MapPage extends State<MapPage> {
 
     } catch (e) {
       // Log the error and provide feedback
-      print("Error initializing environment and service: $e Failed to initialize map service. Please check API key");
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
     }
 
