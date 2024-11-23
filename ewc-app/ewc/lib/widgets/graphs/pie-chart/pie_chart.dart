@@ -1,4 +1,4 @@
-import 'package:ewc/widgets/graphs/pie-chart/individual-sector.dart';
+import 'package:ewc/widgets/graphs/pie-chart/individual_sector.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;

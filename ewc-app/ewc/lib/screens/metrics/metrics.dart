@@ -1,4 +1,3 @@
-
 import 'package:ewc/widgets/graphs/bar-graph/bar_graph.dart';
 import 'package:ewc/widgets/graphs/line-graph/line_graph.dart';
 import 'package:ewc/widgets/graphs/pie-chart/pie_chart.dart';
