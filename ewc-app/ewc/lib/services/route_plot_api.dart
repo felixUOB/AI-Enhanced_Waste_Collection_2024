@@ -1,4 +1,3 @@
-// Import necessary packages for route service and geolocation handling
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -48,7 +47,7 @@ class RouteService {
       // Debugging error log
       print('Error fetching route: $e');
       // Rethrow the exception to allow higher-level handlers to manage it
-      throw e;
+      rethrow;
     }
   }
 

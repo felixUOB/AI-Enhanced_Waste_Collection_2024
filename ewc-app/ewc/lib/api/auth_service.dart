@@ -1,10 +1,7 @@
-
-
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:ewc/imports/imports.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthService {
   final storage = FlutterSecureStorage();
@@ -20,12 +17,10 @@ class AuthService {
           'Content-Type': 'application/json',
         }
       );
-      print(response.statusCode);
       if(response.statusCode == 500){
         throw Exception("Server Error: If email field is blank please input email.");
       } else if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print(data);
         return data['exists'] ?? false;
       } else {
         throw Exception('Failed to check email');
@@ -156,7 +151,6 @@ Future<void> launchPasswordReset() async {
     final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
   
   if (await canLaunchUrl(resetUri)) {
-    print("LAUNCHING");
     await launchUrl(resetUri, mode: LaunchMode.externalApplication);
   } else {
     throw 'Could not launch password reset URL';

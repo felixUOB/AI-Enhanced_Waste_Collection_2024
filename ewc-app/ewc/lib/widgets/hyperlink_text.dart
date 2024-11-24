@@ -9,6 +9,7 @@ class HyperLinkText extends StatelessWidget {
   final VoidCallback? onTap; // Add an onTap callback for register
 
 
+  // ignore: prefer_const_constructors_in_immutables
   HyperLinkText({
     super.key,
     required this.string1,

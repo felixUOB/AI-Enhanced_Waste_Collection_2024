@@ -6,6 +6,7 @@ class LoginTextfield extends StatelessWidget {
   final String hintText;
   final bool obscured;
 
+  // ignore: prefer_const_constructors_in_immutables
   LoginTextfield({
     super.key,
     required this.controller,
