@@ -5,9 +5,8 @@
 // // gestures. You can also use WidgetTester to find child widgets in the widget
 // // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:ewc/imports/imports.dart';
 import 'package:ewc/widgets/login_textfeild.dart';
-// import 'package:ewc/widgets/schedule_stoplist.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
