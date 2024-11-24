@@ -33,7 +33,7 @@ jobs:
         working-directory: "./ewc-app/ewc"  
         run: |
           flutter pub get
-          flutter analyze || true
+          flutter analyze
           flutter test
 
   build:
