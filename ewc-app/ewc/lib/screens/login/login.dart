@@ -1,14 +1,23 @@
-import 'package:ewc/imports/imports.dart';
-import 'package:ewc/api/auth_service.dart'; // Add AuthService import
-import 'package:ewc/screens/login/forgot-password.dart';
+import 'package:flutter/material.dart';
+import 'package:ewc/widgets/login_textfield.dart';
+import 'package:ewc/widgets/login_button.dart';
+import 'package:ewc/widgets/hyperlink_text.dart';
+import 'package:ewc/widgets/theme_switch.dart';
+import 'package:ewc/api/auth_service.dart';
+import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
-import 'package:ewc/screens/register/register.dart'; // Import the signup page
 
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+  @override
+  State<StatefulWidget> createState() {
+    return LoginPageState();
+  }
+}
 
-  // TXT Controllers
+class LoginPageState extends State<LoginPage>{
+
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -53,28 +62,22 @@ class LoginPage extends StatelessWidget {
                       obscured: true,
                     ),
 
-                    //-------------HYPERLINK: FORGOT PASSWORD----------------------
-                    const SizedBox(height: 10),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            HyperLinkText(
-                              string1: "",
-                              hyperString: "Forgot Password?",
-                              string2: "",
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ForgotPassword(),
-                                  ),
-                                );
-                              }
-                            )
-                          ],
+
+                  //-------------HYPERLINK: FORGOT PASSWORD----------------------
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        HyperLinkText(
+                          string1: "",
+                          hyperString: "Forgot Password?",
+                          string2: "",
+                          onTap: launchPasswordReset
                         )
+                      ]
+                      )
                     ),
 
                     //-------------LOGIN BUTTON---------------------------------
@@ -82,21 +85,22 @@ class LoginPage extends StatelessWidget {
                     LoginButton(
                       text1: "Sign In",
                       onPressed: () async {
+                        final navigator = Navigator.of(context);
+                        final scaffoldMessenger = ScaffoldMessenger.of(context);
                         try {
                           await AuthService().login(
                               usernameController.text,
                               passwordController.text
                           );
                           // Navigate to the schedule page after successful login
-                          Navigator.pushReplacement(
-                            context,
+                          navigator.pushReplacement(
                             MaterialPageRoute(
                               builder: (context) => MainNavigationBar(), // Moving pages
                             ),
                           );
                         } catch (e) {
                           // Error handling: for example, display a warning message to the user if login fails
-                          ScaffoldMessenger.of(context).showSnackBar(
+                          scaffoldMessenger.showSnackBar(
                             SnackBar(
                               content: Text('Login failed: $e'),
                             ),

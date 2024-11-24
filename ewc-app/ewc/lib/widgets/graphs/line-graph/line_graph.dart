@@ -36,15 +36,19 @@ class MyLineGraph extends StatelessWidget{
               dotData: FlDotData(
                 show:false,
               ),
-
-              color: Colors.red,
+              // #077b41
+              color: Theme.of(context).colorScheme.primary,
+              barWidth: 4,
             ),
           ],
           borderData: FlBorderData(
             border: const Border(
-              bottom: BorderSide(),
-            ),),
+              bottom: BorderSide(color: Colors.grey, width: 4),
+              
+            ),
+          ),
           gridData: FlGridData(show: false),
+
           titlesData: FlTitlesData(
             bottomTitles: AxisTitles(sideTitles: _bottomTitles),
             leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -57,7 +61,6 @@ class MyLineGraph extends StatelessWidget{
   }
 }
 SideTitles get _bottomTitles => SideTitles(
-  
   showTitles: true,
   getTitlesWidget: (value, meta) {
     const style = TextStyle(
