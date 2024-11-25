@@ -1,4 +1,4 @@
-import 'package:ewc/imports/imports.dart';
+import 'package:flutter/material.dart';
 
 const spaceNXTGreen = Color.fromARGB(255, 32, 156, 132);
 const spaceNXTGreenLight = Color.fromARGB(255, 147, 175, 173);

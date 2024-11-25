@@ -1,7 +1,7 @@
-import 'package:ewc/imports/imports.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
+import 'package:flutter/material.dart';
 
 class MainNavigationBar extends StatefulWidget {
   const MainNavigationBar({super.key});

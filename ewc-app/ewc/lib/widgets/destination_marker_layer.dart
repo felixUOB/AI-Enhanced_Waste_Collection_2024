@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:ewc/imports/imports.dart';
 import 'package:latlong2/latlong.dart';
 
 class DestinationMarker extends StatelessWidget{
   final LatLng location;
 
+  // ignore: prefer_const_constructors_in_immutables
   DestinationMarker({
     super.key,
     required this.location,
