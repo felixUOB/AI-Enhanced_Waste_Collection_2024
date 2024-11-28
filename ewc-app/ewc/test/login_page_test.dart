@@ -1,12 +1,19 @@
 import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ewc/api/auth_service.dart';
 import "package:mockito/mockito.dart";
-import 'package:url_launcher/url_launcher.dart';
+
+class MockUrlLauncher extends Mock {
+  Future<bool> mockCanLaunchUrl(Uri url) => Future.value(true);
+  void mockLaunchUrl(Uri url);
+}
+
+class MockPageRouter extends Mock {
+  void mockPageRouter();
+}
 
 void main() {
   group('LoginPage Widget Tests', () {
@@ -95,10 +102,23 @@ void main() {
 
       verify(mockUrlLauncher.mockLaunchUrl(testUrl)).called(1);
     });
-  });
-}
+    testWidgets("Register Here button routes to registration page",
+        (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+          home: LoginPage(), routes: {"register": (_) => RegisterPage()}));
 
-class MockUrlLauncher extends Mock {
-  Future<bool> mockCanLaunchUrl(Uri url) => Future.value(true);
-  void mockLaunchUrl(Uri url);
+      expect(find.text("Welcome Back!"), findsOneWidget);
+
+      final richTextFinder = find.byWidgetPredicate(
+        //Pulls text out of Rich Text Widget
+        (widget) =>
+            widget is RichText &&
+            widget.text.toPlainText().contains("Register Here"),
+      );
+      await tester.tap(richTextFinder);
+      await tester.pumpAndSettle();
+
+      expect(find.text("Create an Account"), findsOneWidget);
+    });
+  });
 }
