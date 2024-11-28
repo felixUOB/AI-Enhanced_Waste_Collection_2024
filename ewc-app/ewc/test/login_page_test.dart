@@ -37,64 +37,64 @@ void main() {
           (textFieldDecoration?.focusedBorder as OutlineInputBorder).borderSide;
       expect(borderSide.color, Colors.black);
     });
-  });
 
-  testWidgets('LoginTextField displays hint and obscures text correctly',
-      (WidgetTester tester) async {
-    final controller = TextEditingController();
+    testWidgets('LoginTextField displays hint and obscures text correctly',
+        (WidgetTester tester) async {
+      final controller = TextEditingController();
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: LoginTextfield(
-            controller: controller,
-            hintText: 'Email',
-            obscured: true,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: LoginTextfield(
+              controller: controller,
+              hintText: 'Email',
+              obscured: true,
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    // check if the hint text is displayed
-    expect(find.text('Email'), findsOneWidget);
+      // check if the hint text is displayed
+      expect(find.text('Email'), findsOneWidget);
 
-    // check if the text field is initially obscured
-    final textField = tester.widget<TextField>(find.byType(TextField));
-    expect(textField.obscureText, isTrue);
-  });
+      // check if the text field is initially obscured
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.obscureText, isTrue);
+    });
 
-  testWidgets("Forgot Password button routes to email reset page",
-      (WidgetTester tester) async {
-    final mockUrlLauncher = MockUrlLauncher();
-    final testUrl = Uri.parse("http://127.0.0.1:8000/reset_password/");
+    testWidgets("Forgot Password button routes to email reset page",
+        (WidgetTester tester) async {
+      final mockUrlLauncher = MockUrlLauncher();
+      final testUrl = Uri.parse("http://127.0.0.1:8000/reset_password/");
 
-    when(mockUrlLauncher.mockCanLaunchUrl(testUrl));
+      when(mockUrlLauncher.mockCanLaunchUrl(testUrl));
 
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: HyperLinkText(
-          string1: "",
-          hyperString: "Forgot Password?", //Pump Hyperlink text
-          string2: "",
-          onTap: () async {
-            mockUrlLauncher.mockLaunchUrl(testUrl);
-          },
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: HyperLinkText(
+            string1: "",
+            hyperString: "Forgot Password?", //Pump Hyperlink text
+            string2: "",
+            onTap: () async {
+              mockUrlLauncher.mockLaunchUrl(testUrl);
+            },
+          ),
         ),
-      ),
-    ));
+      ));
 
-    final richTextFinder = find.byWidgetPredicate(
-      //Pulls text out of Rich Text Widget
-      (widget) =>
-          widget is RichText &&
-          widget.text.toPlainText().contains("Forgot Password?"),
-    );
-    expect(richTextFinder, findsOneWidget); //Tests if present
+      final richTextFinder = find.byWidgetPredicate(
+        //Pulls text out of Rich Text Widget
+        (widget) =>
+            widget is RichText &&
+            widget.text.toPlainText().contains("Forgot Password?"),
+      );
+      expect(richTextFinder, findsOneWidget); //Tests if present
 
-    await tester.tap(richTextFinder); //Simulates Tapping link
-    await tester.pumpAndSettle();
+      await tester.tap(richTextFinder); //Simulates Tapping link
+      await tester.pumpAndSettle();
 
-    verify(mockUrlLauncher.mockLaunchUrl(testUrl)).called(1);
+      verify(mockUrlLauncher.mockLaunchUrl(testUrl)).called(1);
+    });
   });
 }
 
