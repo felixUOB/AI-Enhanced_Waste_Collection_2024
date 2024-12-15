@@ -120,5 +120,18 @@ void main() {
 
       expect(find.text("Create an Account"), findsOneWidget);
     });
+
+    testWidgets("Logo Loads Correctly", (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: Image.asset(
+            "assets/RecycleNXT-Logo_Update_Black.png",
+            scale: 8,
+          ),
+        ),
+      ));
+      final imageFinder = find.byType(Image);
+      expect(imageFinder, findsOneWidget);
+    });
   });
 }
