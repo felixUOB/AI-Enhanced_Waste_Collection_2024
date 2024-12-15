@@ -1,10 +1,16 @@
+import 'package:ewc/api/auth_service.dart';
 import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
+import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ewc/widgets/login_button.dart';
+import 'package:mockito/annotations.dart';
 import "package:mockito/mockito.dart";
+import 'login_page_test.mocks.dart';
 
 class MockUrlLauncher extends Mock {
   Future<bool> mockCanLaunchUrl(Uri url) => Future.value(true);
@@ -15,12 +21,12 @@ class MockPageRouter extends Mock {
   void mockPageRouter();
 }
 
+@GenerateMocks([AuthService, MapPage])
 void main() {
   group('LoginPage Widget Tests', () {
     testWidgets('LoginTextField has correct styling',
         (WidgetTester tester) async {
       final controller = TextEditingController();
-
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -28,6 +34,7 @@ void main() {
               controller: controller,
               hintText: 'Email',
               obscured: false,
+              key: Key("emailField"),
             ),
           ),
         ),
@@ -56,6 +63,7 @@ void main() {
               controller: controller,
               hintText: 'Email',
               obscured: true,
+              key: Key("emailField"),
             ),
           ),
         ),
@@ -133,5 +141,33 @@ void main() {
       final imageFinder = find.byType(Image);
       expect(imageFinder, findsOneWidget);
     });
+    testWidgets("SignIn Button Functions Correctly On Correct Login",
+        (WidgetTester tester) async {
+      MockAuthService mockAuth = MockAuthService();
+
+      when((mockAuth.login("mockUsername", "mockPassword")))
+          .thenAnswer((_) async {
+        return Future.value();
+      });
+
+      await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+        body: LoginButton(
+            text1: "Sign In",
+            onPressed: () async {
+              await mockAuth.login("mockUsername", "mockPassword");
+              Navigator.push(
+                tester.element(find.byKey(Key('loginButton'))),
+                MaterialPageRoute(builder: (context) => MapPage()),
+              );
+            }),
+      )));
+      expect(find.byKey(Key("loginButton")), findsOneWidget);
+      await tester.tap(find.byKey(Key('loginButton')));
+      await tester.pumpAndSettle();
+      expect(find.text("RecycleNXT"), findsOneWidget);
+    });
   });
 }
+
+class M {}
