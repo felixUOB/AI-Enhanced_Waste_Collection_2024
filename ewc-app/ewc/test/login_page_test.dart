@@ -4,7 +4,6 @@ import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
-import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
@@ -41,6 +40,7 @@ void main() {
       );
 
       // verify background color
+      expect(find.byKey(Key("emailField")), findsOneWidget);
       final textFieldDecoration =
           tester.widget<TextField>(find.byType(TextField)).decoration;
       expect(textFieldDecoration?.fillColor,
@@ -169,5 +169,3 @@ void main() {
     });
   });
 }
-
-class M {}

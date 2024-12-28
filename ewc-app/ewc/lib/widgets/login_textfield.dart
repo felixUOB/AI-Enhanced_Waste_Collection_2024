@@ -8,10 +8,11 @@ class LoginTextfield extends StatelessWidget {
 
   // ignore: prefer_const_constructors_in_immutables
   LoginTextfield({
+    super.key,
     required this.controller,
     required this.hintText,
     required this.obscured,
-    required dynamic key,
+    // required dynamic key,
   });
 
   @override
