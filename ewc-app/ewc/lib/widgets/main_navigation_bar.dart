@@ -3,9 +3,9 @@ import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/services/route_plot_api.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/screens/map/map_service.dart' as mapService;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+// ignore: must_be_immutable
 class MainNavigationBar extends StatefulWidget {
   bool testing;
   MainNavigationBar({super.key, required this.testing});
@@ -46,9 +46,17 @@ class _NavigationBarState extends State<MainNavigationBar> {
       body: IndexedStack(
         index: currentPageIndex,
         children: [
-          MetricsPage(),
-          !widget.testing ? MapPage() : Text("TESTING"),
-          Schedule()
+          MetricsPage(
+            key: ValueKey("metricsPage"),
+          ),
+          !widget.testing
+              ? MapPage(
+                  key: ValueKey("mapPage"),
+                )
+              : Text("TESTING"),
+          Schedule(
+            key: ValueKey("schedulePage"),
+          )
         ],
       ),
       bottomNavigationBar: NavigationBar(
