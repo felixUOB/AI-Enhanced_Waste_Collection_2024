@@ -11,7 +11,7 @@ import 'map_service.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
-  MapPage({super.key});
+  const MapPage({super.key});
 
   // Creates and returns the private _MapPage state instance to manage the widget's state
   @override

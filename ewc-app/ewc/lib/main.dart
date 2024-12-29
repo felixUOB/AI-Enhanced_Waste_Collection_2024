@@ -1,9 +1,6 @@
-import 'package:ewc/screens/login/login.dart';
-import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
-import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 ThemeManager themeManager = ThemeManager();
