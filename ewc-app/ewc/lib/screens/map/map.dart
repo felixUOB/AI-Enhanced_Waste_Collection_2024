@@ -7,8 +7,6 @@ import '../../services/route_plot_api.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 
-import 'map_service.dart';
-
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -20,7 +18,7 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> {
-  List<LatLng> _routePoints = [];
+  final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
   // State initialisation
@@ -46,18 +44,29 @@ class _MapPage extends State<MapPage> {
       }
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
-      _routePoints = await RouteProvider(routeService: _routeService)
-          .fetchRoute(
-              startLat: 51.4553,
-              startLng: -2.6050,
-              endLat: 51.4492,
-              endLng: -2.5810);
-      setState(() {});
+      await _fetchRoute();
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
           "Failed to initialize map service. Please check API key and network connection.");
     }
+  }
+
+  // Fetches route data from the API
+  Future<void> _fetchRoute() async {
+    const startLat = 51.4553, startLng = -2.6050;
+    const endLat = 51.4492, endLng = -2.5810;
+
+    // Get route points from the API and update _routePoints with the data
+    final List<LatLng> route =
+        await _routeService.getRoute(startLat, startLng, endLat, endLng);
+
+    setState(() {
+      // Remove any existing points
+      _routePoints.clear();
+      // Add new route points
+      _routePoints.addAll(route);
+    });
   }
 
   // Displays an error dialog with the provided message
