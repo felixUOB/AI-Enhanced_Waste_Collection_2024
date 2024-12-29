@@ -6,12 +6,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../services/route_plot_api.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
-import 'package:ewc/screens/map/map_service.dart' as mapService;
+
+import 'map_service.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
-  RouteService? routeService;
-  MapPage({super.key, required this.routeService});
+  MapPage({super.key});
 
   // Creates and returns the private _MapPage state instance to manage the widget's state
   @override
@@ -46,7 +46,7 @@ class _MapPage extends State<MapPage> {
       }
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
-      _routePoints = await mapService.RouteProvider(routeService: _routeService)
+      _routePoints = await RouteProvider(routeService: _routeService)
           .fetchRoute(
               startLat: 51.4553,
               startLng: -2.6050,

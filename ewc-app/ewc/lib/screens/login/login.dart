@@ -96,7 +96,7 @@ class LoginPageState extends State<LoginPage> {
                   navigator.pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => MainNavigationBar(
-                        altRouteService: null,
+                        testing: false,
                       ), // Moving pages
                     ),
                   );

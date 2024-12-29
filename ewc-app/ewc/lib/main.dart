@@ -46,7 +46,7 @@ class MyAppState extends State<App> {
         title: "EWC",
         debugShowCheckedModeBanner: false,
         home: MainNavigationBar(
-          altRouteService: null,
+          testing: false,
         ), // main page
         // theme management
         theme: AppTheme().lightTheme,

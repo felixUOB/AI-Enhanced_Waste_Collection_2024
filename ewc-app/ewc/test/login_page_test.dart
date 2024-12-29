@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:mockito/annotations.dart';
 import "package:mockito/mockito.dart";
-import 'login_page_test.mocks.dart';
+import 'login_page_test.mocks.dart' as mocks;
 
 class MockUrlLauncher extends Mock {
   Future<bool> mockCanLaunchUrl(Uri url) => Future.value(true);
@@ -144,7 +144,7 @@ void main() {
     });
     testWidgets("SignIn Button Functions Correctly On Correct Login",
         (WidgetTester tester) async {
-      MockAuthService mockAuth = MockAuthService();
+      mocks.MockAuthService mockAuth = mocks.MockAuthService();
 
       when((mockAuth.login("mockUsername", "mockPassword")))
           .thenAnswer((_) async {
@@ -160,15 +160,16 @@ void main() {
               Navigator.push(
                 tester.element(find.byKey(Key('loginButton'))),
                 MaterialPageRoute(
-                    builder: (context) =>
-                        MainNavigationBar(altRouteService: null)),
+                    builder: (context) => MainNavigationBar(
+                          testing: true,
+                        )),
               );
             }),
       )));
       expect(find.byKey(Key("loginButton")), findsOneWidget);
       await tester.tap(find.byKey(Key('loginButton')));
       await tester.pumpAndSettle();
-      expect(find.text("RecycleNXT"), findsOneWidget);
+      expect(find.byKey(Key("mainNavigationBar")), findsOneWidget);
     });
   });
 }

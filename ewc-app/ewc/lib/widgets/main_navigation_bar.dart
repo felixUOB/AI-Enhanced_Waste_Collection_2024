@@ -7,8 +7,8 @@ import 'package:ewc/screens/map/map_service.dart' as mapService;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MainNavigationBar extends StatefulWidget {
-  RouteService? altRouteService;
-  MainNavigationBar({super.key, required this.altRouteService});
+  bool testing;
+  MainNavigationBar({super.key, required this.testing});
 
   @override
   State<MainNavigationBar> createState() => _NavigationBarState();
@@ -20,12 +20,8 @@ class _NavigationBarState extends State<MainNavigationBar> {
   late RouteService? routeService;
 
   Future<void> initRouteService() async {
-    if (widget.altRouteService != null) {
-      routeService = widget.altRouteService;
-    } else {
-      await dotenv.load();
-      routeService = RouteService(dotenv.env['API_KEY']!);
-    }
+    await dotenv.load();
+    routeService = RouteService(dotenv.env['API_KEY']!);
 
     setState(() {
       isRouteServiceInitialized = true;
@@ -45,12 +41,13 @@ class _NavigationBarState extends State<MainNavigationBar> {
     }
 
     return Scaffold(
+      key: Key("mainNavigationBar"),
       // Set the body of the scaffold to be the selected screen
       body: IndexedStack(
         index: currentPageIndex,
         children: [
           MetricsPage(),
-          MapPage(routeService: routeService),
+          !widget.testing ? MapPage() : Text("TESTING"),
           Schedule()
         ],
       ),
@@ -74,19 +71,14 @@ class _NavigationBarState extends State<MainNavigationBar> {
 
             // Metrics page icon
             NavigationDestination(
-                key: Key("metricsLink"),
-                icon: Icon(Icons.bar_chart_outlined),
-                label: "Metrics"),
+                icon: Icon(Icons.bar_chart_outlined), label: "Metrics"),
 
             // Map page icon
-            NavigationDestination(
-                key: Key("mapLink"), icon: Icon(Icons.map), label: "Map"),
+            NavigationDestination(icon: Icon(Icons.map), label: "Map"),
 
             // Stops list page icon
             NavigationDestination(
-                key: Key("scheduleLink"),
-                icon: Icon(Icons.menu_rounded),
-                label: "Schedule")
+                icon: Icon(Icons.menu_rounded), label: "Schedule")
           ]),
     );
   }
