@@ -34,6 +34,7 @@ class LoginPageState extends State<LoginPage> {
               height: 170,
             ),
             Image.asset(
+              key: ValueKey("logo"),
               "assets/RecycleNXT-Logo_Update_Black.png",
               scale: 8,
             ),
@@ -123,7 +124,9 @@ class LoginPageState extends State<LoginPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RegisterPage(),
+                    builder: (context) => RegisterPage(
+                      key: ValueKey("registerPage"),
+                    ),
                   ),
                 );
               },

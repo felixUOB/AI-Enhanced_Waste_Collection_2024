@@ -1,4 +1,4 @@
-import 'package:ewc/screens/route-schedule/schedule.dart';
+import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class MyAppState extends State<App> {
     return MaterialApp(
         title: "EWC",
         debugShowCheckedModeBanner: false,
-        home: Schedule(), // main page
+        home: LoginPage(), // main page
         // theme management
         theme: AppTheme().lightTheme,
         darkTheme: AppTheme().darkTheme,

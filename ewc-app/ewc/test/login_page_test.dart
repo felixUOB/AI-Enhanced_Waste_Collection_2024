@@ -12,6 +12,7 @@ import 'package:mockito/annotations.dart';
 import "package:mockito/mockito.dart";
 import 'login_page_test.mocks.dart' as mocks;
 
+//Mock Url Launcher function to replace real urlLauncher
 class MockUrlLauncher extends Mock {
   Future<bool> mockCanLaunchUrl(Uri url) => Future.value(true);
   void mockLaunchUrl(Uri url);
@@ -127,21 +128,14 @@ void main() {
       await tester.tap(richTextFinder);
       await tester.pumpAndSettle();
 
-      expect(find.text("Create an Account"), findsOneWidget);
+      expect(find.byKey(ValueKey("registerPage")), findsOneWidget);
     });
 
     testWidgets("Logo Loads Correctly", (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: Image.asset(
-            "assets/RecycleNXT-Logo_Update_Black.png",
-            scale: 8,
-          ),
-        ),
-      ));
-      final imageFinder = find.byType(Image);
-      expect(imageFinder, findsOneWidget);
+      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      expect(find.byKey(ValueKey("logo")), findsOneWidget);
     });
+
     testWidgets("SignIn Button Functions Correctly On Correct Login",
         (WidgetTester tester) async {
       mocks.MockAuthService mockAuth = mocks.MockAuthService();
@@ -150,7 +144,6 @@ void main() {
           .thenAnswer((_) async {
         return Future.value();
       });
-
       await tester.pumpWidget(MaterialApp(
           home: Scaffold(
         body: LoginButton(
@@ -170,6 +163,7 @@ void main() {
       await tester.tap(find.byKey(Key('loginButton')));
       await tester.pumpAndSettle();
       expect(find.byKey(Key("mainNavigationBar")), findsOneWidget);
+      expect(find.byKey(Key("mapPageReplacement")), findsOneWidget);
     });
   });
 }
