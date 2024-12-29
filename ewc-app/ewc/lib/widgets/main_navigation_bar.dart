@@ -53,7 +53,13 @@ class _NavigationBarState extends State<MainNavigationBar> {
               ? MapPage(
                   key: ValueKey("mapPage"),
                 )
-              : Text("TESTING"),
+              : Container(
+                  key: ValueKey("mapPageReplacement"),
+                  color: Colors.green,
+                  child: Center(
+                    child: Text("TESTING - MAP DISABLED"),
+                  ),
+                ),
           Schedule(
             key: ValueKey("schedulePage"),
           )

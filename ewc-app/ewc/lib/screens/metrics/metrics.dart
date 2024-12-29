@@ -76,6 +76,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                       SizedBox(
                                         height: 200,
                                         child: MyBarGraph(
+                                            key: ValueKey("barGraph"),
                                             weeklySummary: carbonFootPrintData),
                                       ),
                                     ]),
@@ -101,6 +102,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                     SizedBox(
                                       height: 200,
                                       child: MyLineGraph(
+                                          key: ValueKey("lineGraph"),
                                           weeklySummary: carbonFootPrintData),
                                     ),
                                   ]),
@@ -128,6 +130,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                       SizedBox(
                                         height: 200,
                                         child: MyPieChart(
+                                            key: ValueKey("pieGraph"),
                                             sectors: carbonFootPrintData),
                                       ),
                                     ]),
