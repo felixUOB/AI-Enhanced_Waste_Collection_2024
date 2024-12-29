@@ -95,7 +95,9 @@ class LoginPageState extends State<LoginPage> {
                   // Navigate to the schedule page after successful login
                   navigator.pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => MainNavigationBar(), // Moving pages
+                      builder: (context) => MainNavigationBar(
+                        altRouteService: null,
+                      ), // Moving pages
                     ),
                   );
                 } catch (e) {

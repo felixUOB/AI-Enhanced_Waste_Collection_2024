@@ -1,25 +1,58 @@
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
+import 'package:ewc/services/route_plot_api.dart';
 import 'package:flutter/material.dart';
+import 'package:ewc/screens/map/map_service.dart' as mapService;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class MainNavigationBar extends StatefulWidget {
-  const MainNavigationBar({super.key});
+  RouteService? altRouteService;
+  MainNavigationBar({super.key, required this.altRouteService});
 
   @override
   State<MainNavigationBar> createState() => _NavigationBarState();
 }
 
 class _NavigationBarState extends State<MainNavigationBar> {
+  bool isRouteServiceInitialized = false;
   int currentPageIndex = 1; // Set default opening page to map
+  late RouteService? routeService;
+
+  Future<void> initRouteService() async {
+    if (widget.altRouteService != null) {
+      routeService = widget.altRouteService;
+    } else {
+      await dotenv.load();
+      routeService = RouteService(dotenv.env['API_KEY']!);
+    }
+
+    setState(() {
+      isRouteServiceInitialized = true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initRouteService();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (!isRouteServiceInitialized) {
+      return Center(child: CircularProgressIndicator());
+    }
+
     return Scaffold(
       // Set the body of the scaffold to be the selected screen
       body: IndexedStack(
         index: currentPageIndex,
-        children: [MetricsPage(), MapPage(), Schedule()],
+        children: [
+          MetricsPage(),
+          MapPage(routeService: routeService),
+          Schedule()
+        ],
       ),
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {

@@ -17,7 +17,9 @@ void main() {
     testWidgets("Metric Page Button Functions Correctly",
         (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(
-        home: MainNavigationBar(),
+        home: MainNavigationBar(
+          altRouteService: null,
+        ),
       ));
       expect(find.byKey(Key("metricsLink")), findsOneWidget);
       await tester.tap(find.byKey(Key("metricsLink")));

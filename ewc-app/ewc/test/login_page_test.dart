@@ -4,6 +4,7 @@ import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
+import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
@@ -158,7 +159,9 @@ void main() {
               await mockAuth.login("mockUsername", "mockPassword");
               Navigator.push(
                 tester.element(find.byKey(Key('loginButton'))),
-                MaterialPageRoute(builder: (context) => MapPage()),
+                MaterialPageRoute(
+                    builder: (context) =>
+                        MainNavigationBar(altRouteService: null)),
               );
             }),
       )));

@@ -10,7 +10,8 @@ import 'package:ewc/screens/map/map_service.dart' as mapService;
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  RouteService? routeService;
+  MapPage({super.key, required this.routeService});
 
   // Creates and returns the private _MapPage state instance to manage the widget's state
   @override

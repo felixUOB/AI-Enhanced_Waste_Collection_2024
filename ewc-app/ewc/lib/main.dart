@@ -45,7 +45,9 @@ class MyAppState extends State<App> {
     return MaterialApp(
         title: "EWC",
         debugShowCheckedModeBanner: false,
-        home: MainNavigationBar(), // main page
+        home: MainNavigationBar(
+          altRouteService: null,
+        ), // main page
         // theme management
         theme: AppTheme().lightTheme,
         darkTheme: AppTheme().darkTheme,
