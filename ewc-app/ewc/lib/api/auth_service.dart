@@ -8,23 +8,38 @@ class AuthService {
   final String apiUrl = 'http://127.0.0.1:8000/api';
   final String adminUrl = 'http://127.0.0.1:8000/admin';
 
+  // Save username and password
+  Future<void> saveUserCredentials(String username, String password) async {
+    await storage.write(key: 'username', value: username); // Store username
+    await storage.write(key: 'password', value: password); // Store password
+  }
 
+  // Load username and password
+  Future<Map<String, String?>> loadUserCredentials() async {
+    String? username = await storage.read(key: 'username');
+    String? password = await storage.read(key: 'password');
+    return {'username': username, 'password': password};
+  }
+
+  // Clear credentials
+  Future<void> clearCredentials() async {
+    await storage.deleteAll(); // Remove all data
+  }
 
   Future<bool> checkEmail(String email) async {
-      final response = await http.get(
-        Uri.parse("$apiUrl/check-email/?email=$email"),
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      );
-      if(response.statusCode == 500){
-        throw Exception("Server Error: If email field is blank please input email.");
-      } else if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return data['exists'] ?? false;
-      } else {
-        throw Exception('Failed to check email');
-      }
+    final response = await http
+        .get(Uri.parse("$apiUrl/check-email/?email=$email"), headers: {
+      'Content-Type': 'application/json',
+    });
+    if (response.statusCode == 500) {
+      throw Exception(
+          "Server Error: If email field is blank please input email.");
+    } else if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['exists'] ?? false;
+    } else {
+      throw Exception('Failed to check email');
+    }
   }
 
   // Login method: Obtain JWT access and refresh tokens
@@ -35,7 +50,6 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username, 'password': password}),
       );
-
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -76,12 +90,14 @@ class AuthService {
         await storage.delete(key: 'refreshToken');
         throw Exception('Refresh token expired. Please log in again.');
       } else {
-        throw Exception('Failed to refresh access token. Status code: ${response.statusCode}');
+        throw Exception(
+            'Failed to refresh access token. Status code: ${response.statusCode}');
       }
     } else {
       throw Exception('No refresh token available');
     }
   }
+
   // Method to make an authenticated request
   Future<http.Response> makeAuthenticatedRequest(String endpoint) async {
     String? accessToken = await storage.read(key: 'accessToken');
@@ -117,39 +133,39 @@ class AuthService {
   }
 
   // Add registration method
-Future<void> register({
-  required String username,
-  required String password,
-  required email,
-  required phoneNumber,
-  required address,
-  // Additional fields if needed
-}) async {
-  final response = await http.post(
-    Uri.parse('$apiUrl/register/'),
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'username': username,
-      'password': password,
-      'email': email ?? '',
-      'phone_number': phoneNumber ?? '',
-      'address': address ?? '',
-      // Include additional fields if necessary
-    }),
-  );
+  Future<void> register({
+    required String username,
+    required String password,
+    required email,
+    required phoneNumber,
+    required address,
+    // Additional fields if needed
+  }) async {
+    final response = await http.post(
+      Uri.parse('$apiUrl/register/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+        'email': email ?? '',
+        'phone_number': phoneNumber ?? '',
+        'address': address ?? '',
+        // Include additional fields if necessary
+      }),
+    );
 
-  if (response.statusCode == 201) {
-    // Perform additional actions upon successful registration
-  } else {
-    var data = jsonDecode(response.body);
-    throw Exception('Failed to register: ${data.toString()}');
+    if (response.statusCode == 201) {
+      // Perform additional actions upon successful registration
+    } else {
+      var data = jsonDecode(response.body);
+      throw Exception('Failed to register: ${data.toString()}');
+    }
   }
-}
 }
 
 Future<void> launchPasswordReset() async {
-    final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
-  
+  final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
+
   if (await canLaunchUrl(resetUri)) {
     await launchUrl(resetUri, mode: LaunchMode.externalApplication);
   } else {
