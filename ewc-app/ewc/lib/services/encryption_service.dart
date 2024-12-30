@@ -31,7 +31,7 @@ class EncryptionService {
     final ivBase64 = iv.base64;
     final encryptedBase64 = encrypted.base64;
 
-    return '$ivBase64:$encryptedBase64';
+    return '$ivBase64:$encryptedBase64'; //Sends IV with Encrypted Data
   }
 
   // Method to decrypt data

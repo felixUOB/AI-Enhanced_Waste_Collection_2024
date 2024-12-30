@@ -28,11 +28,9 @@ class AuthService {
   Future<void> saveUserCredentials(String username, String password) async {
     await authStorage.write(key: 'username', value: username); // Store username
 
-    print("Encrypting password...");
     var encryptedPassword =
         encryptionService.encryptData(password); // Encrypt Password
 
-    print("Encrypted password: $encryptedPassword");
     await authStorage.write(
         key: 'password', value: encryptedPassword); // Store password
   }
@@ -44,24 +42,24 @@ class AuthService {
 
     if (encryptedPassword != null && username != null) {
       try {
-        print("Encrypted Password: $encryptedPassword");
-        var password = encryptionService.decryptData(encryptedPassword);
-        print("Returning 'username': $username, 'password': $password");
+        var password = encryptionService
+            .decryptData(encryptedPassword); //Attempts decryption
         return {'username': username, 'password': password};
       } catch (e) {
         print('Decryption failed: $e');
         return {'username': null, 'password': null};
       }
     } else {
-      print("No Data found");
       return {'username': null, 'password': null};
     }
   }
 
-  // Clear credentials
+  // Clear credentials and tokens
   Future<void> clearCredentials() async {
     await authStorage.deleteAll(); // Remove all data
   }
+
+//====================DJANGO AUTH FUNCTIONS=======================================
 
   Future<bool> checkEmail(String email) async {
     final response = await http
@@ -78,8 +76,6 @@ class AuthService {
       throw Exception('Failed to check email');
     }
   }
-
-//====================DJANGO AUTH FUNCTIONS=======================================
 
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {

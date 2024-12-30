@@ -83,7 +83,6 @@ class LoginPageState extends State<LoginPage> {
                           Checkbox(
                               value: _rememberMe,
                               onChanged: (value) => setState(() {
-                                    print(value);
                                     _rememberMe = value!;
                                   })),
                         ],
