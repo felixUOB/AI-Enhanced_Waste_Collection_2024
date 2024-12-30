@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/encryption_service.dart' as encrypt;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
@@ -10,8 +11,15 @@ class AuthService {
   final String apiUrl = 'http://127.0.0.1:8000/api';
   final String adminUrl = 'http://127.0.0.1:8000/admin';
 
-  AuthService() {
-    encryptionService.init("12345678901234567890123456789012");
+  Future<void> initializeAuthService() async {
+    await dotenv.load(fileName: '.env');
+
+    // Check if the API key exists in .env; show an error message if not
+    final encryptionKey = dotenv.env['ENCRYPTION_KEY'];
+    if (encryptionKey == null || encryptionKey.isEmpty) {
+      throw Exception("Encryption Key missing in .env file.");
+    }
+    encryptionService.init(encryptionKey);
   }
 
 //====================AUTO LOGIN FUNCTIONS=======================================
@@ -35,11 +43,15 @@ class AuthService {
     String? encryptedPassword = await authStorage.read(key: 'password');
 
     if (encryptedPassword != null && username != null) {
-      print("Decrypting Data");
-      print("$encryptedPassword");
-      var password = encryptionService.decryptData(encryptedPassword);
-      print("$password");
-      return {'username': username, 'password': password};
+      try {
+        print("Encrypted Password: $encryptedPassword");
+        var password = encryptionService.decryptData(encryptedPassword);
+        print("Returning 'username': $username, 'password': $password");
+        return {'username': username, 'password': password};
+      } catch (e) {
+        print('Decryption failed: $e');
+        return {'username': null, 'password': null};
+      }
     } else {
       print("No Data found");
       return {'username': null, 'password': null};

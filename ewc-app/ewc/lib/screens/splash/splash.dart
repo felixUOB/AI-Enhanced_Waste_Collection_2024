@@ -24,13 +24,17 @@ class SplashPageState extends State<SplashPage> {
   }
 
   void _attemptAutoLogin() async {
+    // await _authService.clearCredentials();
     var credentials = await _authService.loadUserCredentials();
+
     String? username = credentials['username'];
     String? password = credentials['password'];
 
     if (username != null && password != null) {
       try {
         await Future.delayed(const Duration(seconds: 1));
+        print("Attempting Login with $username, $password");
+
         await _authService.login(username, password);
 
         if (mounted) {
@@ -50,7 +54,7 @@ class SplashPageState extends State<SplashPage> {
         }
       }
     } else {
-      await Future.delayed(const Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 2));
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
