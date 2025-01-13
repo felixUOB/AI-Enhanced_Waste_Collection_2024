@@ -1,19 +1,41 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthService {
   final storage = FlutterSecureStorage();
-  final String baseUrl = 'http://127.0.0.1:8000/api';
+  final String apiUrl = 'http://127.0.0.1:8000/api';
+  final String adminUrl = 'http://127.0.0.1:8000/admin';
+
+
+
+  Future<bool> checkEmail(String email) async {
+      final response = await http.get(
+        Uri.parse("$apiUrl/check-email/?email=$email"),
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      );
+      if(response.statusCode == 500){
+        throw Exception("Server Error: If email field is blank please input email.");
+      } else if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['exists'] ?? false;
+      } else {
+        throw Exception('Failed to check email');
+      }
+  }
 
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$baseUrl/token/'),
+        Uri.parse('$apiUrl/token/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username, 'password': password}),
       );
+
 
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
@@ -38,7 +60,7 @@ class AuthService {
 
     if (refreshToken != null) {
       final response = await http.post(
-        Uri.parse('$baseUrl/token/refresh/'),
+        Uri.parse('$apiUrl/token/refresh/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refresh': refreshToken}),
       );
@@ -65,7 +87,7 @@ class AuthService {
     String? accessToken = await storage.read(key: 'accessToken');
 
     final response = await http.get(
-      Uri.parse('$baseUrl/$endpoint'),
+      Uri.parse('$apiUrl/$endpoint'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
@@ -80,7 +102,7 @@ class AuthService {
       String? newAccessToken = await storage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.get(
-          Uri.parse('$baseUrl/$endpoint'),
+          Uri.parse('$apiUrl/$endpoint'),
           headers: {
             'Authorization': 'Bearer $newAccessToken',
             'Content-Type': 'application/json',
@@ -104,7 +126,7 @@ Future<void> register({
   // Additional fields if needed
 }) async {
   final response = await http.post(
-    Uri.parse('$baseUrl/register/'),
+    Uri.parse('$apiUrl/register/'),
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode({
       'username': username,
@@ -123,6 +145,14 @@ Future<void> register({
     throw Exception('Failed to register: ${data.toString()}');
   }
 }
+}
 
-
+Future<void> launchPasswordReset() async {
+    final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
+  
+  if (await canLaunchUrl(resetUri)) {
+    await launchUrl(resetUri, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch password reset URL';
+  }
 }

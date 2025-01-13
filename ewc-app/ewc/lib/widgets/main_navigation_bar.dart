@@ -1,7 +1,7 @@
-import 'package:ewc/imports/imports.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
+import 'package:flutter/material.dart';
 
 class MainNavigationBar extends StatefulWidget {
   const MainNavigationBar({super.key});
@@ -19,7 +19,7 @@ class _NavigationBarState extends State<MainNavigationBar> {
       // Set the body of the scaffold to be the selected screen
       body: IndexedStack(
       index: currentPageIndex,
-      children: const [
+      children: [
         MetricsPage(),
         MapPage(),
         Schedule()

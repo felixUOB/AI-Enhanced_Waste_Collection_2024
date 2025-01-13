@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../services/route-plot-api.dart';
+import '../../services/route_plot_api.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:http/http.dart' as http;
@@ -64,7 +65,6 @@ class _MapPage extends State<MapPage> {
 
     } catch (e) {
       // Log the error and provide feedback
-      print("Error initializing environment and service: $e Failed to initialize map service. Please check API key");
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
     }
 
@@ -112,9 +112,33 @@ class _MapPage extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('RecycleNXT',
-      style:TextStyle(fontFamily: 'Questrial', fontSize: 22),
-      ),
+
+      appBar: AppBar(
+        //toolbarHeight: 75,
+        title: Text('RecycleNXT',
+            style: Theme.of(context).textTheme.titleLarge),
+            //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
+        actions: [
+          SafeArea(
+          child: Container(
+              // ignore: prefer_const_literals_to_create_immutables
+              margin: EdgeInsets.only(right: 8.0),
+              child: Column(
+                children: [
+                  Padding(
+                  padding: const EdgeInsets.all(3),
+                  child:
+                    // ignore: prefer_const_constructors
+                    Align(
+                      alignment: Alignment.topRight, 
+                      // ignore: prefer_const_constructors
+                      child: ThemeSwitch(),
+                    )
+                  )
+                ],
+              )
+          ))// ignore: prefer_const_constructor 
+          ],
       ),
       body: content(),
     );
