@@ -2,18 +2,23 @@ import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+// This file contains tests for the App Navigation
 void main() {
+  // Group of tests for the App Navigation
   group('App Navigation Tests', () {
+    // Test to check if the main navigation bar buttons function correctly
     testWidgets("Main Navigation Bar Buttons Function Correctly",
         (WidgetTester tester) async {
+      // Build the MainNavigationBar widget inside a MaterialApp
       await tester.pumpWidget(MaterialApp(
         home: MainNavigationBar(
           testing: true,
         ),
       ));
+      // Wait for all animations to complete
       await tester.pumpAndSettle();
 
-      //Creating instances of widgets if found
+      // Creating instances of widgets if found
       final metricsDestination = find.byWidgetPredicate(
         (widget) =>
             widget is NavigationDestination && widget.label == "Metrics",
@@ -26,12 +31,12 @@ void main() {
             widget is NavigationDestination && widget.label == "Schedule",
       );
 
-      //Checking number of instances is correct
+      // Checking number of instances is correct
       expect(metricsDestination, findsOneWidget);
       expect(mapDestination, findsOneWidget);
       expect(scheduleDestination, findsOneWidget);
 
-      //Check all buttons change shown widget correctly
+      // Check all buttons change shown widget correctly
       await tester.tap(metricsDestination);
       await tester.pumpAndSettle();
       expect(find.byKey(ValueKey("metricsPage")), findsOneWidget);
