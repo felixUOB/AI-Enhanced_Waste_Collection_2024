@@ -8,7 +8,7 @@ import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
-class MapPage extends StatefulWidget{
+class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
   // Creates and returns the private _MapPage state instance to manage the widget's state
@@ -21,12 +21,11 @@ class _MapPage extends State<MapPage> {
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
-  // State initialisation 
+  // State initialisation
   @override
   void initState() {
     super.initState();
     _initializeEnvAndService();
-
   }
 
   // This function loads .env and initializes RouteService asynchronously
@@ -43,16 +42,14 @@ class _MapPage extends State<MapPage> {
       if (apiKey == null || apiKey.isEmpty) {
         throw Exception("API key missing in .env file.");
       }
-    // Initialize RouteService with the valid API key
-    _routeService = RouteService(dotenv.env['API_KEY']!);
-    await _fetchRoute();
-
+      // Initialize RouteService with the valid API key
+      _routeService = RouteService(dotenv.env['API_KEY']!);
+      await _fetchRoute();
     } catch (e) {
       // Log the error and provide feedback
-      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
+      _showErrorDialog(
+          "Failed to initialize map service. Please check API key and network connection.");
     }
-
-
   }
 
   // Fetches route data from the API
@@ -61,7 +58,8 @@ class _MapPage extends State<MapPage> {
     const endLat = 51.4492, endLng = -2.5810;
 
     // Get route points from the API and update _routePoints with the data
-    final List<LatLng> route = await _routeService.getRoute(startLat, startLng, endLat, endLng);
+    final List<LatLng> route =
+        await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
       // Remove any existing points
@@ -70,7 +68,6 @@ class _MapPage extends State<MapPage> {
       _routePoints.addAll(route);
     });
   }
-
 
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
@@ -89,74 +86,59 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-
-
-
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         //toolbarHeight: 75,
-        title: Text('RecycleNXT',
-            style: Theme.of(context).textTheme.titleLarge),
-            //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
+        title:
+            Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
+        //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
         actions: [
           SafeArea(
-          child: Container(
-              // ignore: prefer_const_literals_to_create_immutables
-              margin: EdgeInsets.only(right: 8.0),
-              child: Column(
-                children: [
-                  Padding(
-                  padding: const EdgeInsets.all(3),
-                  child:
-                    // ignore: prefer_const_constructors
-                    Align(
-                      alignment: Alignment.topRight, 
-                      // ignore: prefer_const_constructors
-                      child: ThemeSwitch(),
-                    )
-                  )
-                ],
-              )
-          ))// ignore: prefer_const_constructor 
-          ],
+              child: Container(
+                  // ignore: prefer_const_literals_to_create_immutables
+                  margin: EdgeInsets.only(right: 8.0),
+                  child: Column(
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(3),
+                          child:
+                              // ignore: prefer_const_constructors
+                              Align(
+                            alignment: Alignment.topRight,
+                            // ignore: prefer_const_constructors
+                            child: ThemeSwitch(),
+                          ))
+                    ],
+                  ))) // ignore: prefer_const_constructor
+        ],
       ),
       body: content(),
     );
   }
 
-
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
-  return FlutterMap(
-    options: const MapOptions(
-      initialCenter: LatLng(51.4492, -2.5879),
-      initialZoom: 14,
-      interactionOptions:
-        InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
-    ),
-    
-    children: [
-      openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-      RoutePolylineLayer(routePoints : _routePoints),
-      DestinationMarker(location: LatLng(51.4516, -2.5810)),
-    
-
-    ],
-    
-  );
-}
-
+    return FlutterMap(
+      options: const MapOptions(
+        initialCenter: LatLng(51.4492, -2.5879),
+        initialZoom: 14,
+        interactionOptions:
+            InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
+      ),
+      children: [
+        openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        RoutePolylineLayer(routePoints: _routePoints),
+        DestinationMarker(location: LatLng(51.4516, -2.5810)),
+      ],
+    );
+  }
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-  );
-
-
-
+        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+      );
 }
