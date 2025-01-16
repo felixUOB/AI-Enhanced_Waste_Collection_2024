@@ -187,3 +187,6 @@ Navigate to the root directory of the Flutter project `cd ewc-app/ewc`
 <img width="947" alt="Screenshot 2024-10-09 at 15 10 10" src="https://github.com/user-attachments/assets/47126bfd-216d-4ed0-af83-25c644637679">
 
 # **Database Diagram**
+
+<img width="900" alt="image" src="https://github.com/user-attachments/assets/063dae5e-0fce-4dff-956f-77c55aae6129" />
+
