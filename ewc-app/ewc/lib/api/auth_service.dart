@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AuthService {
   final storage = FlutterSecureStorage();
-  final String apiUrl = 'http://127.0.0.1:8000/api';
+  final String apiUrl = 'http://10.0.2.2:8000/api'; // changed to 10.0.2.2 to work with android emulator
   final String adminUrl = 'http://127.0.0.1:8000/admin';
 
   Future<bool> checkEmail(String email) async {
