@@ -1,8 +1,8 @@
 from rest_framework import viewsets, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import UserProfile, CollectionPoint, JourneyMetric, WastePrediction
-from .serializers import UserProfileSerializer, CollectionPointSerializer, JourneyMetricSerializer, WastePredictionSerializer, UserRegistrationSerializer, UserSerializer
+from .models import UserProfile, StopCollection, Stops, RouteEnvData
+from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, UserSerializer
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib.auth import views as auth_views
@@ -17,21 +17,21 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Collection Point ViewSet
-class CollectionPointViewSet(viewsets.ModelViewSet):
-    queryset = CollectionPoint.objects.all()
-    serializer_class = CollectionPointSerializer
+class StopCollectionViewSet(viewsets.ModelViewSet):
+    queryset = StopCollection.objects.all()
+    serializer_class = StopCollectionSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Journey Metric ViewSet
-class JourneyMetricViewSet(viewsets.ModelViewSet):
-    queryset = JourneyMetric.objects.all()
-    serializer_class = JourneyMetricSerializer
+class RouteEnvDataViewSet(viewsets.ModelViewSet):
+    queryset = RouteEnvData.objects.all()
+    serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Waste Prediction ViewSet
-class WastePredictionViewSet(viewsets.ModelViewSet):
-    queryset = WastePrediction.objects.all()
-    serializer_class = WastePredictionSerializer
+class StopsViewSet(viewsets.ModelViewSet):
+    queryset = Stops.objects.all()
+    serializer_class = StopsSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Registration view

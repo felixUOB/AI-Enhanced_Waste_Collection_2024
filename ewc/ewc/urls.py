@@ -20,7 +20,7 @@ from django.http import JsonResponse
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from ewc_web.views import UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet, UserRegistrationView
+from ewc_web.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
 from ewc_web import views
 from django.contrib.auth import views as auth_views
 
@@ -29,9 +29,9 @@ from django.contrib.auth import views as auth_views
 # Router configuration for REST API endpoints
 router = routers.DefaultRouter()
 router.register(r'user_profiles', UserProfileViewSet, basename='userprofile')
-router.register(r'collection_points', CollectionPointViewSet, basename='collectionpoint')
-router.register(r'journey_metrics', JourneyMetricViewSet, basename='journeymetric')
-router.register(r'waste_predictions', WastePredictionViewSet, basename='wasteprediction')
+router.register(r'stops', StopsViewSet, basename='stops')
+router.register(r'stop_collection', StopCollectionViewSet, basename='stopcollection')
+router.register(r'route_env_data', RouteEnvDataViewSet, basename='routeenvdata')
 # URL patterns for the application
 urlpatterns = [
     path('admin/', admin.site.urls),  # Admin site route

@@ -122,7 +122,7 @@ class DjangoSession(models.Model):
         db_table = 'django_session'
 
 
-class EwcWebRouteEnvData(models.Model):
+class RouteEnvData(models.Model):
     route_env_data_id = models.AutoField(primary_key=True)
     distance = models.FloatField()
     mpg = models.FloatField()
@@ -133,7 +133,7 @@ class EwcWebRouteEnvData(models.Model):
         db_table = 'ewc_web_route_env_data'
 
 
-class EwcWebStopCollection(models.Model):
+class StopCollection(models.Model):
     stop_collection_id = models.AutoField(primary_key=True)
     stop = models.ForeignKey('EwcWebStops', models.DO_NOTHING)
     weight_collected = models.IntegerField()
@@ -143,7 +143,7 @@ class EwcWebStopCollection(models.Model):
         db_table = 'ewc_web_stop_collection'
 
 
-class EwcWebStops(models.Model):
+class Stops(models.Model):
     stop_id = models.BigAutoField(primary_key=True)
     location_name = models.CharField(max_length=255, blank=True, null=True)
     latitude = models.FloatField()
@@ -156,7 +156,7 @@ class EwcWebStops(models.Model):
         db_table = 'ewc_web_stops'
 
 
-class EwcWebUserprofile(models.Model):
+class Userprofile(models.Model):
     id = models.BigAutoField(primary_key=True)
     phone_number = models.CharField(max_length=15)
     address = models.TextField()
