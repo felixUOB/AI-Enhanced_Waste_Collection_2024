@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:ewc/api/auth_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
+// SplashPage is the initial screen that attempts auto-login
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -21,6 +22,7 @@ class SplashPageState extends State<SplashPage> {
     _attemptAutoLogin();
   }
 
+  // Attempts to auto-login using saved credentials
   void _attemptAutoLogin() async {
     // await _authService.clearCredentials();
     var credentials = await _authService.loadUserCredentials();
@@ -32,7 +34,7 @@ class SplashPageState extends State<SplashPage> {
       try {
         await Future.delayed(const Duration(seconds: 1));
         await _authService.login(
-            username, password); //Attempt login with given credentials
+            username, password); // Attempt login with given credentials
 
         if (mounted) {
           Navigator.of(context).pushReplacement(
@@ -51,7 +53,7 @@ class SplashPageState extends State<SplashPage> {
           );
         }
       }
-      //If either username or password is null, skip check and route to Login
+      // If either username or password is null, skip check and route to Login
     } else {
       await Future.delayed(const Duration(seconds: 2));
       if (mounted) {

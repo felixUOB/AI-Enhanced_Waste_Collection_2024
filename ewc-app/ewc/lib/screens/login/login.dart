@@ -7,6 +7,7 @@ import 'package:ewc/api/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
+// LoginPage is the screen where users can log in to the app
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

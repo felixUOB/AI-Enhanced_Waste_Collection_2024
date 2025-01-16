@@ -54,7 +54,7 @@ class MyAppState extends State<App> {
     return MaterialApp(
         title: "EWC",
         debugShowCheckedModeBanner: false,
-        home: SplashPage(), // main page
+        home: SplashPage(),
         // theme management
         theme: AppTheme().lightTheme,
         darkTheme: AppTheme().darkTheme,

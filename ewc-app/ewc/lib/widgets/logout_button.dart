@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// LogoutButton is a button widget that triggers a logout action
 // ignore: must_be_immutable
 class LogoutButton extends StatefulWidget {
   IconData iconData;
@@ -20,35 +21,18 @@ class LogoutButtonState extends State<LogoutButton> {
 
   @override
   Widget build(BuildContext context) {
-    Color? defaultColor = Theme.of(context).iconTheme.color;
-    final Color hoverColor = Theme.of(context).colorScheme.primary;
-
     return ConstrainedBox(
       constraints: BoxConstraints(maxWidth: 90),
-      child: MouseRegion(
-        onEnter: (event) {
-          print("HOVERING");
-          setState(() {
-            isHovered = true;
-          });
-        },
-        onExit: (event) {
-          print("NOT HOVERING");
-          setState(() {
-            isHovered = false;
-          });
-        },
-        child: SizedBox(
-          height: 50,
-          width: 50,
-          child: ElevatedButton(
-            style: Theme.of(context).elevatedButtonTheme.style,
-            onPressed: widget.onPressed,
-            child: Icon(
-              widget.iconData,
-              color: isHovered ? hoverColor : defaultColor,
-              size: 25,
-            ),
+      child: SizedBox(
+        height: 50,
+        width: 50,
+        child: ElevatedButton(
+          style: Theme.of(context).elevatedButtonTheme.style,
+          onPressed: widget.onPressed,
+          child: Icon(
+            widget.iconData,
+            color: Theme.of(context).iconTheme.color,
+            size: 25,
           ),
         ),
       ),
