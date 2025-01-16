@@ -38,10 +38,22 @@ class LoginPageState extends State<LoginPage> {
               height: 170,
             ),
             Image.asset(
+              key: ValueKey("logo"),
               "assets/RecycleNXT-Logo_Update_Black.png",
               scale: 8,
             ),
 
+            //-------------WELCOME BACK TXT-FIELD----------------------
+            const SizedBox(
+              height: 50,
+            ),
+            Text(
+              "Welcome Back!",
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
             //-------------WELCOME BACK TXT-FIELD----------------------
             const SizedBox(
               height: 50,
@@ -59,6 +71,7 @@ class LoginPageState extends State<LoginPage> {
               controller: usernameController,
               hintText: "Username",
               obscured: false,
+              key: Key("usernameFeild"),
             ),
             const SizedBox(
               height: 10,
@@ -69,6 +82,7 @@ class LoginPageState extends State<LoginPage> {
               controller: passwordController,
               hintText: "Password",
               obscured: true,
+              key: Key("passwordField"),
             ),
 
             //-------------HYPERLINK: FORGOT PASSWORD----------------------
@@ -142,7 +156,9 @@ class LoginPageState extends State<LoginPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RegisterPage(),
+                    builder: (context) => RegisterPage(
+                      key: ValueKey("registerPage"),
+                    ),
                   ),
                 );
               },

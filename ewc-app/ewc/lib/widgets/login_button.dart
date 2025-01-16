@@ -16,6 +16,7 @@ class LoginButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(25),
       child: ElevatedButton(
+        key: Key("loginButton"),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.black,
           shape: RoundedRectangleBorder(
@@ -27,7 +28,7 @@ class LoginButton extends StatelessWidget {
         child: Text(
           " $text1",
           style: AppTheme().constWhiteTextMedium,
-          ),
+        ),
       ),
     );
   }

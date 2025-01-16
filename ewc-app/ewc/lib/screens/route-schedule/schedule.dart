@@ -20,71 +20,67 @@ class Schedule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 // ------------Top app bar------------
-
-      appBar: AppBar(
-        //toolbarHeight: 75,
-        title: Text('Schedule',
-            style: Theme.of(context).textTheme.titleLarge),
-            //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
-        // dark vs light mode toggle
-        actions: [
-          SafeArea(
-          child: Container(
-              // ignore: prefer_const_literals_to_create_immutables
-              margin: EdgeInsets.only(right: 8.0),
-              child: Column(
-                children: [
-                  Padding(
-                  padding: const EdgeInsets.all(3),
-                  child:
-                    // ignore: prefer_const_constructors
-                    Align(
-                      alignment: Alignment.topRight, 
-                      // ignore: prefer_const_constructors
-                      child: ThemeSwitch(),
-                    )
-                  )
-                ],
-              )
-          ))// ignore: prefer_const_constructor 
+        appBar: AppBar(
+          //toolbarHeight: 75,
+          title:
+              Text('Schedule', style: Theme.of(context).textTheme.titleLarge),
+          //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
+          // dark vs light mode toggle
+          actions: [
+            SafeArea(
+                child: Container(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    margin: EdgeInsets.only(right: 8.0),
+                    child: Column(
+                      children: [
+                        Padding(
+                            padding: const EdgeInsets.all(3),
+                            child:
+                                // ignore: prefer_const_constructors
+                                Align(
+                              alignment: Alignment.topRight,
+                              // ignore: prefer_const_constructors
+                              child: ThemeSwitch(),
+                            ))
+                      ],
+                    ))) // ignore: prefer_const_constructor
           ],
-      ),
+        ),
 // ------------List of stops------------
-      // makes a scrollable list
-      body: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50.0),
-          child: ListView.builder(
-            itemCount: routes.length,
-            itemBuilder: (BuildContext context, int index){
-              return CustomTimelineTile(
-                inPast: checkTimeLabel(routes[index]), // checks if its in the past or in the future
-                isFirst: (index == 0) ? true : false, // if it is the first index set the property to true
-                isLast: (index == routes.length-1) ? true : false, // checks if its the last in the list
-                eventCard: Row(
-                  children: [
+        // makes a scrollable list
+        body: Scaffold(
+            body: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 50.0),
+                child: ListView.builder(
+                    itemCount: routes.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return CustomTimelineTile(
+                        inPast: checkTimeLabel(routes[
+                            index]), // checks if its in the past or in the future
+                        isFirst: (index == 0)
+                            ? true
+                            : false, // if it is the first index set the property to true
+                        isLast: (index == routes.length - 1)
+                            ? true
+                            : false, // checks if its the last in the list
+                        eventCard: Row(children: [
 // ------------Stop name text------------
-                  Expanded(
-                    child: Text(
-                      routes[index].label, textAlign: TextAlign.left, // display the stop name
-                      style: AppTheme().constWhiteTextLarge)
-                  ),
+                          Expanded(
+                              child: Text(routes[index].label,
+                                  textAlign:
+                                      TextAlign.left, // display the stop name
+                                  style: AppTheme().constWhiteTextLarge)),
 // ------------Minutes text------------
-                  Expanded(
-                    child: Text(
-                      DateFormat('kk:mm').format(routes[index].time), // display the stop time
-                      textAlign: TextAlign.right,
-                      style: AppTheme().constWhiteTextLarge,
-                      )
-                  )
-                ]
-                ),
-              );
-            }
-          )
-        )
-      )
-    );
+                          Expanded(
+                              child: Text(
+                            DateFormat('kk:mm').format(
+                                routes[index].time), // display the stop time
+                            textAlign: TextAlign.right,
+                            style: AppTheme().constWhiteTextLarge,
+                          ))
+                        ]),
+                      );
+                    }))));
   }
 }
 
@@ -96,11 +92,11 @@ class RouteStop {
 }
 
 // checkTimeLabel returns true if the time given to it is before the current time
-bool checkTimeLabel(RouteStop timeLable){
+bool checkTimeLabel(RouteStop timeLable) {
   DateTime now = DateTime.now();
-  if (timeLable.time.isBefore(now)){
+  if (timeLable.time.isBefore(now)) {
     return true;
-  }else{
+  } else {
     return false;
   }
 }
