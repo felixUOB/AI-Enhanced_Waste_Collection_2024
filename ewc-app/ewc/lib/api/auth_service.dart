@@ -192,8 +192,12 @@ class AuthService {
     if (response.statusCode == 201) {
       // Perform additional actions upon successful registration
     } else {
-      var data = jsonDecode(response.body);
-      throw Exception('Failed to register: ${data.toString()}');
+      try {
+        var data = jsonDecode(response.body);
+        throw Exception('Failed to register: ${data.toString()}');
+      } catch (e) {
+        throw Exception('Invalid server response: $e');
+      }
     }
   }
 }
