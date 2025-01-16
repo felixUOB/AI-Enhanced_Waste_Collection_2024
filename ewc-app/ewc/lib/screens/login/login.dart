@@ -42,18 +42,6 @@ class LoginPageState extends State<LoginPage> {
               "assets/RecycleNXT-Logo_Update_Black.png",
               scale: 8,
             ),
-
-            //-------------WELCOME BACK TXT-FIELD----------------------
-            const SizedBox(
-              height: 50,
-            ),
-            Text(
-              "Welcome Back!",
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(
-              height: 30,
-            ),
             //-------------WELCOME BACK TXT-FIELD----------------------
             const SizedBox(
               height: 50,
@@ -130,7 +118,9 @@ class LoginPageState extends State<LoginPage> {
                   // Navigate to home screen
                   navigator.pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => MainNavigationBar(), // Moving pages
+                      builder: (context) => MainNavigationBar(
+                        testing: false,
+                      ), // Moving pages
                     ),
                   );
                 } catch (e) {
