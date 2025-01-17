@@ -124,9 +124,14 @@ class _MapPage extends State<MapPage> {
     return FlutterMap(
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
+        minZoom: 1,
+        maxZoom: 19,
         initialZoom: 14,
         interactionOptions:
-            InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
+            InteractionOptions(
+                flags: ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
+                       ~InteractiveFlag.rotate // Disable map rotation
+            ),
       ),
       children: [
         openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
