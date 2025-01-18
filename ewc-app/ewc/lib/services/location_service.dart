@@ -1,31 +1,40 @@
 import 'package:geolocator/geolocator.dart';
 
+// Function that returns true/false depending on if ewc can access device's location
+Future<bool> getLocationPermissions() async {
+  // Test if location services are enabled
+  bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // Location services are not enabled on the device
+    return false;
+  }
 
-// Function to return device's current location
-Future<Position> determineLocation() async {
+  // Test if the app has location permissions
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+    return false;
+  }
+
+  // If code reaches here then location is enabled
+  // and permission has been granted, so return true.
+  return true;
+}
+
+// Function to request permission to access device location
+Future<bool> requestLocationPermissions() async {
 
   // Test if location services are enabled
   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
   if (!serviceEnabled) {
     // Location services are not enabled on the device
-    return Future.error("Location services are disabled.");
+    return false;
   }
 
-  // Test if the app has location permissions
-  LocationPermission permission = await Geolocator.checkPermission();
-  if (permission == LocationPermission.denied) {
-    // If the app does not have location permission, request permission
-    permission = await Geolocator.requestPermission();
-    if (permission == LocationPermission.denied) {
-      return Future.error("Location permissions are denied");
-    }
+  LocationPermission permission = await Geolocator.requestPermission();
+  if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+    return false;
   }
 
-  if (permission == LocationPermission.deniedForever) {
-    return Future.error("Location permissions are denied.");
-  }
-
-  // If code reaches here then the location service is enabled
-  // and permission has been granted. Get device location.
-  return await Geolocator.getCurrentPosition();
+  // Return true because the permission has now been granted.
+  return true;
 }

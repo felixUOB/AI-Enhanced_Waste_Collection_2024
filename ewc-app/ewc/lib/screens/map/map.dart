@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'package:ewc/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../services/route_plot_api.dart';
@@ -21,13 +24,47 @@ class MapPage extends StatefulWidget {
 class _MapPage extends State<MapPage> {
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
+
+  late LatLng latestLocation;
+  late StreamSubscription<Position> locationStream;
+
   final MapController mapController = MapController();
 
   // State initialisation
   @override
   void initState() {
     super.initState();
+    _initialiseLocationServices();
     _initializeEnvAndService();
+  }
+
+  void _initialiseLocationServices() async {
+    // Ask user for location permissions
+    bool locationAccessible = await getLocationPermissions();
+    if (locationAccessible) {
+      initialiseStream();
+    } else {
+      locationAccessible = await requestLocationPermissions();
+      if (locationAccessible) {
+        initialiseStream();
+      }
+    }
+  }
+
+  // Function to initialise location stream.
+  // The stream updates the latestLocation variable to new location if the
+  // device moves more than 5 metres from the previous latestLocation value.
+  void initialiseStream() {
+    final LocationSettings locationSettings = LocationSettings(
+      distanceFilter: 5, // Minimum distance device must move (in metres) to update the location
+    );
+    // Create a location stream which returns device location at regular intervals
+    locationStream = Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position? position) {
+      setState(() {
+        latestLocation = LatLng(position!.latitude, position.longitude);
+      });
+    });
   }
 
   // This function loads .env and initializes RouteService asynchronously
@@ -114,11 +151,25 @@ class _MapPage extends State<MapPage> {
                       child: ThemeSwitch(),
                     ))
                 ],
-              ))) // ignore: prefer_const_constructor
+              )
+            )
+          ) // ignore: prefer_const_constructor
         ],
       ),
-      floatingActionButton: RecentreButton(onPressed: () {
-        mapController.move(LatLng(48.8584, 2.2945), 14);
+      floatingActionButton: RecentreButton(onPressed: () async {
+        // If recentre button pressed recentre map over user location
+        // Check if location permissions have been granted.
+        if (await getLocationPermissions()) {
+          mapController.move(
+              LatLng(latestLocation.latitude, latestLocation.longitude), 14);
+        } else {
+          // Request permission if not already granted.
+          if (await requestLocationPermissions()) {
+            initialiseStream();
+            mapController.move(
+                LatLng(latestLocation.latitude, latestLocation.longitude), 14);
+          }
+        }
       }),
       body: content(mapController),
     );
@@ -152,4 +203,10 @@ class _MapPage extends State<MapPage> {
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
   );
+
+  @override
+  void dispose() {
+    locationStream.cancel();
+    super.dispose();
+  }
 }
