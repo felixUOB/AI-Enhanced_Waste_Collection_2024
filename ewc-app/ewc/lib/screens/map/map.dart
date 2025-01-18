@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:ewc/services/location_service.dart';
+import 'package:ewc/widgets/location_marker.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -25,21 +26,23 @@ class _MapPage extends State<MapPage> {
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
-  late LatLng latestLocation;
+  late LatLng? latestLocation;
   late StreamSubscription<Position> locationStream;
 
-  final MapController mapController = MapController();
+  late MapController mapController;
 
   // State initialisation
   @override
   void initState() {
     super.initState();
+    mapController = MapController();
     _initialiseLocationServices();
     _initializeEnvAndService();
   }
 
   void _initialiseLocationServices() async {
     // Ask user for location permissions
+    latestLocation = null;
     bool locationAccessible = await getLocationPermissions();
     if (locationAccessible) {
       initialiseStream();
@@ -161,13 +164,13 @@ class _MapPage extends State<MapPage> {
         // Check if location permissions have been granted.
         if (await getLocationPermissions()) {
           mapController.move(
-              LatLng(latestLocation.latitude, latestLocation.longitude), 14);
+              LatLng(latestLocation!.latitude, latestLocation!.longitude), 14);
         } else {
           // Request permission if not already granted.
           if (await requestLocationPermissions()) {
             initialiseStream();
             mapController.move(
-                LatLng(latestLocation.latitude, latestLocation.longitude), 14);
+                LatLng(latestLocation!.latitude, latestLocation!.longitude), 14);
           }
         }
       }),
@@ -194,6 +197,8 @@ class _MapPage extends State<MapPage> {
         openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
         RoutePolylineLayer(routePoints: _routePoints),
         DestinationMarker(location: LatLng(51.4516, -2.5810)),
+        // Only display location marker if app can access location
+        if (latestLocation != null) LocationMarker(location: latestLocation!),
       ],
     );
   }
