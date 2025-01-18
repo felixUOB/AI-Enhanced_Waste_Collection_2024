@@ -1,5 +1,16 @@
 import 'package:encrypt/encrypt.dart' as encrypt;
 
+class EncryptionNotInitializedException implements Exception {
+  final String message;
+
+  EncryptionNotInitializedException(this.message);
+
+  @override
+  String toString() {
+    return "EncryptionNotInitializedException: $message";
+  }
+}
+
 class EncryptionService {
   static final EncryptionService _instance = EncryptionService._internal();
 
@@ -21,7 +32,8 @@ class EncryptionService {
 // Method to encrypt data
   String encryptData(String plainText) {
     if (_key == null) {
-      throw Exception('Encryption key is not initialized.');
+      throw EncryptionNotInitializedException(
+          'Encryption key is not initialized.');
     }
     final iv = encrypt.IV.fromLength(16); // Generate a random IV
     final encrypter =
@@ -37,7 +49,8 @@ class EncryptionService {
   // Method to decrypt data
   String decryptData(String encryptedData) {
     if (_key == null) {
-      throw Exception('Encryption key is not initialized.');
+      throw EncryptionNotInitializedException(
+          'Encryption key is not initialized.');
     }
     final parts = encryptedData.split(':'); //Splits IV from Encrypted Data
 
