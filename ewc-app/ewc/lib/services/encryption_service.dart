@@ -7,7 +7,7 @@ class EncryptionNotInitializedException implements Exception {
 
   @override
   String toString() {
-    return "EncryptionNotInitializedException: $message";
+    return message;
   }
 }
 
