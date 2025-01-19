@@ -32,7 +32,7 @@ class _MapPage extends State<MapPage> {
   }
   // Retrieve latitude and longitude of a collection point by its id
   Future<LatLng> _getCollectionPoint(int collection_point_id) async {
-    final url = 'http://127.0.0.1:8000/api/collection_points/$collection_point_id';
+    final url = 'http://10.0.2.2:8000/api/collection_points/$collection_point_id';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -65,7 +65,7 @@ class _MapPage extends State<MapPage> {
 
     } catch (e) {
       // Log the error and provide feedback
-      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
+      _showErrorDialog("Failed to initialize map service. Please check API key and network connection. Details: $e");
     }
 
 
@@ -73,8 +73,17 @@ class _MapPage extends State<MapPage> {
 
   // Fetches route data from the API
   Future<void> _fetchRoute() async {
-    const startLat = 51.4553, startLng = -2.6050;
-    const endLat = 51.4492, endLng = -2.5810;
+    // const startLat = 51.4553, startLng = -2.6050;
+    // const endLat = 51.4492, endLng = -2.5810;
+
+    LatLng startPoint = await _getCollectionPoint(2);
+    LatLng collectionPoint = await _getCollectionPoint(3);
+
+    final startLat = startPoint.latitude, startLng = startPoint.longitude;
+    final endLat = collectionPoint.latitude, endLng = collectionPoint.longitude;
+
+    debugPrint('Start: $startLat, $startLng');
+    debugPrint('Collection Point: $collectionPoint');
 
     // Get route points from the API and update _routePoints with the data
     final List<LatLng> route = await _routeService.getRoute(startLat, startLng, endLat, endLng);
