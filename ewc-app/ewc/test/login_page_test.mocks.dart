@@ -104,7 +104,6 @@ class MockAuthService extends _i1.Mock implements _i6.AuthService {
     _i1.throwOnMissingStub(this);
   }
 
-  @override
   _i2.FlutterSecureStorage get storage => (super.noSuchMethod(
         Invocation.getter(#storage),
         returnValue: _FakeFlutterSecureStorage_0(

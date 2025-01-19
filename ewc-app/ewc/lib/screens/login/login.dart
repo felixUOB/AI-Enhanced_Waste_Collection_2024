@@ -7,6 +7,7 @@ import 'package:ewc/api/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
+// LoginPage is the screen where users can log in to the app
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -17,6 +18,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  bool _rememberMe = false;
+  final AuthService _authService = AuthService();
+
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -38,7 +42,6 @@ class LoginPageState extends State<LoginPage> {
               "assets/RecycleNXT-Logo_Update_Black.png",
               scale: 8,
             ),
-
             //-------------WELCOME BACK TXT-FIELD----------------------
             const SizedBox(
               height: 50,
@@ -64,22 +67,35 @@ class LoginPageState extends State<LoginPage> {
 
             //-------------PASSWORD TXT-FIELD----------------------
             LoginTextfield(
-                controller: passwordController,
-                hintText: "Password",
-                obscured: true,
-                key: Key("passwordField")),
+              controller: passwordController,
+              hintText: "Password",
+              obscured: true,
+              key: Key("passwordField"),
+            ),
 
             //-------------HYPERLINK: FORGOT PASSWORD----------------------
             const SizedBox(height: 10),
             Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  HyperLinkText(
-                      string1: "",
-                      hyperString: "Forgot Password?",
-                      string2: "",
-                      onTap: launchPasswordReset)
-                ])),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Text("Remember Me?"),
+                          Checkbox(
+                              value: _rememberMe,
+                              onChanged: (value) => setState(() {
+                                    _rememberMe = value!;
+                                  })),
+                        ],
+                      ),
+                      HyperLinkText(
+                          string1: "",
+                          hyperString: "Forgot Password?",
+                          string2: "",
+                          onTap: launchPasswordReset)
+                    ])),
 
             //-------------LOGIN BUTTON---------------------------------
             const SizedBox(
@@ -91,9 +107,15 @@ class LoginPageState extends State<LoginPage> {
                 final navigator = Navigator.of(context);
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 try {
-                  await AuthService()
-                      .login(usernameController.text, passwordController.text);
+                  await _authService.login(
+                      usernameController.text, passwordController.text);
                   // Navigate to the schedule page after successful login
+
+                  if (_rememberMe) {
+                    await _authService.saveUserCredentials(
+                        usernameController.text, passwordController.text);
+                  }
+                  // Navigate to home screen
                   navigator.pushReplacement(
                     MaterialPageRoute(
                       builder: (context) => MainNavigationBar(
