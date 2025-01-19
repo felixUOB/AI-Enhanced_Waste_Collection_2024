@@ -28,7 +28,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   late RouteService _routeService;
 
   late LatLng? _latestLocation;
-  late StreamSubscription<Position> _locationStream;
+  late StreamSubscription<Position>? _locationStream;
+  late StreamSubscription<ServiceStatus> _locationStatusStream;
+  bool? _locationStatus;
 
   late AnimatedMapController _animatedMapController;
 
@@ -38,7 +40,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
     _initialiseLocationServices();
+    _initialiseLocationStatusStream();
     _initializeEnvAndService();
+  }
+
+  void _initialiseLocationStatusStream() async {
+    _locationStatus = await Geolocator.isLocationServiceEnabled();
+    _locationStatusStream = Geolocator.getServiceStatusStream()
+        .listen((ServiceStatus status) {
+      setState(() {
+        _locationStatus = (status == ServiceStatus.enabled) ? true : false;
+      });
+    });
   }
 
   void _initialiseLocationServices() async {
@@ -46,11 +59,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     _latestLocation = null;
     bool locationAccessible = await getLocationPermissions();
     if (locationAccessible) {
-      initialiseStream();
+      _initialisePositionStream();
     } else {
       locationAccessible = await requestLocationPermissions();
       if (locationAccessible) {
-        initialiseStream();
+        _initialisePositionStream();
       }
     }
   }
@@ -58,7 +71,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Function to initialise location stream.
   // The stream updates the latestLocation variable to new location if the
   // device moves more than 5 metres from the previous latestLocation value.
-  void initialiseStream() {
+  void _initialisePositionStream() {
     final LocationSettings locationSettings = LocationSettings(
       distanceFilter: 5, // Minimum distance device must move (in metres) to update the location
     );
@@ -164,14 +177,22 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         // If recentre button pressed recentre map over user location
         // Check if location permissions have been granted.
         if (await getLocationPermissions()) {
-          _animatedMapController.animateTo(
-              dest: LatLng(_latestLocation!.latitude, _latestLocation!.longitude), zoom: 14);
+          if (_latestLocation != null) {
+            _animatedMapController.animateTo(
+                dest: LatLng(
+                    _latestLocation!.latitude, _latestLocation!.longitude),
+                zoom: 14);
+          }
         } else {
           // Request permission if not already granted.
           if (await requestLocationPermissions()) {
-            initialiseStream();
-            _animatedMapController.animateTo(
-                dest: LatLng(_latestLocation!.latitude, _latestLocation!.longitude), zoom: 14);
+            _initialisePositionStream();
+            if (_latestLocation != null) {
+              _animatedMapController.animateTo(
+                  dest: LatLng(
+                      _latestLocation!.latitude, _latestLocation!.longitude),
+                  zoom: 14);
+            }
           }
         }
       }),
@@ -199,7 +220,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         RoutePolylineLayer(routePoints: _routePoints),
         DestinationMarker(location: LatLng(51.4516, -2.5810)),
         // Only display location marker if app can access location
-        if (_latestLocation != null) LocationMarker(location: _latestLocation!),
+        if (_locationStatus != null && _latestLocation != null) if (_locationStatus!) LocationMarker(location: _latestLocation!),
       ],
     );
   }
@@ -212,7 +233,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _locationStream.cancel();
+    _locationStream?.cancel();
+    _locationStatusStream.cancel();
     super.dispose();
   }
 }
