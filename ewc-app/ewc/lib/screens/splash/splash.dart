@@ -32,7 +32,6 @@ class SplashPageState extends State<SplashPage> {
 
     if (username != null && password != null) {
       try {
-        await Future.delayed(const Duration(seconds: 1));
         await _authService.login(
             username, password); // Attempt login with given credentials
 
@@ -57,7 +56,6 @@ class SplashPageState extends State<SplashPage> {
       }
       // If either username or password is null, skip check and route to Login
     } else {
-      await Future.delayed(const Duration(seconds: 2));
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
