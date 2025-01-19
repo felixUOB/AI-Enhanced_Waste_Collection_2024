@@ -36,7 +36,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _animatedMapController = AnimatedMapController(vsync: this);
+    _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
     _initialiseLocationServices();
     _initializeEnvAndService();
   }
