@@ -4,6 +4,7 @@ import 'package:ewc/widgets/location_marker.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -22,27 +23,27 @@ class MapPage extends StatefulWidget {
 }
 
 // Private State class for MapPage, manages state and map interactions
-class _MapPage extends State<MapPage> {
+class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
-  late LatLng? latestLocation;
-  late StreamSubscription<Position> locationStream;
+  late LatLng? _latestLocation;
+  late StreamSubscription<Position> _locationStream;
 
-  late MapController mapController;
+  late AnimatedMapController _animatedMapController;
 
   // State initialisation
   @override
   void initState() {
     super.initState();
-    mapController = MapController();
+    _animatedMapController = AnimatedMapController(vsync: this);
     _initialiseLocationServices();
     _initializeEnvAndService();
   }
 
   void _initialiseLocationServices() async {
     // Ask user for location permissions
-    latestLocation = null;
+    _latestLocation = null;
     bool locationAccessible = await getLocationPermissions();
     if (locationAccessible) {
       initialiseStream();
@@ -62,10 +63,10 @@ class _MapPage extends State<MapPage> {
       distanceFilter: 5, // Minimum distance device must move (in metres) to update the location
     );
     // Create a location stream which returns device location at regular intervals
-    locationStream = Geolocator.getPositionStream(locationSettings: locationSettings)
+    _locationStream = Geolocator.getPositionStream(locationSettings: locationSettings)
         .listen((Position? position) {
       setState(() {
-        latestLocation = LatLng(position!.latitude, position.longitude);
+        _latestLocation = LatLng(position!.latitude, position.longitude);
       });
     });
   }
@@ -163,25 +164,25 @@ class _MapPage extends State<MapPage> {
         // If recentre button pressed recentre map over user location
         // Check if location permissions have been granted.
         if (await getLocationPermissions()) {
-          mapController.move(
-              LatLng(latestLocation!.latitude, latestLocation!.longitude), 14);
+          _animatedMapController.animateTo(
+              dest: LatLng(_latestLocation!.latitude, _latestLocation!.longitude), zoom: 14);
         } else {
           // Request permission if not already granted.
           if (await requestLocationPermissions()) {
             initialiseStream();
-            mapController.move(
-                LatLng(latestLocation!.latitude, latestLocation!.longitude), 14);
+            _animatedMapController.animateTo(
+                dest: LatLng(_latestLocation!.latitude, _latestLocation!.longitude), zoom: 14);
           }
         }
       }),
-      body: content(mapController),
+      body: content(),
     );
   }
 
   // Widget that creates and displays map with initial configurations, route and markers
-  Widget content(MapController mapController) {
+  Widget content() {
     return FlutterMap(
-      mapController: mapController,
+      mapController: _animatedMapController.mapController,
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
         minZoom: 1,
@@ -198,7 +199,7 @@ class _MapPage extends State<MapPage> {
         RoutePolylineLayer(routePoints: _routePoints),
         DestinationMarker(location: LatLng(51.4516, -2.5810)),
         // Only display location marker if app can access location
-        if (latestLocation != null) LocationMarker(location: latestLocation!),
+        if (_latestLocation != null) LocationMarker(location: _latestLocation!),
       ],
     );
   }
@@ -211,7 +212,7 @@ class _MapPage extends State<MapPage> {
 
   @override
   void dispose() {
-    locationStream.cancel();
+    _locationStream.cancel();
     super.dispose();
   }
 }
