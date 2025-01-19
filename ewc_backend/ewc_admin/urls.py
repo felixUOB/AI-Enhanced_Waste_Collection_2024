@@ -20,8 +20,8 @@ from django.http import JsonResponse
 from django.urls import include, path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from ewc_web.views import UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet, UserRegistrationView
-from ewc_web import views
+from ewc_core.views import UserProfileViewSet, CollectionPointViewSet, JourneyMetricViewSet, WastePredictionViewSet, UserRegistrationView
+from ewc_core import views
 from django.contrib.auth import views as auth_views
 
 
@@ -39,7 +39,7 @@ urlpatterns = [
     path('api/register/', UserRegistrationView.as_view(), name='user-registration'), # Add a signup endpoint
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
-    path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
+    path('ewc_core/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
 
 # -----------PASSWORD RESET ENDPOINTS--------------
     

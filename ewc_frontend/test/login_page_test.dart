@@ -1,4 +1,4 @@
-import 'package:ewc/api/auth_service.dart';
+import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/register/register.dart';

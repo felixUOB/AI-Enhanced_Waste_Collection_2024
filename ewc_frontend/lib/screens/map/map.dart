@@ -1,4 +1,4 @@
-import 'package:ewc/api/auth_service.dart';
+import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/screens/splash/splash.dart';
 import 'package:ewc/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../services/route_plot_api.dart';
+import '../../services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 

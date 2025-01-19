@@ -5,7 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes, must_be_immutable
 import 'dart:async' as _i8;
 
-import 'package:ewc/api/auth_service.dart' as _i6;
+import 'package:ewc/services/auth_service.dart' as _i6;
 import 'package:ewc/screens/map/map.dart' as _i9;
 import 'package:flutter/foundation.dart' as _i5;
 import 'package:flutter/material.dart' as _i4;

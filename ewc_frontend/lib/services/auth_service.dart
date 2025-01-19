@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../services/encryption_service.dart' as encrypt;
+import 'encryption_service.dart' as encrypt;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {

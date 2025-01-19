@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'ewc_web',
+    'ewc_core',
     'corsheaders',  # Added for CORS configuration
 ]
 
@@ -77,7 +77,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'ewc.urls'
+ROOT_URLCONF = 'ewc_admin.urls'
 
 TEMPLATES = [
     {
@@ -95,7 +95,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'ewc.wsgi.application'
+WSGI_APPLICATION = 'ewc_admin.wsgi.application'
 
 
 

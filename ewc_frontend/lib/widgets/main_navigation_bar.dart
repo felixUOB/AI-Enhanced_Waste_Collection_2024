@@ -1,7 +1,7 @@
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
-import 'package:ewc/services/route_plot_api.dart';
+import 'package:ewc/services/route_plot_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 

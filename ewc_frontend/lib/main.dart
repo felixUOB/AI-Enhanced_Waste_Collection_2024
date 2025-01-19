@@ -2,7 +2,7 @@ import 'package:ewc/screens/splash/splash.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/api/auth_service.dart';
+import 'package:ewc/services/auth_service.dart';
 
 ThemeManager themeManager = ThemeManager();
 
