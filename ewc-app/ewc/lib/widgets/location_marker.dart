@@ -16,7 +16,18 @@ class LocationMarker extends StatelessWidget {
       markers: [
         Marker(
           point: location,
-          child: Icon(Icons.my_location)
+          width: 20,
+          height: 20,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.blue,
+              border: Border.all(
+                color: Colors.white,
+                width: 2.0,
+              ),
+            )
+          )
         )
       ]
     );

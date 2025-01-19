@@ -185,7 +185,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       mapController: _animatedMapController.mapController,
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
-        minZoom: 1,
+        minZoom: 2.5,
         maxZoom: 19,
         initialZoom: 14,
         interactionOptions:
