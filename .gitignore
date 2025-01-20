@@ -11,3 +11,7 @@ db.sqlite3
 
 # Django Secure
 *.env
+
+*.vscode
+
+.prettierignore

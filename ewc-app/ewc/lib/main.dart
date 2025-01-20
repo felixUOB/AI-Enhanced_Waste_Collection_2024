@@ -1,14 +1,24 @@
-import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/screens/splash/splash.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:ewc/api/auth_service.dart';
 
 ThemeManager themeManager = ThemeManager();
 
-void main() => runApp(const App()); //Runs application root
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final authService = AuthService();
+  await authService
+      .initializeAuthService(); // Ensure environment variables are loaded
+
+  runApp(App(authService: authService));
+}
 
 class App extends StatefulWidget {
-  const App({super.key});
+  final AuthService authService;
+  const App({super.key, required this.authService});
 
   @override
   State<StatefulWidget> createState() {
@@ -44,7 +54,7 @@ class MyAppState extends State<App> {
     return MaterialApp(
         title: "EWC",
         debugShowCheckedModeBanner: false,
-        home: LoginPage(), // main page
+        home: SplashPage(),
         // theme management
         theme: AppTheme().lightTheme,
         darkTheme: AppTheme().darkTheme,
