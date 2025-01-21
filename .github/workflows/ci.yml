@@ -2,10 +2,10 @@ name: CI
 
 on:
   push:
-  pull_request:
-    branches:
-      - main
-      - dev
+  # pull_request:
+  #   branches:
+  #     - main
+  #     - dev
 
 jobs:
   flutter_test:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: "./ewc-app/ewc"    
+        working-directory: "./ewc_frontend"    
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
           api_key: ${{ secrets.API_KEY }}
 
       - name: Run format, analyze, test
-        working-directory: "./ewc-app/ewc"  
+        working-directory: "./ewc_frontend"  
         run: |
           flutter pub get
           flutter analyze
@@ -42,7 +42,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     defaults:
       run:
-        working-directory: "./ewc-app/ewc" 
+        working-directory: "./ewc_frontend" 
     strategy:
       matrix: 
         os: [ubuntu-latest, macos-latest]
