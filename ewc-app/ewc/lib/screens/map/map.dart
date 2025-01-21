@@ -8,6 +8,7 @@ import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:ewc/api/auth_service.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget{
@@ -31,8 +32,8 @@ class _MapPage extends State<MapPage> {
 
   }
   // Retrieve latitude and longitude of a collection point by its id
-  Future<LatLng> _getCollectionPoint(int collection_point_id) async {
-    final url = 'http://10.0.2.2:8000/api/collection_points/$collection_point_id';
+  Future<LatLng> _getCollectionPoint(int collectionPointId) async {
+    final url = 'http://10.0.2.2:8000/api/collection_points/$collectionPointId';
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -71,13 +72,44 @@ class _MapPage extends State<MapPage> {
 
   }
 
+  //NEW FUNCTION GETS ROUTE DATA FROM API 
+  Future<LatLng> fetchCollectionPoint(int collectionPointID) async {
+    // final response = await http.get(
+    //   Uri.parse('http://10.0.2.2:8000/api/collection_points/$collectionPointID'),
+    //   headers: {
+    //   'Authorization': 'Bearer ${await AuthService().makeAuthenticatedRequest()}',
+    //   },
+    // );
+
+    final authService = AuthService();
+    final response = await authService.makeAuthenticatedRequest('collection_points/$collectionPointID');
+
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final lat = data['latitude'];
+      final lng = data['longitude'];
+      return LatLng(lat, lng);
+    } else {
+      throw Exception('Failed to load collection point');
+    }
+  }
+
+
+
+
   // Fetches route data from the API
   Future<void> _fetchRoute() async {
     // const startLat = 51.4553, startLng = -2.6050;
     // const endLat = 51.4492, endLng = -2.5810;
 
-    LatLng startPoint = await _getCollectionPoint(2);
-    LatLng collectionPoint = await _getCollectionPoint(3);
+    // LatLng startPoint = await _getCollectionPoint(2);
+    // LatLng collectionPoint = await _getCollectionPoint(3);
+
+    LatLng startPoint = await fetchCollectionPoint(2);
+    LatLng collectionPoint = await fetchCollectionPoint(3);
+
+
 
     final startLat = startPoint.latitude, startLng = startPoint.longitude;
     final endLat = collectionPoint.latitude, endLng = collectionPoint.longitude;
