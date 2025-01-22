@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../widgets/theme_switch.dart';
 import '../login/login.dart';
+import '../../services/auth_service.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -11,6 +12,18 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  final AuthService authService =AuthService();
+  Future<void> _logout() async {
+    // Call clearCredentials to clear stored credentials
+    await authService.clearCredentials();
+
+    // Navigate to LoginPage, removing all previous routes
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginPage()),
+          (route) => false,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +56,7 @@ class _SettingPageState extends State<SettingPage> {
                   title: const Text("Logout"),
                   subtitle: const Text("Sign out of your account"),
                   trailing: Icon(Icons.arrow_forward_ios),
+                  onTap : _logout,
 
 
                 )
@@ -52,6 +66,7 @@ class _SettingPageState extends State<SettingPage> {
 
       ),
     );
+
 
   }
 }
