@@ -25,25 +25,7 @@ class _MetricsPageState extends State<MetricsPage> {
           title: Text('Metrics Page',
               style: Theme.of(context).textTheme.titleLarge),
           // make the toggle for light vs dark mode
-          actions: [
-            SafeArea(
-                child: Container(
-                    // ignore: prefer_const_literals_to_create_immutables
-                    margin: EdgeInsets.only(right: 8.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                            padding: const EdgeInsets.all(3),
-                            child:
-                                // ignore: prefer_const_constructors
-                                Align(
-                              alignment: Alignment.topRight,
-                              // ignore: prefer_const_constructors
-                              child: ThemeSwitch(),
-                            ))
-                      ],
-                    ))) // ignore: prefer_const_constructor
-          ],
+
         ),
 
         // display the graphs as a scrollable list

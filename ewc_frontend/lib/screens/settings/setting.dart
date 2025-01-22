@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../main.dart';
 import '../../widgets/theme_switch.dart';
 import '../login/login.dart';
 import '../../services/auth_service.dart';
@@ -27,25 +28,40 @@ class _SettingPageState extends State<SettingPage> {
   }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
-      // Top App Bar
       appBar: AppBar(
         title: Text(
           'Settings Page',
           style: Theme.of(context).textTheme.titleLarge,
         ),
-        actions: [
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 8.0),
-              child: ThemeSwitch(),
-            ),
-          ),
-        ],
+        // actions: [
+        //   SafeArea(
+        //     child: Padding(
+        //       padding: const EdgeInsets.only(right: 8.0),
+        //       child: ThemeSwitch(),
+        //     ),
+        //   ),
+        // ],
       ),
       // Body content
       body: ListView(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              shape : RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0)
+              ),
+              child:  Switch(
+                  value: themeManager.themeMode == ThemeMode.dark,
+                  onChanged: (onChanged){
+                    themeManager.toggleTheme(onChanged);
+                  }
+                  ),
+              ),
+            ),
+
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -92,6 +108,21 @@ class _SettingPageState extends State<SettingPage> {
 
 
                 )
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: ListTile(
+                leading: Icon(Icons.feedback, color: Colors.blue),
+                title: const Text("Feedback"),
+                subtitle: const Text("Share your feedback with us"),
+                trailing: Icon(Icons.arrow_forward_ios),
+                // onTap: _openFeedbackPage,
+              ),
             ),
           ),
         ],

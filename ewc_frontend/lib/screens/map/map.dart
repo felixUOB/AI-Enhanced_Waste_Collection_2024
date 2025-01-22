@@ -1,6 +1,4 @@
 import 'package:ewc/services/auth_service.dart';
-import 'package:ewc/screens/splash/splash.dart';
-import 'package:ewc/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -97,28 +95,9 @@ class _MapPage extends State<MapPage> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: LogoutButton(
-            iconData: Icons.logout,
-            onPressed: () {
-              _authService.clearCredentials();
-              navigator.pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => SplashPage(), // Moving pages
-                ),
-              );
-            }),
         title:
             Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
-        actions: [
-          SafeArea(
-              child: Align(
-                  alignment: Alignment.topRight,
-                  // ignore: prefer_const_constructors
-                  child: Padding(
-                      padding: EdgeInsets.zero,
-                      child:
-                          ThemeSwitch()))) // ignore: prefer_const_constructor
-        ],
+
       ),
       body: content(),
     );
