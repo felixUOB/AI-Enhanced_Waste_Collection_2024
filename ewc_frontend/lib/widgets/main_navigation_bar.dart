@@ -92,7 +92,10 @@ class _NavigationBarState extends State<MainNavigationBar> {
 
             // Stops list page icon
             NavigationDestination(
-                icon: Icon(Icons.menu_rounded), label: "Schedule")
+                icon: Icon(Icons.menu_rounded), label: "Schedule"),
+
+            NavigationDestination(
+                icon: Icon(Icons.settings), label: "Settings")
           ]),
     );
   }
