@@ -17,6 +17,7 @@ class _SettingPageState extends State<SettingPage> {
     // Call clearCredentials to clear stored credentials
     await authService.clearCredentials();
 
+    if (!mounted) return; // needed to allow BuildContext inn Async
     // Navigate to LoginPage, removing all previous routes
     Navigator.pushAndRemoveUntil(
       context,
@@ -56,7 +57,38 @@ class _SettingPageState extends State<SettingPage> {
                   title: const Text("Logout"),
                   subtitle: const Text("Sign out of your account"),
                   trailing: Icon(Icons.arrow_forward_ios),
-                  onTap : _logout,
+                  onTap : () async {
+                    bool confirmLogout = await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Are sure you want to logout?"),
+                        actions: [
+                          TextButton(
+                              onPressed: () =>Navigator.pop(context,false),
+                              style: TextButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor : Colors.red,
+                                textStyle: const TextStyle(fontSize: 16),
+                              ),
+                              child: Text("No")
+                          ),
+                          TextButton(
+                              onPressed: () =>Navigator.pop(context,true),
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: Colors.green, // Button text color
+                                textStyle: const TextStyle(fontSize: 16),// ,
+                              ),
+
+                              child: Text("Yes"))
+                        ],
+                      )
+                    );
+                    if (confirmLogout == true){
+                      await _logout();
+                    }
+
+                  },
 
 
                 )
