@@ -132,7 +132,7 @@ class _MapPage extends State<MapPage> {
         ],
       ),
       body: content(),
-      
+
       // Place 2 bottom buttons
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -180,6 +180,64 @@ class _MapPage extends State<MapPage> {
         RoutePolylineLayer(routePoints: _routePoints),
         DestinationMarker(location: LatLng(51.4516, -2.5810)),
       ],
+    );
+  }
+
+  // Popup: Start Trip (2 inputs: mileage, mpg)
+  void _showStartDialog() {
+    double tempMileage = 0;
+    double tempMpg = 0;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Start Trip'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Mileage',
+                  ),
+                  onChanged: (value) {
+                    tempMileage = double.tryParse(value) ?? 0;
+                  },
+                ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'Miles per Gallon',
+                  ),
+                  onChanged: (value) {
+                    tempMpg = double.tryParse(value) ?? 0;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                setState(() {
+                  _startMileage = tempMileage;
+                  _startMpg = tempMpg;
+                });
+                Navigator.of(context).pop(); // Close the dialog
+                // Additional logic (e.g., server communication, state update) can go here
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
