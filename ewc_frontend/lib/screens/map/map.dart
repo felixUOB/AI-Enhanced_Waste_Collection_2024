@@ -26,6 +26,7 @@ class _MapPage extends State<MapPage> {
   late RouteService _routeService;
 
   // A variable to simply hold the input
+  // For later use when saving the DB
   double _startMileage = 0;
   double _startMpg = 0;
   double _endMpg = 0;
@@ -231,6 +232,11 @@ class _MapPage extends State<MapPage> {
                   _startMileage = tempMileage;
                   _startMpg = tempMpg;
                 });
+
+                // Output for debugging purposes. For later use when saving the DB
+                print('Start Mileage: $_startMileage');
+                print('Start MPG: $_startMpg');
+
                 Navigator.of(context).pop(); // Close the dialog
                 // Additional logic (e.g., server communication, state update) can go here
               },
@@ -272,6 +278,10 @@ class _MapPage extends State<MapPage> {
                 setState(() {
                   _endMpg = tempMpg;
                 });
+
+                // Output for debugging purposes. For later use when saving the DB
+                print('End MPG: $_endMpg');
+
                 Navigator.of(context).pop(); // Close the dialog
                 // Additional logic for ending the trip can go here
               },
