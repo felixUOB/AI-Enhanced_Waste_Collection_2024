@@ -25,6 +25,11 @@ class _MapPage extends State<MapPage> {
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
+  // A variable to simply hold the input
+  double _startMileage = 0;
+  double _startMpg = 0;
+  double _endMpg = 0;
+
   // State initialisation
   @override
   void initState() {
@@ -108,20 +113,26 @@ class _MapPage extends State<MapPage> {
               );
             }),
         title:
-            Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
+        Text('RecycleNXT', style: Theme
+            .of(context)
+            .textTheme
+            .titleLarge),
         actions: [
           SafeArea(
-              child: Align(
-                  alignment: Alignment.topRight,
-                  // ignore: prefer_const_constructors
-                  child: Padding(
-                      padding: EdgeInsets.zero,
-                      child:
-                          ThemeSwitch()))) // ignore: prefer_const_constructor
+            child: Align(
+              alignment: Alignment.topRight,
+              // ignore: prefer_const_constructors
+              child: Padding(
+                padding: EdgeInsets.zero,
+                child:
+                ThemeSwitch(),
+              ),
+            ),
+          ) // ignore: prefer_const_constructor
         ],
       ),
       body: content(),
-    );
+    )
   }
 
   // Widget that creates and displays map with initial configurations, route and markers
