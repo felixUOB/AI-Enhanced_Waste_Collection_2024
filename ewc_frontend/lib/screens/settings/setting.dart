@@ -66,7 +66,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
               ),
             ),
-
+          //Feedback
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -82,6 +82,7 @@ class _SettingPageState extends State<SettingPage> {
               ),
             ),
           ),
+          //Privacy
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -92,10 +93,11 @@ class _SettingPageState extends State<SettingPage> {
                 leading: Icon(Icons.privacy_tip_outlined, color: Colors.yellow),
                 title: const Text("Privacy Policy"),
                 trailing: Icon(Icons.arrow_forward_ios),
-                // onTap: _openFeedbackPage,
+                // onTap: _openPrivacyPage,
               ),
             ),
           ),
+          //Share App
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -107,10 +109,11 @@ class _SettingPageState extends State<SettingPage> {
                 title: const Text("Share app"),
                 subtitle: const Text("Share this app with your friends"),
                 trailing: Icon(Icons.arrow_forward_ios),
-                // onTap: _openFeedbackPage,
+                // onTap: _openSharePage,
               ),
             ),
           ),
+          //Contact
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
@@ -122,10 +125,11 @@ class _SettingPageState extends State<SettingPage> {
                 title: const Text("Contact us"),
                 subtitle: const Text("Contact if you need help"),
                 trailing: Icon(Icons.arrow_forward_ios),
-                // onTap: _openFeedbackPage,
+                // onTap: email,
               ),
             ),
           ),
+          //Logout
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Card(
