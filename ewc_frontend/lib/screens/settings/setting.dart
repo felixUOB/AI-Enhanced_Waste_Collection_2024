@@ -48,7 +48,7 @@ class _SettingPageState extends State<SettingPage> {
       body: ListView(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(1.0),
             child: Card(
               shape : RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0)
@@ -69,7 +69,7 @@ class _SettingPageState extends State<SettingPage> {
             ),
           //Feedback
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(1.0),
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -85,7 +85,7 @@ class _SettingPageState extends State<SettingPage> {
           ),
           //Privacy
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(1.0),
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -100,7 +100,7 @@ class _SettingPageState extends State<SettingPage> {
           ),
           //Share App
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(1.0),
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -116,7 +116,7 @@ class _SettingPageState extends State<SettingPage> {
           ),
           //Contact
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(1.0),
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -132,7 +132,7 @@ class _SettingPageState extends State<SettingPage> {
           ),
           //Reset Password
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(1.0),
             child: Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
@@ -154,7 +154,7 @@ class _SettingPageState extends State<SettingPage> {
           ),
           //Logout
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(1.0),
             child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0)
