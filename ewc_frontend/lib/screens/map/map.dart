@@ -1,5 +1,6 @@
 import 'package:ewc/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,7 +19,7 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> {
-  final AuthService _authService = AuthService();
+  // final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
@@ -90,13 +91,12 @@ class _MapPage extends State<MapPage> {
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-    NavigatorState navigator = Navigator.of(context);
+    // NavigatorState navigator = Navigator.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title:
             Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
-
       ),
       body: content(),
     );

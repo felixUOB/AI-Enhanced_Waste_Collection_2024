@@ -53,7 +53,7 @@ class _SettingPageState extends State<SettingPage> {
                 borderRadius: BorderRadius.circular(12.0)
               ),
               child: ListTile(
-                leading: Icon(Icons.feedback, color: Colors.blue),
+                leading: Icon(Icons.dark_mode_outlined, color: Colors.green),
                 title: const Text("Change Theme"),
                 subtitle: const Text("Switch to Dark/Light Mode"),
                 trailing: Switch(
@@ -103,7 +103,7 @@ class _SettingPageState extends State<SettingPage> {
                 borderRadius: BorderRadius.circular(12.0),
               ),
               child: ListTile(
-                leading: Icon(Icons.share, color: Colors.black),
+                leading: Icon(Icons.share, color: Colors.green),
                 title: const Text("Share app"),
                 subtitle: const Text("Share this app with your friends"),
                 trailing: Icon(Icons.arrow_forward_ios),
