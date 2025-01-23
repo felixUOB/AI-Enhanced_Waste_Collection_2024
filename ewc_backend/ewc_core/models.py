@@ -37,7 +37,7 @@ class StopCollection(models.Model):
     weight_collected = models.IntegerField()
 
     class Meta:
-        db_table = 'ewc_web_stop_collection'
+        db_table = 'ewc_core_stop_collection'
         
     def __str__(self):
         return self.stop_collection_id
@@ -49,10 +49,11 @@ class Stops(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     next_collection_due_date = models.DateField(blank=True, null=True)
+    last_collection_date = models.DateField(blank=True, null=True)
     max_weight = models.IntegerField()
 
     class Meta:
-        db_table = 'ewc_web_stops'
+        db_table = 'ewc_core_stops'
 
     def __str__(self):
         return self.location_name 
@@ -67,7 +68,7 @@ class RouteEnvData(models.Model):
     date = models.FloatField(null=False)
 
     class Meta:
-        db_table = 'ewc_web_route_env_data'
+        db_table = 'ewc_core_route_env_data'
 
     def __str__(self):
         return f"Route Data {self.route_env_data_id}"
