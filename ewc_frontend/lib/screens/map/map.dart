@@ -132,7 +132,38 @@ class _MapPage extends State<MapPage> {
         ],
       ),
       body: content(),
-    )
+      
+      // Place 2 bottom buttons
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Row(
+          children: [
+            // Start Trip button
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () async {
+                  _showStartDialog();
+                },
+                child: const Text('Start Trip'),
+              ),
+            ),
+            const SizedBox(width: 16.0),
+            // End Trip button
+            Expanded(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                onPressed: () async {
+                  _showEndDialog();
+                },
+                child: const Text('End Trip'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // Widget that creates and displays map with initial configurations, route and markers
