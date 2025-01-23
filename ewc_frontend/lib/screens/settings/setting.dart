@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
+import '../login/forgot_password.dart';
 import '../login/login.dart';
 import '../../services/auth_service.dart';
 
@@ -126,6 +127,28 @@ class _SettingPageState extends State<SettingPage> {
                 subtitle: const Text("Contact if you need help"),
                 trailing: Icon(Icons.arrow_forward_ios),
                 // onTap: email,
+              ),
+            ),
+          ),
+          //Reset Password
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: ListTile(
+                leading: Icon(Icons.lock_reset, color: Colors.deepOrange),
+                title: const Text("Reset Password"),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: (){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder : (context) => const ForgotPassword()
+                      )
+                  );
+                },
               ),
             ),
           ),
