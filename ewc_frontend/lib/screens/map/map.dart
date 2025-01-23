@@ -241,6 +241,47 @@ class _MapPage extends State<MapPage> {
     );
   }
 
+  // Popup: End Trip (1 input: mpg)
+  void _showEndDialog() {
+    double tempMpg = 0;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('End Trip'),
+          content: TextField(
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Miles per Gallon',
+            ),
+            onChanged: (value) {
+              tempMpg = double.tryParse(value) ?? 0;
+            },
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                setState(() {
+                  _endMpg = tempMpg;
+                });
+                Navigator.of(context).pop(); // Close the dialog
+                // Additional logic for ending the trip can go here
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
         urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
