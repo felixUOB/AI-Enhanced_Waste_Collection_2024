@@ -315,9 +315,9 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-  // Tile layer for OpenStreetMap tiles
-  TileLayer get openStreetMapTileLayer => TileLayer(
-        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-      );
+  /// A tile layer for OpenStreetMap base tiles.
+  TileLayer get _openStreetMapTileLayer => TileLayer(
+    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+  );
 }
