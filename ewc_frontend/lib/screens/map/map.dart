@@ -105,50 +105,45 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-  // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-    NavigatorState navigator = Navigator.of(context);
+    final navigator = Navigator.of(context);
 
     return Scaffold(
       appBar: AppBar(
         leading: LogoutButton(
-            iconData: Icons.logout,
-            onPressed: () {
-              _authService.clearCredentials();
-              navigator.pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => SplashPage(), // Moving pages
-                ),
-              );
-            }),
-        title:
-        Text('RecycleNXT', style: Theme
-            .of(context)
-            .textTheme
-            .titleLarge),
+          iconData: Icons.logout,
+          onPressed: () {
+            _authService.clearCredentials();
+            navigator.pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const SplashPage(),
+              ),
+            );
+          },
+        ),
+        title: Text(
+          'RecycleNXT',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
         actions: [
           SafeArea(
             child: Align(
               alignment: Alignment.topRight,
-              // ignore: prefer_const_constructors
               child: Padding(
                 padding: EdgeInsets.zero,
-                child:
-                ThemeSwitch(),
+                child: const ThemeSwitch(),
               ),
             ),
-          ) // ignore: prefer_const_constructor
+          ),
         ],
       ),
-      body: content(),
-
-      // Place 2 bottom buttons
+      body: _buildMapContent(),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(
           children: [
-            // Start Trip button
+            // Start Trip Button
             Expanded(
               child: ElevatedButton(
                 onPressed: () async {
@@ -158,7 +153,7 @@ class _MapPage extends State<MapPage> {
               ),
             ),
             const SizedBox(width: 16.0),
-            // End Trip button
+            // End Trip Button
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -176,17 +171,17 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-  // Widget that creates and displays map with initial configurations, route and markers
-  Widget content() {
+  /// Builds the main map UI, including tile layers and route markers.
+  Widget _buildMapContent() {
     return FlutterMap(
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
         initialZoom: 14,
         interactionOptions:
-            InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
+        InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
       ),
       children: [
-        openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        _openStreetMapTileLayer,
         RoutePolylineLayer(routePoints: _routePoints),
         DestinationMarker(location: LatLng(51.4516, -2.5810)),
       ],
@@ -298,15 +293,20 @@ class _MapPage extends State<MapPage> {
             ElevatedButton(
               child: const Text('Confirm'),
               onPressed: () {
+                final parsedMpg = double.tryParse(mpgInput);
+                if (parsedMpg == null) {
+                  _showInvalidInputDialog('Miles per Gallon');
+                  return; // Remain in dialog
+                }
+
                 setState(() {
-                  _endMpg = tempMpg;
+                  _endMpg = parsedMpg;
                 });
 
-                // Output for debugging purposes. For later use when saving the DB
                 print('End MPG: $_endMpg');
 
                 Navigator.of(context).pop(); // Close the dialog
-                // Additional logic for ending the trip can go here
+                // Additional logic for DB or state updates can be added here
               },
             ),
           ],
