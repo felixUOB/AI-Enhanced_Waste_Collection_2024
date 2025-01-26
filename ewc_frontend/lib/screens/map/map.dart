@@ -193,10 +193,10 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-  // Popup: Start Trip (2 inputs: mileage, mpg)
+  /// Displays a dialog to enter mileage and MPG when starting a trip.
   void _showStartDialog() {
-    double tempMileage = 0;
-    double tempMpg = 0;
+    String mileageInput = '';
+    String mpgInput = '';
 
     showDialog(
       context: context,
@@ -212,7 +212,7 @@ class _MapPage extends State<MapPage> {
                     labelText: 'Mileage',
                   ),
                   onChanged: (value) {
-                    tempMileage = double.tryParse(value) ?? 0;
+                    mileageInput = value;
                   },
                 ),
                 TextField(
@@ -221,7 +221,7 @@ class _MapPage extends State<MapPage> {
                     labelText: 'Miles per Gallon',
                   ),
                   onChanged: (value) {
-                    tempMpg = double.tryParse(value) ?? 0;
+                    mpgInput = value;
                   },
                 ),
               ],
@@ -237,17 +237,31 @@ class _MapPage extends State<MapPage> {
             ElevatedButton(
               child: const Text('Confirm'),
               onPressed: () {
+                // Attempt to parse mileage
+                final parsedMileage = double.tryParse(mileageInput);
+                if (parsedMileage == null) {
+                  _showInvalidInputDialog('Mileage');
+                  return; // Remain in dialog
+                }
+
+                // Attempt to parse MPG
+                final parsedMpg = double.tryParse(mpgInput);
+                if (parsedMpg == null) {
+                  _showInvalidInputDialog('Miles per Gallon');
+                  return; // Remain in dialog
+                }
+
                 setState(() {
-                  _startMileage = tempMileage;
-                  _startMpg = tempMpg;
+                  _startMileage = parsedMileage;
+                  _startMpg = parsedMpg;
                 });
 
-                // Output for debugging purposes. For later use when saving the DB
+                // Debug logs
                 print('Start Mileage: $_startMileage');
                 print('Start MPG: $_startMpg');
 
                 Navigator.of(context).pop(); // Close the dialog
-                // Additional logic (e.g., server communication, state update) can go here
+                // Additional logic for DB or state updates can be added here
               },
             ),
           ],
@@ -256,9 +270,9 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-  // Popup: End Trip (1 input: mpg)
+  /// Displays a dialog to enter MPG when ending a trip.
   void _showEndDialog() {
-    double tempMpg = 0;
+    String mpgInput = '';
 
     showDialog(
       context: context,
@@ -271,7 +285,7 @@ class _MapPage extends State<MapPage> {
               labelText: 'Miles per Gallon',
             ),
             onChanged: (value) {
-              tempMpg = double.tryParse(value) ?? 0;
+              mpgInput = value;
             },
           ),
           actions: [
