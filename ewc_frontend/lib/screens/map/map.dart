@@ -10,86 +10,95 @@ import '../../services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 
-// MapPage is a stateful widget displaying a map and plotting a route
+/// A stateful widget that displays a map and manages route plotting.
 class MapPage extends StatefulWidget {
-  const MapPage({super.key});
+  const MapPage({Key? key}) : super(key: key);
 
-  // Creates and returns the private _MapPage state instance to manage the widget's state
   @override
   State<MapPage> createState() => _MapPage();
 }
 
-// Private State class for MapPage, manages state and map interactions
+/// Private state class for the [MapPage].
+/// Manages user input for starting/ending mileage and mpg,
+/// loads environment variables, fetches a route, and displays it on a map.
 class _MapPage extends State<MapPage> {
   final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
-  // A variable to simply hold the input
-  // For later use when saving the DB
+  // Variables to store user input (to be used for future DB operations)
   double _startMileage = 0;
   double _startMpg = 0;
   double _endMpg = 0;
 
-  // State initialisation
   @override
   void initState() {
     super.initState();
     _initializeEnvAndService();
   }
 
-  // This function loads .env and initializes RouteService asynchronously
+  /// Loads the .env file and initializes the [RouteService] asynchronously.
+  /// Displays an error dialog if the API key is missing or invalid.
   Future<void> _initializeEnvAndService() async {
-    // await dotenv.load(fileName: '.env'); // Load the .env file
-    // // Initialize RouteService with API key
-
     try {
-      // Attempt to load the .env file
       await dotenv.load(fileName: '.env');
-
-      // Check if the API key exists in .env; show an error message if not
       final apiKey = dotenv.env['API_KEY'];
+
       if (apiKey == null || apiKey.isEmpty) {
         throw Exception("API key missing in .env file.");
       }
-      // Initialize RouteService with the valid API key
-      _routeService = RouteService(dotenv.env['API_KEY']!);
+
+      _routeService = RouteService(apiKey);
       await _fetchRoute();
     } catch (e) {
-      // Log the error and provide feedback
       _showErrorDialog(
-          "Failed to initialize map service. Please check API key and network connection.");
+          "Failed to initialize map service. Please check the API key and network connection."
+      );
     }
   }
 
-  // Fetches route data from the API
+  /// Fetches route data from the API and updates [_routePoints].
   Future<void> _fetchRoute() async {
     const startLat = 51.4553, startLng = -2.6050;
     const endLat = 51.4492, endLng = -2.5810;
 
-    // Get route points from the API and update _routePoints with the data
     final List<LatLng> route =
-        await _routeService.getRoute(startLat, startLng, endLat, endLng);
+    await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
-      // Remove any existing points
       _routePoints.clear();
-      // Add new route points
       _routePoints.addAll(route);
     });
   }
 
-  // Displays an error dialog with the provided message
+  /// Displays a generic error dialog with the provided [message].
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Error"),
+        title: const Text("Error"),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text("OK"),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Displays a dialog indicating an invalid numeric input for a particular field.
+  void _showInvalidInputDialog(String fieldLabel) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Invalid Input"),
+        content: Text("Please enter a valid numeric value for $fieldLabel."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
           ),
         ],
       ),
