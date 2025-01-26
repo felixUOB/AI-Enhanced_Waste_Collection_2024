@@ -41,8 +41,22 @@ class _NavigationBarState extends State<MainNavigationBar> {
       return Center(child: CircularProgressIndicator());
     }
 
+    // titles for each tab
+    final List<String> appBarTitles = [
+      'Metrics',
+      'RecycleNXT',
+      'Schedule',
+      'Settings',
+    ];
+
     return Scaffold(
       key: Key("mainNavigationBar"),
+      appBar: AppBar(
+        title: Text(
+          appBarTitles[currentPageIndex],
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      ),
       // Set the body of the scaffold to be the selected screen
       body: IndexedStack(
         index: currentPageIndex,

@@ -19,14 +19,7 @@ class Schedule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 // ------------Top app bar------------
-        appBar: AppBar(
-          //toolbarHeight: 75,
-          title:
-              Text('Schedule', style: Theme.of(context).textTheme.titleLarge),
-          //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
-          // dark vs light mode toggle
 
-        ),
 // ------------List of stops------------
         // makes a scrollable list
         body: Scaffold(

@@ -92,10 +92,6 @@ class _MapPage extends State<MapPage> {
     // NavigatorState navigator = Navigator.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title:
-            Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
-      ),
       body: content(),
     );
   }

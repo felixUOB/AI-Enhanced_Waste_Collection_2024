@@ -17,15 +17,6 @@ class _MetricsPageState extends State<MetricsPage> {
     // sample data
     List<double> carbonFootPrintData = [2.4, 2.4, 3.2, 4.5, 6.7, 6.7, 5.4];
     return Scaffold(
-        appBar: AppBar(
-          key: Key("metricsPageAppBar"),
-          elevation: 2.0,
-
-          title: Text('Metrics Page',
-              style: Theme.of(context).textTheme.titleLarge),
-          // make the toggle for light vs dark mode
-
-        ),
 
         // display the graphs as a scrollable list
         body: ListView(children: [

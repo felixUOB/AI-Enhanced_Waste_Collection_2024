@@ -56,12 +56,7 @@ class _SettingPageState extends State<SettingPage> {
     @override
     Widget build(BuildContext context) {
       return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Settings Page',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
+
           body: ListView(
               children: [
                 // 1) Change Theme item
