@@ -19,6 +19,8 @@ class RouteService {
   }
 
 
+
+
   // Form Route between coordinates returning a list of LatLng objects representing the route
   Future<List<LatLng>> getRoute(double startLat, double startLng, double endLat, double endLng) async {
     // Input Validation
@@ -52,6 +54,45 @@ class RouteService {
   }
 
 
+  Future<OptimizationData> routePlanning() async {
+    final depot = LatLng(51.4682, -2.6103);
+    final stops = [
+      LatLng(51.4476, -2.5982),
+      LatLng(51.4541, -2.6200),
+      LatLng(51.4499, -2.5812),
+    ];
+    
+    List<VroomJob> jobs = [];
+
+    for (int idx = 0; idx < stops.length; idx++) {
+      LatLng stop = stops[idx];
+      jobs.add(VroomJob(
+        id: idx + 1,
+        location: ORSCoordinate(latitude: stop.latitude, longitude: stop.longitude),
+      ));
+    }
+
+
+    List<VroomVehicle> vehicles = [];
+
+    VroomVehicle vehicle = VroomVehicle(
+      id: 1,
+      start: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      profile: 'driving-hgv',
+    );
+
+    vehicles.add(vehicle);
+
+    final response = await client.optimizationDataPost(jobs: jobs, vehicles: vehicles);
+  
+    if (response.routes.isEmpty) {
+      throw Exception('No optimized route could be found.');
+    }
+
+    return response;
+
+  }
 
 
 }

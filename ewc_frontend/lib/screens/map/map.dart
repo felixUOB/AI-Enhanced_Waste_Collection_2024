@@ -6,7 +6,7 @@ import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../services/route_plot_service.dart';
+import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 
