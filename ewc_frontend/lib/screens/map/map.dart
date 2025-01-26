@@ -12,7 +12,7 @@ import 'package:ewc/widgets/route_polyline_layer.dart';
 
 /// A stateful widget that displays a map and manages route plotting.
 class MapPage extends StatefulWidget {
-  const MapPage({Key? key}) : super(key: key);
+  const MapPage({super.key}); // Use super-parameter syntax here
 
   @override
   State<MapPage> createState() => _MapPage();
@@ -26,7 +26,7 @@ class _MapPage extends State<MapPage> {
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
-  // Variables to store user input (to be used for future DB operations)
+  // Variables to store user input (for future DB operations)
   double _startMileage = 0;
   double _startMpg = 0;
   double _endMpg = 0;
@@ -37,7 +37,7 @@ class _MapPage extends State<MapPage> {
     _initializeEnvAndService();
   }
 
-  /// Loads the .env file and initializes the [RouteService] asynchronously.
+  /// Loads the .env file and initializes [RouteService].
   /// Displays an error dialog if the API key is missing or invalid.
   Future<void> _initializeEnvAndService() async {
     try {
@@ -66,12 +66,13 @@ class _MapPage extends State<MapPage> {
     await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
-      _routePoints.clear();
-      _routePoints.addAll(route);
+      _routePoints
+        ..clear()
+        ..addAll(route);
     });
   }
 
-  /// Displays a generic error dialog with the provided [message].
+  /// Displays a generic error dialog with a given [message].
   void _showErrorDialog(String message) {
     showDialog(
       context: context,
@@ -116,9 +117,7 @@ class _MapPage extends State<MapPage> {
           onPressed: () {
             _authService.clearCredentials();
             navigator.pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const SplashPage(),
-              ),
+              MaterialPageRoute(builder: (context) => const SplashPage()),
             );
           },
         ),
@@ -156,9 +155,7 @@ class _MapPage extends State<MapPage> {
             // End Trip Button
             Expanded(
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 onPressed: () async {
                   _showEndDialog();
                 },
@@ -203,21 +200,13 @@ class _MapPage extends State<MapPage> {
               children: [
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Mileage',
-                  ),
-                  onChanged: (value) {
-                    mileageInput = value;
-                  },
+                  decoration: const InputDecoration(labelText: 'Mileage'),
+                  onChanged: (value) => mileageInput = value,
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'Miles per Gallon',
-                  ),
-                  onChanged: (value) {
-                    mpgInput = value;
-                  },
+                  decoration: const InputDecoration(labelText: 'Miles per Gallon'),
+                  onChanged: (value) => mpgInput = value,
                 ),
               ],
             ),
@@ -236,14 +225,14 @@ class _MapPage extends State<MapPage> {
                 final parsedMileage = double.tryParse(mileageInput);
                 if (parsedMileage == null) {
                   _showInvalidInputDialog('Mileage');
-                  return; // Remain in dialog
+                  return; // Stay in the dialog
                 }
 
                 // Attempt to parse MPG
                 final parsedMpg = double.tryParse(mpgInput);
                 if (parsedMpg == null) {
                   _showInvalidInputDialog('Miles per Gallon');
-                  return; // Remain in dialog
+                  return; // Stay in the dialog
                 }
 
                 setState(() {
@@ -276,12 +265,8 @@ class _MapPage extends State<MapPage> {
           title: const Text('End Trip'),
           content: TextField(
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              labelText: 'Miles per Gallon',
-            ),
-            onChanged: (value) {
-              mpgInput = value;
-            },
+            decoration: const InputDecoration(labelText: 'Miles per Gallon'),
+            onChanged: (value) => mpgInput = value,
           ),
           actions: [
             TextButton(
@@ -296,13 +281,14 @@ class _MapPage extends State<MapPage> {
                 final parsedMpg = double.tryParse(mpgInput);
                 if (parsedMpg == null) {
                   _showInvalidInputDialog('Miles per Gallon');
-                  return; // Remain in dialog
+                  return; // Stay in the dialog
                 }
 
                 setState(() {
                   _endMpg = parsedMpg;
                 });
 
+                // Debug logs
                 print('End MPG: $_endMpg');
 
                 Navigator.of(context).pop(); // Close the dialog
