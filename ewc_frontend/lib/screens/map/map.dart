@@ -49,6 +49,7 @@ class _MapPage extends State<MapPage> {
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
       await _fetchRoute();
+      await _fetchOptimizedRoute();
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -72,6 +73,22 @@ class _MapPage extends State<MapPage> {
       _routePoints.addAll(route);
     });
   }
+
+  // Optimized route planning
+  Future<void> _fetchOptimizedRoute() async {
+    try {
+      List<LatLng> optimizedRoute = await _routeService.routePlanning();
+      setState(() {
+        _routePoints.clear();
+        _routePoints.addAll(optimizedRoute);
+      });
+    } catch (e) {
+      _showErrorDialog("Failed to fetch optimized route: $e");
+    }
+  }
+
+
+
 
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
