@@ -9,7 +9,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 
@@ -51,7 +50,7 @@ class _MapPage extends State<MapPage> {
       }
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
-      await _fetchRoute();
+      await _drawCompleteRoute();
 
     } catch (e) {
       // Log the error and provide feedback
@@ -96,8 +95,28 @@ class _MapPage extends State<MapPage> {
     }
   }
 
+  // Function to draw a complete route between all stops
+  Future<void> _drawCompleteRoute() async {
+    // Alternatively store stops list as class attribute
+    List<LatLng> stops = await fetchAllStops();
+    List<LatLng> route = [];
+    for (int i = 0; i < stops.length - 1; i++) {
+      final start = stops[i];
+      final end = stops[i + 1];
+      final routePart = await _routeService.getRoute(start.latitude, start.longitude, end.latitude, end.longitude);
+      route.addAll(routePart);
+    }
+    setState(() {
+      _routePoints.clear();
+      _routePoints.addAll(route);
+    });
+
+  }
+
+
 
   // Fetches route data from the API
+  // ignore: unused_element
   Future<void> _fetchRoute() async {
 
     LatLng startPoint = await fetchStop(2);
