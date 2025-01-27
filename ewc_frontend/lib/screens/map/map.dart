@@ -7,7 +7,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
-import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'dart:convert';
 
@@ -25,7 +24,9 @@ class MapPage extends StatefulWidget {
 class _MapPage extends State<MapPage> {
   final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
+  final List<Marker> _marker = [];
   late RouteService _routeService;
+  
 
   // State initialisation 
   @override
@@ -51,6 +52,7 @@ class _MapPage extends State<MapPage> {
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
       await _drawCompleteRoute();
+      await _drawStopsMarker(Colors.blue);
 
     } catch (e) {
       // Log the error and provide feedback
@@ -112,6 +114,32 @@ class _MapPage extends State<MapPage> {
     });
 
   }
+
+  void _createMarker(LatLng location,Color color) {
+    _marker.add(
+    Marker(
+      width: 80.0,
+      height: 80.0,
+      point: location,
+      child: Icon(
+        Icons.location_on,
+        color: color,
+        size: 40.0,
+      ),
+      ),
+    );
+  
+
+  }
+
+  Future<void> _drawStopsMarker( Color color) async {
+    List<LatLng> stops = await fetchAllStops();
+    for (int i = 0; i < stops.length; i++) {
+      _createMarker(stops[i], color);
+    }
+
+  }
+
 
 
 
@@ -215,7 +243,7 @@ class _MapPage extends State<MapPage> {
     children: [
       openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
       RoutePolylineLayer(routePoints : _routePoints),
-      DestinationMarker(location: LatLng(51.4516, -2.5810)),
+      MarkerLayer(markers: _marker),
     
 
     ],
