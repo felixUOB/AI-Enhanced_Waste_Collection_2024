@@ -1,0 +1,176 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - lcov.info - lib/widgets/graphs/line-graph/line_graph.dart</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory lib/widgets/graphs/line-graph">lib/widgets/graphs/line-graph</a> - line_graph.dart</td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">lcov.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">97.4&nbsp;%</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntry">37</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-01-27 09:40:27</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">-</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">0</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : </span>
+<span id="L2"><span class="lineNum">       2</span>              : import 'package:ewc/widgets/graphs/line-graph/line_data.dart';</span>
+<span id="L3"><span class="lineNum">       3</span>              : import 'package:flutter/material.dart';</span>
+<span id="L4"><span class="lineNum">       4</span>              : import 'package:fl_chart/fl_chart.dart';</span>
+<span id="L5"><span class="lineNum">       5</span>              : </span>
+<span id="L6"><span class="lineNum">       6</span>              : class MyLineGraph extends StatelessWidget{</span>
+<span id="L7"><span class="lineNum">       7</span>              :   final List weeklySummary;</span>
+<span id="L8"><span class="lineNum">       8</span>              : </span>
+<span id="L9"><span class="lineNum">       9</span> <span class="tlaGNC">           3 :   const MyLineGraph({</span></span>
+<span id="L10"><span class="lineNum">      10</span>              :     super.key,</span>
+<span id="L11"><span class="lineNum">      11</span>              :     required this.weeklySummary,</span>
+<span id="L12"><span class="lineNum">      12</span>              :   });</span>
+<span id="L13"><span class="lineNum">      13</span>              : </span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC">           3 :   @override</span></span>
+<span id="L15"><span class="lineNum">      15</span>              :   Widget build(BuildContext context){</span>
+<span id="L16"><span class="lineNum">      16</span>              : </span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           3 :     LineData myLineData = LineData(</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">           6 :       monAmount: weeklySummary[0], </span></span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">           6 :       tueAmount: weeklySummary[1], </span></span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">           6 :       wedAmount: weeklySummary[2], </span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">           6 :       thuAmount: weeklySummary[3], </span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           6 :       friAmount: weeklySummary[4],</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">           6 :       satAmount: weeklySummary[5], </span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           6 :       sunAmount: weeklySummary[6], </span></span>
+<span id="L25"><span class="lineNum">      25</span>              :     );</span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           3 :     myLineData.initializeBarData();</span></span>
+<span id="L27"><span class="lineNum">      27</span>              :     </span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">           3 :     return Padding(</span></span>
+<span id="L29"><span class="lineNum">      29</span>              :       padding: const EdgeInsets.symmetric(horizontal: 25.0), </span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           3 :       child: LineChart(</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">           3 :         LineChartData(</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">           3 :           lineBarsData: [</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           3 :             LineChartBarData(</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          24 :               spots: myLineData.lineData.map((point) =&gt; FlSpot(point.x.toDouble(), point.y)).toList(),</span></span>
+<span id="L35"><span class="lineNum">      35</span>              :               isCurved: false,</span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           3 :               dotData: FlDotData(</span></span>
+<span id="L37"><span class="lineNum">      37</span>              :                 show:false,</span>
+<span id="L38"><span class="lineNum">      38</span>              :               ),</span>
+<span id="L39"><span class="lineNum">      39</span>              :               // #077b41</span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           9 :               color: Theme.of(context).colorScheme.primary,</span></span>
+<span id="L41"><span class="lineNum">      41</span>              :               barWidth: 4,</span>
+<span id="L42"><span class="lineNum">      42</span>              :             ),</span>
+<span id="L43"><span class="lineNum">      43</span>              :           ],</span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">           3 :           borderData: FlBorderData(</span></span>
+<span id="L45"><span class="lineNum">      45</span>              :             border: const Border(</span>
+<span id="L46"><span class="lineNum">      46</span>              :               bottom: BorderSide(color: Colors.grey, width: 4),</span>
+<span id="L47"><span class="lineNum">      47</span>              :               </span>
+<span id="L48"><span class="lineNum">      48</span>              :             ),</span>
+<span id="L49"><span class="lineNum">      49</span>              :           ),</span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           3 :           gridData: FlGridData(show: false),</span></span>
+<span id="L51"><span class="lineNum">      51</span>              : </span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">           3 :           titlesData: FlTitlesData(</span></span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">           6 :             bottomTitles: AxisTitles(sideTitles: _bottomTitles),</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           6 :             leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           6 :             topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           6 :             rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),</span></span>
+<span id="L57"><span class="lineNum">      57</span>              :           )</span>
+<span id="L58"><span class="lineNum">      58</span>              :         ),</span>
+<span id="L59"><span class="lineNum">      59</span>              :       ),</span>
+<span id="L60"><span class="lineNum">      60</span>              :     );</span>
+<span id="L61"><span class="lineNum">      61</span>              :   }</span>
+<span id="L62"><span class="lineNum">      62</span>              : }</span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">           6 : SideTitles get _bottomTitles =&gt; SideTitles(</span></span>
+<span id="L64"><span class="lineNum">      64</span>              :   showTitles: true,</span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">           3 :   getTitlesWidget: (value, meta) {</span></span>
+<span id="L66"><span class="lineNum">      66</span>              :     const style = TextStyle(</span>
+<span id="L67"><span class="lineNum">      67</span>              :       color: Colors.grey,</span>
+<span id="L68"><span class="lineNum">      68</span>              :       fontWeight: FontWeight.bold,</span>
+<span id="L69"><span class="lineNum">      69</span>              :       fontSize: 14,</span>
+<span id="L70"><span class="lineNum">      70</span>              :     );</span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">           3 :     Widget text = Text('');</span></span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">           3 :     switch (value.toInt()){</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">           3 :     case 0:</span></span>
+<span id="L74"><span class="lineNum">      74</span>              :       text = const Text('M', style: style);</span>
+<span id="L75"><span class="lineNum">      75</span>              :       break;</span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           3 :     case 1:</span></span>
+<span id="L77"><span class="lineNum">      77</span>              :       text = const Text('T', style: style);</span>
+<span id="L78"><span class="lineNum">      78</span>              :       break;</span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaGNC">           3 :     case 2:</span></span>
+<span id="L80"><span class="lineNum">      80</span>              :       text = const Text('W', style: style);</span>
+<span id="L81"><span class="lineNum">      81</span>              :       break;</span>
+<span id="L82"><span class="lineNum">      82</span> <span class="tlaGNC">           3 :     case 3:</span></span>
+<span id="L83"><span class="lineNum">      83</span>              :       text = const Text('T', style: style);</span>
+<span id="L84"><span class="lineNum">      84</span>              :       break;</span>
+<span id="L85"><span class="lineNum">      85</span> <span class="tlaGNC">           3 :     case 4:</span></span>
+<span id="L86"><span class="lineNum">      86</span>              :       text = const Text('F', style: style);</span>
+<span id="L87"><span class="lineNum">      87</span>              :       break;</span>
+<span id="L88"><span class="lineNum">      88</span> <span class="tlaGNC">           3 :     case 5:</span></span>
+<span id="L89"><span class="lineNum">      89</span>              :       text = const Text('S', style: style);</span>
+<span id="L90"><span class="lineNum">      90</span>              :       break;</span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">           3 :     case 6:</span></span>
+<span id="L92"><span class="lineNum">      92</span>              :       text = const Text('S', style: style);</span>
+<span id="L93"><span class="lineNum">      93</span>              :       break;</span>
+<span id="L94"><span class="lineNum">      94</span>              :     default:</span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaUNC">           0 :       text = Text('', style: style);</span></span>
+<span id="L96"><span class="lineNum">      96</span>              :   }</span>
+<span id="L97"><span class="lineNum">      97</span>              :     return text;</span>
+<span id="L98"><span class="lineNum">      98</span>              :   },</span>
+<span id="L99"><span class="lineNum">      99</span>              :   interval: 1,</span>
+<span id="L100"><span class="lineNum">     100</span>              : );</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.3-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
