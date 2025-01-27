@@ -35,24 +35,9 @@ class _MapPage extends State<MapPage> {
     _initializeEnvAndService();
 
   }
-  // Retrieve latitude and longitude of a collection point by its id
-  Future<LatLng> _getCollectionPoint(int collectionPointId) async {
-    final url = 'http://10.0.2.2:8000/api/collection_points/$collectionPointId';
-    final response = await http.get(Uri.parse(url));
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final lat = data['latitude'];
-      final lng = data['longitude'];
-      return LatLng(lat, lng);
-    } else {
-      throw Exception('Failed to load collection point');
-    }
-  }
 
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
-    // await dotenv.load(fileName: '.env'); // Load the .env file
     // // Initialize RouteService with API key
 
     try {
@@ -77,16 +62,10 @@ class _MapPage extends State<MapPage> {
   }
 
   //NEW FUNCTION GETS ROUTE DATA FROM API 
-  Future<LatLng> fetchCollectionPoint(int collectionPointID) async {
-    // final response = await http.get(
-    //   Uri.parse('http://10.0.2.2:8000/api/collection_points/$collectionPointID'),
-    //   headers: {
-    //   'Authorization': 'Bearer ${await AuthService().makeAuthenticatedRequest()}',
-    //   },
-    // );
+  Future<LatLng> fetchStop(int collectionPointID) async {
 
     final authService = AuthService();
-    final response = await authService.makeAuthenticatedRequest('collection_points/$collectionPointID');
+    final response = await authService.makeAuthenticatedRequest('stops/$collectionPointID');
 
 
     if (response.statusCode == 200) {
@@ -99,19 +78,30 @@ class _MapPage extends State<MapPage> {
     }
   }
 
+  
+  // Fetches all collection points from the API and returns a list of LatLng
+  Future<List<LatLng>> fetchAllStops() async {
+    final authService = AuthService();
+    final response = await authService.makeAuthenticatedRequest('stops');
 
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as List;
+      List<LatLng> latLngStopsList = [];
+      for (var point in data) {
+        latLngStopsList.add(LatLng(point['latitude'], point['longitude']));
+      }
+      return data.map((point) => LatLng(point['latitude'], point['longitude'])).toList();
+    } else {
+      throw Exception('Failed to load collection points');
+    }
+  }
 
 
   // Fetches route data from the API
   Future<void> _fetchRoute() async {
-    // const startLat = 51.4553, startLng = -2.6050;
-    // const endLat = 51.4492, endLng = -2.5810;
 
-    // LatLng startPoint = await _getCollectionPoint(2);
-    // LatLng collectionPoint = await _getCollectionPoint(3);
-
-    LatLng startPoint = await fetchCollectionPoint(2);
-    LatLng collectionPoint = await fetchCollectionPoint(3);
+    LatLng startPoint = await fetchStop(2);
+    LatLng collectionPoint = await fetchStop(3);
 
 
 
