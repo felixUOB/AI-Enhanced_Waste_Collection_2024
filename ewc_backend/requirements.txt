@@ -4,4 +4,3 @@ psycopg2-binary
 djangorestframework-simplejwt
 django-cors-headers
 python-decouple
-django_nose

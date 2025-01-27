@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'ewc_core',
     'corsheaders',  # Added for CORS configuration
-    'django_nose',
 ]
 
 REST_FRAMEWORK = {
@@ -169,10 +168,3 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = config('SENDGRID_SECRET_KEY')
 DEFAULT_FROM_EMAIL = 'autoemail.authnoreply@gmail.com'
-
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-NOSE_ARGS = [
-    '--with-coverage',
-    '--cover-package=ewc_core',
-]
