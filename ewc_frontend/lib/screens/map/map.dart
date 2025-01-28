@@ -1,12 +1,8 @@
-import 'package:ewc/services/auth_service.dart';
-import 'package:ewc/screens/splash/splash.dart';
-import 'package:ewc/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../services/route_plot_service.dart';
+import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 
@@ -22,7 +18,7 @@ class MapPage extends StatefulWidget {
 /// Manages user input for starting/ending mileage and mpg,
 /// loads environment variables, fetches a route, and displays it on a map.
 class _MapPage extends State<MapPage> {
-  final AuthService _authService = AuthService(); // AuthService instance to handle authentication logic.
+  // final AuthService _authService = AuthService(); // AuthService instance to handle authentication logic.
   final List<LatLng> _routePoints = []; // A list of LatLng points that represent the route.
   late RouteService _routeService; // A RouteService instance for fetching route data.
 
@@ -48,8 +44,7 @@ class _MapPage extends State<MapPage> {
       if (apiKey == null || apiKey.isEmpty) {
         throw Exception("API key missing in .env file.");
       }
-
-      _routeService = RouteService(apiKey); // Creates the RouteService with the valid API key.
+      _routeService = RouteService(dotenv.env['API_KEY']!); // Creates the RouteService with the valid API key.
       await _fetchRoute(); // Fetches the default route points from the API.
     } catch (e) {
       // Shows an error dialog if initialization fails.
@@ -70,9 +65,10 @@ class _MapPage extends State<MapPage> {
     await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
-      _routePoints
-        ..clear()   // Clears any existing route points.
-        ..addAll(route); // Adds the newly fetched route points.
+      // Remove any existing points
+      _routePoints.clear();
+      // Add new route points
+      _routePoints.addAll(route);
     });
   }
 
@@ -113,7 +109,7 @@ class _MapPage extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    final navigator = Navigator.of(context); // A reference to the current Navigator.
+    // final navigator = Navigator.of(context); // A reference to the current Navigator.
 
     // Builds the main UI layout with an AppBar, body content, and a bottom navigation bar.
     return Scaffold(
