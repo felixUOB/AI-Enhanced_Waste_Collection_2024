@@ -2,6 +2,7 @@ import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/services/route_plot_service.dart';
+import 'package:ewc/screens/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -40,8 +41,22 @@ class _NavigationBarState extends State<MainNavigationBar> {
       return Center(child: CircularProgressIndicator());
     }
 
+    // titles for each tab
+    final List<String> appBarTitles = [
+      'Metrics',
+      'RecycleNXT',
+      'Schedule',
+      'Settings',
+    ];
+
     return Scaffold(
       key: Key("mainNavigationBar"),
+      appBar: AppBar(
+        title: Text(
+          appBarTitles[currentPageIndex],
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      ),
       // Set the body of the scaffold to be the selected screen
       body: IndexedStack(
         index: currentPageIndex,
@@ -62,6 +77,9 @@ class _NavigationBarState extends State<MainNavigationBar> {
                 ),
           Schedule(
             key: ValueKey("schedulePage"),
+          ),
+          SettingPage(
+            key : ValueKey("settingPage")
           )
         ],
       ),
@@ -92,7 +110,10 @@ class _NavigationBarState extends State<MainNavigationBar> {
 
             // Stops list page icon
             NavigationDestination(
-                icon: Icon(Icons.menu_rounded), label: "Schedule")
+                icon: Icon(Icons.menu_rounded), label: "Schedule"),
+
+            NavigationDestination(
+                icon: Icon(Icons.settings), label: "Settings")
           ]),
     );
   }

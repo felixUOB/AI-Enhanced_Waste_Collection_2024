@@ -3,7 +3,6 @@ import 'package:ewc/widgets/graphs/line-graph/line_graph.dart';
 import 'package:ewc/widgets/graphs/pie-chart/pie_chart.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/widgets/theme_switch.dart';
 
 class MetricsPage extends StatefulWidget {
   const MetricsPage({super.key});
@@ -18,33 +17,6 @@ class _MetricsPageState extends State<MetricsPage> {
     // sample data
     List<double> carbonFootPrintData = [2.4, 2.4, 3.2, 4.5, 6.7, 6.7, 5.4];
     return Scaffold(
-        appBar: AppBar(
-          key: Key("metricsPageAppBar"),
-          elevation: 2.0,
-
-          title: Text('Metrics Page',
-              style: Theme.of(context).textTheme.titleLarge),
-          // make the toggle for light vs dark mode
-          actions: [
-            SafeArea(
-                child: Container(
-                    // ignore: prefer_const_literals_to_create_immutables
-                    margin: EdgeInsets.only(right: 8.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                            padding: const EdgeInsets.all(3),
-                            child:
-                                // ignore: prefer_const_constructors
-                                Align(
-                              alignment: Alignment.topRight,
-                              // ignore: prefer_const_constructors
-                              child: ThemeSwitch(),
-                            ))
-                      ],
-                    ))) // ignore: prefer_const_constructor
-          ],
-        ),
 
         // display the graphs as a scrollable list
         body: ListView(children: [
