@@ -1,11 +1,7 @@
 import 'dart:async';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
-import 'package:ewc/services/auth_service.dart';
-import 'package:ewc/screens/splash/splash.dart';
-import 'package:ewc/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
@@ -27,8 +23,7 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
-  final AuthService _authService = AuthService();
-
+  // final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
 
@@ -150,36 +145,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-    NavigatorState navigator = Navigator.of(context);
+    // NavigatorState navigator = Navigator.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        leading: LogoutButton(
-            iconData: Icons.logout,
-            onPressed: () {
-              _authService.clearCredentials();
-              navigator.pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => SplashPage(), // Moving pages
-                ),
-              );
-            }),
-        title:
-            Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
-        actions: [
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topRight,
-                // ignore: prefer_const_constructors
-                child: Padding(
-                  padding: EdgeInsets.zero,
-                  child:
-                    ThemeSwitch()
-                )
-            )
-          ) // ignore: prefer_const_constructor
-        ],
-      ),
       floatingActionButton: RecentreButton(onPressed: () async {
         // If recentre button pressed recentre map over user location
         // Check if location permissions have been granted.
