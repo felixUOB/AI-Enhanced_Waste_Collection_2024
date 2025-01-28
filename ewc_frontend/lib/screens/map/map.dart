@@ -141,12 +141,12 @@ class _MapPage extends State<MapPage> {
 
 
 
-  // Fetches route data from the API
+  // Fetches route data from the ORS API between the two given stops, entered by their ID.
   // ignore: unused_element
-  Future<void> _fetchRoute() async {
+  Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
 
-    LatLng startPoint = await fetchStop(2);
-    LatLng collectionPoint = await fetchStop(3);
+    LatLng startPoint = await fetchStop(firstStopID);
+    LatLng collectionPoint = await fetchStop(secondStopID);
 
 
 
