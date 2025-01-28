@@ -1,6 +1,5 @@
 import 'package:ewc/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -195,21 +194,6 @@ class _MapPage extends State<MapPage> {
   
     
     return Scaffold(
-      appBar: AppBar(
-
-        title:
-            Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
-        actions: [
-          SafeArea(
-              child: Align(
-                  alignment: Alignment.topRight,
-                  // ignore: prefer_const_constructors
-                  child: Padding(
-                      padding: EdgeInsets.zero,
-                      child:
-                          ThemeSwitch()))) // ignore: prefer_const_constructor
-        ],
-      ),
       body: content(),
     );
   }
