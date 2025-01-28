@@ -11,10 +11,10 @@ import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../services/route_plot_service.dart';
+import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
-import '../../widgets/recentre_button.dart';
+import 'package:ewc/widgets/recentre_button.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
