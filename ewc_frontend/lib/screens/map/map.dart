@@ -1,6 +1,4 @@
 import 'package:ewc/services/auth_service.dart';
-import 'package:ewc/screens/splash/splash.dart';
-import 'package:ewc/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -22,6 +20,7 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> {
+  //ignore: unused_field
   final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
@@ -193,28 +192,16 @@ class _MapPage extends State<MapPage> {
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-    NavigatorState navigator = Navigator.of(context);
+  
     
     return Scaffold(
-
       appBar: AppBar(
-        leading: LogoutButton(
-            iconData: Icons.logout,
-            onPressed: () {
-              _authService.clearCredentials();
-              navigator.pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => SplashPage(), // Moving pages
-                ),
-              );
-            }),
-        //toolbarHeight: 75,
-        title: Text('RecycleNXT',
-            style: Theme.of(context).textTheme.titleLarge),
-            //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
+
+        title:
+            Text('RecycleNXT', style: Theme.of(context).textTheme.titleLarge),
         actions: [
           SafeArea(
-            child: Align(
+              child: Align(
                   alignment: Alignment.topRight,
                   // ignore: prefer_const_constructors
                   child: Padding(
@@ -222,8 +209,6 @@ class _MapPage extends State<MapPage> {
                       child:
                           ThemeSwitch()))) // ignore: prefer_const_constructor
         ],
-                    
-            
       ),
       body: content(),
     );
