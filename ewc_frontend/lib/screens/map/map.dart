@@ -117,32 +117,6 @@ class _MapPage extends State<MapPage> {
 
     // Builds the main UI layout with an AppBar, body content, and a bottom navigation bar.
     return Scaffold(
-      appBar: AppBar(
-        leading: LogoutButton(
-          iconData: Icons.logout, // Icon for the logout button.
-          onPressed: () {
-            _authService.clearCredentials(); // Clears any stored credentials.
-            navigator.pushReplacement( // Replaces the current route with SplashPage.
-              MaterialPageRoute(builder: (context) => const SplashPage()),
-            );
-          },
-        ),
-        // title: Text(
-        //   'RecycleNXT',
-        //   style: Theme.of(context).textTheme.titleLarge, // Uses the theme's large title style.
-        // ),
-        actions: [
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topRight, // Places the widget at the top-right corner.
-              child: Padding(
-                padding: EdgeInsets.zero, // No extra padding.
-                child: const ThemeSwitch(), // A widget to toggle light/dark theme.
-              ),
-            ),
-          ),
-        ],
-      ),
       body: _buildMapContent(), // The main map content is built in a separate method.
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Spacing around the buttons.
