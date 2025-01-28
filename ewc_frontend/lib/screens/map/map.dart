@@ -1,12 +1,8 @@
-import 'package:ewc/services/auth_service.dart';
-import 'package:ewc/screens/splash/splash.dart';
-import 'package:ewc/widgets/logout_button.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/widgets/theme_switch.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../services/route_plot_service.dart';
+import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 
@@ -114,6 +110,7 @@ class _MapPage extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     final navigator = Navigator.of(context); // A reference to the current Navigator.
+
 
     // Builds the main UI layout with an AppBar, body content, and a bottom navigation bar.
     return Scaffold(

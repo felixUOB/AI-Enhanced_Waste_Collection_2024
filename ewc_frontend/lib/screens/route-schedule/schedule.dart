@@ -2,7 +2,6 @@ import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/widgets/timeline_tile.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/widgets/theme_switch.dart';
 
 class Schedule extends StatelessWidget {
   // Hardcoded 'stop name' and 'minutes until stop reached' data
@@ -20,32 +19,7 @@ class Schedule extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 // ------------Top app bar------------
-        appBar: AppBar(
-          //toolbarHeight: 75,
-          title:
-              Text('Schedule', style: Theme.of(context).textTheme.titleLarge),
-          //style: TextStyle(fontFamily: 'Questrial', fontSize: 32))
-          // dark vs light mode toggle
-          actions: [
-            SafeArea(
-                child: Container(
-                    // ignore: prefer_const_literals_to_create_immutables
-                    margin: EdgeInsets.only(right: 8.0),
-                    child: Column(
-                      children: [
-                        Padding(
-                            padding: const EdgeInsets.all(3),
-                            child:
-                                // ignore: prefer_const_constructors
-                                Align(
-                              alignment: Alignment.topRight,
-                              // ignore: prefer_const_constructors
-                              child: ThemeSwitch(),
-                            ))
-                      ],
-                    ))) // ignore: prefer_const_constructor
-          ],
-        ),
+
 // ------------List of stops------------
         // makes a scrollable list
         body: Scaffold(
