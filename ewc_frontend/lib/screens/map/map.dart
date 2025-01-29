@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
+import 'package:ewc/widgets/marker_widget.dart';
 import 'dart:convert';
 
 
@@ -113,27 +114,10 @@ class _MapPage extends State<MapPage> {
 
   }
 
-  void _createMarker(LatLng location,Color color) {
-    _marker.add(
-    Marker(
-      width: 80.0,
-      height: 80.0,
-      point: location,
-      child: Icon(
-        Icons.location_on,
-        color: color,
-        size: 40.0,
-      ),
-      ),
-    );
-  
-
-  }
-
   Future<void> _drawStopsMarker( Color color) async {
     List<LatLng> stops = await fetchAllStops();
     for (int i = 0; i < stops.length; i++) {
-      _createMarker(stops[i], color);
+      _marker.add(MarkerWidget.createMarker(stops[i], color));
     }
 
   }
