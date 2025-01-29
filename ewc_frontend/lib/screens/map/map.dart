@@ -6,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:ewc/widgets/marker_widget.dart';
-import 'dart:convert';
+import 'package:ewc/services/stops_service.dart';
 
 
 // MapPage is a stateful widget displaying a map and plotting a route
@@ -25,6 +25,7 @@ class _MapPage extends State<MapPage> {
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
   late RouteService _routeService;
+  final StopsService _stopsService = StopsService();
   
 
   // State initialisation 
@@ -61,45 +62,11 @@ class _MapPage extends State<MapPage> {
 
   }
 
-  //NEW FUNCTION GETS ROUTE DATA FROM API 
-  Future<LatLng> fetchStop(int collectionPointID) async {
-
-    final authService = AuthService();
-    final response = await authService.makeAuthenticatedRequest('stops/$collectionPointID');
-
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final lat = data['latitude'];
-      final lng = data['longitude'];
-      return LatLng(lat, lng);
-    } else {
-      throw Exception('Failed to load collection point');
-    }
-  }
-
-  
-  // Fetches all collection points from the API and returns a list of LatLng
-  Future<List<LatLng>> fetchAllStops() async {
-    final authService = AuthService();
-    final response = await authService.makeAuthenticatedRequest('stops');
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body) as List;
-      List<LatLng> latLngStopsList = [];
-      for (var point in data) {
-        latLngStopsList.add(LatLng(point['latitude'], point['longitude']));
-      }
-      return data.map((point) => LatLng(point['latitude'], point['longitude'])).toList();
-    } else {
-      throw Exception('Failed to load collection points');
-    }
-  }
 
   // Function to draw a complete route between all stops
   Future<void> _drawCompleteRoute() async {
     // Alternatively store stops list as class attribute
-    List<LatLng> stops = await fetchAllStops();
+    List<LatLng> stops = await _stopsService.fetchAllStops();
     List<LatLng> route = [];
     for (int i = 0; i < stops.length - 1; i++) {
       final start = stops[i];
@@ -115,7 +82,7 @@ class _MapPage extends State<MapPage> {
   }
 
   Future<void> _drawStopsMarker( Color color) async {
-    List<LatLng> stops = await fetchAllStops();
+    List<LatLng> stops = await _stopsService.fetchAllStops();
     for (int i = 0; i < stops.length; i++) {
       _marker.add(MarkerWidget.createMarker(stops[i], color));
     }
@@ -129,8 +96,8 @@ class _MapPage extends State<MapPage> {
   // ignore: unused_element
   Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
 
-    LatLng startPoint = await fetchStop(firstStopID);
-    LatLng collectionPoint = await fetchStop(secondStopID);
+    LatLng startPoint = await _stopsService.fetchStop(firstStopID);
+    LatLng collectionPoint = await _stopsService.fetchStop(secondStopID);
 
 
 
