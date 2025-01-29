@@ -1,10 +1,16 @@
+import 'dart:async';
+import 'package:ewc/services/location_service.dart';
+import 'package:ewc/widgets/location_marker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_animations/flutter_map_animations.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
+import 'package:ewc/widgets/recentre_button.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
@@ -16,16 +22,66 @@ class MapPage extends StatefulWidget {
 }
 
 // Private State class for MapPage, manages state and map interactions
-class _MapPage extends State<MapPage> {
+class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
+
+  late LatLng? _latestLocation;
+  late StreamSubscription<Position>? _locationStream;
+  late StreamSubscription<ServiceStatus> _locationStatusStream;
+  bool? _locationStatus;
+
+  late AnimatedMapController _animatedMapController;
 
   // State initialisation
   @override
   void initState() {
     super.initState();
+    _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
+    _initialiseLocationServices();
+    _initialiseLocationStatusStream();
     _initializeEnvAndService();
+  }
+
+  void _initialiseLocationStatusStream() async {
+    _locationStatus = await Geolocator.isLocationServiceEnabled();
+    _locationStatusStream = Geolocator.getServiceStatusStream()
+        .listen((ServiceStatus status) {
+      setState(() {
+        _locationStatus = (status == ServiceStatus.enabled) ? true : false;
+      });
+    });
+  }
+
+  void _initialiseLocationServices() async {
+    // Ask user for location permissions
+    _latestLocation = null;
+    bool locationAccessible = await getLocationPermissions();
+    if (locationAccessible) {
+      _initialisePositionStream();
+    } else {
+      locationAccessible = await requestLocationPermissions();
+      if (locationAccessible) {
+        _initialisePositionStream();
+      }
+    }
+  }
+
+  // Function to initialise location stream.
+  // The stream updates the latestLocation variable to new location if the
+  // device moves more than 5 metres from the previous latestLocation value.
+  void _initialisePositionStream() {
+    final LocationSettings locationSettings = LocationSettings(
+      distanceFilter: 5, // Minimum distance device must move (in metres) to update the location
+    );
+    // Create a location stream which returns device location at regular intervals
+    _locationStream = Geolocator.getPositionStream(locationSettings: locationSettings)
+        .listen((Position? position) {
+      setState(() {
+        _latestLocation = LatLng(position!.latitude, position.longitude);
+      });
+    });
   }
 
   // This function loads .env and initializes RouteService asynchronously
@@ -92,6 +148,29 @@ class _MapPage extends State<MapPage> {
     // NavigatorState navigator = Navigator.of(context);
 
     return Scaffold(
+      floatingActionButton: RecentreButton(onPressed: () async {
+        // If recentre button pressed recentre map over user location
+        // Check if location permissions have been granted.
+        if (await getLocationPermissions()) {
+          if (_latestLocation != null) {
+            _animatedMapController.animateTo(
+                dest: LatLng(
+                    _latestLocation!.latitude, _latestLocation!.longitude),
+                zoom: 14);
+          }
+        } else {
+          // Request permission if not already granted.
+          if (await requestLocationPermissions()) {
+            _initialisePositionStream();
+            if (_latestLocation != null) {
+              _animatedMapController.animateTo(
+                  dest: LatLng(
+                      _latestLocation!.latitude, _latestLocation!.longitude),
+                  zoom: 14);
+            }
+          }
+        }
+      }),
       body: content(),
     );
   }
@@ -99,23 +178,38 @@ class _MapPage extends State<MapPage> {
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
     return FlutterMap(
+      mapController: _animatedMapController.mapController,
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
+        minZoom: 2.5,
+        maxZoom: 19,
         initialZoom: 14,
         interactionOptions:
-            InteractionOptions(flags: ~InteractiveFlag.doubleTapZoom),
+        InteractionOptions(
+            flags: ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
+            ~InteractiveFlag.rotate // Disable map rotation
+        ),
       ),
       children: [
         openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
         RoutePolylineLayer(routePoints: _routePoints),
         DestinationMarker(location: LatLng(51.4516, -2.5810)),
+        // Only display location marker if app can access location
+        if (_locationStatus != null && _latestLocation != null) if (_locationStatus!) LocationMarker(location: _latestLocation!),
       ],
     );
   }
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-      );
+    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+  );
+
+  @override
+  void dispose() {
+    _locationStream?.cancel();
+    _locationStatusStream.cancel();
+    super.dispose();
+  }
 }
