@@ -7,6 +7,7 @@ db.sqlite3
 
 # IDE-specific settings files (JetBrains), exclude from the project
 .idea
+.vscode
 
 # Django Secure
 *.env
@@ -16,3 +17,6 @@ db.sqlite3
 .prettierignore
 
 .vs
+
+# ignore the flutter test coverage files 
+coverage/
