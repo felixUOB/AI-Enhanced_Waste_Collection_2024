@@ -153,8 +153,6 @@ class _MapPage extends State<MapPage> {
     final startLat = startPoint.latitude, startLng = startPoint.longitude;
     final endLat = collectionPoint.latitude, endLng = collectionPoint.longitude;
 
-    debugPrint('Start: $startLat, $startLng');
-    debugPrint('Collection Point: $collectionPoint');
 
     // Get route points from the API and update _routePoints with the data
     final List<LatLng> route = await _routeService.getRoute(startLat, startLng, endLat, endLng);
