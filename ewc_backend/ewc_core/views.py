@@ -59,19 +59,3 @@ class CheckEmailView(APIView):
         # Return JSON response indicating whether the email exists
         return Response({'exists': email_exists})
     
-    
-# Retrieves a given collection point record by its ID
-@api_view(['GET'])
-def get_collection_point(request,collection_point_id):
-    try:
-        collection_point = CollectionPoint.objects.get(id=collection_point_id)
-        data = {
-            'id': collection_point.id,
-            'name': collection_point.location_name,
-            'address': collection_point.address,
-            'latitude': collection_point.latitude,
-            'longitude': collection_point.longitude,
-        }
-        return Response(data)
-    except CollectionPoint.DoesNotExist:
-        return Response({'error: Collection Point does not exist'}, status=404)
