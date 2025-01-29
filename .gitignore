@@ -16,3 +16,6 @@ db.sqlite3
 .prettierignore
 
 .vs
+
+# ignore the flutter test coverage files 
+coverage/
