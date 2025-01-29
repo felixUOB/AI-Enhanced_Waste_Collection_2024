@@ -118,24 +118,24 @@ class _MapPage extends State<MapPage> {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0), // Spacing around the buttons.
         child: Row(
           children: [
-            // "Start Trip" button
+            // "Start Journey" button
             Expanded(
               child: ElevatedButton(
                 onPressed: () async {
-                  _showStartDialog(); // Opens the dialog for starting a trip.
+                  _showStartDialog(); // Opens the dialog for starting a Journey.
                 },
-                child: const Text('Start Trip'), // Button label.
+                child: const Text('Start Journey'), // Button label.
               ),
             ),
             const SizedBox(width: 16.0), // Spacing between the two buttons.
-            // "End Trip" button
+            // "End Journey" button
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red), // Red background.
                 onPressed: () async {
-                  _showEndDialog(); // Opens the dialog for ending a trip.
+                  _showEndDialog(); // Opens the dialog for ending a Journey.
                 },
-                child: const Text('End Trip'), // Button label.
+                child: const Text('End Journey'), // Button label.
               ),
             ),
           ],
@@ -161,7 +161,7 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-  /// Displays a dialog to enter mileage and MPG when starting a trip.
+  /// Displays a dialog to enter mileage and MPG when starting a Journey.
   void _showStartDialog() {
     String mileageInput = ''; // Temporary holder for mileage input.
     String mpgInput = ''; // Temporary holder for MPG input.
@@ -233,9 +233,9 @@ class _MapPage extends State<MapPage> {
     );
   }
 
-  /// Displays a dialog to enter MPG when ending a trip.
+  /// Displays a dialog to enter MPG when ending a Journey.
   void _showEndDialog() {
-    String mpgInput = ''; // Temporary holder for end-trip MPG input.
+    String mpgInput = ''; // Temporary holder for end-Journey MPG input.
 
     showDialog(
       context: context, // Current BuildContext.
@@ -264,7 +264,7 @@ class _MapPage extends State<MapPage> {
                 }
 
                 setState(() {
-                  _endMpg = parsedMpg; // If valid, update the end-trip MPG state variable.
+                  _endMpg = parsedMpg; // If valid, update the end-Journey MPG state variable.
                 });
 
                 // Debug logs
