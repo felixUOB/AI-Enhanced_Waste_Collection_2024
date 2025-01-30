@@ -47,6 +47,42 @@ class _MetricsPageState extends State<MetricsPage> {
                                               EdgeInsets.only(bottom: 4.0)),
                                       SizedBox(
                                         height: 200,
+                                        child: 
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: [
+                                            Text("Total Distance : ", style : TextStyle(fontSize: 20)),
+                                            SizedBox(height: 20,),
+                                            Text("Average mpg : ", style : TextStyle(fontSize: 20)),
+                                            SizedBox(height: 20,),
+                                            Text("Total routes completed : ", style : TextStyle(fontSize: 20)),
+                                          ],
+                                          )
+                                      ),
+                                    ]),
+                                  ])),
+                          context)),
+                  StaggeredGridTile.extent(
+                      crossAxisCellCount: 2,
+                      mainAxisExtent: 300.0,
+                      child: _buildTile(
+                          Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Column(children: [
+                                      Text('Weekly Distance Summary',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium),
+                                      Padding(
+                                          padding:
+                                              EdgeInsets.only(bottom: 4.0)),
+                                      SizedBox(
+                                        height: 200,
                                         child: MyBarGraph(
                                             key: ValueKey("barGraph"),
                                             weeklySummary: carbonFootPrintData),
@@ -65,7 +101,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Column(children: [
-                                    Text('Carbon Footprint Line Graph',
+                                    Text('MPG over time',
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium),
@@ -82,33 +118,60 @@ class _MetricsPageState extends State<MetricsPage> {
                         context, // pass in the context as an argument
                       )),
                   StaggeredGridTile.extent(
+                    crossAxisCellCount: 2,
+                    mainAxisExtent: 300.0,
+                    child: _buildTile(
+                      Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Column(children: [
+                                  Text('Emissions',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium),
+                                  Padding(
+                                      padding: EdgeInsets.only(bottom: 4.0)),
+                                  SizedBox(
+                                    height: 200,
+                                    child: MyLineGraph(
+                                        key: ValueKey("lineGraph"),
+                                        weeklySummary: carbonFootPrintData),
+                                  ),
+                                ]),
+                              ])),
+                      context, // pass in the context as an argument
+                    )),
+                  StaggeredGridTile.extent(
                       crossAxisCellCount: 2,
                       mainAxisExtent: 300.0,
                       child: _buildTile(
-                          Padding(
-                              padding: const EdgeInsets.all(24.0),
-                              child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Column(children: [
-                                      Text('Carbon Footprint Pie Graph',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium),
-                                      Padding(
-                                          padding:
-                                              EdgeInsets.only(bottom: 4.0)),
-                                      SizedBox(
-                                        height: 200,
-                                        child: MyPieChart(
-                                            key: ValueKey("pieGraph"),
-                                            sectors: carbonFootPrintData),
-                                      ),
-                                    ]),
-                                  ])),
-                          context // pass in the context as an argument
-                          ))
+                        Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Column(children: [
+                                    Text('Fuel consumed',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium),
+                                    Padding(
+                                        padding: EdgeInsets.only(bottom: 4.0)),
+                                    SizedBox(
+                                      height: 200,
+                                      child: MyLineGraph(
+                                          key: ValueKey("lineGraph"),
+                                          weeklySummary: carbonFootPrintData),
+                                    ),
+                                  ]),
+                                ])),
+                        context, // pass in the context as an argument
+                      )),
+                  
                 ],
               )),
         ]));

@@ -40,6 +40,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
+    path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
 
 # -----------PASSWORD RESET ENDPOINTS--------------
     
