@@ -289,7 +289,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     // NavigatorState navigator = Navigator.of(context);
 
     return Scaffold(
-
+      body: content(),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(
