@@ -26,13 +26,19 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
   late RouteService _routeService;
-
+  late AnimatedMapController _animatedMapController;
   late LatLng? _latestLocation;
   late StreamSubscription<Position>? _locationStream;
   late StreamSubscription<ServiceStatus> _locationStatusStream;
   bool? _locationStatus;
 
-  late AnimatedMapController _animatedMapController;
+  // Journey state management (tracks whether a journey is currently active)
+  bool _journeyActive = false; // false means the journey hasn't started yet, true means it has.
+
+  // User inputs (mileage / MPG)
+  double _startMileage = 0;
+  double _startMpg = 0;
+  double _endMpg = 0;
 
   // State initialisation
   @override
@@ -115,7 +121,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     // Get route points from the API and update _routePoints with the data
     final List<LatLng> route =
-        await _routeService.getRoute(startLat, startLng, endLat, endLng);
+    await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
       // Remove any existing points
@@ -142,12 +148,170 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
+  /// Shows a dialog when an invalid (non-numeric) value is provided.
+  void _showInvalidInputDialog(String fieldLabel) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Invalid Input"),
+        content: Text("Please enter a valid numeric value for $fieldLabel."),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Dialog for starting a journey: asks for mileage and MPG.
+  /// After validating the input, it updates the state fields and sets
+  /// [_journeyActive] to true.
+  void _showStartJourneyDialog() {
+    String mileageInput = '';
+    String mpgInput = '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Start Journey'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: 'Mileage'),
+                  onChanged: (value) => mileageInput = value,
+                ),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration:
+                  const InputDecoration(labelText: 'Miles per Gallon'),
+                  onChanged: (value) => mpgInput = value,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss dialog
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                // Parse user inputs
+                final parsedMileage = double.tryParse(mileageInput);
+                if (parsedMileage == null) {
+                  _showInvalidInputDialog('Mileage');
+                  return;
+                }
+
+                final parsedMpg = double.tryParse(mpgInput);
+                if (parsedMpg == null) {
+                  _showInvalidInputDialog('Miles per Gallon');
+                  return;
+                }
+
+                // Valid input: update state
+                setState(() {
+                  _startMileage = parsedMileage;
+                  _startMpg = parsedMpg;
+                  _journeyActive = true;
+                });
+
+                debugPrint('Start Mileage: $_startMileage');
+                debugPrint('Start MPG: $_startMpg');
+
+                Navigator.of(context).pop(); // Dismiss dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Dialog for ending a journey: asks only for MPG.
+  /// After validating, it updates the [_endMpg] field and sets [_journeyActive] to false.
+  void _showEndJourneyDialog() {
+    String mpgInput = '';
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('End Journey'),
+          content: TextField(
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: 'Miles per Gallon'),
+            onChanged: (value) => mpgInput = value,
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Dismiss dialog
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                final parsedMpg = double.tryParse(mpgInput);
+                if (parsedMpg == null) {
+                  _showInvalidInputDialog('Miles per Gallon');
+                  return;
+                }
+
+                setState(() {
+                  _endMpg = parsedMpg;
+                  _journeyActive = false;
+                });
+
+                debugPrint('End MPG: $_endMpg');
+
+                Navigator.of(context).pop(); // Dismiss dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
     // NavigatorState navigator = Navigator.of(context);
 
     return Scaffold(
+      body: content(),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        child: Row(
+          children: [
+            // Single button toggling journey start/end
+            Expanded(
+              child: ElevatedButton(
+                child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
+                onPressed: () {
+                  if (_journeyActive) {
+                    _showEndJourneyDialog();
+                  } else {
+                    _showStartJourneyDialog();
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+
+
       floatingActionButton: RecentreButton(onPressed: () async {
         // If recentre button pressed recentre map over user location
         // Check if location permissions have been granted.
@@ -171,7 +335,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           }
         }
       }),
-      body: content(),
     );
   }
 
@@ -213,3 +376,4 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.dispose();
   }
 }
+
