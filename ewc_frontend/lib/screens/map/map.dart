@@ -1,3 +1,4 @@
+import 'package:ewc/services/auth_service.dart';
 import 'dart:async';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
@@ -8,8 +9,10 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
-import 'package:ewc/widgets/destination_marker_layer.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
+import 'package:ewc/widgets/marker_widget.dart';
+import 'package:ewc/services/stops_service.dart';
+
 import 'package:ewc/widgets/recentre_button.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
@@ -23,9 +26,13 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
-  // final AuthService _authService = AuthService();
+  //ignore: unused_field
+  final AuthService _authService = AuthService();
   final List<LatLng> _routePoints = [];
+  final List<Marker> _marker = [];
   late RouteService _routeService;
+  final StopsService _stopsService = StopsService();
+  
   late AnimatedMapController _animatedMapController;
   late LatLng? _latestLocation;
   late StreamSubscription<Position>? _locationStream;
@@ -40,7 +47,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   double _startMpg = 0;
   double _endMpg = 0;
 
-  // State initialisation
+  // State initialisation 
   @override
   void initState() {
     super.initState();
@@ -92,7 +99,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
-    // await dotenv.load(fileName: '.env'); // Load the .env file
     // // Initialize RouteService with API key
 
     try {
@@ -106,22 +112,62 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       }
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
-      await _fetchRoute();
+      await _drawCompleteRoute();
+      await _drawStopsMarker(Colors.blue);
+
     } catch (e) {
       // Log the error and provide feedback
-      _showErrorDialog(
-          "Failed to initialize map service. Please check API key and network connection.");
+      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
     }
+
+
   }
 
-  // Fetches route data from the API
-  Future<void> _fetchRoute() async {
-    const startLat = 51.4553, startLng = -2.6050;
-    const endLat = 51.4492, endLng = -2.5810;
+
+  // Function to draw a complete route between all stops
+  Future<void> _drawCompleteRoute() async {
+    // Alternatively store stops list as class attribute
+    List<LatLng> stops = await _stopsService.fetchAllStops();
+    List<LatLng> route = [];
+    for (int i = 0; i < stops.length - 1; i++) {
+      final start = stops[i];
+      final end = stops[i + 1];
+      final routePart = await _routeService.getRoute(start.latitude, start.longitude, end.latitude, end.longitude);
+      route.addAll(routePart);
+    }
+    setState(() {
+      _routePoints.clear();
+      _routePoints.addAll(route);
+    });
+
+  }
+
+  Future<void> _drawStopsMarker( Color color) async {
+    List<LatLng> stops = await _stopsService.fetchAllStops();
+    for (int i = 0; i < stops.length; i++) {
+      _marker.add(MarkerWidget.createMarker(stops[i], color));
+    }
+
+  }
+
+
+
+
+  // Fetches route data from the ORS API between the two given stops, entered by their ID.
+  // ignore: unused_element
+  Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
+
+    LatLng startPoint = await _stopsService.fetchStop(firstStopID);
+    LatLng collectionPoint = await _stopsService.fetchStop(secondStopID);
+
+
+
+    final startLat = startPoint.latitude, startLng = startPoint.longitude;
+    final endLat = collectionPoint.latitude, endLng = collectionPoint.longitude;
+
 
     // Get route points from the API and update _routePoints with the data
-    final List<LatLng> route =
-    await _routeService.getRoute(startLat, startLng, endLat, endLng);
+    final List<LatLng> route = await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
       // Remove any existing points
@@ -130,6 +176,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       _routePoints.addAll(route);
     });
   }
+
 
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
@@ -286,8 +333,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-    // NavigatorState navigator = Navigator.of(context);
-
+  
+    
     return Scaffold(
       body: content(),
       bottomNavigationBar: Padding(
@@ -338,6 +385,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
+
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
     return FlutterMap(
@@ -356,7 +404,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       children: [
         openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
         RoutePolylineLayer(routePoints: _routePoints),
-        DestinationMarker(location: LatLng(51.4516, -2.5810)),
+        MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
         if (_locationStatus != null && _latestLocation != null) if (_locationStatus!) LocationMarker(location: _latestLocation!),
       ],

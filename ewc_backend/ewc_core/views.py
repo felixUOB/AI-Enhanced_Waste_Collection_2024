@@ -9,6 +9,8 @@ from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetView
 
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 # User Profile ViewSet
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -56,3 +58,4 @@ class CheckEmailView(APIView):
         print(email_exists)
         # Return JSON response indicating whether the email exists
         return Response({'exists': email_exists})
+    
