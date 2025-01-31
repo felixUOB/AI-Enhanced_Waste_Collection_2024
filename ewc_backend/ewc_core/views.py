@@ -32,6 +32,9 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
     serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
+    def get_route_env_data(self, request):
+        return Response({"message"})
+
 # Waste Prediction ViewSet
 class StopsViewSet(viewsets.ModelViewSet):
     queryset = Stops.objects.all()

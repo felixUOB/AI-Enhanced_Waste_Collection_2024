@@ -7,7 +7,6 @@ class MetricsService {
 
 
   // get all distance data
-  Future<>
 
   // get all mpg datae
 

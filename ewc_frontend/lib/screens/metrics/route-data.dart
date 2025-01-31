@@ -4,7 +4,8 @@ class Route {
   final DateTime date;
 
   Route(
-    {required this.distance, 
+    {
+      required this.distance, 
       required this.mpg,
       required this.date,
       }
