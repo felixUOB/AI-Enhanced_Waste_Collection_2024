@@ -1,9 +1,9 @@
-class Route {
+class JourneyRoute {
   final double distance;
   final double mpg;
-  final DateTime date;
+  final String date;
 
-  Route(
+  JourneyRoute(
     {
       required this.distance, 
       required this.mpg,

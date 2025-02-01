@@ -65,7 +65,7 @@ class RouteEnvData(models.Model):
     route_env_data_id = models.BigAutoField(primary_key=True)
     distance = models.FloatField(null=False)
     mpg = models.FloatField(null=False)
-    date = models.FloatField(null=False)
+    date = models.DateField(null=False)
 
     class Meta:
         db_table = 'ewc_core_route_env_data'
