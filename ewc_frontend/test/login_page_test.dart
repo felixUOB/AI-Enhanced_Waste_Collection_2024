@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/map/map.dart';
@@ -20,6 +22,26 @@ class MockUrlLauncher extends Mock {
 
 class MockPageRouter extends Mock {
   void mockPageRouter();
+}
+
+class MockAuthService extends Mock implements AuthService {
+  @override
+  Future<void> saveUserCredentials(String username, String password) {
+    return super.noSuchMethod(
+      Invocation.method(#saveUserCredentials, [username, password]),
+      returnValue: Future.value(),
+      returnValueForMissingStub: Future.value(),
+    );
+  }
+
+  @override
+  Future<Map<String, String>> loadUserCredentials() {
+    return super.noSuchMethod(
+      Invocation.method(#loadUserCredentials, []),
+      returnValue: Future.value({"username": "mockUsername", "password": "mockPassword"}),
+      returnValueForMissingStub: Future.value({"username": "mockUsername", "password": "mockPassword"}),
+    );
+  }
 }
 
 @GenerateMocks([AuthService, MapPage])
@@ -182,7 +204,7 @@ void main() {
       expect(find.byKey(Key("mapPageReplacement")), findsOneWidget);
 
     });
-    testWidgets("Remember Me Functions as Expected", 
+    testWidgets("Remember Me Checkbox Functions as Expected", 
     (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -199,5 +221,45 @@ void main() {
       expect(rememberMe.value, true);
     }
     );
+
+    testWidgets("Remember Me Functions as Expected", (WidgetTester tester) async {
+    final mockAuthService = MockAuthService();
+
+    // Mock the saveUserCredentials and loadUserCredentials methods
+    when(mockAuthService.saveUserCredentials("mockUsername", "mockPassword")).thenAnswer((_) async => Future.value());
+    when(mockAuthService.loadUserCredentials()).thenAnswer((_) async => {
+      "username": "mockUsername",
+      "password": "mockPassword",
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: LoginPage(),
+      ),
+    );
+
+    // Initial state of the checkbox
+    var rememberMe = tester.widget<Checkbox>(find.byKey(Key("remember_me")));
+    expect(rememberMe.value, false);
+
+    // Tap the checkbox
+    await tester.tap(find.byKey(Key("remember_me")));
+    await tester.pumpAndSettle();
+
+    // Retrieve the updated state of the checkbox
+    rememberMe = tester.widget<Checkbox>(find.byKey(Key("remember_me")));
+    expect(rememberMe.value, true);
+
+    // Call the mocked saveUserCredentials method
+    await mockAuthService.saveUserCredentials("mockUsername", "mockPassword");
+    final credentials = await mockAuthService.loadUserCredentials();
+
+    print(credentials);
+
+    // Verify the credentials
+    expect(credentials["username"], "mockUsername");
+    expect(credentials["password"], "mockPassword");
+  });
+
   });
 }
