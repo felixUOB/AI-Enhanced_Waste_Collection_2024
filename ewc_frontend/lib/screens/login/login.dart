@@ -84,6 +84,7 @@ class LoginPageState extends State<LoginPage> {
                         children: [
                           Text("Remember Me?"),
                           Checkbox(
+                            key: Key("remember_me"),
                               value: _rememberMe,
                               onChanged: (value) => setState(() {
                                     _rememberMe = value!;

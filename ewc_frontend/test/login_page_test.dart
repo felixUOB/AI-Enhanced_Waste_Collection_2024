@@ -180,6 +180,24 @@ void main() {
       // Verify that the main navigation bar and map page are displayed
       expect(find.byKey(Key("mainNavigationBar")), findsOneWidget);
       expect(find.byKey(Key("mapPageReplacement")), findsOneWidget);
+
     });
+    testWidgets("Remember Me Functions as Expected", 
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: LoginPage()
+        ),
+      );
+      var rememberMe = tester.widget<Checkbox>(find.byKey(Key(("remember_me"))));
+      expect(rememberMe.value, false);
+      await tester.tap(find.byKey(Key(("remember_me"))));
+      await tester.pumpAndSettle();
+
+      // Retrieve the updated state of the checkbox
+      rememberMe = tester.widget<Checkbox>(find.byKey(Key("remember_me")));
+      expect(rememberMe.value, true);
+    }
+    );
   });
 }
