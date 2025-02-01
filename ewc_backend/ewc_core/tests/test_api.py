@@ -79,3 +79,29 @@ class UserProfileViewSetTest(APITestCase):
         # Expect HTTP 200 OK when accessing the user profiles list
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+class StopsViewSetTest(APITestCase):
+    """
+    Tests for the Stops viewset endpoint.
+    This test verifies that the GET method returns a list of stops.
+    """
+    def setUp(self):
+        # Create and authenticate a user for testing
+        self.user = User.objects.create_user(username="stopsuser", password="pass123")
+        self.client.force_authenticate(user=self.user)
+        # Create a sample Stops object for testing GET requests
+        self.stop = Stops.objects.create(
+            location_name="Test Stop",
+            latitude=37.5665,
+            longitude=126.9780,
+            next_collection_due_date=None,
+            last_collection_date=None,
+            max_weight=100
+        )
+
+    def test_get_stops(self):
+        # Reverse lookup of the Stops list endpoint
+        url = reverse('stops-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Verify that at least one stop is returned
+        self.assertGreaterEqual(len(response.data), 1)
