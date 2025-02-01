@@ -105,3 +105,36 @@ class StopsViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Verify that at least one stop is returned
         self.assertGreaterEqual(len(response.data), 1)
+
+class StopCollectionViewSetTest(APITestCase):
+    """
+    Tests for the StopCollection viewset endpoint.
+    This test checks that a StopCollection object related to a Stops object
+    is correctly retrieved via the GET method.
+    """
+    def setUp(self):
+        # Create and authenticate a user for testing
+        self.user = User.objects.create_user(username="collectionuser", password="pass123")
+        self.client.force_authenticate(user=self.user)
+        # Create a sample Stops object
+        self.stop = Stops.objects.create(
+            location_name="Collection Stop",
+            latitude=35.0,
+            longitude=129.0,
+            next_collection_due_date=None,
+            last_collection_date=None,
+            max_weight=200
+        )
+        # Create a sample StopCollection object linked to the Stops object
+        self.collection = StopCollection.objects.create(
+            stop=self.stop,
+            weight_collected=75
+        )
+
+    def test_get_stop_collections(self):
+        # Reverse lookup of the StopCollection list endpoint
+        url = reverse('stopcollection-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Verify that at least one stop collection is returned
+        self.assertGreaterEqual(len(response.data), 1)
