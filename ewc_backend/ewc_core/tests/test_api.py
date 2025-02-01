@@ -138,3 +138,27 @@ class StopCollectionViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Verify that at least one stop collection is returned
         self.assertGreaterEqual(len(response.data), 1)
+
+class RouteEnvDataViewSetTest(APITestCase):
+    """
+    Tests for the RouteEnvData viewset endpoint.
+    This test verifies that the GET method returns route environmental data.
+    """
+    def setUp(self):
+        # Create and authenticate a user for testing
+        self.user = User.objects.create_user(username="routeenvuser", password="pass123")
+        self.client.force_authenticate(user=self.user)
+        # Create a sample RouteEnvData object for testing; note that the 'date' field is a FloatField
+        self.route_data = RouteEnvData.objects.create(
+            distance=150.0,
+            mpg=30.0,
+            date=20250101  # Example numeric value since 'date' is defined as a FloatField
+        )
+
+    def test_get_route_env_data(self):
+        # Reverse lookup of the RouteEnvData list endpoint
+        url = reverse('routeenvdata-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # Verify that at least one route environmental data entry is returned
+        self.assertGreaterEqual(len(response.data), 1)
