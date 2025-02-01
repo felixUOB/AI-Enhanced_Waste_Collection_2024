@@ -66,3 +66,5 @@ class CheckEmailView(APIView):
         # Return JSON response indicating whether the email exists
         return Response({'exists': email_exists})
     
+
+    

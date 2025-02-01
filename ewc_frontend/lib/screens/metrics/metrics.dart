@@ -19,6 +19,17 @@ class _MetricsPageState extends State<MetricsPage> {
   double totalDistance = 0;
   double averageMpg = 0;
   int totalRoutes = 0;
+  // day of week route : shows the routes done this week by day
+  Map<String, dynamic> thisWeekFormated = {
+    'Monday' : null, 
+    'Tuesday': null,
+    'Wednesday' : null,
+    'Thursday' : null,
+    'Friday' : null,
+    'Saturday' : null,
+    'Sunday' : null,
+    };
+  List<JourneyRoute> thisWeek = [];
 
   // get the data and initialise the list of routes
   // do once when the app is first opened
@@ -31,6 +42,30 @@ class _MetricsPageState extends State<MetricsPage> {
   void main() async{
    routeList = await _initialiseMetricData();
     _calculateDetails();
+    // get the dates that occured this week
+    thisWeek = _calculateThisWeek();
+    //  put the dates into a nice format
+    for (var route in thisWeek){
+      DateTime d = DateTime.parse(route.date);
+      int dayOfWeek = d.weekday;
+      if (dayOfWeek == 1){
+        thisWeekFormated['Monday'] = route;
+      } else if (dayOfWeek == 2){
+        thisWeekFormated['Tuesday'] = route;
+      } else if (dayOfWeek == 2){
+        thisWeekFormated['Wednesday'] = route;
+      } else if (dayOfWeek == 2){
+        thisWeekFormated['Thursday'] = route;
+      }else if (dayOfWeek == 2){
+        thisWeekFormated['Friday'] = route;
+      }else if (dayOfWeek == 2){
+        thisWeekFormated['Saturday'] = route;
+      }else if (dayOfWeek == 2){
+        thisWeekFormated['Sunday'] = route;
+      } else{
+        throw Exception("unvalid");
+      }
+    }
   }
 
   Future<List<JourneyRoute>> _initialiseMetricData() async {
@@ -47,6 +82,27 @@ class _MetricsPageState extends State<MetricsPage> {
       cumulativeMpg = cumulativeMpg + route.mpg;
     }
     averageMpg = cumulativeMpg / totalRoutes;
+    // calculate the dates that are in the current week
+  }
+
+  List<JourneyRoute> _calculateThisWeek() {
+    // get the currentWeekday = now.weekday;
+    DateTime now = DateTime.now();
+    // work out when monday was (1 = monday, 7= sunday)
+    int daysToSubtract = now.weekday -1;
+    DateTime monday = now.subtract(Duration(days: daysToSubtract));
+    // genereate this weeks dates
+    // List<DateTime> weekDates = List.generate(7, (index){
+    //   return startOfWeek.add(Duration(days: index));
+    // });
+    // get the first and last days of the week
+    DateTime sunday = monday.add(Duration(days: 7));
+    // returns the list of routes that happened this week
+    return routeList.where((item) {
+      // parse the string to be datetime
+      DateTime date = DateTime.parse(item.date);
+      return date.isAfter(monday.subtract(Duration(days:1))) && date.isBefore(sunday.add(Duration(days:1)));
+    }).toList();
   }
 
   // build the UI for the metrics page
@@ -93,7 +149,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                       SizedBox(height: 20,),
                                       Text("Average mpg : $averageMpg mpg", style : TextStyle(fontSize: 20)),
                                       SizedBox(height: 20,),
-                                      Text("Total routes completed : $totalRoutes", style : TextStyle(fontSize: 20)),
+                                      Text("Number of routes completed : $totalRoutes", style : TextStyle(fontSize: 20)),
                                     ],
                                       )
                                   ),

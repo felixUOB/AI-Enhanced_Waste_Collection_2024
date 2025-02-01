@@ -22,7 +22,7 @@ class MetricsService {
     } else{
       throw Exception('Failed to load statistics data.');
     }
-
   }
+
 
 }
