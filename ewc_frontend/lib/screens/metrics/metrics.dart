@@ -21,16 +21,21 @@ class _MetricsPageState extends State<MetricsPage> {
   int totalRoutes = 0;
 
   // get the data and initialise the list of routes
+  // do once when the app is first opened
   @override
   void initState(){
     super.initState();
-    _initialiseMetricData();
+    main();
+  }
+
+  void main() async{
+   routeList = await _initialiseMetricData();
     _calculateDetails();
   }
 
-  void _initialiseMetricData() async {
+  Future<List<JourneyRoute>> _initialiseMetricData() async {
     List<JourneyRoute> routes = await _metricsService.fetchAllRoutes();
-    routeList = routes;
+    return routes;
   }
   void _calculateDetails() async {
     totalRoutes = routeList.length;
@@ -42,15 +47,11 @@ class _MetricsPageState extends State<MetricsPage> {
       cumulativeMpg = cumulativeMpg + route.mpg;
     }
     averageMpg = cumulativeMpg / totalRoutes;
-    print(totalRoutes);
-    print(totalDistance);
-    print(averageMpg);
   }
 
   // build the UI for the metrics page
   @override
   Widget build(BuildContext context) {
-
     // sample data
     List<double> carbonFootPrintData = [2.4, 2.4, 3.2, 4.5, 6.7, 6.7, 5.4];
     return Scaffold(
@@ -67,38 +68,38 @@ class _MetricsPageState extends State<MetricsPage> {
                     crossAxisCellCount: 2,
                     mainAxisExtent: 300.0,
                     child: _buildTile(
-                        Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Column(children: [
-                                    Text('Carbon Footprint Bar Graph',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium),
-                                    Padding(
-                                        padding:
-                                            EdgeInsets.only(bottom: 4.0)),
-                                    SizedBox(
-                                      height: 200,
-                                      child: 
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        children: [
-                                          Text("Total Distance : ", style : TextStyle(fontSize: 20)),
-                                          SizedBox(height: 20,),
-                                          Text("Average mpg : ", style : TextStyle(fontSize: 20)),
-                                          SizedBox(height: 20,),
-                                          Text("Total routes completed : ", style : TextStyle(fontSize: 20)),
-                                        ],
-                                          )
-                                      ),
-                                    ]),
-                                  ])),
-                          context)),
+                      Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Column(children: [
+                                Text('Carbon Footprint Bar Graph',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
+                                Padding(
+                                    padding:
+                                        EdgeInsets.only(bottom: 4.0)),
+                                SizedBox(
+                                  height: 200,
+                                  child: 
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text("Total Distance : $totalDistance miles", style : TextStyle(fontSize: 20)),
+                                      SizedBox(height: 20,),
+                                      Text("Average mpg : $averageMpg mpg", style : TextStyle(fontSize: 20)),
+                                      SizedBox(height: 20,),
+                                      Text("Total routes completed : $totalRoutes", style : TextStyle(fontSize: 20)),
+                                    ],
+                                      )
+                                  ),
+                                  ]),
+                                ])),
+                        context)),
                   StaggeredGridTile.extent(
                       crossAxisCellCount: 2,
                       mainAxisExtent: 300.0,
