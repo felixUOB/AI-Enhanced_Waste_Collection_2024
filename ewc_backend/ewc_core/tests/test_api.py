@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
-from .models import UserProfile, Stops, StopCollection, RouteEnvData
+from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData
 
 class UserRegistrationTest(APITestCase):
     """
