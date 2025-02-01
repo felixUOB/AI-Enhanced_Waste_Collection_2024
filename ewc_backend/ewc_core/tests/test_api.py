@@ -4,11 +4,25 @@ from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData
 
+# python manage.py test ewc_core.tests
+
+# Overall Structure
+#      - Each test class inherits from APITestCase (from Django REST framework),
+#        which provides tools for testing API endpoints.
+#      - The tests use Django’s test client to send requests to your API endpoints
+#        and then compare the received responses with the expected outcomes.
+
 class UserRegistrationTest(APITestCase):
     """
-    Tests for the user registration endpoint.
-    This test checks that a new user and their associated UserProfile
-    are properly created when posting valid data to the registration endpoint.
+    UserRegistrationTest
+      - Purpose: Verifies the "user-registration" endpoint.
+      - Key steps:
+          1. Constructs a payload with registration info (username, password, email, etc.).
+          2. Sends a POST request to the endpoint (reverse('user-registration')).
+          3. Checks for:
+             • HTTP 201 CREATED.
+             • A new User in the User model.
+             • A corresponding UserProfile linked to that user.
     """
     def test_user_registration(self):
         # Reverse lookup of the registration endpoint URL by its name
@@ -33,9 +47,11 @@ class UserRegistrationTest(APITestCase):
 
 class CheckEmailTest(APITestCase):
     """
-    Tests for the email-check endpoint.
-    These tests verify that the endpoint correctly handles cases
-    where the email parameter is missing, exists, or does not exist.
+    - Purpose: Tests the "check-email" endpoint under different scenarios.
+      - Key scenarios:
+          1. No email parameter: expects an error/failure response.
+          2. Existing email: verifies the endpoint indicates the email exists.
+          3. Non-existing email: verifies the endpoint indicates the email does not exist.
     """
     def test_check_email_without_parameter(self):
         # Reverse lookup of the email-check endpoint URL
@@ -64,8 +80,12 @@ class CheckEmailTest(APITestCase):
 
 class UserProfileViewSetTest(APITestCase):
     """
-    Tests for the UserProfile viewset.
-    This viewset requires authentication, so a test user is created and authenticated.
+    UserProfileViewSetTest
+      - Purpose: Ensures authenticated users can access the "UserProfile" endpoint.
+      - Key steps:
+          1. Creates and authenticates a test user (setUp()).
+          2. Sends a GET request to reverse('userprofile-list').
+          3. Expects a 200 OK response.
     """
     def setUp(self):
         # Create a test user and force authentication for the test client
@@ -81,8 +101,12 @@ class UserProfileViewSetTest(APITestCase):
 
 class StopsViewSetTest(APITestCase):
     """
-    Tests for the Stops viewset endpoint.
-    This test verifies that the GET method returns a list of stops.
+    - Purpose: Validates that "Stops" endpoint returns a list of Stops objects.
+      - Key steps:
+          1. Creates and authenticates a test user (setUp()).
+          2. Creates a sample Stops object in the DB.
+          3. Sends a GET request to reverse('stops-list').
+          4. Checks for 200 OK and at least one item in the returned list.
     """
     def setUp(self):
         # Create and authenticate a user for testing
@@ -108,9 +132,12 @@ class StopsViewSetTest(APITestCase):
 
 class StopCollectionViewSetTest(APITestCase):
     """
-    Tests for the StopCollection viewset endpoint.
-    This test checks that a StopCollection object related to a Stops object
-    is correctly retrieved via the GET method.
+    - Purpose: Confirms that "StopCollection" endpoint returns StopCollection objects.
+      - Key steps:
+          1. Creates and authenticates a test user (setUp()).
+          2. Creates a Stops object and a related StopCollection object.
+          3. Sends a GET request to reverse('stopcollection-list').
+          4. Checks for 200 OK and at least one returned record.
     """
     def setUp(self):
         # Create and authenticate a user for testing
@@ -141,8 +168,12 @@ class StopCollectionViewSetTest(APITestCase):
 
 class RouteEnvDataViewSetTest(APITestCase):
     """
-    Tests for the RouteEnvData viewset endpoint.
-    This test verifies that the GET method returns route environmental data.
+    - Purpose: Validates retrieval of route environmental data via "RouteEnvData" endpoint.
+      - Key steps:
+          1. Creates and authenticates a test user (setUp()).
+          2. Creates a RouteEnvData object in the DB.
+          3. Sends a GET request to reverse('routeenvdata-list').
+          4. Expects 200 OK and at least one record in response.
     """
     def setUp(self):
         # Create and authenticate a user for testing
