@@ -83,6 +83,35 @@ void main() {
     // Add additional verifications for navigation or other UI changes after auto-login
     expect(find.byType(LoginPage), findsOneWidget);
   });
+  testWidgets("Auto Login Null Return Functions as Expected", (WidgetTester tester) async {
+    final mockAuthService = mocks.MockAuthService();
+
+    // Mock the loadUserCredentials and login methods
+    when(mockAuthService.loadUserCredentials()).thenAnswer((_) async => {});
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SplashPage(authService: mockAuthService),
+      ),
+    );
+
+    // Verify that the CircularProgressIndicator is displayed initially
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+    // Wait for the auto-login process to complete
+    await tester.pumpAndSettle();
+
+    print("Test 1");
+
+    // Verify that the auto-login process was called
+    verify(mockAuthService.loadUserCredentials()).called(1);
+
+    // Verify that the CircularProgressIndicator is no longer displayed
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+
+    // Add additional verifications for navigation or other UI changes after auto-login
+    expect(find.byType(LoginPage), findsOneWidget);
+  });
 
 
   });
