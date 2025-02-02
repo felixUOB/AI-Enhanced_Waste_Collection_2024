@@ -1,7 +1,5 @@
 
-import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/screens/login/login.dart';
-import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -9,7 +7,6 @@ import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
-import 'package:mockito/annotations.dart';
 import "package:mockito/mockito.dart";
 import 'mocks.mocks.dart' as mocks;
 
@@ -23,27 +20,6 @@ class MockPageRouter extends Mock {
   void mockPageRouter();
 }
 
-class MockAuthService extends Mock implements AuthService {
-  @override
-  Future<void> saveUserCredentials(String username, String password) {
-    return super.noSuchMethod(
-      Invocation.method(#saveUserCredentials, [username, password]),
-      returnValue: Future.value(),
-      returnValueForMissingStub: Future.value(),
-    );
-  }
-
-  @override
-  Future<Map<String, String>> loadUserCredentials() {
-    return super.noSuchMethod(
-      Invocation.method(#loadUserCredentials, []),
-      returnValue: Future.value({"username": "mockUsername", "password": "mockPassword"}),
-      returnValueForMissingStub: Future.value({"username": "mockUsername", "password": "mockPassword"}),
-    );
-  }
-}
-
-@GenerateMocks([AuthService, MapPage])
 void main() {
   // Group of tests for the Login Page
   group('LoginPage Widget Tests', () {
@@ -222,7 +198,7 @@ void main() {
     );
 
     testWidgets("Remember Me Functions as Expected", (WidgetTester tester) async {
-    final mockAuthService = MockAuthService();
+    final mockAuthService = mocks.MockAuthService();
 
     // Mock the saveUserCredentials and loadUserCredentials methods
     when(mockAuthService.saveUserCredentials("mockUsername", "mockPassword")).thenAnswer((_) async => Future.value());

@@ -101,8 +101,6 @@ void main() {
     // Wait for the auto-login process to complete
     await tester.pumpAndSettle();
 
-    print("Test 1");
-
     // Verify that the auto-login process was called
     verify(mockAuthService.loadUserCredentials()).called(1);
 
