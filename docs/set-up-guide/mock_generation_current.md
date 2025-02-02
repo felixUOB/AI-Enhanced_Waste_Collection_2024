@@ -13,8 +13,8 @@ if the funciton has already been mocked and needs updating, run:
 
 
 For example in the code:
-''' 
-testWidgets("Auto Login Success Functions as Expected", (WidgetTester tester) async {
+
+    testWidgets("Auto Login Success Functions as Expected", (WidgetTester tester) async {
 
       when(mockAuthService.loadUserCredentials()).thenAnswer((_) async => <String, String?>{
         "username": "mockUsername",
@@ -52,8 +52,7 @@ testWidgets("Auto Login Success Functions as Expected", (WidgetTester tester) as
 
       // Verify that the user is navigated to the main page after auto-login success
       expect(find.byType(MainNavigationBar), findsOneWidget);
-  });
-'''
+    });
 
 you define what the outputs of the mocked functions will be to ensure you have deterministic outputs
 and can test functionality well 
