@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/services/auth_service.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -18,16 +19,19 @@ class StopsService {
     }
   }
 
-  Future<List<LatLng>> fetchAllStops() async {
+  Future<List<Stop>> fetchAllStops() async {
     final response = await authService.makeAuthenticatedRequest('stops');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as List;
-      List<LatLng> latLngStopsList = [];
+      List<Stop> stopsList = [];
       for (var point in data) {
-        latLngStopsList.add(LatLng(point['latitude'], point['longitude']));
+        stopsList.add(Stop(
+            name: point['location_name'],
+            location: LatLng(point['latitude'], point['longitude']))
+        );
       }
-      return latLngStopsList;
+      return stopsList;
     } else {
       throw Exception('Failed to load collection points');
     }

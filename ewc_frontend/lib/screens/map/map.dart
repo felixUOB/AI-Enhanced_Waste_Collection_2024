@@ -1,4 +1,3 @@
-import 'package:ewc/services/auth_service.dart';
 import 'dart:async';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
@@ -12,7 +11,7 @@ import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
-
+import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
@@ -26,13 +25,15 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
-  //ignore: unused_field
-  final AuthService _authService = AuthService();
+
+  // Route variables
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
   late RouteService _routeService;
   final StopsService _stopsService = StopsService();
-  
+  late List<Stop> _stops = [];
+
+  // Location variables
   late AnimatedMapController _animatedMapController;
   late LatLng? _latestLocation;
   late StreamSubscription<Position>? _locationStream;
@@ -62,7 +63,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     _locationStatusStream = Geolocator.getServiceStatusStream()
         .listen((ServiceStatus status) {
       setState(() {
-        _locationStatus = (status == ServiceStatus.enabled) ? true : false;
+        _locationStatus = status == ServiceStatus.enabled;
       });
     });
   }
@@ -99,7 +100,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
-    // // Initialize RouteService with API key
+    _stops = await _stopsService.fetchAllStops();
+    // Initialize RouteService with API key
 
     try {
       // Attempt to load the .env file
@@ -127,27 +129,26 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Function to draw a complete route between all stops
   Future<void> _drawCompleteRoute() async {
     // Alternatively store stops list as class attribute
-    List<LatLng> stops = await _stopsService.fetchAllStops();
     List<LatLng> route = [];
-    for (int i = 0; i < stops.length - 1; i++) {
-      final start = stops[i];
-      final end = stops[i + 1];
-      final routePart = await _routeService.getRoute(start.latitude, start.longitude, end.latitude, end.longitude);
+    for (int i = 0; i < _stops.length - 1; i++) {
+      final start = _stops[i];
+      final end = _stops[i + 1];
+      final routePart = await _routeService.getRoute(
+          start.location.latitude, start.location.longitude,
+          end.location.latitude, end.location.longitude
+      );
       route.addAll(routePart);
     }
     setState(() {
       _routePoints.clear();
       _routePoints.addAll(route);
     });
-
   }
 
-  Future<void> _drawStopsMarker( Color color) async {
-    List<LatLng> stops = await _stopsService.fetchAllStops();
-    for (int i = 0; i < stops.length; i++) {
-      _marker.add(MarkerWidget.createMarker(stops[i], color));
+  Future<void> _drawStopsMarker(Color color) async {
+    for (int i = 0; i < _stops.length; i++) {
+      _marker.add(MarkerWidget.createMarker(_stops[i].location, color));
     }
-
   }
 
 
