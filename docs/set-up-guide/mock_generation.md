@@ -13,6 +13,10 @@ if the funciton has already been mocked and needs updating, run:
     
     flutter pub run build_runner watch
 
+if these fail you can use this command to rebuild mocks from scratch: 
+
+    flutter pub run build_runner build --delete-conflicting-outputs
+
 
 For example in the code:
 
