@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/screens/login/login.dart';
@@ -12,7 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:mockito/annotations.dart';
 import "package:mockito/mockito.dart";
-import 'login_page_test.mocks.dart' as mocks;
+import 'mocks.mocks.dart' as mocks;
 
 // Mock Url Launcher function to replace real urlLauncher
 class MockUrlLauncher extends Mock {
@@ -173,10 +172,10 @@ void main() {
     // Test to check if the SignIn button functions correctly on correct login
     testWidgets("SignIn Button Functions Correctly On Correct Login",
         (WidgetTester tester) async {
-      mocks.MockAuthService mockAuth = mocks.MockAuthService();
+      mocks.MockAuthService  mockAuthService = mocks.MockAuthService();
 
       // Mock the login behavior
-      when((mockAuth.login("mockUsername", "mockPassword")))
+      when((mockAuthService.login("mockUsername", "mockPassword")))
           .thenAnswer((_) async {
         return Future.value();
       });
@@ -185,7 +184,7 @@ void main() {
         body: LoginButton(
             text1: "Sign In",
             onPressed: () async {
-              await mockAuth.login("mockUsername", "mockPassword");
+              await mockAuthService.login("mockUsername", "mockPassword");
               Navigator.push(
                 tester.element(find.byKey(Key('loginButton'))),
                 MaterialPageRoute(
