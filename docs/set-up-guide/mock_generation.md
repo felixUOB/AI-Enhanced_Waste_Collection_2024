@@ -7,11 +7,11 @@ The generated mocks will be placed in a file named mocks.mocks.dart.
 
 As we already have a mocks.dart file set up, just add the required classes to the @GenerateMocks annotation and run:
 
-    flutter pub run build_runner build>
+    flutter pub run build_runner build
 
 if the funciton has already been mocked and needs updating, run:
     
-    flutter pub run build_runner watch>
+    flutter pub run build_runner watch
 
 
 For example in the code:
