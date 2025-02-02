@@ -254,6 +254,7 @@ void main() {
     await mockAuthService.saveUserCredentials("mockUsername", "mockPassword");
     final credentials = await mockAuthService.loadUserCredentials();
 
+
     // Verify the credentials
     expect(credentials["username"], "mockUsername");
     expect(credentials["password"], "mockPassword");

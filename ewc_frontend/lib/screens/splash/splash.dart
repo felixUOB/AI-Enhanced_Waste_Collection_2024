@@ -6,8 +6,9 @@ import 'package:ewc/widgets/main_navigation_bar.dart';
 // SplashPage is the initial screen that attempts auto-login
 // ignore: must_be_immutable
 class SplashPage extends StatefulWidget {
+  final bool isTesting;
   dynamic authService;
-  SplashPage({super.key, required this.authService});
+  SplashPage({super.key, required this.authService, this.isTesting = false,});
 
   @override
   State<StatefulWidget> createState() {
@@ -38,13 +39,23 @@ class SplashPageState extends State<SplashPage> {
             username, password); // Attempt login with given credentials
 
         if (mounted) {
+          if (widget.isTesting) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => MainNavigationBar(
-                testing: false,
+                testing: true,
               ), // Moving pages
             ),
           );
+          } else {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => MainNavigationBar(
+                  testing: false,
+                ), // Moving pages
+              ),
+            );
+          }
         }
       } catch (e) {
         // If unsuccessful, route to login page
