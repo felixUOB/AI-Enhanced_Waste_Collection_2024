@@ -5,7 +5,6 @@ import 'package:ewc/widgets/timeline_tile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/models/stop_model.dart';
-import 'package:latlong2/latlong.dart';
 
 class Schedule extends StatefulWidget {
   const Schedule({super.key});
@@ -15,12 +14,8 @@ class Schedule extends StatefulWidget {
 }
 
 class _Schedule extends State<Schedule> {
-  final List<Stop> _route = [
-    Stop(name: 'southdown', location: LatLng(51.4963871, -2.6230827)),
-    Stop(name: 'hill grove', location: LatLng(51.4898217, -2.6021408)),
-    Stop(name: 'coombe dingle', location: LatLng(51.4980162, -2.6411713))
-  ];
-  List<double>? _stopTimes;
+  late List<Stop> _route = [];
+  List<int>? _stopTimes;
   final _stopsService = StopsService();
 
   @override
@@ -40,7 +35,7 @@ class _Schedule extends State<Schedule> {
         throw Exception("API key missing in .env file.");
       }
       // Initialize RouteService with the valid API key
-      //_route = await _stopsService.fetchAllStops();
+      _route = await _stopsService.fetchAllStops();
       RouteService routeService = RouteService(dotenv.env['API_KEY']!);
       _stopTimes = await routeService.getStopTimes(_route[0].location, _route.map((route) => route.location).toList());
 
@@ -58,7 +53,7 @@ class _Schedule extends State<Schedule> {
       // makes a scrollable list
       body: Scaffold(
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50.0),
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: ListView.builder(
             itemCount: _route.length,
             itemBuilder: (BuildContext context, int index) {
@@ -76,13 +71,13 @@ class _Schedule extends State<Schedule> {
                   ),
 // ------------Minutes text------------
                   Expanded(
-                    child: (_stopTimes != null) ?
+                    child: (_stopTimes != null && !_route[index].visited) ?
                     Text(
-                      _stopTimes![index].toString(), // display the stop time
+                      "${_stopTimes![index]} mins", // display the stop time
                       textAlign: TextAlign.right,
                       style: AppTheme().constWhiteTextLarge,
                     ): Text(
-                      "Getting Data",
+                      "",
                       textAlign: TextAlign.right,
                       style: AppTheme().constWhiteTextLarge,
                     )

@@ -53,7 +53,7 @@ class RouteService {
 
   // This function takes two values, source and destinations and returns
   // a matrix of the time it takes to get from that source to each destination
-  Future<List<double>> getStopTimes(LatLng source, List<LatLng> stopLocations) async {
+  Future<List<int>> getStopTimes(LatLng source, List<LatLng> stopLocations) async {
 
     // Convert stopLocations list from LatLng to ORSCoordinates
     stopLocations.insert(0, source); // Add source as initial item in array
@@ -64,19 +64,19 @@ class RouteService {
       // Request time duration matrix from ORS API
       TimeDistanceMatrix matrix = await client.matrixPost(
         locations: convertedList,
-        destinations: List.generate(
-            stopLocations.length - 1, (index) => index + 1),
-        sources: List.generate(stopLocations.length - 1, (index) => index);,
+        destinations: List.generate(stopLocations.length - 1, (index) => index + 1),
+        sources: List.generate(stopLocations.length - 1, (index) => index),
         profileOverride: ORSProfile.drivingHgv,
       );
 
-      List<double> finalDurations = [];
+      List<int> finalDurations = [];
       double previousStopValue = 0;
 
       for (int i = 0; i < matrix.durations.length; i++) {
         // Values we want are on the diagonal of the array
         double stopValue = matrix.durations[i][i] + previousStopValue;
-        finalDurations.add(stopValue / 60); // Convert to minutes
+        // Convert to minutes and floor the value
+        finalDurations.add((stopValue / 60).floor());
         previousStopValue = stopValue; // Keep track of concurrent stop time
       }
 

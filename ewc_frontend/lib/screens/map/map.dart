@@ -48,6 +48,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   double _startMpg = 0;
   double _endMpg = 0;
 
+  LatLng? get latestLocation => _latestLocation;
+
   // State initialisation 
   @override
   void initState() {
