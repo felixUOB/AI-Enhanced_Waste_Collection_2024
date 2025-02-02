@@ -4,8 +4,10 @@ import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
 // SplashPage is the initial screen that attempts auto-login
+// ignore: must_be_immutable
 class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+  dynamic authService;
+  SplashPage({super.key, required this.authService});
 
   @override
   State<StatefulWidget> createState() {
@@ -14,7 +16,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class SplashPageState extends State<SplashPage> {
-  final AuthService _authService = AuthService();
+  
 
   @override
   void initState() {
@@ -25,14 +27,14 @@ class SplashPageState extends State<SplashPage> {
   // Attempts to auto-login using saved credentials
   void _attemptAutoLogin() async {
     // await _authService.clearCredentials();
-    var credentials = await _authService.loadUserCredentials();
+    var credentials = await widget.authService.loadUserCredentials();
 
     String? username = credentials['username'];
     String? password = credentials['password'];
 
     if (username != null && password != null) {
       try {
-        await _authService.login(
+        await widget.authService.login(
             username, password); // Attempt login with given credentials
 
         if (mounted) {
