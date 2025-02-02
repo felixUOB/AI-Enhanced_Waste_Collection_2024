@@ -1,18 +1,12 @@
 import 'package:ewc/screens/login/login.dart';
-import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/splash/splash.dart';
-import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks.mocks.dart' as mocks;
 
 // This file contains tests for the Metrics Page
-
-  
-
 
 void main() {
 

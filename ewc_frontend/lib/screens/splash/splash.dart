@@ -1,6 +1,5 @@
 import 'package:ewc/screens/login/login.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
 // SplashPage is the initial screen that attempts auto-login
