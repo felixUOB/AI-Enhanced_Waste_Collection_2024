@@ -66,6 +66,7 @@ class _MetricsPageState extends State<MetricsPage> {
         throw Exception("unvalid");
       }
     }
+    print(thisWeekFormated);
   }
 
   Future<List<JourneyRoute>> _initialiseMetricData() async {
@@ -108,6 +109,7 @@ class _MetricsPageState extends State<MetricsPage> {
   // build the UI for the metrics page
   @override
   Widget build(BuildContext context) {
+    print(thisWeekFormated);
     // sample data
     List<double> carbonFootPrintData = [2.4, 2.4, 3.2, 4.5, 6.7, 6.7, 5.4];
     return Scaffold(
