@@ -5,6 +5,9 @@ import 'package:ewc/widgets/timeline_tile.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/models/stop_model.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import 'package:ewc/notifiers/location_notifier.dart';
 
 class Schedule extends StatefulWidget {
   const Schedule({super.key});
@@ -37,8 +40,10 @@ class _Schedule extends State<Schedule> {
       // Initialize RouteService with the valid API key
       _route = await _stopsService.fetchAllStops();
       RouteService routeService = RouteService(dotenv.env['API_KEY']!);
-      _stopTimes = await routeService.getStopTimes(_route[0].location, _route.map((route) => route.location).toList());
-
+      if (mounted) {
+        LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+        if (location != null) _stopTimes = await routeService.getStopTimes(location, _route.map((route) => route.location).toList());
+      }
   } catch (e) {
       // Log the error and provide feedback
       throw Exception("Failed to initialize map service. Please check API key and network connection.");
