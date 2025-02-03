@@ -61,7 +61,7 @@ class SplashPageState extends State<SplashPage> {
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LoginPage(), // Moving pages
+              builder: (context) => LoginPage(authService: widget.authService,), // Moving pages
             ),
           );
         }
@@ -71,7 +71,7 @@ class SplashPageState extends State<SplashPage> {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => LoginPage(), // Moving pages
+            builder: (context) => LoginPage(authService: widget.authService,), // Moving pages
           ),
         );
       }

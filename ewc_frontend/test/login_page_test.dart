@@ -119,8 +119,10 @@ void main() {
     // Test to check if the Register Here button routes to registration page
     testWidgets("Register Here button routes to registration page",
         (WidgetTester tester) async {
+      mocks.MockAuthService  mockAuthService = mocks.MockAuthService();
+
       await tester.pumpWidget(MaterialApp(
-          home: LoginPage(), routes: {"register": (_) => RegisterPage()}));
+          home: LoginPage(authService: mockAuthService,), routes: {"register": (_) => RegisterPage()}));
 
       // Verify that the welcome text is displayed
       expect(find.text("Welcome Back!"), findsOneWidget);
@@ -140,7 +142,9 @@ void main() {
 
     // Test to check if the logo loads correctly
     testWidgets("Logo Loads Correctly", (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      mocks.MockAuthService  mockAuthService = mocks.MockAuthService();
+
+      await tester.pumpWidget(MaterialApp(home: LoginPage(authService: mockAuthService)));
       // Verify that the logo is displayed
       expect(find.byKey(ValueKey("logo")), findsOneWidget);
     });
@@ -181,9 +185,10 @@ void main() {
     });
     testWidgets("Remember Me Checkbox Functions as Expected", 
     (WidgetTester tester) async {
+      mocks.MockAuthService  mockAuthService = mocks.MockAuthService();
       await tester.pumpWidget(
         MaterialApp(
-          home: LoginPage()
+          home: LoginPage(authService: mockAuthService,)
         ),
       );
       var rememberMe = tester.widget<Checkbox>(find.byKey(Key(("remember_me"))));
@@ -209,7 +214,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: LoginPage(),
+        home: LoginPage(authService: mockAuthService,),
       ),
     );
 
@@ -235,5 +240,35 @@ void main() {
     expect(credentials["password"], "mockPassword");
   });
 
+    testWidgets("SignIn fails if password is empty", (WidgetTester tester) async {
+      final mockAuthService = mocks.MockAuthService();
+
+      // If the username is "mockUsername" and the password is "", we expect an exception
+      when(mockAuthService.login("mockUsername", ""))
+          .thenThrow(Exception("Password missing"));
+
+      // Build the test widget
+      await tester.pumpWidget(MaterialApp(home: LoginPage(authService: mockAuthService)));
+
+      // Find the text fields and enter only the username
+      final usernameFieldFinder = find.byKey(const Key('usernameField'));
+      final passwordFieldFinder = find.byKey(const Key('passwordField'));
+
+      await tester.enterText(usernameFieldFinder, 'mockUsername');
+      await tester.enterText(passwordFieldFinder, "");
+      await tester.pumpAndSettle();
+
+      // Tap the login button
+      final loginButtonFinder = find.byKey(const Key('loginButtonTop'));
+      
+      await tester.tap(loginButtonFinder);
+      await tester.pumpAndSettle(Duration(seconds: 10));
+
+      // Verify that the login call with an empty password was indeed made and caused an exception
+      verify(mockAuthService.login("mockUsername", "")).called(1);
+
+      // Verify that an error message is displayed
+      expect(find.byType(LoginPage), findsOneWidget);
+    });
   });
 }

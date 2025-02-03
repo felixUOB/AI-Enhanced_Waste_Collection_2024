@@ -110,7 +110,39 @@ void main() {
     // Add additional verifications for navigation or other UI changes after auto-login
     expect(find.byType(LoginPage), findsOneWidget);
   });
+testWidgets("Auto Login Partial Credential (username, no password) leads to LoginPage",
+  (WidgetTester tester) async {
+  final mockAuthService = mocks.MockAuthService();
 
+  // Mock user credentials with no password
+  when(mockAuthService.loadUserCredentials()).thenAnswer((_) async => {
+    "username": "mockUsername",
+    "password": null,
+  });
+
+  // Attempting to log in should fail because the password is missing
+  when(mockAuthService.login("mockUsername", any))
+      .thenThrow(Exception("Missing password"));
+
+  // Build the SplashPage with the mocked authService
+  await tester.pumpWidget(
+    MaterialApp(
+      home: SplashPage(authService: mockAuthService),
+    ),
+  );
+
+  // Initially, a loading indicator appears
+  expect(find.byType(CircularProgressIndicator), findsOneWidget);
+
+  // Let the widgets update
+  await tester.pumpAndSettle();
+
+  // Verify loadUserCredentials() was called and that we landed on the LoginPage
+  verify(mockAuthService.loadUserCredentials()).called(1);
+  expect(find.byType(LoginPage), findsOneWidget);
+  // The loading indicator should be gone now
+  expect(find.byType(CircularProgressIndicator), findsNothing);
+});
 
   });
 }
