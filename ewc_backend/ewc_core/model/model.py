@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 threshold = 8
 
 # load the data
-df = pd.read_csv('https://raw.githubusercontent.com/facebook/prophet/main/examples/example_wp_log_peyton_manning.csv')
+df = pd.read_csv('waste_collection_data.csv')
 df.head()
 
 #fit the model
@@ -26,14 +26,14 @@ forecast = m.predict(future)
 forecast[['ds', 'yhat','yhat_lower', 'yhat_upper']].tail()
 
 # plot the forecast
-# fig1 = m.plot(forecast)
+fig1 = m.plot(forecast)
 
-# fig2 = m.plot_components(forecast)
+fig2 = m.plot_components(forecast)
 
-# plot_plotly(m, forecast)
+plot_plotly(m, forecast)
 
-# plot_components_plotly(m, forecast)
-# plt.show()
+plot_components_plotly(m, forecast)
+plt.show()
 
 # idea:
 # predict the amount of waste that will be at each stop 
