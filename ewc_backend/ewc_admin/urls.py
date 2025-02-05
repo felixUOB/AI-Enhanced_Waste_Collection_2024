@@ -23,6 +23,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
 from ewc_core import views
 from django.contrib.auth import views as auth_views
+from ewc_core.ml_model.data import export_stopcollection_csv
 
 
 
@@ -40,6 +41,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
+    path('api/export_stopdata', export_stopcollection_csv, name='export_stopdata'), # Export Stop collection data to csv
 
 # -----------PASSWORD RESET ENDPOINTS--------------
     

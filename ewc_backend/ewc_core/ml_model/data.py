@@ -1,6 +1,6 @@
 import csv
 from django.http import HttpResponse
-from models import RouteEnvData
+from ewc_core.models import RouteEnvData
 
 def export_stopcollection_csv (request) :
     #Create HTTP response with CSV content type
@@ -8,13 +8,13 @@ def export_stopcollection_csv (request) :
     response['Content-Disposition'] = 'attachment; filename="stopdata.csv"'
     
     #Write file
-    write = csv.writer(response)
+    writer = csv.writer(response)
     
     #Write header rows
-    write.writerow(["ID", "Distance", "MPG (Miles per Gallon)", "Date"])
+    writer.writerow(["ID", "Distance", "MPG (Miles per Gallon)", "Date"])
     
     #Fill data to table in csv
     for routeenvdata in RouteEnvData.objects.all():
-        write.writerow([routeenvdata.route_env_data_id, routeenvdata.distance, routeenvdata.mpg, routeenvdata.date])
+        writer.writerow([routeenvdata.route_env_data_id, routeenvdata.distance, routeenvdata.mpg, routeenvdata.date])
     
     return response
