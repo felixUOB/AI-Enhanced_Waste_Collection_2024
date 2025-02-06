@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from ewc_core.models import RouteEnvData
 from ewc_core.models import StopCollection
+from ewc_core.models import UserProfile
 
 def export_routeenvdata_csv (request) :
     #Define file path
@@ -73,5 +74,41 @@ def export_stopdata_csv (request) :
     with open(path, "rb") as file :
         response = HttpResponse(file.read(), content_type="text/csv")
         response['Content-Disposition'] = f'attachment; filename="stopdata.csv"'
+        
+    return response
+
+def export_userdata_csv (request) :
+    #Define file path
+    dir = os.path.abspath(os.path.join(settings.BASE_DIR, "ewc_core","ml_model"))
+    
+    #Ensure directory exists
+    os.makedirs(dir, exist_ok=True)
+    
+    path = os.path.join(dir, "userdata.csv")
+    # #Create HTTP response with CSV content type
+    # response = HttpResponse(content_type='text/csv')
+    
+    
+    with open(path, mode="w", newline="", encoding='utf-8') as file :
+    
+        #Write file
+        writer = csv.writer(file)
+    
+        #Write header rows
+        writer.writerow(["pickup frequency", "waste preference", "carbon savings"])
+        
+        #Fill data to table in csv
+        for userdata in UserProfile.objects.all():
+            writer.writerow([
+                
+                userdata.pickup_frequency,
+                userdata.waste_type_preference,
+                userdata.carbon_savings
+    
+                ])
+        
+    with open(path, "rb") as file :
+        response = HttpResponse(file.read(), content_type="text/csv")
+        response['Content-Disposition'] = f'attachment; filename="userdata.csv"'
         
     return response
