@@ -1,0 +1,92 @@
+# ----------------------------------------------------------
+# 1) Set the base image
+#    - cirrusci/flutter comes with the Android SDK built-in, which is convenient
+# ----------------------------------------------------------
+FROM cirrusci/flutter:3.7.0
+
+# ----------------------------------------------------------
+# 2) Set the working directory
+# ----------------------------------------------------------
+WORKDIR /app
+
+# ----------------------------------------------------------
+# 3) Copy pubspec files first and run pub get
+#    - For caching optimization, copy only dependency files first, then pub get
+# ----------------------------------------------------------
+COPY ewc_frontend/pubspec.yaml .
+COPY ewc_frontend/pubspec.lock .
+
+RUN flutter pub get
+
+# ----------------------------------------------------------
+# 4) Copy the remaining source code
+# ----------------------------------------------------------
+COPY ewc_frontend/ ./
+
+# ----------------------------------------------------------
+# 5) Actual build commands
+#    - Here, we show examples for both APK and AAB
+# ----------------------------------------------------------
+RUN flutter pub get && \
+    flutter build apk --release && \
+    flutter build appbundle --release
+
+# ----------------------------------------------------------
+# 6) Build outputs
+#    - APK : build/app/outputs/flutter-apk/app-release.apk
+#    - AAB : build/app/outputs/bundle/release/app-release.aab
+# ----------------------------------------------------------
+
+# ----------------------------------------------------------
+# 7) Include the final artifacts (e.g., APK/AAB) in the image
+#    - Using multi-stage builds is recommended to extract only the final outputs
+# ----------------------------------------------------------
+
+# --- Multi-stage Build: keep the final image minimal ---
+FROM ubuntu:22.04 AS final
+
+# Working directory
+WORKDIR /app
+
+# Copy APK/AAB from the first build stage
+COPY --from=0 /app/build/app/outputs/flutter-apk/app-release.apk .
+COPY --from=0 /app/build/app/outputs/bundle/release/app-release.aab .
+
+# (Optional) If the final image doesn't need to run anything,
+# you don't need to specify CMD or ENTRYPOINT.
+
+# ----------------------------------------------------------
+# Docker build example:
+#   docker build -f Dockerfile.android -t ewc-android:latest .
+#
+# Because it’s multi-stage:
+#   - Stage 0 (cirrusci/flutter) handles the build
+#   - Stage 1 (ubuntu) image contains only the APK/AAB artifacts
+# ----------------------------------------------------------
+
+# ----------------------------------------------------------
+# 1) cirrusci/flutter as base image (includes Flutter and Android SDK)
+# ----------------------------------------------------------
+#   - We use "cirrusci/flutter:3.7.0" so we have both Flutter and the Android SDK ready.
+#   - This saves time and complexity when building Android apps.
+
+# ----------------------------------------------------------
+# 2) pubspec.yaml → flutter pub get → copy full source → flutter build
+# ----------------------------------------------------------
+#   - Copying `pubspec.yaml` and `pubspec.lock` first to cache dependencies.
+#   - Then copying all source files and running the build commands (apk, appbundle).
+#   - This reduces rebuild time because dependencies are cached if they haven’t changed.
+
+# ----------------------------------------------------------
+# 3) Multi-stage build to extract only final artifacts
+# ----------------------------------------------------------
+#   - Using a separate final stage (e.g. `FROM ubuntu:22.04`) that just copies the built APK/AAB files.
+#   - This approach keeps the final image minimal (no Flutter/Gradle caches).
+
+# ----------------------------------------------------------
+# Post-build: tag/push to AWS ECR
+# ----------------------------------------------------------
+#   - After the build, you can push the “final stage” image to ECR.
+#   - That image primarily serves as an archive holding the .apk/.aab artifacts.
+#   - If you run `docker run` on that final image, nothing special happens (no CMD/ENTRYPOINT).
+#   - To retrieve the files, use `docker create` and `docker cp`, or handle them in a CI pipeline (e.g. upload to S3).
