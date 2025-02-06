@@ -24,6 +24,7 @@ from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewS
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.ml_model.data import export_routeenvdata_csv
+from ewc_core.ml_model.data import export_stopdata_csv
 
 
 
@@ -41,8 +42,9 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
-    path('api/export_routeenvdata', export_routeenvdata_csv, name='export_routeenvdata'), # Export Stop collection data to csv
-
+    path('api/export_routeenvdata', export_routeenvdata_csv, name='export_routeenvdata'), # Export Route Environment collection data to csv
+    path('api/export_stopdata', export_stopdata_csv, name='export_stopdata'), #Export Stop collection data to csv
+    
 # -----------PASSWORD RESET ENDPOINTS--------------
     
     path('check-email/', views.CheckEmailView.as_view(), name='check-email'), #DEPRECATED BUT LEFT IN FOR LATER USE
