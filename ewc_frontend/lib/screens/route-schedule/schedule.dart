@@ -19,6 +19,7 @@ class Schedule extends StatefulWidget {
 class _Schedule extends State<Schedule> {
   late List<Stop> _route = [];
   List<int>? _stopTimes;
+  late RouteService _routeService;
   final _stopsService = StopsService();
 
   @override
@@ -39,10 +40,10 @@ class _Schedule extends State<Schedule> {
       }
       // Initialize RouteService with the valid API key
       _route = await _stopsService.fetchAllStops();
-      RouteService routeService = RouteService(dotenv.env['API_KEY']!);
+      _routeService = RouteService(dotenv.env['API_KEY']!);
       if (mounted) {
         LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-        if (location != null) _stopTimes = await routeService.getStopTimes(location, _route.map((route) => route.location).toList());
+        if (location != null) _stopTimes = await _routeService.getStopTimes(location, _route.map((route) => route.location).toList());
       }
   } catch (e) {
       // Log the error and provide feedback
@@ -54,11 +55,22 @@ class _Schedule extends State<Schedule> {
   Widget build(BuildContext context) {
     return Scaffold(
 
-// ------------List of stops------------
-      // makes a scrollable list
-      body: Scaffold(
-        body: Padding(
+      // Add refresh indicator to allow drag down refresh
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // When user refreshes, recalculate stop times based off of location and set new state
+          LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+          if (location != null) {
+            var newStops = await _routeService.getStopTimes(
+                location, _route.map((route) => route.location).toList());
+            setState(() {
+              _stopTimes = newStops; // Force reload of widget with new stop times
+            });
+          }
+        },
+        child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
+          // makes a scrollable list
           child: ListView.builder(
             itemCount: _route.length,
             itemBuilder: (BuildContext context, int index) {

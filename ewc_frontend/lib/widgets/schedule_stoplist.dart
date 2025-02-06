@@ -16,8 +16,8 @@ class ScheduleStopList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(25),
-      padding: const EdgeInsets.all(25),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: inPast ? Theme.of(context).colorScheme.primary: Theme.of(context).colorScheme.secondary, //different colour depending on if it has already happened or not
         borderRadius: BorderRadius.circular(8),

@@ -20,7 +20,7 @@ class StopsService {
   }
 
   Future<List<Stop>> fetchAllStops() async {
-    final response = await authService.makeAuthenticatedRequest('stops');
+    final response = await authService.makeAuthenticatedRequest('stops/');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as List;
