@@ -41,9 +41,21 @@ class _Schedule extends State<Schedule> {
       // Initialize RouteService with the valid API key
       _route = await _stopsService.fetchAllStops();
       _routeService = RouteService(dotenv.env['API_KEY']!);
+
+      // The next block of code creates a list _stopTimes where each element
+      // is the amount of time in minutes from the user's location to that stop
+      // while following the route
       if (mounted) {
         LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-        if (location != null) _stopTimes = await _routeService.getStopTimes(location, _route.map((route) => route.location).toList());
+        if (location != null) {
+          // SelectedStops filters out already visited stops from the route calculation
+          var selectedStops = _route.where((route) => !route.visited).map((route) => route.location).toList();
+          _stopTimes = [];
+          for (var _ in _route.where((route) => route.visited)) {
+            _stopTimes?.add(0); // Pad out the stop times with 0s when some stops have been visited
+          }
+          _stopTimes?.addAll(await _routeService.getStopTimes(location, selectedStops));
+        }
       }
   } catch (e) {
       // Log the error and provide feedback
@@ -57,17 +69,24 @@ class _Schedule extends State<Schedule> {
 
       // Add refresh indicator to allow drag down refresh
       body: RefreshIndicator(
+
         onRefresh: () async {
           // When user refreshes, recalculate stop times based off of location and set new state
           LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
           if (location != null) {
-            var newStops = await _routeService.getStopTimes(
-                location, _route.map((route) => route.location).toList());
+            // SelectedStops filters out already visited stops from the route calculation
+            var selectedStops = _route.where((route) => !route.visited).map((route) => route.location).toList();
+            List<int> newStops = [];
+            for (var _ in _route.where((route) => route.visited)) {
+              newStops.add(0); // Pad out the stop times with 0s when some stops have been visited
+            }
+            newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
             setState(() {
               _stopTimes = newStops; // Force reload of widget with new stop times
             });
           }
         },
+
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
           // makes a scrollable list
