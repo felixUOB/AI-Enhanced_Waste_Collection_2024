@@ -1,9 +1,11 @@
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:ewc/services/stops_service.dart';
 
 // A service class to manage route fetching from OpenRouteService API
 class RouteService {
   final OpenRouteService client;
+  final stopsService = StopsService();
 
   //Constructor for initialization of the OpenRouteService client with an API key 
   RouteService(String apiKey) : client = OpenRouteService(apiKey: apiKey);
@@ -55,12 +57,10 @@ class RouteService {
 
 
   Future<List<LatLng>> routePlanning() async {
-    final depot = LatLng(51.4682, -2.6103);
-    final stops = [
-      LatLng(51.4476, -2.5982),
-      LatLng(51.4541, -2.6200),
-      LatLng(51.4499, -2.5812),
-    ];
+    // final depot = LatLng(51.4682, -2.6103);
+    final depot = LatLng(51.4533, -2.6257);
+
+    final stops = await stopsService.fetchAllStops();
     
     List<VroomJob> jobs = [];
 

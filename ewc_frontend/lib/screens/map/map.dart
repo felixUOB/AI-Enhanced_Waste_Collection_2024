@@ -116,6 +116,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       await _drawStopsMarker(Colors.blue);
 
       await _fetchOptimizedRoute();
+      //Depot location marker
+      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
