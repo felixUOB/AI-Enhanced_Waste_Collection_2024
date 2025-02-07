@@ -23,9 +23,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
 from ewc_core import views
 from django.contrib.auth import views as auth_views
-from ewc_core.ml_model.data import export_routeenvdata_csv
-from ewc_core.ml_model.data import export_stopdata_csv
-from ewc_core.ml_model.data import export_userdata_csv
+# from ewc_core.ml_model.data import export_routeenvdata_csv
+# from ewc_core.ml_model.data import export_stopdata_csv
+# from ewc_core.ml_model.data import export_userdata_csv
+from ewc_core.ml_model.model import getdata
 
 
 
@@ -43,9 +44,10 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
-    path('api/export_routeenvdata', export_routeenvdata_csv, name='export_routeenvdata'), # Export Route Environment collection data to csv
-    path('api/export_stopdata', export_stopdata_csv, name='export_stopdata'),#Export Stop collection data to csv
-    path('api/export_userdata', export_userdata_csv, name='export_userdata'),
+    # path('api/export_routeenvdata', export_routeenvdata_csv, name='export_routeenvdata'), # Export Route Environment collection data to csv
+    # path('api/export_stopdata', export_stopdata_csv, name='export_stopdata'),#Export Stop Collection data to csv
+    # path('api/export_userdata', export_userdata_csv, name='export_userdata'), #Export User Data to csv
+    path('api/runmodel', getdata ,name='runmodel'), #Run Machine Learning Model
     
 # -----------PASSWORD RESET ENDPOINTS--------------
     

@@ -3,9 +3,7 @@ import os
 import io
 from django.conf import settings
 from django.http import HttpResponse
-from ewc_core.models import RouteEnvData
-from ewc_core.models import StopCollection
-from ewc_core.models import UserProfile
+
 
 def generate_csv(filename, headers, queryset, data_extractor):
     # Define the directory path
@@ -30,45 +28,47 @@ def generate_csv(filename, headers, queryset, data_extractor):
 
     return file_path 
     
+# #Exporting route environment data
+# def export_routeenvdata_csv (request) :
+#     file_path = generate_csv(
+#         filename="routeenvdata.csv",
+#         headers=["Date","Distance","MPG (Miles Per Gallon)"],
+#         queryset=RouteEnvData.objects.all(),
+#         data_extractor=lambda routeenvdata :
+#             [
+#                 routeenvdata.date.strftime("%Y-%m-%d"),
+#                 routeenvdata.distance,
+#                 routeenvdata.mpg
+#             ] 
+#     )
+#     return HttpResponse(f"CSV file saved at: {file_path}")
 
-def export_routeenvdata_csv (request) :
-    file_path = generate_csv(
-        filename="routeenvdata.csv",
-        headers=["Date","Distance","MPG (Miles Per Gallon)"],
-        queryset=RouteEnvData.objects.all(),
-        data_extractor=lambda routeenvdata :
-            [
-                routeenvdata.date.strftime("%Y-%m-%d"),
-                routeenvdata.distance,
-                routeenvdata.mpg
-            ] 
-    )
-    return HttpResponse(f"CSV file saved at: {file_path}")
-
-def export_stopdata_csv (request) :
-    file_path = generate_csv(
-        filename="stopdata.csv",
-        headers=["Stop ID","Weight Collected"],
-        queryset=StopCollection.objects.all(),
-        data_extractor=lambda stopdata :
-            [
-                stopdata.stop_collection_id,
-                stopdata.weight_collected
+#Exporting stop collection data
+# def export_stopdata_csv (request) :
+#     file_path = generate_csv(
+#         filename="stopdata.csv",
+#         headers=["Stop ID","Weight Collected"],
+#         queryset=StopCollection.objects.all(),
+#         data_extractor=lambda stopdata :
+#             [
+#                 stopdata.stop_collection_id,
+#                 stopdata.weight_collected
                 
-            ] 
-    )
-    return HttpResponse(f"CSV file saved at: {file_path}")
+#             ] 
+#     )
+#     return HttpResponse(f"CSV file saved at: {file_path}")
 
-def export_userdata_csv (request) :
-    file_path = generate_csv(
-        filename="userdata.csv",
-        headers=["Pickup frequency","Waste Preferences","Carbon Savings"],
-        queryset=UserProfile.objects.all(),
-        data_extractor=lambda userdata :
-            [
-                userdata.pickup_frequency,
-                userdata.waste_type_preference,
-                userdata.carbon_savings
-            ] 
-    )
-    return HttpResponse(f"CSV file saved at: {file_path}")
+# #Exporting user data
+# def export_userdata_csv (request) :
+#     file_path = generate_csv(
+#         filename="userdata.csv",
+#         headers=["Pickup frequency","Waste Preferences","Carbon Savings"],
+#         queryset=UserProfile.objects.all(),
+#         data_extractor=lambda userdata :
+#             [
+#                 userdata.pickup_frequency,
+#                 userdata.waste_type_preference,
+#                 userdata.carbon_savings
+#             ] 
+#     )
+#     return HttpResponse(f"CSV file saved at: {file_path}")

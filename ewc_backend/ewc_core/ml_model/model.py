@@ -4,6 +4,68 @@ import pandas as pd
 from prophet import Prophet
 from prophet.plot import plot_plotly, plot_components_plotly
 import matplotlib.pyplot as plt
+from ewc_core.models import RouteEnvData
+from ewc_core.models import StopCollection
+from ewc_core.models import UserProfile
+from django.http import HttpResponse
+from ewc_core.ml_model.data import generate_csv
+
+#csv files creation
+
+#Exporting route environment data
+def export_routeenvdata_csv () :
+    file_path = generate_csv(
+        filename="routeenvdata.csv",
+        headers=["Date","Distance","MPG (Miles Per Gallon)"],
+        queryset=RouteEnvData.objects.all(),
+        data_extractor=lambda routeenvdata :
+            [
+                routeenvdata.date.strftime("%Y-%m-%d"),
+                routeenvdata.distance,
+                routeenvdata.mpg
+            ] 
+    )
+    return file_path
+
+#Exporting stop collection data
+def export_stopdata_csv () :
+    file_path = generate_csv(
+        filename="stopdata.csv",
+        headers=["Stop ID","Weight Collected"],
+        queryset=StopCollection.objects.all(),
+        data_extractor=lambda stopdata :
+            [
+                stopdata.stop_collection_id,
+                stopdata.weight_collected
+                
+            ] 
+    )
+    return file_path
+
+#Exporting user data
+def export_userdata_csv () :
+    file_path = generate_csv(
+        filename="userdata.csv",
+        headers=["Pickup frequency","Waste Preferences","Carbon Savings"],
+        queryset=UserProfile.objects.all(),
+        data_extractor=lambda userdata :
+            [
+                userdata.pickup_frequency,
+                userdata.waste_type_preference,
+                userdata.carbon_savings
+            ] 
+    )
+    return file_path
+
+def getdata(request) :
+    print("Generating CSV files...")
+    route_csv = export_routeenvdata_csv()
+    stop_csv = export_stopdata_csv()
+    user_csv = export_userdata_csv()
+    print("Files Generated!!")
+    return HttpResponse("DONE")
+
+# model starts here
 
 # threshold value
 threshold = 8
