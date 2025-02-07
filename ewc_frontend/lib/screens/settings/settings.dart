@@ -20,7 +20,7 @@ class _SettingPageState extends State<SettingPage> {
     if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const LoginPage()),
+      MaterialPageRoute(builder: (context) => LoginPage(authService: authService,)),
           (route) => false,
     );
   }

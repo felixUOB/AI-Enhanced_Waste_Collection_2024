@@ -10,3 +10,5 @@ prophet
 plotly
 notebook
 ipywidgets
+coverage
+

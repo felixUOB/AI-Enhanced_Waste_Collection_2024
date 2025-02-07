@@ -1,0 +1,24 @@
+version: 2
+updates:
+
+# 1) Python dependencies (pip)
+  - package-ecosystem: "pip"       # Python (pip) dependencies
+    directory: "/ewc_backend"      # ewc_backend directory of the repository
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "10:00"                # 24-hour format
+      timezone: "Europe/London"    # Set UK time zone
+    commit-message:
+      prefix: "maintenance"        # Adds "maintenance" as a prefix to Dependabot PR commit messages
+
+# 2) Flutter/Dart dependencies (pub)
+  - package-ecosystem: "pub"
+    directory: "/ewc_frontend"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "10:00"
+      timezone: "Europe/London"
+    commit-message:
+      prefix: "maintenance"
