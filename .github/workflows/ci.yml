@@ -80,7 +80,7 @@ jobs:
       - name: Run Django tests with coverage
         run: |
           cd ewc_backend
-          coverage run manage.py test ewc_core.tests
+          coverage run manage.py test ewc_core.tests --noinput
           coverage report -m
           coverage html
 
