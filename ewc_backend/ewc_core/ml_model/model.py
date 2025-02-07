@@ -66,7 +66,7 @@ def getdata(request) :
     return HttpResponse("DONE")
 
 # model starts here
-
+# make model here
 # threshold value
 threshold = 8
 

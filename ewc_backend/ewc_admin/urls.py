@@ -44,9 +44,6 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
-    # path('api/export_routeenvdata', export_routeenvdata_csv, name='export_routeenvdata'), # Export Route Environment collection data to csv
-    # path('api/export_stopdata', export_stopdata_csv, name='export_stopdata'),#Export Stop Collection data to csv
-    # path('api/export_userdata', export_userdata_csv, name='export_userdata'), #Export User Data to csv
     path('api/runmodel', getdata ,name='runmodel'), #Run Machine Learning Model
     
 # -----------PASSWORD RESET ENDPOINTS--------------
