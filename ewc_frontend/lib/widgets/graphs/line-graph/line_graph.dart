@@ -3,32 +3,27 @@ import 'package:ewc/widgets/graphs/bar-graph/bar_graph.dart';
 import 'package:ewc/widgets/graphs/line-graph/line_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart'; // date formatting
 
 class MyLineGraph extends StatelessWidget{
-  final List weeklySummary;
+  final List<Map<String, dynamic>> dataPoints;
 
   const MyLineGraph({
     super.key,
-    required this.weeklySummary,
+    required this.dataPoints,
   });
 
   @override
   Widget build(BuildContext context){
-
-    LineData myLineData = LineData(
-      monAmount: weeklySummary[0], 
-      tueAmount: weeklySummary[1], 
-      wedAmount: weeklySummary[2], 
-      thuAmount: weeklySummary[3], 
-      friAmount: weeklySummary[4],
-      satAmount: weeklySummary[5], 
-      sunAmount: weeklySummary[6], 
-    );
-    myLineData.initializeBarData();
-    
+    // get the data points in FlSpot format
+    List<FlSpot> points = dataPoints.asMap().entries.map((entry) {
+        int index = entry.key;
+        double value = (entry.value['value'] as num).toDouble();
+        return FlSpot(index.toDouble(), value);
+      }).toList();
     // work out the maxY based on the data
-    double maxY = (weeklySummary
-    .map((e) => (e as num).toDouble()) //make sure its a number
+
+    double maxY = (dataPoints.map((e) => (e['value'] as num).toDouble()) //make sure its a number
     .reduce((a,b)=> a > b ? a : b) * 1.2) // add extra space
     .ceilToDouble(); // make whole number
 
@@ -64,14 +59,15 @@ class MyLineGraph extends StatelessWidget{
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 1,
-              getTitlesWidget: getBottomTitles,
+              interval: (dataPoints.length/6).ceilToDouble(), // space out the labels on the bottom axis
+              getTitlesWidget: (value, meta) => 
+              getBottomTitles(value, meta, dataPoints),
             ),
           ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: 2,
+              interval: 5,
               getTitlesWidget: getLeftTitles,
               ),
             ),
@@ -81,8 +77,7 @@ class MyLineGraph extends StatelessWidget{
         ),
         lineBarsData: [
           LineChartBarData(
-            spots: myLineData.lineData
-            .map((point) => FlSpot(point.x.toDouble(), point.y)).toList(),
+            spots: points,
             isCurved: true,
             dotData: FlDotData(show:true),
             // #077b41
@@ -95,41 +90,28 @@ class MyLineGraph extends StatelessWidget{
   }
 }
 
-Widget getBottomTitles(double value, TitleMeta meta){
+Widget getBottomTitles(double value, TitleMeta meta, List<Map<String, dynamic>> dataPoints){
     const style = TextStyle(
       color: Colors.grey,
       fontWeight: FontWeight.bold,
-      fontSize: 14,
+      fontSize: 10,
     );
+    int index = value.toInt();
+    if (index < 0 || index >= dataPoints.length) return Container();
 
-    Widget text = Text('');
-    switch (value.toInt()){
-    case 0:
-      text = const Text('M', style: style);
-      break;
-    case 1:
-      text = const Text('T', style: style);
-      break;
-    case 2:
-      text = const Text('W', style: style);
-      break;
-    case 3:
-      text = const Text('T', style: style);
-      break;
-    case 4:
-      text = const Text('F', style: style);
-      break;
-    case 5:
-      text = const Text('S', style: style);
-      break;
-    case 6:
-      text = const Text('S', style: style);
-      break;
-    default:
-      text = Text('', style: style);
+    DateTime date = DateTime.parse(dataPoints[index]['date']);
+    
+    // display only the day (dd)
+    String dayLabel = DateFormat('dd').format(date);
+    // show month name (MM) only on the first of the month
+    if (index == 0 || date.month != DateTime.parse(dataPoints[index - 1]['date']).month){
+      dayLabel = DateFormat('MMM').format(date);
     }
-    return SideTitleWidget(meta: meta, child: text);
-
+    
+    return SideTitleWidget(
+      meta: meta, 
+      child: Text(dayLabel, style:style),
+    );
 }
 
 Widget getLeftTitles(double value, TitleMeta meta){
@@ -138,15 +120,15 @@ Widget getLeftTitles(double value, TitleMeta meta){
     fontWeight: FontWeight.bold,
     fontSize: 10,
   );
-  String text;
   // only display the even values on the scale
-  if (value % 2 == 0){
-    text = value.toInt().toString();
+  if (value % 5 == 0){
+    String text = value.toInt().toString();
+    return SideTitleWidget(
+      meta: meta,
+      child: Text(text, style:style),
+    );
   }else{
     return Container(); // dont display just have a space 
   }
-  return SideTitleWidget(
-    meta: meta,
-    child: Text(text, style:style),
-    );
+  
 }

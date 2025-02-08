@@ -31,6 +31,8 @@ class _MetricsPageState extends State<MetricsPage> {
     'Sunday' : 0,
     };
   List<JourneyRoute> thisWeek = [];
+  List<Map<String, dynamic>> overallMpg = [];
+  List<Map<String, dynamic>> overallDistance = [];
 
   // get the data and initialise the list of routes
   // do once when the app is first opened
@@ -70,7 +72,8 @@ class _MetricsPageState extends State<MetricsPage> {
       }
     }
     
-    print(thisWeekFormated.values.toList());
+    print(overallDistance);
+    print(overallMpg);
   }
 
   // get the data from the database
@@ -79,7 +82,7 @@ class _MetricsPageState extends State<MetricsPage> {
     return routes;
   }
 
-  // calculate the total routes, total distance and average Mpg
+  // calculate the total routes, total distance and average Mpg and add to lists
   void _calculateDetails() async {
     totalRoutes = routeList.length;
     double cumulativeMpg =0;
@@ -88,8 +91,13 @@ class _MetricsPageState extends State<MetricsPage> {
       totalDistance = totalDistance + route.distance;
       // caluclate the average mpg
       cumulativeMpg = cumulativeMpg + route.mpg;
+      
+      overallMpg.add({'date': route.date, 'value': route.mpg});
+      overallDistance.add({'date': route.date, 'value': route.distance});
+
     }
     averageMpg = cumulativeMpg / totalRoutes;
+    
     // calculate the dates that are in the current week
   }
 
@@ -115,7 +123,6 @@ class _MetricsPageState extends State<MetricsPage> {
       return date.isAfter(monday.subtract(Duration(days:1))) && date.isBefore(sunday.add(Duration(days:1)));
     }).toList();
   }
-
   // build the UI for the metrics page
   @override
   Widget build(BuildContext context) {
@@ -215,7 +222,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                       height: 200,
                                       child: MyLineGraph(
                                           key: ValueKey("lineGraph"),
-                                          weeklySummary: carbonFootPrintData),
+                                          dataPoints: overallMpg),
                                     ),
                                   ]),
                                 ])),
@@ -242,39 +249,39 @@ class _MetricsPageState extends State<MetricsPage> {
                                     height: 200,
                                     child: MyLineGraph(
                                         key: ValueKey("lineGraph"),
-                                        weeklySummary: carbonFootPrintData),
+                                        dataPoints: overallDistance),
                                   ),
                                 ]),
                               ])),
                       context, // pass in the context as an argument
                     )),
-                  StaggeredGridTile.extent(
-                      crossAxisCellCount: 2,
-                      mainAxisExtent: 300.0,
-                      child: _buildTile(
-                        Padding(
-                            padding: const EdgeInsets.all(24.0),
-                            child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Column(children: [
-                                    Text('Fuel consumed',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium),
-                                    Padding(
-                                        padding: EdgeInsets.only(bottom: 4.0)),
-                                    SizedBox(
-                                      height: 200,
-                                      child: MyLineGraph(
-                                          key: ValueKey("lineGraph"),
-                                          weeklySummary: carbonFootPrintData),
-                                    ),
-                                  ]),
-                                ])),
-                        context, // pass in the context as an argument
-                      )),
+                  // StaggeredGridTile.extent(
+                  //     crossAxisCellCount: 2,
+                  //     mainAxisExtent: 300.0,
+                  //     child: _buildTile(
+                  //       Padding(
+                  //           padding: const EdgeInsets.all(24.0),
+                  //           child: Column(
+                  //               mainAxisAlignment: MainAxisAlignment.start,
+                  //               crossAxisAlignment: CrossAxisAlignment.center,
+                  //               children: <Widget>[
+                  //                 Column(children: [
+                  //                   Text('Fuel consumed',
+                  //                       style: Theme.of(context)
+                  //                           .textTheme
+                  //                           .titleMedium),
+                  //                   Padding(
+                  //                       padding: EdgeInsets.only(bottom: 4.0)),
+                  //                   SizedBox(
+                  //                     height: 200,
+                  //                     child: MyLineGraph(
+                  //                         key: ValueKey("lineGraph"),
+                  //                         weeklySummary: carbonFootPrintData),
+                  //                   ),
+                  //                 ]),
+                  //               ])),
+                  //       context, // pass in the context as an argument
+                  //     )),
                   
                 ],
               )),
