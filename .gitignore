@@ -1,6 +1,7 @@
 # Unnecessary system file for macOS
 .DS_Store
 
+# Python bytecode / cache
 *.pyc
 __pycache__
 db.sqlite3
@@ -8,15 +9,17 @@ db.sqlite3
 # IDE-specific settings files (JetBrains), exclude from the project
 .idea
 .vscode
+.vs
 
 # Django Secure
 *.env
 
-*.vscode
-
+# Prettier ignore file
 .prettierignore
 
-.vs
-
-# ignore the flutter test coverage files 
+# ignore the flutter test coverage files
 coverage/
+
+# Coverage.py result files
+.coverage
+htmlcov/
