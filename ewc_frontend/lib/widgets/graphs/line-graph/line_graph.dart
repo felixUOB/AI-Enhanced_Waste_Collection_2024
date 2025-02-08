@@ -121,7 +121,7 @@ Widget getLeftTitles(double value, TitleMeta meta){
     fontSize: 10,
   );
   // only display the even values on the scale
-  if (value % 5 == 0){
+  if (value == 0 || value % 5 == 0 || meta.axisSide == AxisSide.left && meta.max <5){
     String text = value.toInt().toString();
     return SideTitleWidget(
       meta: meta,

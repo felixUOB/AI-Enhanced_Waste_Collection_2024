@@ -33,6 +33,8 @@ class _MetricsPageState extends State<MetricsPage> {
   List<JourneyRoute> thisWeek = [];
   List<Map<String, dynamic>> overallMpg = [];
   List<Map<String, dynamic>> overallDistance = [];
+  List<Map<String, dynamic>> fuelConsumed = [];
+  List<Map<String, dynamic>> emissions = [];
 
   // get the data and initialise the list of routes
   // do once when the app is first opened
@@ -95,6 +97,14 @@ class _MetricsPageState extends State<MetricsPage> {
       overallMpg.add({'date': route.date, 'value': route.mpg});
       overallDistance.add({'date': route.date, 'value': route.distance});
 
+      // calculate the fuel consumed : number of gallons of fuel consumed
+      double fuel =  route.distance/route.mpg;
+      emissions.add({'date': route.date, 'value': fuel});
+      print(fuel);
+      // calculate the emissions using 10.21 kg co2 per galone
+      double emitted = (route.distance * 10.21) / route.mpg;
+      fuelConsumed.add({'date':route.date, 'value': emitted});
+      print(emitted);
     }
     averageMpg = cumulativeMpg / totalRoutes;
     
@@ -127,7 +137,6 @@ class _MetricsPageState extends State<MetricsPage> {
   @override
   Widget build(BuildContext context) {
     // sample data
-    List<double> carbonFootPrintData = [2.4, 2.4, 3.2, 4.5, 6.7, 6.7, 5.4];
     return Scaffold(
       // display the graphs as a scrollable list
       body: ListView(children: [
@@ -239,7 +248,7 @@ class _MetricsPageState extends State<MetricsPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Column(children: [
-                                  Text('Emissions',
+                                  Text('Distance Over Time',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium),
@@ -255,34 +264,60 @@ class _MetricsPageState extends State<MetricsPage> {
                               ])),
                       context, // pass in the context as an argument
                     )),
-                  // StaggeredGridTile.extent(
-                  //     crossAxisCellCount: 2,
-                  //     mainAxisExtent: 300.0,
-                  //     child: _buildTile(
-                  //       Padding(
-                  //           padding: const EdgeInsets.all(24.0),
-                  //           child: Column(
-                  //               mainAxisAlignment: MainAxisAlignment.start,
-                  //               crossAxisAlignment: CrossAxisAlignment.center,
-                  //               children: <Widget>[
-                  //                 Column(children: [
-                  //                   Text('Fuel consumed',
-                  //                       style: Theme.of(context)
-                  //                           .textTheme
-                  //                           .titleMedium),
-                  //                   Padding(
-                  //                       padding: EdgeInsets.only(bottom: 4.0)),
-                  //                   SizedBox(
-                  //                     height: 200,
-                  //                     child: MyLineGraph(
-                  //                         key: ValueKey("lineGraph"),
-                  //                         weeklySummary: carbonFootPrintData),
-                  //                   ),
-                  //                 ]),
-                  //               ])),
-                  //       context, // pass in the context as an argument
-                  //     )),
-                  
+                  StaggeredGridTile.extent(
+                      crossAxisCellCount: 2,
+                      mainAxisExtent: 300.0,
+                      child: _buildTile(
+                        Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Column(children: [
+                                    Text('Gallons of Fuel Consumed',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium),
+                                    Padding(
+                                        padding: EdgeInsets.only(bottom: 4.0)),
+                                    SizedBox(
+                                      height: 200,
+                                      child: MyLineGraph(
+                                          key: ValueKey("lineGraph"),
+                                          dataPoints: fuelConsumed),
+                                    ),
+                                  ]),
+                                ])),
+                        context, // pass in the context as an argument
+                      )),
+                  StaggeredGridTile.extent(
+                      crossAxisCellCount: 2,
+                      mainAxisExtent: 300.0,
+                      child: _buildTile(
+                        Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Column(children: [
+                                    Text('KG of CO2 per Journey',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium),
+                                    Padding(
+                                        padding: EdgeInsets.only(bottom: 4.0)),
+                                    SizedBox(
+                                      height: 200,
+                                      child: MyLineGraph(
+                                          key: ValueKey("lineGraph"),
+                                          dataPoints: emissions),
+                                    ),
+                                  ]),
+                                ])),
+                        context, // pass in the context as an argument
+                      )),
                 ],
               )),
         ]));
