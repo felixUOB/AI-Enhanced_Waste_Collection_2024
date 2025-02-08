@@ -1,4 +1,5 @@
 
+import 'package:ewc/widgets/graphs/bar-graph/bar_graph.dart';
 import 'package:ewc/widgets/graphs/line-graph/line_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -25,49 +26,82 @@ class MyLineGraph extends StatelessWidget{
     );
     myLineData.initializeBarData();
     
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0), 
-      child: LineChart(
-        LineChartData(
-          lineBarsData: [
-            LineChartBarData(
-              spots: myLineData.lineData.map((point) => FlSpot(point.x.toDouble(), point.y)).toList(),
-              isCurved: false,
-              dotData: FlDotData(
-                show:false,
-              ),
-              // #077b41
-              color: Theme.of(context).colorScheme.primary,
-              barWidth: 4,
+    // work out the maxY based on the data
+    double maxY = (weeklySummary
+    .map((e) => (e as num).toDouble()) //make sure its a number
+    .reduce((a,b)=> a > b ? a : b) * 1.2) // add extra space
+    .ceilToDouble(); // make whole number
+
+    return LineChart(
+      LineChartData(
+        maxY: maxY,
+        minY: 0,
+        // draw the background lines
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          drawHorizontalLine: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: Colors.grey.withOpacity(0.3), // Adjust color for visibility
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: Colors.grey.withOpacity(0.3),
+              strokeWidth: 1,
+            );
+          },
+        ),
+        borderData: FlBorderData(
+          border: const Border(
+            bottom: BorderSide(color: Colors.grey, width: 4),
             ),
-          ],
-          borderData: FlBorderData(
-            border: const Border(
-              bottom: BorderSide(color: Colors.grey, width: 4),
-              
+        ),
+        titlesData: FlTitlesData(
+          // ones we want
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              getTitlesWidget: getBottomTitles,
             ),
           ),
-          gridData: FlGridData(show: false),
-
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(sideTitles: _bottomTitles),
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          )
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 2,
+              getTitlesWidget: getLeftTitles,
+              ),
+            ),
+          // ones we dont want
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: myLineData.lineData
+            .map((point) => FlSpot(point.x.toDouble(), point.y)).toList(),
+            isCurved: true,
+            dotData: FlDotData(show:true),
+            // #077b41
+            color: Theme.of(context).colorScheme.primary,
+            barWidth: 4,
+          ),
+        ],
       ),
     );
   }
 }
-SideTitles get _bottomTitles => SideTitles(
-  showTitles: true,
-  getTitlesWidget: (value, meta) {
+
+Widget getBottomTitles(double value, TitleMeta meta){
     const style = TextStyle(
       color: Colors.grey,
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
+
     Widget text = Text('');
     switch (value.toInt()){
     case 0:
@@ -93,8 +127,26 @@ SideTitles get _bottomTitles => SideTitles(
       break;
     default:
       text = Text('', style: style);
+    }
+    return SideTitleWidget(meta: meta, child: text);
+
+}
+
+Widget getLeftTitles(double value, TitleMeta meta){
+  const style = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.bold,
+    fontSize: 10,
+  );
+  String text;
+  // only display the even values on the scale
+  if (value % 2 == 0){
+    text = value.toInt().toString();
+  }else{
+    return Container(); // dont display just have a space 
   }
-    return text;
-  },
-  interval: 1,
-);
+  return SideTitleWidget(
+    meta: meta,
+    child: Text(text, style:style),
+    );
+}

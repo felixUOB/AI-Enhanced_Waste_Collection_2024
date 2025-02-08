@@ -27,11 +27,12 @@ class MyBarGraph extends StatelessWidget{
     );
     myBarData.initializeBarData();
 
+    // work out the maxY based on the data
     double maxY = (weeklySummary
     .map((e) => (e as num).toDouble()) //make sure its a number
     .reduce((a,b)=> a > b ? a : b) * 1.2) // add extra space
     .ceilToDouble(); // make whole number
-    print(maxY);
+
     return BarChart(
       BarChartData(
         // find the maximum value, round it up then leave some space
@@ -119,7 +120,6 @@ Widget getBottomTitles(double value, TitleMeta meta){
 }
 
 Widget getLeftTitles(double value, TitleMeta meta){
-  print(value);
   const style = TextStyle(
     color: Colors.grey,
     fontWeight: FontWeight.bold,
