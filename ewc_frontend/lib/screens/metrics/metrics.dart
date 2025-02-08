@@ -15,19 +15,20 @@ class MetricsPage extends StatefulWidget {
 class _MetricsPageState extends State<MetricsPage> {
 
   List<JourneyRoute> routeList = [];
+  // instantiate the variables
   final MetricsService _metricsService = MetricsService();
   double totalDistance = 0;
   double averageMpg = 0;
   int totalRoutes = 0;
   // day of week route : shows the routes done this week by day
-  Map<String, dynamic> thisWeekFormated = {
-    'Monday' : null, 
-    'Tuesday': null,
-    'Wednesday' : null,
-    'Thursday' : null,
-    'Friday' : null,
-    'Saturday' : null,
-    'Sunday' : null,
+  Map<String, double> thisWeekFormated = {
+    'Monday' : 0, 
+    'Tuesday': 0,
+    'Wednesday' : 0,
+    'Thursday' : 0,
+    'Friday' : 0,
+    'Saturday' : 0,
+    'Sunday' : 0,
     };
   List<JourneyRoute> thisWeek = [];
 
@@ -40,7 +41,9 @@ class _MetricsPageState extends State<MetricsPage> {
   }
 
   void main() async{
-   routeList = await _initialiseMetricData();
+    // get the data from the database
+    routeList = await _initialiseMetricData();
+    // calculate the total routes, total distance and average Mpg
     _calculateDetails();
     // get the dates that occured this week
     thisWeek = _calculateThisWeek();
@@ -49,30 +52,34 @@ class _MetricsPageState extends State<MetricsPage> {
       DateTime d = DateTime.parse(route.date);
       int dayOfWeek = d.weekday;
       if (dayOfWeek == 1){
-        thisWeekFormated['Monday'] = route;
+        thisWeekFormated['Monday'] = route.distance;
       } else if (dayOfWeek == 2){
-        thisWeekFormated['Tuesday'] = route;
-      } else if (dayOfWeek == 2){
-        thisWeekFormated['Wednesday'] = route;
-      } else if (dayOfWeek == 2){
-        thisWeekFormated['Thursday'] = route;
-      }else if (dayOfWeek == 2){
-        thisWeekFormated['Friday'] = route;
-      }else if (dayOfWeek == 2){
-        thisWeekFormated['Saturday'] = route;
-      }else if (dayOfWeek == 2){
-        thisWeekFormated['Sunday'] = route;
+        thisWeekFormated['Tuesday'] = route.distance;
+      } else if (dayOfWeek == 3){
+        thisWeekFormated['Wednesday'] = route.distance;
+      } else if (dayOfWeek == 4){
+        thisWeekFormated['Thursday'] = route.distance;
+      }else if (dayOfWeek == 5){
+        thisWeekFormated['Friday'] = route.distance;
+      }else if (dayOfWeek == 6){
+        thisWeekFormated['Saturday'] = route.distance;
+      }else if (dayOfWeek == 7){
+        thisWeekFormated['Sunday'] = route.distance;
       } else{
         throw Exception("unvalid");
       }
     }
-    print(thisWeekFormated);
+    
+    print(thisWeekFormated.values.toList());
   }
 
+  // get the data from the database
   Future<List<JourneyRoute>> _initialiseMetricData() async {
     List<JourneyRoute> routes = await _metricsService.fetchAllRoutes();
     return routes;
   }
+
+  // calculate the total routes, total distance and average Mpg
   void _calculateDetails() async {
     totalRoutes = routeList.length;
     double cumulativeMpg =0;
@@ -86,9 +93,11 @@ class _MetricsPageState extends State<MetricsPage> {
     // calculate the dates that are in the current week
   }
 
+  // returns the jorunies that occured in the current week
   List<JourneyRoute> _calculateThisWeek() {
     // get the currentWeekday = now.weekday;
-    DateTime now = DateTime.now();
+   // DateTime now = DateTime.now();
+    DateTime now = DateTime(2025, 1, 28);
     // work out when monday was (1 = monday, 7= sunday)
     int daysToSubtract = now.weekday -1;
     DateTime monday = now.subtract(Duration(days: daysToSubtract));
@@ -100,6 +109,7 @@ class _MetricsPageState extends State<MetricsPage> {
     DateTime sunday = monday.add(Duration(days: 7));
     // returns the list of routes that happened this week
     return routeList.where((item) {
+      print("returning stuff");
       // parse the string to be datetime
       DateTime date = DateTime.parse(item.date);
       return date.isAfter(monday.subtract(Duration(days:1))) && date.isBefore(sunday.add(Duration(days:1)));
@@ -109,7 +119,6 @@ class _MetricsPageState extends State<MetricsPage> {
   // build the UI for the metrics page
   @override
   Widget build(BuildContext context) {
-    print(thisWeekFormated);
     // sample data
     List<double> carbonFootPrintData = [2.4, 2.4, 3.2, 4.5, 6.7, 6.7, 5.4];
     return Scaffold(
@@ -180,7 +189,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                         height: 200,
                                         child: MyBarGraph(
                                             key: ValueKey("barGraph"),
-                                            weeklySummary: carbonFootPrintData),
+                                            weeklySummary: thisWeekFormated.values.toList()),
                                       ),
                                     ]),
                                   ])),

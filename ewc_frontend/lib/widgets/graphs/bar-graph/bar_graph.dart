@@ -27,25 +27,36 @@ class MyBarGraph extends StatelessWidget{
     );
     myBarData.initializeBarData();
 
+    double maxY = (weeklySummary
+    .map((e) => (e as num).toDouble()) //make sure its a number
+    .reduce((a,b)=> a > b ? a : b) * 1.2) // add extra space
+    .ceilToDouble(); // make whole number
+    print(maxY);
     return BarChart(
       BarChartData(
-        maxY: 10,
+        // find the maximum value, round it up then leave some space
+        maxY: maxY,
         minY: 0,
-        gridData: FlGridData(show: false),
+        gridData: FlGridData(show: true),
         borderData: FlBorderData(show: false),
         titlesData: FlTitlesData(
-          show: true,
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          // the ones we want to show
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 2,
+              getTitlesWidget: getLeftTitles,
+            )
+          ),
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               getTitlesWidget: getBottomTitles,
             ),
-            
           ),
-          
+          // the ones we want to hide
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         barGroups: myBarData.barData
         .map(
@@ -59,7 +70,7 @@ class MyBarGraph extends StatelessWidget{
                 borderRadius: BorderRadius.circular(4),
                 backDrawRodData: BackgroundBarChartRodData(
                   show:true,
-                  toY: 10,
+                  toY: maxY,
                   color: Colors.grey.shade400,
                 )
               )
@@ -105,4 +116,24 @@ Widget getBottomTitles(double value, TitleMeta meta){
   }
 
   return SideTitleWidget(meta: meta, child: text);
+}
+
+Widget getLeftTitles(double value, TitleMeta meta){
+  print(value);
+  const style = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.bold,
+    fontSize: 10,
+  );
+  String text;
+  // only display the even values on the scale
+  if (value % 2 == 0){
+    text = value.toInt().toString();
+  }else{
+    return Container(); // dont display just have a space 
+  }
+  return SideTitleWidget(
+    meta: meta,
+    child: Text(text, style:style),
+    );
 }
