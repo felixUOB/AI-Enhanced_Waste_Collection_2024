@@ -138,8 +138,8 @@ jobs:
         with:
           name: android-output
           path: |
-            build/app/outputs/flutter-apk/release/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
+            build/app/outputs/**/release/*.apk
+            build/app/outputs/**/release/*.aab
       
       - name: Build iOS app
         if: ${{ matrix.os == 'macos-latest' }}
@@ -190,7 +190,6 @@ jobs:
         with:
           api-level: 29
           script: |
-            flutter drive \
               cd ewc_frontend
               flutter test
       
