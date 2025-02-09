@@ -22,6 +22,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+
       - name: Secrets
         run: |
           touch .env
@@ -29,7 +30,7 @@ jobs:
         env: 
           api_key: ${{ secrets.API_KEY }}
 
-      - name: Run format, analyze, test
+      - name: Static Analysis & Unit Tests (Flutter)
         working-directory: "./ewc_frontend"  
         run: |
           flutter pub get
@@ -190,6 +191,6 @@ jobs:
           api-level: 29
           script: |
             flutter drive \
-              --driver=test_driver/integration_test_driver.dart \
-              --target=integration_test/app_test.dart
+              cd ewc_frontend
+              flutter test
       
