@@ -9,7 +9,7 @@ on:
 
 jobs:
   flutter_test:
-    name: Run Flutter test and analyze
+    name: Run Flutter Tests & Analyze Coverage
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -37,7 +37,7 @@ jobs:
           flutter test
 
   django_test:
-    name: Run Django Tests
+    name: Run Flutter Tests & Analyze Coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -115,7 +115,7 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Secrets
+      - name: API_KEY Set-up
         run: |
           touch .env
           echo API_KEY=${API_KEY} >> .env
@@ -156,4 +156,29 @@ jobs:
           path: |
             build/ios/iphoneos/*.app
 
+  integration_test:
+    name: Flutter Integration Tests
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run Android emulator + Flutter integration test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: |
+            flutter drive \
+              --driver=test_driver/integration_test_driver.dart \
+              --target=integration_test/app_test.dart
       
