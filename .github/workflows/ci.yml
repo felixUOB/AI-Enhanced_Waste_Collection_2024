@@ -37,7 +37,7 @@ jobs:
           flutter test
 
   django_test:
-    name: Run Flutter Tests & Analyze Coverage
+    name: Run Django Tests & Analyze Coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -115,7 +115,7 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: API_KEY Set-up
+      - name: Setup .env
         run: |
           touch .env
           echo API_KEY=${API_KEY} >> .env
@@ -137,7 +137,7 @@ jobs:
         with:
           name: android-output
           path: |
-            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/flutter-apk/release/*.apk
             build/app/outputs/bundle/release/*.aab
       
       - name: Build iOS app
@@ -154,7 +154,14 @@ jobs:
         with:
           name: ios-output
           path: |
-            build/ios/iphoneos/*.app
+            build/ios/Release-iphoneos/*.app
+
+      - name: <Debug> list build directory
+        run: |
+          echo "=== ANDROID BUILD OUTPUT ==="
+          ls -R build/app/outputs
+          echo "=== IOS BUILD OUTPUT ==="
+          ls -R build/ios
 
   integration_test:
     name: Flutter Integration Tests
