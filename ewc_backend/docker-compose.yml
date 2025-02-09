@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  ewc_backend:
+    build: .
+    volumes:
+      - .:/django
+    ports:
+      - "8000:8000"
+    image: application:ewc_backend_image
+    container_name: ewc_backend_container
+    command: gunicorn ewc_backend.wsgi:application --bind 0.0.0.0:8000
+    
