@@ -70,10 +70,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
-    _stops = await _stopsService.fetchAllStops();
-    // Initialize RouteService with API key
-
     try {
+      _stops = await _stopsService.fetchAllStops();
+      // Initialize RouteService with API key
+
       // Attempt to load the .env file
       await dotenv.load(fileName: '.env');
 

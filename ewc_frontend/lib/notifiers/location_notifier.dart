@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../services/location_service.dart';
+import 'package:ewc/services/location_service.dart';
 
 
 // This class provides location updates to any consumers which may require them
