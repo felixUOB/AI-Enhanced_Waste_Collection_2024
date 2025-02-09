@@ -114,6 +114,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+
       - name: Secrets
         run: |
           touch .env
@@ -128,7 +129,16 @@ jobs:
           pwd
           flutter pub get
           flutter build apk --no-pub
-          flutter build appbundle --no-pub 
+          flutter build appbundle --no-pub
+
+      - name: Upload Android Artifacts
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-output
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/release/*.aab
       
       - name: Build iOS app
         if: ${{ matrix.os == 'macos-latest' }}
@@ -137,85 +147,13 @@ jobs:
           flutter pub get
           flutter clean
           flutter build ios --no-codesign
-        
-         
 
-  # build_ios-test:
-  #   name: Build Flutter (iOS)
-    
-  #   runs-on: macos-latest
-  #   defaults:
-  #     run:
-  #       working-directory: "./ewc-app/ewc"    
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v2
-  #     - uses: actions/setup-java@v1
-  #       with: 
-  #         java-version: "17.x"
+      - name: Upload iOS Artifacts
+        if: ${{ matrix.os == 'macos-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-output
+          path: |
+            build/ios/iphoneos/*.app
 
-  #     - name: Setup and Install Flutter
-  #       uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: "stable"
-  #         cache: true
-
-  #     - name: Install Flutter Dependencies
-  #       run: flutter pub get
       
-  #     - run: flutter clean
-
-  #     # - name: Enable iOS
-  #     #   run: flutter config --enable-ios
-      
-  #     - name: Build Flutter App
-  #       run: flutter build ios --no-codesign
-      
-  #     # - name: Run iOS Integration Tests
-  #     #   run: |
-  #     #     xcrun simctl boot "iPhone 16"
-  #     #     flutter test integration_test -d "iPhone 16"
-
-  # build_android-test:
-  #   name: Build Test (ubuntu)
-  #   needs: [flutter_test]
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: "./ewc-app/ewc"    
-  #   steps:
-  #     - name: Checkout Repository
-  #       uses: actions/checkout@v2
-
-  #     - name: Setup Java
-  #       uses: actions/setup-java@v1
-  #       with:
-  #         java-version: "17.x"
-  #     - name: Setup and Install Flutter
-  #       uses: subosito/flutter-action@v2
-  #       with:
-  #         channel: "stable"
-  #         cache: true
-
-  #     - name: Enable Android
-  #       run: flutter config --enable-android
-
-  #     - name: Install Flutter Dependencies
-  #       run: flutter pub get
-  #       working-directory: "./ewc-app/ewc"    
-      
-  #     # - name: Run Flutter Integration Tests
-  #     #   uses: reactivecircus/android-emulator-runner@v2
-  #     #   with:
-  #     #     api-level: ${{ matrix.api-level }}
-  #     #     arch: x86_64
-  #     #     profile: pixel_6_pro
-  #     #     script: flutter test integration_test
-
-  #     - name: Build Flutter App
-  #       run: flutter build apk --no-pub
-  #       working-directory: "./ewc-app/ewc"    
-
-  #     - name: build bundle 
-  #       run: flutter build appbundle --no-pub 
-  #       working-directory: "./ewc-app/ewc"    
