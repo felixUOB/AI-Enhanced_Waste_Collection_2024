@@ -137,8 +137,8 @@ jobs:
         with:
           name: android-output
           path: |
-            build/app/outputs/flutter-apk/release/*.apk
-            build/app/outputs/bundle/release/*.aab
+            build/app/outputs/flutter-apk/release/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
       
       - name: Build iOS app
         if: ${{ matrix.os == 'macos-latest' }}
@@ -146,7 +146,7 @@ jobs:
           echo "Building iOS..."
           flutter pub get
           flutter clean
-          flutter build ios --no-codesign
+          flutter build ios --release --no-codesign
 
       - name: Upload iOS Artifacts
         if: ${{ matrix.os == 'macos-latest' }}
@@ -159,9 +159,9 @@ jobs:
       - name: <Debug> list build directory
         run: |
           echo "=== ANDROID BUILD OUTPUT ==="
-          ls -R build/app/outputs
+          ls -R build/app/outputs || true
           echo "=== IOS BUILD OUTPUT ==="
-          ls -R build/ios
+          ls -R build/ios || true
 
   integration_test:
     name: Flutter Integration Tests
