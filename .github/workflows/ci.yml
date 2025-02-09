@@ -129,8 +129,8 @@ jobs:
           echo "Building Android..."
           pwd
           flutter pub get
-          flutter build apk --no-pub
-          flutter build appbundle --no-pub
+          flutter build apk --release --no-pub
+          flutter build appbundle --release --no-pub
 
       - name: Upload Android Artifacts
         if: ${{ matrix.os == 'ubuntu-latest' }}
@@ -156,13 +156,6 @@ jobs:
           name: ios-output
           path: |
             build/ios/Release-iphoneos/*.app
-
-      - name: <Debug> list build directory
-        run: |
-          echo "=== ANDROID BUILD OUTPUT ==="
-          ls -R build/app/outputs || true
-          echo "=== IOS BUILD OUTPUT ==="
-          ls -R build/ios || true
 
   integration_test:
     name: Flutter Integration Tests
@@ -190,6 +183,4 @@ jobs:
         with:
           api-level: 29
           script: |
-              cd ewc_frontend
-              flutter test
-      
+            cd ewc_frontend && flutter test
