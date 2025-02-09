@@ -168,6 +168,10 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: "./ewc_frontend"
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
