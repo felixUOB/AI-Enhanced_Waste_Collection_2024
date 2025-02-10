@@ -26,7 +26,8 @@ RUN apt-get update && apt-get install -y \
 # 2) Install Flutter
 # ------------------------------------------------
 ARG FLUTTER_VERSION=3.7.9
-RUN wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz -O /tmp/flutter.tar.xz \
+RUN wget https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_${FLUTTER_VERSION}-stable.tar.xz \
+        -O /tmp/flutter.tar.xz \
     && tar xf /tmp/flutter.tar.xz -C /opt \
     && rm /tmp/flutter.tar.xz
 
@@ -40,19 +41,22 @@ RUN mkdir -p /opt/android/sdk/cmdline-tools && \
     cd /opt/android/sdk/cmdline-tools && \
     wget https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip -O cmdline-tools.zip && \
     unzip cmdline-tools.zip && \
+    # rename the extracted folder to 'tools'
     mv cmdline-tools tools && \
     rm cmdline-tools.zip
 
+# Ensure we match the folder name ('tools') in our PATH
 ENV ANDROID_SDK_ROOT=/opt/android/sdk
-ENV PATH="${PATH}:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools"
+ENV PATH="${PATH}:${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin:${ANDROID_SDK_ROOT}/platform-tools"
 
 RUN yes | sdkmanager --licenses || true
 RUN sdkmanager --update
+
 RUN sdkmanager \
     "platform-tools" \
     "platforms;android-33" \
     "build-tools;33.0.0" \
-    "ndk;25.2.9519653" \
+    "ndk;25.2.9519653"
 
 # ------------------------------------------------
 # 4) Flutter setup (accept Android licenses)
