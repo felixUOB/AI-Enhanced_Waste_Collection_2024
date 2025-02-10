@@ -6,17 +6,22 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 
 class MetricsPage extends StatefulWidget {
-  const MetricsPage({super.key});
+
+  final bool testingMode;
+
+  const MetricsPage({super.key, this.testingMode = false});
 
   @override
   State<MetricsPage> createState() => _MetricsPageState();
 }
 
 class _MetricsPageState extends State<MetricsPage> {
-
   List<JourneyRoute> routeList = [];
   // instantiate the variables
   final MetricsService _metricsService = MetricsService();
+
+  bool get isTesting => widget.testingMode;
+
   double totalDistance = 0;
   double averageMpg = 0;
   int totalRoutes = 0;
@@ -29,7 +34,8 @@ class _MetricsPageState extends State<MetricsPage> {
     'Friday' : 0,
     'Saturday' : 0,
     'Sunday' : 0,
-    };
+  };
+
   List<JourneyRoute> thisWeek = [];
   List<Map<String, dynamic>> overallMpg = [];
   List<Map<String, dynamic>> overallDistance = [];
@@ -40,99 +46,96 @@ class _MetricsPageState extends State<MetricsPage> {
   // do once when the app is first opened
   @override
   void initState(){
+    _fetchMatricsDate();
     super.initState();
-    main();
   }
 
-  void main() async{
-    // get the data from the database
-    routeList = await _initialiseMetricData();
-    // calculate the total routes, total distance and average Mpg
-    _calculateDetails();
-    // get the dates that occured this week
-    thisWeek = _calculateThisWeek();
-    //  put the dates into a nice format
-    for (var route in thisWeek){
-      DateTime d = DateTime.parse(route.date);
-      int dayOfWeek = d.weekday;
-      if (dayOfWeek == 1){
-        thisWeekFormated['Monday'] = route.distance;
-      } else if (dayOfWeek == 2){
-        thisWeekFormated['Tuesday'] = route.distance;
-      } else if (dayOfWeek == 3){
-        thisWeekFormated['Wednesday'] = route.distance;
-      } else if (dayOfWeek == 4){
-        thisWeekFormated['Thursday'] = route.distance;
-      }else if (dayOfWeek == 5){
-        thisWeekFormated['Friday'] = route.distance;
-      }else if (dayOfWeek == 6){
-        thisWeekFormated['Saturday'] = route.distance;
-      }else if (dayOfWeek == 7){
-        thisWeekFormated['Sunday'] = route.distance;
-      } else{
-        throw Exception("unvalid");
+  Future<void> _fetchMatricsDate() async{
+    List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
+    setState((){
+      routeList = fetchedRoutes;
+      _calculateDetails();
+      thisWeek = _calculateThisWeek();
+      //  put the dates into a nice format
+      for (var route in thisWeek){
+        DateTime d = DateTime.parse(route.date);
+        int dayOfWeek = d.weekday;
+        if (dayOfWeek == 1){
+          thisWeekFormated['Monday'] = route.distance;
+        } else if (dayOfWeek == 2){
+          thisWeekFormated['Tuesday'] = route.distance;
+        } else if (dayOfWeek == 3){
+          thisWeekFormated['Wednesday'] = route.distance;
+        } else if (dayOfWeek == 4){
+          thisWeekFormated['Thursday'] = route.distance;
+        }else if (dayOfWeek == 5){
+          thisWeekFormated['Friday'] = route.distance;
+        }else if (dayOfWeek == 6){
+          thisWeekFormated['Saturday'] = route.distance;
+        }else if (dayOfWeek == 7){
+          thisWeekFormated['Sunday'] = route.distance;
+        } else{
+          throw Exception("Unvalid");
+        }
       }
-    }
-    
-    print(overallDistance);
-    print(overallMpg);
+    });
   }
 
   // get the data from the database
   Future<List<JourneyRoute>> _initialiseMetricData() async {
-    List<JourneyRoute> routes = await _metricsService.fetchAllRoutes();
-    return routes;
+    if (isTesting){
+      return [
+        JourneyRoute(date: "2025-01-25", distance: 50, mpg: 10),
+        JourneyRoute(date: "2025-01-26", distance: 30, mpg: 8),
+      ];
+    }
+    return await _metricsService.fetchAllRoutes();
   }
 
   // calculate the total routes, total distance and average Mpg and add to lists
   void _calculateDetails() async {
     totalRoutes = routeList.length;
-    double cumulativeMpg =0;
-    for (var route in routeList){
-      // calculate the total distance
-      totalDistance = totalDistance + route.distance;
-      // caluclate the average mpg
-      cumulativeMpg = cumulativeMpg + route.mpg;
-      
-      overallMpg.add({'date': route.date, 'value': route.mpg});
-      overallDistance.add({'date': route.date, 'value': route.distance});
 
-      // calculate the fuel consumed : number of gallons of fuel consumed
-      double fuel =  route.distance/route.mpg;
-      emissions.add({'date': route.date, 'value': fuel});
-      print(fuel);
-      // calculate the emissions using 10.21 kg co2 per galone
-      double emitted = (route.distance * 10.21) / route.mpg;
-      fuelConsumed.add({'date':route.date, 'value': emitted});
-      print(emitted);
+    if (totalRoutes != 0) {
+      double cumulativeMpg =0;
+
+      for (var route in routeList){
+        // calculate the total distance
+        totalDistance += route.distance;
+        // caluclate the average mpg
+        cumulativeMpg += route.mpg;
+        // calculate the fuel consumed : number of gallons of fuel consumed
+        double fuel =  route.distance/route.mpg;
+        // calculate the emissions using 10.21 kg co2 per galone
+        double emitted = (route.distance * 10.21) / route.mpg;
+        
+        fuelConsumed.add({'date':route.date, 'value': emitted});
+        emissions.add({'date': route.date, 'value': fuel});
+        overallMpg.add({'date': route.date, 'value': route.mpg});
+        overallDistance.add({'date': route.date, 'value': route.distance});
+
+      }
+      if (totalRoutes >0 ){
+        averageMpg = cumulativeMpg / totalRoutes;
+      }
     }
-    averageMpg = cumulativeMpg / totalRoutes;
-    
-    // calculate the dates that are in the current week
   }
-
   // returns the jorunies that occured in the current week
   List<JourneyRoute> _calculateThisWeek() {
     // get the currentWeekday = now.weekday;
-   // DateTime now = DateTime.now();
-    DateTime now = DateTime(2025, 1, 28);
+    DateTime now = DateTime.now();
     // work out when monday was (1 = monday, 7= sunday)
     int daysToSubtract = now.weekday -1;
     DateTime monday = now.subtract(Duration(days: daysToSubtract));
-    // genereate this weeks dates
-    // List<DateTime> weekDates = List.generate(7, (index){
-    //   return startOfWeek.add(Duration(days: index));
-    // });
-    // get the first and last days of the week
     DateTime sunday = monday.add(Duration(days: 7));
     // returns the list of routes that happened this week
     return routeList.where((item) {
-      print("returning stuff");
       // parse the string to be datetime
       DateTime date = DateTime.parse(item.date);
       return date.isAfter(monday.subtract(Duration(days:1))) && date.isBefore(sunday.add(Duration(days:1)));
     }).toList();
   }
+
   // build the UI for the metrics page
   @override
   Widget build(BuildContext context) {
@@ -205,7 +208,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                         height: 200,
                                         child: MyBarGraph(
                                             key: ValueKey("barGraph"),
-                                            weeklySummary: thisWeekFormated.values.toList()),
+                                            weeklySummary: thisWeekFormated.values.isNotEmpty ? thisWeekFormated.values.toList() : [0,0,0,0,0,0,0]),
                                       ),
                                     ]),
                                   ])),
@@ -231,7 +234,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                       height: 200,
                                       child: MyLineGraph(
                                           key: ValueKey("lineGraph"),
-                                          dataPoints: overallMpg),
+                                          dataPoints: overallMpg.isNotEmpty ? overallMpg : [{'date': DateTime.now().toString(), 'value': 0}]),
                                     ),
                                   ]),
                                 ])),
@@ -258,8 +261,8 @@ class _MetricsPageState extends State<MetricsPage> {
                                     height: 200,
                                     child: MyLineGraph(
                                         key: ValueKey("lineGraph"),
-                                        dataPoints: overallDistance),
-                                  ),
+                                        dataPoints: (overallDistance.isNotEmpty ? overallDistance : [{'date': DateTime.now().toString(), 'value': 0}] ),
+                                  ),),
                                 ]),
                               ])),
                       context, // pass in the context as an argument
@@ -285,7 +288,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                       height: 200,
                                       child: MyLineGraph(
                                           key: ValueKey("lineGraph"),
-                                          dataPoints: fuelConsumed),
+                                          dataPoints: fuelConsumed.isNotEmpty ? fuelConsumed : [{'date': DateTime.now().toString(), 'value': 0}]),
                                     ),
                                   ]),
                                 ])),
@@ -312,7 +315,8 @@ class _MetricsPageState extends State<MetricsPage> {
                                       height: 200,
                                       child: MyLineGraph(
                                           key: ValueKey("lineGraph"),
-                                          dataPoints: emissions),
+                                          // check to see if the list is empty, if it is use a defult 
+                                          dataPoints: emissions.isNotEmpty ? emissions : [{'date': DateTime.now().toString(), 'value': 0}]),
                                     ),
                                   ]),
                                 ])),
@@ -330,5 +334,6 @@ Widget _buildTile(Widget child, BuildContext context) {
       elevation: 14.0,
       borderRadius: BorderRadius.circular(12.0),
       shadowColor: Theme.of(context).shadowColor,
-      child: child);
+      child: child
+  );
 }

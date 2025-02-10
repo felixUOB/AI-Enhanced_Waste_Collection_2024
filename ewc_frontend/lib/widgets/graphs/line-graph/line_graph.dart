@@ -10,7 +10,7 @@ class MyLineGraph extends StatelessWidget{
 
   const MyLineGraph({
     super.key,
-    required this.dataPoints,
+    this.dataPoints = const [], 
   });
 
   @override
