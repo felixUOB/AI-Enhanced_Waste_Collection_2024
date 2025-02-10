@@ -38,3 +38,6 @@ jobs:
           IMAGE_NAME="${{ steps.ecr-login.outputs.registry }}/ewc-flutter-docker"
           docker push "$IMAGE_NAME:latest"
           docker push "$IMAGE_NAME:${{ github.sha }}"
+
+      - name: Output Image URI
+        run: echo "Image pushed to $REPO_URI:latest"
