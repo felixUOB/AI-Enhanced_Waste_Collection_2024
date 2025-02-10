@@ -35,13 +35,13 @@ ENV PATH="${PATH}:/opt/flutter/bin"
 # ------------------------------------------------
 # 3) Install Android SDK / NDK / build tools
 # ------------------------------------------------
-RUN mkdir -p /opt/android/sdk/cmdline-tools/latest
-WORKDIR /opt/android/sdk/cmdline-tools/latest
-
 ARG CMDLINE_TOOLS_VERSION=9477386
-RUN wget https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip -O cmdline-tools.zip \
-    && unzip cmdline-tools.zip \
-    && rm cmdline-tools.zip
+RUN mkdir -p /opt/android/sdk/cmdline-tools && \
+    cd /opt/android/sdk/cmdline-tools && \
+    wget https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip -O cmdline-tools.zip && \
+    unzip cmdline-tools.zip && \
+    mv cmdline-tools tools && \
+    rm cmdline-tools.zip
 
 ENV ANDROID_SDK_ROOT=/opt/android/sdk
 ENV PATH="${PATH}:${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin:${ANDROID_SDK_ROOT}/platform-tools"
@@ -53,7 +53,6 @@ RUN sdkmanager \
     "platforms;android-33" \
     "build-tools;33.0.0" \
     "ndk;25.2.9519653" \
-    "cmdline-tools;latest"
 
 # ------------------------------------------------
 # 4) Flutter setup (accept Android licenses)
