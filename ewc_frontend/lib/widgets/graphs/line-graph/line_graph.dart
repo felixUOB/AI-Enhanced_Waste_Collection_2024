@@ -38,13 +38,13 @@ class MyLineGraph extends StatelessWidget{
           drawHorizontalLine: true,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.3), // Adjust color for visibility
+              color: Colors.grey, // Adjust color for visibility
               strokeWidth: 1,
             );
           },
           getDrawingVerticalLine: (value) {
             return FlLine(
-              color: Colors.grey.withOpacity(0.3),
+              color: Colors.grey,
               strokeWidth: 1,
             );
           },
