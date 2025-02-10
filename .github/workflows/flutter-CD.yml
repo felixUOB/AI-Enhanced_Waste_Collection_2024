@@ -3,7 +3,7 @@ name: CD - Build and Push Flutter Docker Image to ECR
 on:
   push:
     branches:
-      - dev
+      - main
 
 jobs:
   build-and-push:
@@ -22,7 +22,7 @@ jobs:
 
       - name: Log in to Amazon ECR
         id: ecr-login
-        uses: aws-actions/amazon-ecr-login@v1
+        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Build Docker image
         run: |
