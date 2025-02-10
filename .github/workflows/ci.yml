@@ -111,6 +111,11 @@ jobs:
           distribution: 'temurin'
           java-version: "17.x"
 
+      - name: Configure Flutter environment
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
       - name: Secrets
         run: |
           touch .env
