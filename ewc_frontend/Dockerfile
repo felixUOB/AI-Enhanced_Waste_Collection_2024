@@ -1,7 +1,5 @@
 # ------------------------------------------------
 # Dockerfile for an Android build (Flutter)
-# The iOS build section is commented out
-# since it requires macOS (OS runner).
 # ------------------------------------------------
 
 FROM ubuntu:20.04
@@ -9,7 +7,7 @@ FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 # ------------------------------------------------
-# 1) Install required packages (OpenJDK, curl, unzip, etc.)
+# 1) Install required packages
 # ------------------------------------------------
 RUN apt-get update && apt-get install -y \
     openjdk-11-jdk \
@@ -31,27 +29,27 @@ RUN wget https://storage.googleapis.com/flutter_infra_release/releases/stable/li
     && tar xf /tmp/flutter.tar.xz -C /opt \
     && rm /tmp/flutter.tar.xz
 
+# -- Git safe.directory 설정 (dubious ownership 경고 방지)
+RUN git config --global --add safe.directory /opt/flutter
+
 ENV PATH="${PATH}:/opt/flutter/bin"
 
 # ------------------------------------------------
-# 3) Install Android SDK / NDK / build tools
+# 3) Install Android SDK / cmdline-tools
 # ------------------------------------------------
 ARG CMDLINE_TOOLS_VERSION=9477386
 RUN mkdir -p /opt/android/sdk/cmdline-tools && \
     cd /opt/android/sdk/cmdline-tools && \
     wget https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip -O cmdline-tools.zip && \
     unzip cmdline-tools.zip && \
-    # rename the extracted folder to 'tools'
     mv cmdline-tools tools && \
     rm cmdline-tools.zip
 
-# Ensure we match the folder name ('tools') in our PATH
 ENV ANDROID_SDK_ROOT=/opt/android/sdk
 ENV PATH="${PATH}:${ANDROID_SDK_ROOT}/cmdline-tools/tools/bin:${ANDROID_SDK_ROOT}/platform-tools"
 
 RUN yes | sdkmanager --licenses || true
 RUN sdkmanager --update
-
 RUN sdkmanager \
     "platform-tools" \
     "platforms;android-33" \
@@ -59,28 +57,21 @@ RUN sdkmanager \
     "ndk;25.2.9519653"
 
 # ------------------------------------------------
-# 4) Flutter setup (accept Android licenses)
+# 4) Configure Flutter to know the SDK path
 # ------------------------------------------------
+RUN flutter config --android-sdk $ANDROID_SDK_ROOT
+
+# Accept licenses via Flutter
 RUN yes | flutter doctor --android-licenses
 RUN flutter doctor
 
 # ------------------------------------------------
-# 5) Set up working directory
+# 5) Working directory
 # ------------------------------------------------
 WORKDIR /app
 
-# ------------------------------------------------
-# iOS build section (commented out: requires macOS)
-# ------------------------------------------------
-# RUN xcode-select --install
-# RUN sudo xcodebuild -license accept
-# (Additional steps for Apple Developer account and code signing, etc.)
-#
-# In practice, iOS builds require macOS or macOS-latest environment
-# or a self-hosted mac.
-# ------------------------------------------------
+# (iOS build lines omitted)
 
-# End.
-# Example to execute a build:
+# Example usage:
 # docker run --rm -v $(pwd):/app <image-name> \
-#   sh -c "cd /app/ewc_frontend && flutter pub get && flutter build apk --release"
+#   sh -c "cd /app && flutter build apk --release"
