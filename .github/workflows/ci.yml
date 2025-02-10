@@ -153,16 +153,8 @@ jobs:
         with:
           channel: stable
 
-      - name: Run Android Emulator and integration tests
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          target: default
-          arch: x86_64
-          force-avd-creation: true
-          emulator-options: -no-snapshot -no-window -gpu swiftshader_indirect -noaudio
-          disable-animations: true
-          script: |
-            cd ewc_frontend
-            flutter pub get
-            flutter test integration_test
+      - name: Run iOS Simulator + Integration Tests
+        run: |
+          cd ewc_frontend
+          xcrun simctl boot "iPhone 16"
+          flutter test integration_test
