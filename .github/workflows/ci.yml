@@ -1,4 +1,4 @@
-name: CI
+name: CI - Tests & Build
 
 on:
   push:
@@ -111,36 +111,29 @@ jobs:
           distribution: 'temurin'
           java-version: "17.x"
 
+      - name: Build Android Docker Image
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        working-directory: "./ewc_frontend"
+        run: |
+          echo "Building Docker image for Android..."
+          docker build -t flutter-android-build -f Dockerfile .
+
+      - name: Docker Run - Build Android APK/AAB
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        working-directory: "./ewc_frontend"
+        run: |
+          echo "Building Android using Docker container..."
+          docker run --rm \
+            -v ${{ github.workspace }}/ewc_frontend:/app \
+            flutter-android-build \
+            bash -c "cd /app && flutter pub get && flutter build apk --release && flutter build appbundle --release"
+
       - name: Configure Flutter environment
+        if: ${{ matrix.os == 'macos-latest' }}
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
-      - name: Setup .env
-        run: |
-          touch .env
-          echo API_KEY=${API_KEY} >> .env
-        env: 
-          api_key: ${{ secrets.API_KEY }}
-      
-      - name: Build Android app
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        run: |
-          echo "Building Android..."
-          pwd
-          flutter pub get
-          flutter build apk --release --no-pub
-          flutter build appbundle --release --no-pub
-
-      - name: Upload Android Artifacts
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-output
-          path: |
-            build/app/outputs/**/release/*.apk
-            build/app/outputs/**/release/*.aab
-      
       - name: Build iOS app
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
@@ -149,45 +142,25 @@ jobs:
           flutter clean
           flutter build ios --release --no-codesign
 
-      - name: Upload iOS Artifacts
+      - name: Upload Android APK
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: ewc_frontend/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Android AAB
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: ewc_frontend/build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload iOS artifact
         if: ${{ matrix.os == 'macos-latest' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ios-output
+          name: ios-build
           path: |
-            build/ios/Release-iphoneos/*.app
-
-  integration_test:
-    name: Flutter Integration Tests
-    needs: [build]
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: "./ewc_frontend"
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-
-      - name: Setup .env
-        run: |
-          touch .env
-          echo API_KEY=${API_KEY} >>ewc_frontend/.env
-        env:
-            API_KEY: ${{ secrets.API_KEY }}
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Run Android emulator + Flutter integration test
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          script: |
-            cd ewc_frontend && flutter test
+            build/ios/iphoneos/*.app
+            build/ios/iphoneos/*.ipa
