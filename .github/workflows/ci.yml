@@ -139,3 +139,24 @@ jobs:
           flutter pub get
           flutter clean
           flutter build ios --no-codesign
+
+  Integration_test:
+    name: Flutter Integration Tests
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Run Android Emulator and integration tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: |
+            flutter pub get
+            flutter test integration_test
