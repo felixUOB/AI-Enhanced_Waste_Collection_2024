@@ -5,13 +5,15 @@ import 'package:latlong2/latlong.dart';
 class MarkerWidget {
   static Marker createMarker(LatLng location, Color color) {
     return Marker(
-      width: 80.0,
-      height: 80.0,
+      width: 60.0,
+      height: 60.0,
       point: location,
-      child: Icon(
-        Icons.location_on,
-        color: color,
-        size: 40.0,
+      child: Align(alignment: Alignment.topCenter,
+        child: Icon(
+          Icons.location_on,
+          color: color,
+          size: 30,
+        )
       ),
     );
   }
