@@ -80,18 +80,19 @@ jobs:
           flutter build ios --no-codesign
 
   # build-and-push:
+  #   name: Build and Push Backend Docker Image
   #   runs-on: ubuntu-latest
 
   #   steps:
   #     - name: Checkout Code
-  #       uses: actions/checkout@v4
+  #       uses: actions/checkout@v3
 
   #     - name: Configure AWS Credentials
   #       uses: aws-actions/configure-aws-credentials@v2
   #       with:
   #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
   #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: us-east-1  # Change to your AWS region
+  #         aws-region: eu-north-1
 
   #     - name: Login to Amazon ECR
   #       id: login-ecr
@@ -99,15 +100,17 @@ jobs:
 
   #     - name: Build and Tag Docker Image
   #       run: |
-  #         REPO_URI=123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repository  # Change this
+  #         REPO_URI=713881812987.dkr.ecr.eu-north-1.amazonaws.com/ewc-django-backend
   #         IMAGE_TAG=$(git rev-parse --short HEAD)
+
+  #         cd ewc_backend
 
   #         docker build -t $REPO_URI:$IMAGE_TAG .
   #         docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
 
   #     - name: Push Docker Image to AWS ECR
   #       run: |
-  #         REPO_URI=123456789012.dkr.ecr.us-east-1.amazonaws.com/my-repository  # Change this
+  #         REPO_URI=713881812987.dkr.ecr.eu-north-1.amazonaws.com/ewc-django-backend
   #         IMAGE_TAG=$(git rev-parse --short HEAD)
 
   #         docker push $REPO_URI:$IMAGE_TAG
