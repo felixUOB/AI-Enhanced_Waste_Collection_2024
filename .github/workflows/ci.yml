@@ -111,28 +111,21 @@ jobs:
           distribution: 'temurin'
           java-version: "17.x"
 
-      - name: Build Android Docker Image
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        working-directory: "./ewc_frontend"
+      - name: Secrets
         run: |
-          echo "Building Docker image for Android..."
-          docker build -t flutter-android-build -f Dockerfile .
+          touch .env
+          echo API_KEY=${API_KEY} >> .env
+        env:
+          api_key: ${{ secrets.API_KEY }}
 
-      - name: Docker Run - Build Android APK/AAB
+      - name: Build Android app
         if: ${{ matrix.os == 'ubuntu-latest' }}
-        working-directory: "./ewc_frontend"
         run: |
-          echo "Building Android using Docker container..."
-          docker run --rm \
-            -v ${{ github.workspace }}/ewc_frontend:/app \
-            flutter-android-build \
-            bash -c "cd /app && flutter pub get && flutter build apk --release && flutter build appbundle --release"
-
-      - name: Configure Flutter environment
-        if: ${{ matrix.os == 'macos-latest' }}
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
+          echo "Building Android..."
+          pwd
+          flutter pub get
+          flutter build apk --no-pub
+          flutter build appbundle --no-pub 
 
       - name: Build iOS app
         if: ${{ matrix.os == 'macos-latest' }}
@@ -140,27 +133,4 @@ jobs:
           echo "Building iOS..."
           flutter pub get
           flutter clean
-          flutter build ios --release --no-codesign
-
-      - name: Upload Android APK
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-apk
-          path: ewc_frontend/build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Upload Android AAB
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: android-aab
-          path: ewc_frontend/build/app/outputs/bundle/release/app-release.aab
-
-      - name: Upload iOS artifact
-        if: ${{ matrix.os == 'macos-latest' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-build
-          path: |
-            build/ios/iphoneos/*.app
-            build/ios/iphoneos/*.ipa
+          flutter build ios --no-codesign
