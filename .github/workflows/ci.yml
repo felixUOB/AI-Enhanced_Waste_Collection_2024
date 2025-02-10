@@ -140,8 +140,8 @@ jobs:
           flutter clean
           flutter build ios --no-codesign
 
-  Integration_test:
-    name: Flutter Integration Tests
+  Integration_test_ios:
+    name: Flutter Integration Tests (iOS)
     needs: [build]
     runs-on: macos-latest
     steps:
@@ -153,8 +153,24 @@ jobs:
         with:
           channel: stable
 
-      - name: Run iOS Simulator + Integration Tests
+      - name: Build iOS
         run: |
           cd ewc_frontend
-          xcrun simctl boot "iPhone 16"
+          flutter pub get
+          flutter clean
+          flutter build ios --no-codesign
+
+      - name: Boot iOS Simulator
+        run: |
+          xcrun simctl shutdown all
+          xcrun simctl erase all
+          
+          xcrun simctl boot "iPhone 16 Pro"
+          
+          xcrun simctl bootstatus "iPhone 14" -b
+
+      - name: Run Flutter iOS Integration Tests
+        run: |
+          cd ewc_frontend
+          flutter pub get
           flutter test integration_test
