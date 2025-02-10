@@ -1,0 +1,42 @@
+name: Build and Push Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Log in to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          IMAGE_NAME="${{ steps.ecr-login.outputs.registry }}/ewc-flutter-docker"
+          DOCKER_TAG="latest"
+          
+          docker build \
+                      -t "$IMAGE_NAME:latest" \
+                      -t "$IMAGE_NAME:${{ github.sha }}" \
+                      -f ./ewc_frontend/Dockerfile \
+                      ./ewc_frontend
+
+      - name: Push to Amazon ECR
+        run: |
+          IMAGE_NAME="${{ steps.ecr-login.outputs.registry }}/ewc-flutter-docker"
+          docker push "$IMAGE_NAME:latest"
+          docker push "$IMAGE_NAME:${{ github.sha }}"
