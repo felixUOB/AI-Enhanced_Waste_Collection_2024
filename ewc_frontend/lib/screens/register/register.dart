@@ -1,3 +1,4 @@
+import 'package:ewc/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/login_button.dart';
@@ -52,7 +53,6 @@ class RegisterPage extends StatelessWidget {
                 LoginTextfield(
                   controller: usernameController,
                   hintText: "Username",
-                  obscured: false,
                   key: Key("usernameField"),
                 ),
                 const SizedBox(
@@ -63,7 +63,6 @@ class RegisterPage extends StatelessWidget {
                 LoginTextfield(
                   controller: emailController,
                   hintText: "Email",
-                  obscured: false,
                   key: Key("emailField"),
                 ),
                 const SizedBox(
@@ -71,10 +70,9 @@ class RegisterPage extends StatelessWidget {
                 ),
 
                 // Password input field
-                LoginTextfield(
+                PasswordTextfield(
                   controller: passwordController,
                   hintText: "Password",
-                  obscured: true,
                   key: Key("passwordField"),
                 ),
                 const SizedBox(
@@ -82,10 +80,9 @@ class RegisterPage extends StatelessWidget {
                 ),
 
                 // Confirm Password input field
-                LoginTextfield(
+                PasswordTextfield(
                   controller: confirmPasswordController,
                   hintText: "Confirm Password",
-                  obscured: true,
                   key: Key("confirmPasswordField"),
                 ),
                 const SizedBox(
@@ -96,7 +93,6 @@ class RegisterPage extends StatelessWidget {
                 LoginTextfield(
                   controller: phoneNumberController,
                   hintText: "Phone Number",
-                  obscured: false,
                   key: Key("phoneNumberField"),
                 ),
                 const SizedBox(
@@ -106,7 +102,6 @@ class RegisterPage extends StatelessWidget {
                 LoginTextfield(
                   controller: addressController,
                   hintText: "Address",
-                  obscured: false,
                   key: Key("addressField"),
                 ),
                 const SizedBox(

@@ -1,4 +1,5 @@
 import 'package:ewc/screens/register/register.dart';
+import 'package:ewc/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/login_button.dart';
@@ -57,7 +58,6 @@ class _ForgotPassword extends State<ForgotPassword> {
               LoginTextfield(
                 controller: usernameController,
                 hintText: "Email",
-                obscured: false,
                 key: Key("usernameField"),
               ),
 
@@ -67,10 +67,9 @@ class _ForgotPassword extends State<ForgotPassword> {
 
 //-------------PASSWORD TXT-FIELD----------------------
               if (isVisible)
-                LoginTextfield(
+                PasswordTextfield(
                   controller: passwordController,
                   hintText: "Password",
-                  obscured: true,
                   key: Key("passwordField"),
                 ),
 
