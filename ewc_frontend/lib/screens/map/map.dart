@@ -13,7 +13,7 @@ import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
-import 'package:ewc/widgets/start_jurney_dialog.dart';
+import 'package:ewc/widgets/start_journey_dialog.dart';
 import 'package:ewc/widgets/end_journey_dialog.dart';
 
 import 'package:provider/provider.dart';
