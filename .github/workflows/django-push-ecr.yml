@@ -1,5 +1,7 @@
 on:
   push:
+    branches:
+      - dev
 
 jobs:
   build-and-push:
