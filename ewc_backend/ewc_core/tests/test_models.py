@@ -1,5 +1,6 @@
 from django.test import TestCase
 from ewc_core.models import Stops, StopCollection
+from datetime import date
 
 class EwcCoreModelsTest(TestCase):
     def test_stops_creation(self):
@@ -20,6 +21,7 @@ class EwcCoreModelsTest(TestCase):
         )
         stop_collection = StopCollection.objects.create(
             stop=stop,
-            weight_collected=50
+            weight_collected=50,
+            date = date.today()
         )
         self.assertEqual(stop_collection.weight_collected, 50)
