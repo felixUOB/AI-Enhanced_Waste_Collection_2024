@@ -1,9 +1,6 @@
 # Python
 
-import pandas as pd
-from prophet import Prophet
-from prophet.plot import plot_plotly, plot_components_plotly
-import matplotlib.pyplot as plt
+
 from ewc_core.models import RouteEnvData
 from ewc_core.models import StopCollection
 from ewc_core.models import UserProfile
@@ -14,50 +11,87 @@ from ewc_core.ml_model.data import generate_csv
 
 #Exporting route environment data
 def export_routeenvdata_csv () :
-    file_path = generate_csv(
-        filename="routeenvdata.csv",
-        headers=["Date","Distance","MPG (Miles Per Gallon)"],
-        queryset=RouteEnvData.objects.all(),
-        data_extractor=lambda routeenvdata :
-            [
-                routeenvdata.date.strftime("%Y-%m-%d"),
-                routeenvdata.distance,
-                routeenvdata.mpg
-            ] 
-    )
-    return file_path
+    route_queryset = RouteEnvData.objects.all()
+    
+    #check if file is empty
+    if not route_queryset.exists() :
+        print("No Route Environment Data Found, no files generated")
+        return None
+    
+    #File Generation
+    try :
+        file_path = generate_csv(
+            filename="routeenvdata.csv",
+            headers=["Date","Distance","MPG (Miles Per Gallon)"],
+            queryset=route_queryset,
+            data_extractor=lambda routeenvdata :
+                [
+                    routeenvdata.date.strftime("%Y-%m-%d"),
+                    routeenvdata.distance,
+                    routeenvdata.mpg
+                ] 
+        )
+        return file_path
+    except Exception as e :
+        print(f"Error exporting Route Environment Data {e}")
+        return None
 
 #Exporting stop collection data
 def export_stopdata_csv () :
-    file_path = generate_csv(
-        filename="stopdata.csv",
-        headers=["Stop ID","Weight Collected"],
-        queryset=StopCollection.objects.all(),
-        data_extractor=lambda stopdata :
-            [
-                stopdata.stop_collection_id,
-                stopdata.weight_collected
-                
-            ] 
-    )
-    return file_path
+    stop_queryset = StopCollection.objects.all()
+    
+    #check if file is empty
+    if not stop_queryset.exists() :
+        print("No Stop Collection Data Found, no files generated")
+        return None
+    
+    #File Generation
+    try :
+        file_path = generate_csv(
+            filename="stopdata.csv",
+            headers=["Stop ID","Weight Collected"],
+            queryset=stop_queryset,
+            data_extractor=lambda stopdata :
+                [
+                    stopdata.stop_collection_id,
+                    stopdata.weight_collected
+                    
+                ] 
+        )
+        return file_path
+    except Exception as e :
+        print(f"Error exporting Stop Collection Data {e}")
+        return None
 
 #Exporting user data
 def export_userdata_csv () :
-    file_path = generate_csv(
-        filename="userdata.csv",
-        headers=["Pickup frequency","Waste Preferences","Carbon Savings"],
-        queryset=UserProfile.objects.all(),
-        data_extractor=lambda userdata :
-            [
-                userdata.pickup_frequency,
-                userdata.waste_type_preference,
-                userdata.carbon_savings
-            ] 
-    )
-    return file_path
-
-def getdata(request) :
+    
+    user_queryset = UserProfile.objects.all()
+    
+    #check if file is empty
+    if not user_queryset.exists() :
+        print("No User Profile Data Found, no files generated")
+        return None
+    
+    #File Generation
+    try :
+        file_path = generate_csv(
+            filename="userdata.csv",
+            headers=["Pickup frequency","Waste Preferences","Carbon Savings"],
+            queryset=user_queryset,
+            data_extractor=lambda userdata :
+                [
+                    userdata.pickup_frequency,
+                    userdata.waste_type_preference,
+                    userdata.carbon_savings
+                ] 
+        )
+        return file_path
+    except Exception as e :
+        print(f"Error exporting User Profile Data {e}")
+        return None
+    
+def generate_csv_files(request) :
     print("Generating CSV files...")
     route_csv = export_routeenvdata_csv()
     stop_csv = export_stopdata_csv()
@@ -67,45 +101,3 @@ def getdata(request) :
 
 
 # TODO model starts here
-# make model here
-# threshold value
-# threshold = 8
-
-# # load the data
-# df = pd.read_csv('https://raw.githubusercontent.com/facebook/prophet/main/examples/example_wp_log_peyton_manning.csv')
-# df.head()
-
-# #fit the model
-# m = Prophet()
-# m.fit(df)
-
-# # make the prediction data frame
-# future = m.make_future_dataframe(periods=365) # year
-# future.tail()
-
-# # predict a value for each row
-# forecast = m.predict(future)
-# # yhat is the predicted value
-# forecast[['ds', 'yhat','yhat_lower', 'yhat_upper']].tail()
-
-# # plot the forecast
-# # fig1 = m.plot(forecast)
-
-# # fig2 = m.plot_components(forecast)
-
-# # plot_plotly(m, forecast)
-
-# # plot_components_plotly(m, forecast)
-# # plt.show()
-
-# # idea:
-# # predict the amount of waste that will be at each stop 
-# # when it passes a threshold then it should be picked up
-
-# # loop through the dates and the data
-# for i in range(0, len(forecast.ds)):
-#     date = forecast.ds[i]
-#     data = forecast.yhat[i]
-#     if (data > threshold):
-#         print("pick up")
-    
