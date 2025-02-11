@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
 from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData
-
+from datetime import date
 # python manage.py test ewc_core.tests
 
 # Overall Structure
@@ -118,7 +118,6 @@ class StopsViewSetTest(APITestCase):
             latitude=37.5665,
             longitude=126.9780,
             next_collection_due_date=None,
-            last_collection_date=None,
             max_weight=100
         )
 
@@ -149,13 +148,13 @@ class StopCollectionViewSetTest(APITestCase):
             latitude=35.0,
             longitude=129.0,
             next_collection_due_date=None,
-            last_collection_date=None,
             max_weight=200
         )
         # Create a sample StopCollection object linked to the Stops object
         self.collection = StopCollection.objects.create(
             stop=self.stop,
-            weight_collected=75
+            weight_collected=75,
+            date=date.today()
         )
 
     def test_get_stop_collections(self):
@@ -183,7 +182,7 @@ class RouteEnvDataViewSetTest(APITestCase):
         self.route_data = RouteEnvData.objects.create(
             distance=150.0,
             mpg=30.0,
-            date=20250101  # Example numeric value since 'date' is defined as a FloatField
+            date=date.today()  # Example numeric value since 'date' is defined as a FloatField
         )
 
     def test_get_route_env_data(self):
