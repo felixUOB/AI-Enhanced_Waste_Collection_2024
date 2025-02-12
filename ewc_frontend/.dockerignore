@@ -1,0 +1,9 @@
+# .dockerignore
+.git/
+build/
+.dart_tool/
+.android/
+.ios/
+.pub-cache/
+packages/
+.gradle/

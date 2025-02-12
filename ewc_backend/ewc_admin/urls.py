@@ -23,6 +23,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
 from ewc_core import views
 from django.contrib.auth import views as auth_views
+# from ewc_core.ml_model.data import export_routeenvdata_csv
+# from ewc_core.ml_model.data import export_stopdata_csv
+# from ewc_core.ml_model.data import export_userdata_csv
+from ewc_core.ml_model.model import generate_csv_files
 
 
 
@@ -41,7 +45,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
     path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
-
+    path('api/runmodel', generate_csv_files ,name='runmodel'), #Run Machine Learning Model
 # -----------PASSWORD RESET ENDPOINTS--------------
     
     path('check-email/', views.CheckEmailView.as_view(), name='check-email'), #DEPRECATED BUT LEFT IN FOR LATER USE

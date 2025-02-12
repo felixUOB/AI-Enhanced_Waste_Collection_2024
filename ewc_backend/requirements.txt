@@ -4,3 +4,11 @@ psycopg2-binary
 djangorestframework-simplejwt
 django-cors-headers
 python-decouple
+# requirements for model
+pandas
+prophet
+plotly
+notebook
+ipywidgets
+coverage
+

@@ -5,6 +5,8 @@ import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:ewc/notifiers/location_notifier.dart';
 
 // ignore: must_be_immutable
 class MainNavigationBar extends StatefulWidget {
@@ -58,30 +60,41 @@ class _NavigationBarState extends State<MainNavigationBar> {
         ),
       ),
       // Set the body of the scaffold to be the selected screen
-      body: IndexedStack(
-        index: currentPageIndex,
-        children: [
-          MetricsPage(
-            key: ValueKey("metricsPage"),
-          ),
-          !widget.testing
-              ? MapPage(
-                  key: ValueKey("mapPage"),
-                )
-              : Container(
-                  key: ValueKey("mapPageReplacement"),
-                  color: Colors.green,
-                  child: Center(
-                    child: Text("TESTING - MAP DISABLED"),
-                  ),
-                ),
-          Schedule(
-            key: ValueKey("schedulePage"),
-          ),
-          SettingPage(
-            key : ValueKey("settingPage")
-          )
-        ],
+      body: ChangeNotifierProvider(
+        create: (context) => LocationProvider(),
+        child: IndexedStack(
+          index: currentPageIndex,
+          children: [
+            MetricsPage(
+              key: ValueKey("metricsPage"),
+            ),
+            !widget.testing
+            ? MapPage(
+              key: ValueKey("mapPage"),
+            )
+            : Container(
+              key: ValueKey("mapPageReplacement"),
+              color: Colors.green,
+              child: Center(
+                child: Text("TESTING - MAP DISABLED"),
+              ),
+            ),
+            !widget.testing
+            ? Schedule(
+              key: ValueKey("schedulePage"),
+            )
+            : Container(
+              key: ValueKey("schedulePageReplacement"),
+              color: Colors.green,
+              child: Center(
+                child: Text("TESTING - SCHEDULE DISABLED"),
+              ),
+            ),
+            SettingPage(
+              key : ValueKey("settingPage")
+            )
+          ],
+        )
       ),
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
