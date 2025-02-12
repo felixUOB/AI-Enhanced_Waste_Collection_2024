@@ -10,3 +10,5 @@ services:
     restart: unless-stopped
     container_name: ewc_backend_container
     command: gunicorn ewc_admin.wsgi:application --bind 0.0.0.0:8000
+    env_file:
+      - .env

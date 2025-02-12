@@ -2,8 +2,8 @@ name: CD - Build and Push Django Docker Image to ECR
 
 on:
   push:
-    # branches:
-    #   - dev
+    branches:
+      - dev
 
 jobs:
   build-and-push:
@@ -25,18 +25,21 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build and Tag Docker Image
+      - name: Set Environment Variables
         run: |
-          REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
-          IMAGE_TAG=$(git rev-parse --short HEAD)
+          echo "REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker" >> .env
+          echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> .env
+
+      - name: Build Docker Image with Docker Compose
+        run: |
           cd ewc_backend
+          cat .env
           docker compose build
-          docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
+          docker tag ewc_backend_ewc_backend $REPO_URI:$IMAGE_TAG
+          docker tag ewc_backend_ewc_backend $REPO_URI:latest
 
       - name: Push Docker Image to AWS ECR
         run: |
-          REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
-          IMAGE_TAG=$(git rev-parse --short HEAD)
           docker push $REPO_URI:$IMAGE_TAG
           docker push $REPO_URI:latest
 
