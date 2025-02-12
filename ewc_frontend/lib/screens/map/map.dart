@@ -334,7 +334,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           //ZOOM IN
           FloatingActionButton(
             heroTag: "zoom in",
-            child: const Icon(Icons.zoom_in),
+            child: const Icon(Icons.add),
             onPressed: () {
               _animatedMapController.mapController.move(
                 _animatedMapController.mapController.camera.center,
@@ -345,7 +345,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         const SizedBox(height: 10), // Space between buttons
         FloatingActionButton(
           heroTag: "zoom out",
-          child: const Icon(Icons.zoom_out),
+          child: const Icon(Icons.remove),
           onPressed: () {
             _animatedMapController.mapController.move(
               _animatedMapController.mapController.camera.center,
