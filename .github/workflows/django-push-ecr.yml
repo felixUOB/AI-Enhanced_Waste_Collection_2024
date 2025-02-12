@@ -25,10 +25,22 @@ jobs:
 
       - name: Build and Tag Docker Image
         run: |
+
+
           REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
           IMAGE_TAG=$(git rev-parse --short HEAD)
+
           cd ewc_backend
-          docker build -t $REPO_URI:$IMAGE_TAG .
+          docker build \
+                      --build-arg DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} \
+                      --build-arg POSTGRES_DB=${{ secrets.POSTGRES_DB }}\
+                      --build-arg POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+                      --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+                      --build-arg POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+                      --build-arg POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+                      --build-arg SENDGRID_SECRET_KEY=${{ secrets.SENDGRID_SECRET_KEY }} \
+                      -t $REPO_URI:$IMAGE_TAG .
+
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
 
       - name: Push Docker Image to AWS ECR
