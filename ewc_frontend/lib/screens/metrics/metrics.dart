@@ -26,7 +26,7 @@ class _MetricsPageState extends State<MetricsPage> {
   double averageMpg = 0;
   int totalRoutes = 0;
   // day of week route : shows the routes done this week by day
-  Map<String, double> thisWeekFormated = {
+  Map<String, double> thisWeekFormatted = {
     'Monday' : 0, 
     'Tuesday': 0,
     'Wednesday' : 0,
@@ -36,7 +36,8 @@ class _MetricsPageState extends State<MetricsPage> {
     'Sunday' : 0,
   };
 
-  List<JourneyRoute> thisWeek = [];
+  // holds the journeys that have occured on this week
+  List<JourneyRoute> thisWeeksJoruneys = [];
   List<Map<String, dynamic>> overallMpg = [];
   List<Map<String, dynamic>> overallDistance = [];
   List<Map<String, dynamic>> fuelConsumed = [];
@@ -46,36 +47,35 @@ class _MetricsPageState extends State<MetricsPage> {
   // do once when the app is first opened
   @override
   void initState(){
-    _fetchMatricsDate();
     super.initState();
+    _fetchMetricsDate();
   }
 
-  Future<void> _fetchMatricsDate() async{
+  Future<void> _fetchMetricsDate() async{
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
+    routeList = fetchedRoutes;
+    _calculateDetails();
+    thisWeeksJoruneys = _calculateThisWeek();
+    // update the state of the graphs
     setState((){
-      routeList = fetchedRoutes;
-      _calculateDetails();
-      thisWeek = _calculateThisWeek();
       //  put the dates into a nice format
-      for (var route in thisWeek){
+      for (var route in thisWeeksJoruneys){
         DateTime d = DateTime.parse(route.date);
         int dayOfWeek = d.weekday;
         if (dayOfWeek == 1){
-          thisWeekFormated['Monday'] = route.distance;
+          thisWeekFormatted['Monday'] = route.distance;
         } else if (dayOfWeek == 2){
-          thisWeekFormated['Tuesday'] = route.distance;
+          thisWeekFormatted['Tuesday'] = route.distance;
         } else if (dayOfWeek == 3){
-          thisWeekFormated['Wednesday'] = route.distance;
+          thisWeekFormatted['Wednesday'] = route.distance;
         } else if (dayOfWeek == 4){
-          thisWeekFormated['Thursday'] = route.distance;
+          thisWeekFormatted['Thursday'] = route.distance;
         }else if (dayOfWeek == 5){
-          thisWeekFormated['Friday'] = route.distance;
+          thisWeekFormatted['Friday'] = route.distance;
         }else if (dayOfWeek == 6){
-          thisWeekFormated['Saturday'] = route.distance;
+          thisWeekFormatted['Saturday'] = route.distance;
         }else if (dayOfWeek == 7){
-          thisWeekFormated['Sunday'] = route.distance;
-        } else{
-          throw Exception("Unvalid");
+          thisWeekFormatted['Sunday'] = route.distance;
         }
       }
     });
@@ -106,11 +106,11 @@ class _MetricsPageState extends State<MetricsPage> {
         cumulativeMpg += route.mpg;
         // calculate the fuel consumed : number of gallons of fuel consumed
         double fuel =  route.distance/route.mpg;
-        // calculate the emissions using 10.21 kg co2 per galone
+        // calculate the emissions using 10.21 kg co2 per gallons
         double emitted = (route.distance * 10.21) / route.mpg;
         
-        fuelConsumed.add({'date':route.date, 'value': emitted});
-        emissions.add({'date': route.date, 'value': fuel});
+        fuelConsumed.add({'date':route.date, 'value': fuel});
+        emissions.add({'date': route.date, 'value': emitted});
         overallMpg.add({'date': route.date, 'value': route.mpg});
         overallDistance.add({'date': route.date, 'value': route.distance});
 
@@ -167,7 +167,8 @@ class _MetricsPageState extends State<MetricsPage> {
                                         .titleMedium),
                                 Padding(
                                     padding:
-                                        EdgeInsets.only(bottom: 4.0)),
+                                        EdgeInsets.only(
+                                          bottom: 4.0)),
                                 SizedBox(
                                   height: 200,
                                   child: 
@@ -175,11 +176,27 @@ class _MetricsPageState extends State<MetricsPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                      Text("Total Distance : $totalDistance miles", style : TextStyle(fontSize: 20)),
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: 
+                                          Text("Total Distance : $totalDistance miles", 
+                                          style : TextStyle(fontSize: 20)),
+                                        ),
                                       SizedBox(height: 20,),
-                                      Text("Average mpg : $averageMpg mpg", style : TextStyle(fontSize: 20)),
+                                      FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: 
+                                          Text("Average mpg : $averageMpg mpg", 
+                                          style : TextStyle(fontSize: 20)),
+                                      ),
                                       SizedBox(height: 20,),
-                                      Text("Number of routes completed : $totalRoutes", style : TextStyle(fontSize: 20)),
+                                      FittedBox(
+                                        fit:BoxFit.scaleDown,
+                                        child: 
+                                          Text("Number of routes completed : $totalRoutes", 
+                                          style : TextStyle(fontSize: 20)
+                                        ),
+                                      ),
                                     ],
                                       )
                                   ),
@@ -208,7 +225,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                         height: 200,
                                         child: MyBarGraph(
                                             key: ValueKey("barGraph"),
-                                            weeklySummary: thisWeekFormated.values.isNotEmpty ? thisWeekFormated.values.toList() : [0,0,0,0,0,0,0]),
+                                            weeklySummary: thisWeekFormatted.values.isNotEmpty ? thisWeekFormatted.values.toList() : [0,0,0,0,0,0,0]),
                                       ),
                                     ]),
                                   ])),
