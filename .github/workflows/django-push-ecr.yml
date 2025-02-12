@@ -30,7 +30,7 @@ jobs:
           REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
           IMAGE_TAG=$(git rev-parse --short HEAD)
           cd ewc_backend
-          docker compose build -t $REPO_URI:$IMAGE_TAG .
+          docker compose build
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
 
       - name: Push Docker Image to AWS ECR
