@@ -328,26 +328,37 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           ],
         ),
       ),
-
-
-      floatingActionButton: RecentreButton(onPressed: () async {
-        // If recentre button pressed recentre map over user location
-        // Check if location permissions have been granted.
-        if (await getLocationPermissions()) {
-          if (context.mounted) {
-            LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-            if (location != null) {
-              _animatedMapController.animateTo(
-                  dest: LatLng(
-                      location.latitude, location.longitude),
-                  zoom: 14);
-            }
-          }
-        } else {
-          // Request permission if not already granted.
-          if (await requestLocationPermissions()) {
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          //ZOOM IN
+          FloatingActionButton(
+            heroTag: "zoom in",
+            child: const Icon(Icons.zoom_in),
+            onPressed: () {
+              _animatedMapController.mapController.move(
+                _animatedMapController.mapController.camera.center,
+                (_animatedMapController.mapController.camera.zoom + 1).clamp(2.5, 19),
+              );
+            },
+        ),
+        const SizedBox(height: 10), // Space between buttons
+        FloatingActionButton(
+          heroTag: "zoom out",
+          child: const Icon(Icons.zoom_out),
+          onPressed: () {
+            _animatedMapController.mapController.move(
+              _animatedMapController.mapController.camera.center,
+              (_animatedMapController.mapController.camera.zoom - 1).clamp(2.5, 19),
+            );
+          },
+        ),
+        const SizedBox(height: 10),
+        RecentreButton(onPressed: () async {
+          // If recentre button pressed recentre map over user location
+          // Check if location permissions have been granted.
+          if (await getLocationPermissions()) {
             if (context.mounted) {
-              Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
               LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
               if (location != null) {
                 _animatedMapController.animateTo(
@@ -356,9 +367,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                     zoom: 14);
               }
             }
+          } else {
+            // Request permission if not already granted.
+            if (await requestLocationPermissions()) {
+              if (context.mounted) {
+                Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                if (location != null) {
+                  _animatedMapController.animateTo(
+                      dest: LatLng(
+                          location.latitude, location.longitude),
+                      zoom: 14);
+                }
+              }
+            }
           }
-        }
-      }),
+        }// Space for recentre button
+        )
+        ])
     );
   }
 
