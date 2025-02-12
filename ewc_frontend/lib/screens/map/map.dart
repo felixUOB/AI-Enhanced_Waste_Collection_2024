@@ -334,23 +334,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           //ZOOM IN
           FloatingActionButton(
             heroTag: "zoom in",
-            child: const Icon(Icons.zoom_in),
+            child: const Icon(Icons.add),
             onPressed: () {
-              _animatedMapController.mapController.move(
-                _animatedMapController.mapController.camera.center,
-                (_animatedMapController.mapController.camera.zoom + 1).clamp(2.5, 19),
-              );
+              _animatedMapController.animatedZoomIn();
+
             },
         ),
         const SizedBox(height: 10), // Space between buttons
         FloatingActionButton(
           heroTag: "zoom out",
-          child: const Icon(Icons.zoom_out),
+          child: const Icon(Icons.remove),
           onPressed: () {
-            _animatedMapController.mapController.move(
-              _animatedMapController.mapController.camera.center,
-              (_animatedMapController.mapController.camera.zoom - 1).clamp(2.5, 19),
-            );
+            _animatedMapController.animatedZoomOut();
           },
         ),
         const SizedBox(height: 10),
@@ -359,6 +354,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           // Check if location permissions have been granted.
           if (await getLocationPermissions()) {
             if (context.mounted) {
+              Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
               LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
               if (location != null) {
                 _animatedMapController.animateTo(
@@ -371,6 +367,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             // Request permission if not already granted.
             if (await requestLocationPermissions()) {
               if (context.mounted) {
+
                 Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
                 LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                 if (location != null) {
@@ -379,6 +376,22 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                           location.latitude, location.longitude),
                       zoom: 14);
                 }
+              }
+            } else {
+              //User denied location permissions, show an alert
+              if (context.mounted) {
+                showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title : Text("Location Permission Required"),
+                      content : Text("This app requires location to function properly. Please consider turning location permission on."),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context), //Dismiss dialog
+                            child: Text("OK"))
+                      ],
+                    ),
+                );
               }
             }
           }
