@@ -16,11 +16,15 @@ class MyLineGraph extends StatelessWidget{
     // get the data points in FlSpot format
     List<FlSpot> points = dataPoints.asMap().entries.map((entry) {
         int index = entry.key;
-        double value = (entry.value['value'] as num).toDouble();
-        return FlSpot(index.toDouble(), value);
+        if (entry.value['value'] != 0){
+          double value = (entry.value['value'] as num).toDouble();
+          return FlSpot(index.toDouble(), value);
+        } else{
+          return FlSpot.nullSpot;
+        }
       }).toList();
-    // work out the maxY based on the data
 
+    // work out the maxY based on the data
     double maxY = (dataPoints.map((e) => (e['value'] as num).toDouble()) //make sure its a number
     .reduce((a,b)=> a > b ? a : b) * 1.2) // add extra space
     .ceilToDouble(); // make whole number
@@ -57,7 +61,7 @@ class MyLineGraph extends StatelessWidget{
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              interval: (dataPoints.length/6).ceilToDouble(), // space out the labels on the bottom axis
+             // interval: (dataPoints.length).ceilToDouble(), // space out the labels on the bottom axis
               getTitlesWidget: (value, meta) => 
               getBottomTitles(value, meta, dataPoints),
             ),
@@ -95,7 +99,9 @@ Widget getBottomTitles(double value, TitleMeta meta, List<Map<String, dynamic>> 
       fontSize: 10,
     );
     int index = value.toInt();
-    if (index < 0 || index >= dataPoints.length) return Container();
+    if (index < 0 || index >= dataPoints.length){
+       return Container();
+    }
 
     DateTime date = DateTime.parse(dataPoints[index]['date']);
     

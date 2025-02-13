@@ -55,19 +55,24 @@ class _MetricsPageState extends State<MetricsPage> {
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
     print(fetchedRoutes);
     fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
-    print(fetchedRoutes);
 
     // fill in the spare days
     if (fetchedRoutes.length >1){
-      for (int i=0; i<fetchedRoutes.length-1; i++){
+      // loop around all of the days currently in the array and fill in any blank days
+      int len = fetchedRoutes.length-1;
+      for (int i=0; i<len; i++){
+        // get the first day
         DateTime current = DateTime.parse(fetchedRoutes[i].date);
         print("current $current");
+        // get the day after
         DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
         print("next $next");
         print(current.add(Duration(days: 1)).isAtSameMomentAs(next));
-        while (current.add(Duration(days: 1)).isAtSameMomentAs(next)){
-          print("add day");
+        // see if the day after current is the next day or identify if there is a gap
+        while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
+          //print("add day");
           current = current.add(Duration(days: 1));
+          // add a filler day
           fetchedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
         }
       }
@@ -137,6 +142,12 @@ class _MetricsPageState extends State<MetricsPage> {
           emissions.add({'date': route.date, 'value': emitted});
           overallMpg.add({'date': route.date, 'value': route.mpg});
           overallDistance.add({'date': route.date, 'value': route.distance});
+        } else{
+          // the data doesn't actually exist so just use 0's
+          fuelConsumed.add({'date':route.date, 'value': 0});
+          emissions.add({'date': route.date, 'value': 0});
+          overallMpg.add({'date': route.date, 'value': 0});
+          overallDistance.add({'date': route.date, 'value': 0});
         }
       }
       if (totalRoutes >0 ){
