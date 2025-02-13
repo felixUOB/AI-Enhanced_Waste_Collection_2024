@@ -157,7 +157,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Optimized route planning
   Future<void> _fetchOptimizedRoute() async {
     try {
-      List<LatLng> optimizedRoute = await _routeService.routePlanning();
+      List<LatLng> optimizedRoute = await _routeService.routePlanning(_stops);
       setState(() {
         _routePoints.clear();
         _routePoints.addAll(optimizedRoute);
