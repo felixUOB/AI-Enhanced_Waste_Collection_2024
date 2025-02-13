@@ -1,0 +1,16 @@
+import 'package:flutter/cupertino.dart';
+
+import 'package:ewc/models/stop_model.dart';
+import 'package:ewc/services/stops_service.dart';
+
+class StopsProvider extends ChangeNotifier {
+  List<Stop> _stops = [];
+  final StopsService _stopsService = StopsService();
+
+  List<Stop> get stops => _stops;
+
+  Future<void> initialiseStops() async {
+    // Fetch stops from backend
+    _stops = await _stopsService.fetchAllStops();
+  }
+}
