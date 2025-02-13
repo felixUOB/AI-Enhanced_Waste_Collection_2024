@@ -87,7 +87,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       }
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
-      await _drawCompleteRoute();
+
       await _drawStopsMarker(Colors.blue);
 
       await _fetchOptimizedRoute();
@@ -103,6 +103,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
 
   // Function to draw a complete route between all stops
+  // ignore: unused_element
   Future<void> _drawCompleteRoute() async {
     // Alternatively store stops list as class attribute
     List<LatLng> route = [];
