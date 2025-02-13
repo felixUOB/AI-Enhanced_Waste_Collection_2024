@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  ewc_frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ewc_frontend_container
+    # command: flutter build apk --release
+    volumes:
+      - .:/ewc_frontend

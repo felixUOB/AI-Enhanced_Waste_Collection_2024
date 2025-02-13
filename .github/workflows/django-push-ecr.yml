@@ -1,0 +1,56 @@
+name: CD - Build and Push Django Docker Image to ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    name: Build and Push Backend Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Tag Docker Image
+        run: |
+
+
+          REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+
+          cd ewc_backend
+          docker build \
+                      --build-arg DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} \
+                      --build-arg POSTGRES_DB=${{ secrets.POSTGRES_DB }}\
+                      --build-arg POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+                      --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+                      --build-arg POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+                      --build-arg POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+                      --build-arg SENDGRID_SECRET_KEY=${{ secrets.SENDGRID_SECRET_KEY }} \
+                      -t $REPO_URI:$IMAGE_TAG .
+
+          docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
+
+      - name: Push Docker Image to AWS ECR
+        run: |
+          REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
+          IMAGE_TAG=$(git rev-parse --short HEAD)
+          docker push $REPO_URI:$IMAGE_TAG
+          docker push $REPO_URI:latest
+
+      - name: Output Image URI
+        run: echo "Image pushed to $REPO_URI:latest"

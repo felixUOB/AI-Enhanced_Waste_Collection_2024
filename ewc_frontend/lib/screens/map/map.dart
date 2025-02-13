@@ -13,6 +13,9 @@ import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
+import 'package:ewc/widgets/start_journey_dialog.dart';
+import 'package:ewc/widgets/end_journey_dialog.dart';
+
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 
@@ -84,9 +87,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       }
       // Initialize RouteService with the valid API key
       _routeService = RouteService(dotenv.env['API_KEY']!);
-      await _drawCompleteRoute();
+
       await _drawStopsMarker(Colors.blue);
 
+      await _fetchOptimizedRoute();
+      //Depot location marker
+      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
@@ -97,6 +103,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
 
   // Function to draw a complete route between all stops
+  // ignore: unused_element
   Future<void> _drawCompleteRoute() async {
     // Alternatively store stops list as class attribute
     List<LatLng> route = [];
@@ -148,6 +155,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
+  // Optimized route planning
+  Future<void> _fetchOptimizedRoute() async {
+    try {
+      List<LatLng> optimizedRoute = await _routeService.routePlanning(_stops);
+      setState(() {
+        _routePoints.clear();
+        _routePoints.addAll(optimizedRoute);
+      });
+    } catch (e) {
+      _showErrorDialog("Failed to fetch optimized route: $e");
+    }
+  }
+
+
+
 
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
@@ -166,140 +188,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
-  /// Shows a dialog when an invalid (non-numeric) value is provided.
-  void _showInvalidInputDialog(String fieldLabel) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Invalid Input"),
-        content: Text("Please enter a valid numeric value for $fieldLabel."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Dialog for starting a journey: asks for mileage and MPG.
-  /// After validating the input, it updates the state fields and sets
-  /// [_journeyActive] to true.
-  void _showStartJourneyDialog() {
-    String mileageInput = '';
-    String mpgInput = '';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Start Journey'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Mileage'),
-                  onChanged: (value) => mileageInput = value,
-                ),
-                TextField(
-                  keyboardType: TextInputType.number,
-                  decoration:
-                  const InputDecoration(labelText: 'Miles per Gallon'),
-                  onChanged: (value) => mpgInput = value,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                // Parse user inputs
-                final parsedMileage = double.tryParse(mileageInput);
-                if (parsedMileage == null) {
-                  _showInvalidInputDialog('Mileage');
-                  return;
-                }
-
-                final parsedMpg = double.tryParse(mpgInput);
-                if (parsedMpg == null) {
-                  _showInvalidInputDialog('Miles per Gallon');
-                  return;
-                }
-
-                // Valid input: update state
-                setState(() {
-                  _startMileage = parsedMileage;
-                  _startMpg = parsedMpg;
-                  _journeyActive = true;
-                });
-
-                debugPrint('Start Mileage: $_startMileage');
-                debugPrint('Start MPG: $_startMpg');
-
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Dialog for ending a journey: asks only for MPG.
-  /// After validating, it updates the [_endMpg] field and sets [_journeyActive] to false.
-  void _showEndJourneyDialog() {
-    String mpgInput = '';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('End Journey'),
-          content: TextField(
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Miles per Gallon'),
-            onChanged: (value) => mpgInput = value,
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                final parsedMpg = double.tryParse(mpgInput);
-                if (parsedMpg == null) {
-                  _showInvalidInputDialog('Miles per Gallon');
-                  return;
-                }
-
-                setState(() {
-                  _endMpg = parsedMpg;
-                  _journeyActive = false;
-                });
-
-                debugPrint('End MPG: $_endMpg');
-
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   // Builds the main UI for the map screen
   @override
@@ -395,6 +283,33 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
   );
+
+  // Delete old code implementation
+
+    void _showStartJourneyDialog() {
+    StartJourneyDialog.show(context, (double mileage, double mpg) {
+      setState(() {
+        _startMileage = mileage;
+        _startMpg = mpg;
+        _journeyActive = true;
+        });
+        debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg'); 
+      });
+    }
+
+    void _showEndJourneyDialog() {
+    EndJourneyDialog.show(context, (double mpg) {
+      setState(() {
+        _endMpg = mpg;
+        _journeyActive = false;
+      });
+
+      debugPrint('End MPG: $_endMpg');
+    });
+  }
+
+
+
 
   @override
   void dispose() {

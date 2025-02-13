@@ -1,9 +1,12 @@
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:ewc/services/stops_service.dart';
+import 'package:ewc/models/stop_model.dart';
 
 // A service class to manage route fetching from OpenRouteService API
 class RouteService {
   final OpenRouteService client;
+  final stopsService = StopsService();
 
   //Constructor for initialization of the OpenRouteService client with an API key 
   RouteService(String apiKey) : client = OpenRouteService(apiKey: apiKey);
@@ -17,6 +20,8 @@ class RouteService {
   bool _isValidLongitude(double longitude) {
     return longitude >= -180.0 && longitude <= 180.0;
   }
+
+
 
 
   // Form Route between coordinates returning a list of LatLng objects representing the route
@@ -50,6 +55,63 @@ class RouteService {
       rethrow;
     }
   }
+
+
+  Future<List<LatLng>> routePlanning(List<Stop> stops) async {
+    final depot = LatLng(51.4533, -2.6257);
+    
+    List<VroomJob> jobs = [];
+
+    for (int idx = 0; idx < stops.length; idx++) {
+      LatLng stop = stops[idx].location;
+      jobs.add(VroomJob(
+        id: idx + 1,
+        location: ORSCoordinate(latitude: stop.latitude, longitude: stop.longitude),
+      ));
+    }
+
+
+    List<VroomVehicle> vehicles = [];
+
+    VroomVehicle vehicle = VroomVehicle(
+      id: 1,
+      start: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      profile: 'driving-hgv',
+    );
+
+    vehicles.add(vehicle);
+
+    final response = await client.optimizationDataPost(jobs: jobs, vehicles: vehicles);
+  
+    if (response.routes.isEmpty) {
+      throw Exception('No optimized route could be found.');
+    }
+    
+     // Extract the optimized order of stops
+    final optimizedOrder = <ORSCoordinate>[];
+    if (response.routes.first.steps != null) {
+      for (var step in response.routes.first.steps!) {
+        final location = step.location;
+        optimizedOrder.add(ORSCoordinate(latitude: location.latitude, longitude: location.longitude)); // Assuming location has latitude and longitude properties
+      }
+    }
+
+      // Get the detailed route coordinates for the optimized order
+    final directionsResponse = await client.directionsMultiRouteCoordsPost(
+      coordinates: optimizedOrder,
+      profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
+    );
+
+    if (directionsResponse.isEmpty) {
+      throw Exception('No route could be found.');
+    }
+
+    // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
+    return directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
+
+  }
+
 
   // This function takes two values, source and destinations and returns
   // a matrix of the time it takes to get from that source to each destination
