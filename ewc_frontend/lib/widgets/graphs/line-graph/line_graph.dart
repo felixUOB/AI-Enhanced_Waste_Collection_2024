@@ -103,7 +103,7 @@ Widget getBottomTitles(double value, TitleMeta meta, List<Map<String, dynamic>> 
     String dayLabel = DateFormat('dd').format(date);
     // show month name (MM) only on the first of the month
     if (index == 0 || date.month != DateTime.parse(dataPoints[index - 1]['date']).month){
-      dayLabel = DateFormat('MMM').format(date);
+      dayLabel = DateFormat('ddMMM').format(date);
     }
     
     return SideTitleWidget(

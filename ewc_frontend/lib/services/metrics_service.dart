@@ -13,7 +13,7 @@ class MetricsService {
       final data = jsonDecode(response.body) as List;
       List<JourneyRoute> routeList = [];
       for (var route in data){
-        routeList.add(JourneyRoute(distance: route['distance'], mpg: route['mpg'], date: route['date']));
+        routeList.add(JourneyRoute(distance: route['distance'], mpg: route['mpg'], date: route['date'], filler: false));
       }
       return routeList;
       // distance, mpg, date

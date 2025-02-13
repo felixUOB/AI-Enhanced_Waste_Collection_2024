@@ -53,6 +53,27 @@ class _MetricsPageState extends State<MetricsPage> {
 
   Future<void> _fetchMetricsDate() async{
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
+    print(fetchedRoutes);
+    fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
+    print(fetchedRoutes);
+
+    // fill in the spare days
+    if (fetchedRoutes.length >1){
+      for (int i=0; i<fetchedRoutes.length-1; i++){
+        DateTime current = DateTime.parse(fetchedRoutes[i].date);
+        print("current $current");
+        DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
+        print("next $next");
+        print(current.add(Duration(days: 1)).isAtSameMomentAs(next));
+        while (current.add(Duration(days: 1)).isAtSameMomentAs(next)){
+          print("add day");
+          current = current.add(Duration(days: 1));
+          fetchedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
+        }
+      }
+    }
+    fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
+    print(fetchedRoutes);
     routeList = fetchedRoutes;
     _calculateDetails();
     thisWeeksJoruneys = _calculateThisWeek();
@@ -83,10 +104,12 @@ class _MetricsPageState extends State<MetricsPage> {
 
   // get the data from the database
   Future<List<JourneyRoute>> _initialiseMetricData() async {
+
+    // if its in testing mode return fake data instead of the stuff from the db
     if (isTesting){
       return [
-        JourneyRoute(date: "2025-01-25", distance: 50, mpg: 10),
-        JourneyRoute(date: "2025-01-26", distance: 30, mpg: 8),
+        JourneyRoute(date: "2025-01-25", distance: 50, mpg: 10, filler: false),
+        JourneyRoute(date: "2025-01-26", distance: 30, mpg: 8, filler: false),
       ];
     }
     return await _metricsService.fetchAllRoutes();
@@ -94,33 +117,34 @@ class _MetricsPageState extends State<MetricsPage> {
 
   // calculate the total routes, total distance and average Mpg and add to lists
   void _calculateDetails() async {
-    totalRoutes = routeList.length;
 
-    if (totalRoutes != 0) {
+    if (routeList.isNotEmpty) {
       double cumulativeMpg =0;
-
       for (var route in routeList){
-        // calculate the total distance
-        totalDistance += route.distance;
-        // caluclate the average mpg
-        cumulativeMpg += route.mpg;
-        // calculate the fuel consumed : number of gallons of fuel consumed
-        double fuel =  route.distance/route.mpg;
-        // calculate the emissions using 10.21 kg co2 per gallons
-        double emitted = (route.distance * 10.21) / route.mpg;
-        
-        fuelConsumed.add({'date':route.date, 'value': fuel});
-        emissions.add({'date': route.date, 'value': emitted});
-        overallMpg.add({'date': route.date, 'value': route.mpg});
-        overallDistance.add({'date': route.date, 'value': route.distance});
-
+        // make sure its an actual value and not a fake one
+        if (route.filler == false){
+          totalRoutes ++;
+          // calculate the total distance
+          totalDistance += route.distance;
+          // caluclate the average mpg
+          cumulativeMpg += route.mpg;
+          // calculate the fuel consumed : number of gallons of fuel consumed
+          double fuel =  route.distance/route.mpg;
+          // calculate the emissions using 10.21 kg co2 per gallons
+          double emitted = (route.distance * 10.21) / route.mpg;
+          
+          fuelConsumed.add({'date':route.date, 'value': fuel});
+          emissions.add({'date': route.date, 'value': emitted});
+          overallMpg.add({'date': route.date, 'value': route.mpg});
+          overallDistance.add({'date': route.date, 'value': route.distance});
+        }
       }
       if (totalRoutes >0 ){
         averageMpg = cumulativeMpg / totalRoutes;
       }
     }
   }
-  // returns the jorunies that occured in the current week
+  // returns the journies that occured in the current week
   List<JourneyRoute> _calculateThisWeek() {
     // get the currentWeekday = now.weekday;
     DateTime now = DateTime.now();
@@ -202,7 +226,9 @@ class _MetricsPageState extends State<MetricsPage> {
                                   ),
                                   ]),
                                 ])),
-                        context)),
+                        context,
+                        "This graph shows some summary data about the journeys you have completed."
+                        )),
                   StaggeredGridTile.extent(
                       crossAxisCellCount: 2,
                       mainAxisExtent: 300.0,
@@ -229,7 +255,9 @@ class _MetricsPageState extends State<MetricsPage> {
                                       ),
                                     ]),
                                   ])),
-                          context)),
+                          context,
+                          "This graph shows how far you have travelled on your journeys this week.",
+                          )),
                   StaggeredGridTile.extent(
                       crossAxisCellCount: 2,
                       mainAxisExtent: 300.0,
@@ -255,7 +283,8 @@ class _MetricsPageState extends State<MetricsPage> {
                                     ),
                                   ]),
                                 ])),
-                        context, // pass in the context as an argument
+                        context,
+                        "This graph shows the mpg for each journey you have completed." // pass in the context as an argument
                       )),
                   StaggeredGridTile.extent(
                     crossAxisCellCount: 2,
@@ -282,7 +311,8 @@ class _MetricsPageState extends State<MetricsPage> {
                                   ),),
                                 ]),
                               ])),
-                      context, // pass in the context as an argument
+                      context,
+                      "This graph shows the amount of distance traveled for each journey." // pass in the context as an argument
                     )),
                   StaggeredGridTile.extent(
                       crossAxisCellCount: 2,
@@ -309,7 +339,8 @@ class _MetricsPageState extends State<MetricsPage> {
                                     ),
                                   ]),
                                 ])),
-                        context, // pass in the context as an argument
+                        context,
+                        "This graph hows the amount of fuel consumed in gallons over all of your journeys." // pass in the context as an argument
                       )),
                   StaggeredGridTile.extent(
                       crossAxisCellCount: 2,
@@ -337,7 +368,8 @@ class _MetricsPageState extends State<MetricsPage> {
                                     ),
                                   ]),
                                 ])),
-                        context, // pass in the context as an argument
+                        context,
+                        "This graph shows the amount of CO2 produced from each journey you have completed in KG's" // pass in the context as an argument
                       )),
                 ],
               )),
@@ -346,11 +378,16 @@ class _MetricsPageState extends State<MetricsPage> {
 }
 
 // widget box for each of the graphs
-Widget _buildTile(Widget child, BuildContext context) {
+Widget _buildTile(Widget child, BuildContext context, String hoverMessage ) {
   return Material(
       elevation: 14.0,
       borderRadius: BorderRadius.circular(12.0),
       shadowColor: Theme.of(context).shadowColor,
-      child: child
+      child: 
+        Tooltip(
+          message: hoverMessage,
+          child: child,
+        )
+      
   );
 }
