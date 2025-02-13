@@ -394,11 +394,13 @@ Widget _buildTile(Widget child, BuildContext context, String hoverMessage ) {
       elevation: 14.0,
       borderRadius: BorderRadius.circular(12.0),
       shadowColor: Theme.of(context).shadowColor,
-      child: 
-        Tooltip(
-          message: hoverMessage,
-          child: child,
-        )
+      child: Tooltip(
+            message: hoverMessage,
+            margin: const EdgeInsets.all(24.0),
+            preferBelow: false,
+            child: child,
+          ),
+        
       
   );
 }
