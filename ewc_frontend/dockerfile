@@ -1,0 +1,7 @@
+FROM ghcr.io/cirruslabs/flutter:latest
+
+WORKDIR /ewc_frontend
+
+COPY . .
+
+RUN flutter pub get

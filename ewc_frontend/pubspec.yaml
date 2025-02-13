@@ -48,9 +48,12 @@ dependencies:
   geolocator: ^13.0.2
   flutter_map_animations: ^0.8.0
   intl: ^0.20.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
   mockito: ^5.4.0
   build_runner: ^2.3.3

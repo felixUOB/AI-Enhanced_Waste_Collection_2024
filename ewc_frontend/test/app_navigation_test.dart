@@ -47,7 +47,7 @@ void main() {
 
       await tester.tap(scheduleDestination);
       await tester.pumpAndSettle();
-      expect(find.byKey(ValueKey("schedulePage")), findsOneWidget);
+      expect(find.byKey(ValueKey("schedulePageReplacement")), findsOneWidget);
     });
   });
 }
