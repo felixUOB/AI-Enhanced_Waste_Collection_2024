@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}SpaceNXT Labs-EWC{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    integrity="sha384-ENjdO4Dr2bkBIFxQpeIVmMZzP6PNnXfrQibTANJ9cz7Yy9Au03+XK5PeHlPhr76L"
+    crossorigin="anonymous">
+
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <!-- Google Fonts, etc. -->
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* Overall font, color, and spacing adjustments */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+    }
+    .navbar-brand {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .footer {
+      background-color: #343a40;
+      color: #fff;
+      padding: 20px 0;
+      margin-top: 40px;
+    }
+    .footer p {
+      margin: 0;
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">SpaceNXT Labs - EWC </a>
+    <button class="navbar-toggler" type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto">
+        <!-- Navigate to the Stops list -->
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'stops_list' %}">Stops</a>
+        </li>
+        <!-- Additional menu items -->
+        <li class="nav-item">
+          <a class="nav-link" href="#">Another Page</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section (main banner)-->
+<div class="bg-light p-5 mb-4">
+  <div class="container py-5">
+    <h1 class="display-5 fw-bold">Waste Collection Management</h1>
+    <p class="col-md-8 fs-4">
+      Efficiently manage and optimize waste collection routes, track stops, and reduce carbon footprint.
+    </p>
+    <a href="{% url 'stops_list' %}" class="btn btn-primary btn-lg">View Stops</a>
+  </div>
+</div>
+
+<!-- Main content area -->
+<div class="container mb-5">
+  {% block content %}{% endblock %}
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <div class="container text-center">
+    <p>&copy; 2022 SpaceNXT Labs | All rights reserved.</p>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+3oXkk+0EWZQvZB7mc0y5fN0hRVDk"
+  crossorigin="anonymous"></script>
+
+</body>
+</html>
