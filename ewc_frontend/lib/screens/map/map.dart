@@ -336,7 +336,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             heroTag: "zoom in",
             child: const Icon(Icons.add),
             onPressed: () {
-              _animatedMapController.animatedZoomIn();
+              _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
 
             },
         ),
@@ -345,7 +345,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           heroTag: "zoom out",
           child: const Icon(Icons.remove),
           onPressed: () {
-            _animatedMapController.animatedZoomOut();
+            _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
           },
         ),
         const SizedBox(height: 10),
