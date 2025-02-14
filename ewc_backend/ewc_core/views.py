@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetView
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import StopsForm
+from .models import Stops
 
 
 from rest_framework.decorators import api_view
@@ -59,3 +62,32 @@ class CheckEmailView(APIView):
         # Return JSON response indicating whether the email exists
         return Response({'exists': email_exists})
     
+
+
+def stops_list_view(request):
+    """View that displays a list of Stops."""
+    stops = Stops.objects.all()
+    return render(request, 'stops/stops_list.html', {'stops': stops})
+
+def stops_create_view(request):
+    """View that creates a new Stops record."""
+    if request.method == 'POST':
+        form = StopsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('stops_list')  # After saving, redirect to the list view
+    else:
+        form = StopsForm()
+    return render(request, 'stops/stops_form.html', {'form': form})
+
+def stops_edit_view(request, pk):
+    """View that edits an existing Stops record."""
+    stop_obj = get_object_or_404(Stops, pk=pk)  # pk=stop_id
+    if request.method == 'POST':
+        form = StopsForm(request.POST, instance=stop_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('stops_list')
+    else:
+        form = StopsForm(instance=stop_obj)
+    return render(request, 'stops/stops_form.html', {'form': form, 'stop': stop_obj})
