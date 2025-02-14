@@ -431,7 +431,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    subdomains: ['a','b','c'],
+    retinaMode: RetinaMode.isHighDensity(context),
     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
   );
 
