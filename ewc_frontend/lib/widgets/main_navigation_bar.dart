@@ -45,7 +45,7 @@ class _NavigationBarState extends State<MainNavigationBar> {
 
     // titles for each tab
     final List<String> appBarTitles = [
-      'Metrics',
+      'Journey Statistics',
       'RecycleNXT',
       'Schedule',
       'Settings',

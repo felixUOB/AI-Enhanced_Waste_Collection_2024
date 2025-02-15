@@ -1,100 +1,138 @@
 
-import 'package:ewc/widgets/graphs/line-graph/line_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart'; // date formatting
 
 class MyLineGraph extends StatelessWidget{
-  final List weeklySummary;
+  final List<Map<String, dynamic>> dataPoints;
 
   const MyLineGraph({
     super.key,
-    required this.weeklySummary,
+    this.dataPoints = const [], 
   });
 
   @override
   Widget build(BuildContext context){
+    // get the data points in FlSpot format
+    List<FlSpot> points = dataPoints.asMap().entries.map((entry) {
+        int index = entry.key;
+        if (entry.value['value'] != 0){
+          double value = (entry.value['value'] as num).toDouble();
+          return FlSpot(index.toDouble(), value);
+        } else{
+          return FlSpot.nullSpot;
+        }
+      }).toList();
 
-    LineData myLineData = LineData(
-      monAmount: weeklySummary[0], 
-      tueAmount: weeklySummary[1], 
-      wedAmount: weeklySummary[2], 
-      thuAmount: weeklySummary[3], 
-      friAmount: weeklySummary[4],
-      satAmount: weeklySummary[5], 
-      sunAmount: weeklySummary[6], 
-    );
-    myLineData.initializeBarData();
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25.0), 
-      child: LineChart(
-        LineChartData(
-          lineBarsData: [
-            LineChartBarData(
-              spots: myLineData.lineData.map((point) => FlSpot(point.x.toDouble(), point.y)).toList(),
-              isCurved: false,
-              dotData: FlDotData(
-                show:false,
-              ),
-              // #077b41
-              color: Theme.of(context).colorScheme.primary,
-              barWidth: 4,
+    // work out the maxY based on the data
+    double maxY = (dataPoints.map((e) => (e['value'] as num).toDouble()) //make sure its a number
+    .reduce((a,b)=> a > b ? a : b) * 1.2) // add extra space
+    .ceilToDouble(); // make whole number
+
+    return LineChart(
+      LineChartData(
+        maxY: maxY,
+        minY: 0,
+        // draw the background lines
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          drawHorizontalLine: true,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: Colors.grey, // Adjust color for visibility
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: Colors.grey,
+              strokeWidth: 1,
+            );
+          },
+        ),
+        borderData: FlBorderData(
+          border: const Border(
+            bottom: BorderSide(color: Colors.grey, width: 4),
             ),
-          ],
-          borderData: FlBorderData(
-            border: const Border(
-              bottom: BorderSide(color: Colors.grey, width: 4),
-              
+        ),
+        titlesData: FlTitlesData(
+          // ones we want
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+             // interval: (dataPoints.length).ceilToDouble(), // space out the labels on the bottom axis
+              getTitlesWidget: (value, meta) => 
+              getBottomTitles(value, meta, dataPoints),
             ),
           ),
-          gridData: FlGridData(show: false),
-
-          titlesData: FlTitlesData(
-            bottomTitles: AxisTitles(sideTitles: _bottomTitles),
-            leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          )
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 5,
+              getTitlesWidget: getLeftTitles,
+              ),
+            ),
+          // ones we dont want
+          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: points,
+            isCurved: true,
+            dotData: FlDotData(show:true),
+            // #077b41
+            color: Theme.of(context).colorScheme.primary,
+            barWidth: 4,
+          ),
+        ],
       ),
     );
   }
 }
-SideTitles get _bottomTitles => SideTitles(
-  showTitles: true,
-  getTitlesWidget: (value, meta) {
+
+Widget getBottomTitles(double value, TitleMeta meta, List<Map<String, dynamic>> dataPoints){
     const style = TextStyle(
       color: Colors.grey,
       fontWeight: FontWeight.bold,
-      fontSize: 14,
+      fontSize: 10,
     );
-    Widget text = Text('');
-    switch (value.toInt()){
-    case 0:
-      text = const Text('M', style: style);
-      break;
-    case 1:
-      text = const Text('T', style: style);
-      break;
-    case 2:
-      text = const Text('W', style: style);
-      break;
-    case 3:
-      text = const Text('T', style: style);
-      break;
-    case 4:
-      text = const Text('F', style: style);
-      break;
-    case 5:
-      text = const Text('S', style: style);
-      break;
-    case 6:
-      text = const Text('S', style: style);
-      break;
-    default:
-      text = Text('', style: style);
+    int index = value.toInt();
+    if (index < 0 || index >= dataPoints.length){
+       return Container();
+    }
+
+    DateTime date = DateTime.parse(dataPoints[index]['date']);
+    
+    // display only the day (dd)
+    String dayLabel = DateFormat('dd').format(date);
+    // show month name (MM) only on the first of the month
+    if (index == 0 || date.month != DateTime.parse(dataPoints[index - 1]['date']).month){
+      dayLabel = DateFormat('ddMMM').format(date);
+    }
+    
+    return SideTitleWidget(
+      meta: meta, 
+      child: Text(dayLabel, style:style),
+    );
+}
+
+Widget getLeftTitles(double value, TitleMeta meta){
+  const style = TextStyle(
+    color: Colors.grey,
+    fontWeight: FontWeight.bold,
+    fontSize: 10,
+  );
+  // only display the even values on the scale
+  if (value == 0 || value % 5 == 0 || meta.axisSide == AxisSide.left && meta.max <5){
+    String text = value.toInt().toString();
+    return SideTitleWidget(
+      meta: meta,
+      child: Text(text, style:style),
+    );
+  }else{
+    return Container(); // dont display just have a space 
   }
-    return text;
-  },
-  interval: 1,
-);
+  
+}
