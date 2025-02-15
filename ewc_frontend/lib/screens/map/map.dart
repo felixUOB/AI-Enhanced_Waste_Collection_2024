@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
+import 'package:ewc/widgets/log_stop_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -212,11 +213,16 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             heroTag: "log visit",
             child: const Icon(Icons.where_to_vote),
             onPressed: () {
-
+              LogStopDialog.show(context,
+                (int stopID, double wasteCollected) {
+                  // IMPLEMENT: Send stop collection to backend
+                  Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
+                }
+              );
             },
           ) : const SizedBox(),
           (_journeyActive) ?
-          const SizedBox() : const SizedBox(),
+          const SizedBox(height: 10) : const SizedBox(),
 
           // ZOOM IN
           FloatingActionButton(

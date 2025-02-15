@@ -13,4 +13,13 @@ class StopsProvider extends ChangeNotifier {
     // Fetch stops from backend
     _stops = await _stopsService.fetchAllStops();
   }
+
+  void setVisited(int stopID) {
+    for (Stop stop in _stops) {
+      if (stop.id == stopID) {
+        stop.visited = true;
+        return;
+      }
+    }
+  }
 }

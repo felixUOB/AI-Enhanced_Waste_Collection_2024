@@ -27,7 +27,7 @@ class StopsService {
       List<Stop> stopsList = [];
       for (var point in data) {
         stopsList.add(Stop(
-          id: point['id'],
+          id: point['stop_id'],
           name: point['location_name'],
           location: LatLng(point['latitude'], point['longitude']))
         );

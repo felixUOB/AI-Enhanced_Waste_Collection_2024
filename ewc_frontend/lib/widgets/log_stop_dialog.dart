@@ -8,25 +8,26 @@ class LogStopDialog {
   static void show(BuildContext context, Function(int, double) onConfirm) {
     int? selectedStop;
     String wasteCollectedInput = '';
+    List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
 
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
         return AlertDialog(
-          title: const Text('Log Pickup'),
+          title: const Text('Register Collection'),
           content: SingleChildScrollView(
             child: ListBody(
               children: [
                 DropdownMenu<int>(
                   enableSearch: false,
+                  hintText: 'Select stop',
                   dropdownMenuEntries:
                     stops.map((stop) => DropdownMenuEntry(value: stop.id, label: stop.name)).toList(),
                   onSelected: (value) => selectedStop = value,
                 ),
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Mass of Waste (kg)'),
+                  decoration: const InputDecoration(labelText: 'Mass of waste collected (kg)'),
                   onChanged: (value) => wasteCollectedInput = value,
                 ),
               ]
