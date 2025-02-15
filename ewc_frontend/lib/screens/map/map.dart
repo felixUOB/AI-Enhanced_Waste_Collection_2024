@@ -206,7 +206,19 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          //ZOOM IN
+          (_journeyActive) ?
+          // Log visit button
+          FloatingActionButton(
+            heroTag: "log visit",
+            child: const Icon(Icons.where_to_vote),
+            onPressed: () {
+
+            },
+          ) : const SizedBox(),
+          (_journeyActive) ?
+          const SizedBox() : const SizedBox(),
+
+          // ZOOM IN
           FloatingActionButton(
             heroTag: "zoom in",
             child: const Icon(Icons.add),
@@ -214,35 +226,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
 
             },
-        ),
-        const SizedBox(height: 10), // Space between buttons
-        FloatingActionButton(
-          heroTag: "zoom out",
-          child: const Icon(Icons.remove),
-          onPressed: () {
-            _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
-          },
-        ),
-        const SizedBox(height: 10),
-        RecentreButton(onPressed: () async {
-          // If recentre button pressed recentre map over user location
-          // Check if location permissions have been granted.
-          if (await getLocationPermissions()) {
-            if (context.mounted) {
-              Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-              LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-              if (location != null) {
-                _animatedMapController.animateTo(
-                    dest: LatLng(
-                        location.latitude, location.longitude),
-                    zoom: 14);
-              }
-            }
-          } else {
-            // Request permission if not already granted.
-            if (await requestLocationPermissions()) {
-              if (context.mounted) {
+          ),
+          const SizedBox(height: 10), // Space between buttons
 
+          // ZOOM OUT
+          FloatingActionButton(
+            heroTag: "zoom out",
+            child: const Icon(Icons.remove),
+            onPressed: () {
+              _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
+            },
+          ),
+          const SizedBox(height: 10),
+          
+          RecentreButton(onPressed: () async {
+            // If recentre button pressed recentre map over user location
+            // Check if location permissions have been granted.
+            if (await getLocationPermissions()) {
+              if (context.mounted) {
                 Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
                 LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                 if (location != null) {
@@ -253,26 +254,40 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                 }
               }
             } else {
-              //User denied location permissions, show an alert
-              if (context.mounted) {
-                showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title : Text("Location Permission Required"),
-                      content : Text("This app requires location to function properly. Please consider turning location permission on."),
-                      actions: [
-                        TextButton(
-                            onPressed: () => Navigator.pop(context), //Dismiss dialog
-                            child: Text("OK"))
-                      ],
-                    ),
-                );
+              // Request permission if not already granted.
+              if (await requestLocationPermissions()) {
+                if (context.mounted) {
+  
+                  Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                  LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                  if (location != null) {
+                    _animatedMapController.animateTo(
+                        dest: LatLng(
+                            location.latitude, location.longitude),
+                        zoom: 14);
+                  }
+                }
+              } else {
+                //User denied location permissions, show an alert
+                if (context.mounted) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title : Text("Location Permission Required"),
+                        content : Text("This app requires location to function properly. Please consider turning location permission on."),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context), //Dismiss dialog
+                              child: Text("OK"))
+                        ],
+                      ),
+                  );
+                }
               }
             }
           }
-        }// Space for recentre button
-        )
-        ])
+        )]
+      )
     );
   }
 
