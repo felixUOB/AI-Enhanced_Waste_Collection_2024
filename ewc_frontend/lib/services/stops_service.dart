@@ -6,6 +6,14 @@ import 'package:latlong2/latlong.dart';
 class StopsService {
   final AuthService authService = AuthService();
 
+  Future<void> postStopCollection(int stopID, int weightCollected) async {
+    final body = {'stop': stopID, 'weight_collected': weightCollected};
+    final response = await authService.makeAuthenticatedPostRequest('stop_collection/', body);
+    if (response.statusCode != 201) {
+      throw Exception('Failed to register stop collection.');
+    }
+  }
+
   Future<LatLng> fetchStop(int stopID) async {
     final response = await authService.makeAuthenticatedRequest('stops/$stopID');
 

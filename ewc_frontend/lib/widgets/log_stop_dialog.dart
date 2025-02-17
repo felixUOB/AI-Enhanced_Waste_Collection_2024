@@ -5,7 +5,7 @@ import 'package:ewc/models/stop_model.dart';
 import 'package:provider/provider.dart';
 
 class LogStopDialog {
-  static void show(BuildContext context, Function(int, double) onConfirm) {
+  static void show(BuildContext context, Function(int, int) onConfirm) {
     int? selectedStop;
     String wasteCollectedInput = '';
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
@@ -43,7 +43,7 @@ class LogStopDialog {
             ElevatedButton(
               child: const Text('Confirm'),
               onPressed: () {
-                final parsedWasteInput = double.tryParse(wasteCollectedInput);
+                final parsedWasteInput = int.tryParse(wasteCollectedInput);
                 if (selectedStop == null) {
                   _showInvalidInputDialog(context, 'stop');
                   return;

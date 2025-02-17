@@ -36,6 +36,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
   late RouteService _routeService;
+  final StopsService _stopsService = StopsService();
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -214,8 +215,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             child: const Icon(Icons.where_to_vote),
             onPressed: () {
               LogStopDialog.show(context,
-                (int stopID, double wasteCollected) {
-                  // IMPLEMENT: Send stop collection to backend
+                (int stopID, int wasteCollected) {
+                  _stopsService.postStopCollection(stopID, wasteCollected);
                   Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
                 }
               );
