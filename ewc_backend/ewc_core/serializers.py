@@ -65,7 +65,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
 
-        # UserProfile 생성
+        # UserProfile
         UserProfile.objects.create(
             user=user,
             phone_number=request.get('phone_number', ''),
