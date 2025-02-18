@@ -44,11 +44,14 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
+    path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
     path('api/runmodel', generate_csv_files ,name='runmodel'), #Run Machine Learning Model
+
 # -----------Stops HTML Form URLs------------------
     path('stops/', stops_list_view, name='stops_list'),                # List
     path('stops/new/', stops_create_view, name='stops_create'),        # Create
     path('stops/<int:pk>/edit/', stops_edit_view, name='stops_edit'),  # Edit
+
 # -----------PASSWORD RESET ENDPOINTS--------------
     
     path('check-email/', views.CheckEmailView.as_view(), name='check-email'), #DEPRECATED BUT LEFT IN FOR LATER USE
