@@ -1,8 +1,12 @@
 from rest_framework import viewsets, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from .models import UserProfile, StopCollection, Stops, RouteEnvData
 from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, UserSerializer
+
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib.auth import views as auth_views
@@ -35,6 +39,9 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
     queryset = RouteEnvData.objects.all()
     serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
+
+    def get_route_env_data(self, request):
+        return Response({"message"})
 
 # Waste Prediction ViewSet
 class StopsViewSet(viewsets.ModelViewSet):
