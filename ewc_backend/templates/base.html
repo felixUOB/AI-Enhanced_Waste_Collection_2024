@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{% block title %}SpaceNXT Labs-EWC{% endblock %}</title>
-
+  <title>{% block title %}SpaceNXT Labs - EWC{% endblock %}</title>
   <!-- Bootstrap CSS -->
   <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -14,39 +13,103 @@
   <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
-  <!-- Google Fonts, etc. -->
+  <!-- Google Fonts: e.g., 'Poppins' + 'Roboto' or 'Nunito' -->
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
-    /* Overall font, color, and spacing adjustments */
+    /* =====================
+       GLOBAL STYLES
+       ===================== */
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #f8f9fa;
+      background-color: #f1f9f2;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* =====================
+       NAVBAR
+       ===================== */
+    .navbar {
+      background-color: #2e7d32;
     }
     .navbar-brand {
       font-weight: 600;
       letter-spacing: 0.5px;
+      color: #ffffff !important;
+      display: flex;
+      align-items: center;
     }
-    .footer {
-      background-color: #343a40;
+    .navbar-brand i {
+      margin-right: 8px;
+      color: #cfff95;
+    }
+
+    /* =====================
+       HERO SECTION
+       ===================== */
+    .hero-section {
+      /* background image */
+      background: url('https://images.unsplash.com/photo-1604793511209-3d114d6d42aa') center/cover no-repeat;
+      position: relative;
+      padding: 100px 0; /* Increase padding for a bigger hero area */
       color: #fff;
-      padding: 20px 0;
-      margin-top: 40px;
+    }
+    .hero-overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1; /* Above overlay */
+    }
+    .hero-title {
+      font-size: 3rem;
+      font-weight: 700;
+    }
+    .hero-text {
+      font-size: 1.25rem;
+    }
+
+    /* =====================
+       FOOTER
+       ===================== */
+    .footer {
+      background-color: #1b5e20; /* deeper green */
+      color: #fff;
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
     }
     .footer p {
       margin: 0;
     }
-  </style>
 
-  {% block extra_head %}{% endblock %}
+    /* =====================
+       BUTTONS & UTILITY
+       ===================== */
+    .btn-eco {
+      background-color: #4caf50; /* A bright green */
+      border: none;
+    }
+    .btn-eco:hover {
+      background-color: #43a047; /* Darken on hover */
+    }
+  </style>
 </head>
 <body>
 
-<!-- Top Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+<!-- NAVIGATION BAR -->
+<nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
-    <span class="navbar-brand">SpaceNXT Labs - EWC</span>
+    <!-- leaf icon -->
+    <span class="navbar-brand">
+      <i class="bi bi-leaf"></i>
+      SpaceNXT Labs - EWC
+    </span>
     <button class="navbar-toggler" type="button"
       data-bs-toggle="collapse"
       data-bs-target="#navbarSupportedContent"
@@ -58,41 +121,36 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto">
-        <!-- Navigate to the Stops list -->
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'stops_list' %}">Stops</a>
-        </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- Hero Section (main banner)-->
-<div class="bg-light p-5 mb-4">
-  <div class="container py-5">
-    <h1 class="display-5 fw-bold">Waste Collection Management</h1>
-    <p class="col-md-8 fs-4">
-      Efficiently manage and optimise waste collection routes, track stops, and reduce carbon footprint.
+<!-- HERO SECTION -->
+<div class="hero-section mb-4">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content text-center">
+    <h1 class="hero-title">Waste Collection Management</h1>
+    <p class="hero-text col-md-8 mx-auto">
+      Efficiently manage and optimize waste collection routes, track stops, and help the planet breathe.
     </p>
   </div>
 </div>
 
-<!-- Main content area -->
+<!-- MAIN CONTENT -->
 <div class="container mb-5">
   {% block content %}{% endblock %}
 </div>
 
-<!-- Footer -->
+<!-- FOOTER -->
 <div class="footer">
-  <div class="container text-center">
+  <div class="container">
     <p>&copy; 2025 SpaceNXT Labs | All rights reserved.</p>
+    <p>Join us in creating a greener future.</p>
   </div>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+3oXkk+0EWZQvZB7mc0y5fN0hRVDk"
-  crossorigin="anonymous"></script>
-
+<!-- BOOTSTRAP JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
