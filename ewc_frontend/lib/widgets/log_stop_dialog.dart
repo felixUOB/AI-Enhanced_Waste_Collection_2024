@@ -48,7 +48,7 @@ class LogStopDialog {
                   _showInvalidInputDialog(context, 'stop');
                   return;
                 }
-                if (parsedWasteInput == null) {
+                if (parsedWasteInput == null || parsedWasteInput < 0) {
                   _showInvalidInputDialog(context, 'collection amount');
                   return;
                 }
