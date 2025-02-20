@@ -18,6 +18,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
+
+    .main-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
     /* =====================
        GLOBAL STYLES
        ===================== */
@@ -133,7 +144,7 @@
 <!-- HERO SECTION -->
 <div class="hero-section mb-4">
   <div class="hero-overlay"></div>
-  <div class="container hero-content text-center">
+  <div class="container hero-content text-center hero-inner">
     <h1 class="hero-title">Waste Collection Management</h1>
     <p class="hero-text col-md-8 mx-auto">
       Efficiently manage and optimize waste collection routes, track stops, and help the planet breathe.
@@ -142,7 +153,7 @@
 </div>
 
 <!-- MAIN CONTENT -->
-<div class="container mb-5">
+<div class="container main-container mb-5">
   {% block content %}{% endblock %}
 </div>
 
