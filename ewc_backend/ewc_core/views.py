@@ -98,6 +98,20 @@ def stops_create_view(request):
 
 @login_required
 @user_passes_test(is_staff_user)
+def stops_delete_view(request, pk):
+    """Admin/staff only: delete an existing Stop."""
+    stop_obj = get_object_or_404(Stops, pk=pk)
+
+    if request.method == 'POST':
+        # deletion logic
+        stop_obj.delete()
+        return redirect('stops_list')
+
+    # For GET requests: users may see ‘Are you sure you want to delete?’ confirmation page
+    return render(request, 'stops/stops_confirm_delete.html', {'stop': stop_obj})
+
+@login_required
+@user_passes_test(is_staff_user)
 def stops_edit_view(request, pk):
     """Admin/staff only: edit an existing Stops record."""
     stop_obj = get_object_or_404(Stops, pk=pk)
