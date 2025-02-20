@@ -168,3 +168,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = config('SENDGRID_SECRET_KEY')
 DEFAULT_FROM_EMAIL = 'autoemail.authnoreply@gmail.com'
+
+# Automatically redirect non-logged-in users to /admin/login/
+LOGIN_URL = '/admin/login/'
