@@ -12,12 +12,14 @@ class StopsProvider extends ChangeNotifier {
   Future<void> initialiseStops() async {
     // Fetch stops from backend
     _stops = await _stopsService.fetchAllStops();
+    notifyListeners();
   }
 
   void setVisited(int stopID) {
     for (Stop stop in _stops) {
       if (stop.id == stopID) {
         stop.visited = true;
+        notifyListeners();
         return;
       }
     }
