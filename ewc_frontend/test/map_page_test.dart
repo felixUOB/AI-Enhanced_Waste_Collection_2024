@@ -3,6 +3,7 @@ import 'package:ewc/screens/map/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_map/flutter_map.dart';
 
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
   @override Future<bool> isLocationServiceEnabled() async => true;
@@ -31,6 +32,14 @@ void main() {
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
       await tester.pumpWidget(MaterialApp(home: MapPage()));
       expect(find.byType(MapPage), findsOneWidget);
+      expect(find.byType(FlutterMap), findsOneWidget);
+    });
+
+    testWidgets('Start Journey button shows dialog', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: MapPage()));
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
     });
 
   });
