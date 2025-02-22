@@ -42,6 +42,19 @@ void main() {
       expect(find.byType(AlertDialog), findsOneWidget);
     });
 
+    testWidgets('End Journey button shows dialog', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: MapPage()));
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '100');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('End Journey'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+    });
+
   });
 
 }
