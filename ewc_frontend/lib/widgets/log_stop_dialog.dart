@@ -10,6 +10,26 @@ class LogStopDialog {
     String wasteCollectedInput = '';
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
 
+    // Check if stops are empty before displaying dropdown
+    if (stops.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Unable to register collection"),
+            content: const Text("There are no stops to select."),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+      return; // No logic after this because there are no stops
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
