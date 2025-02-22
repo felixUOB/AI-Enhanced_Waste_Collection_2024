@@ -1,6 +1,3 @@
-# Python
-
-
 from ewc_core.models import RouteEnvData
 from ewc_core.models import StopCollection
 from ewc_core.models import UserProfile

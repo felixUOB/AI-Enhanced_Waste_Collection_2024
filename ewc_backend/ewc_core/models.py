@@ -54,6 +54,8 @@ class Stops(models.Model):
 
     class Meta:
         db_table = 'ewc_core_stops'
+        verbose_name = "Stop"
+        verbose_name_plural = "Stops"
 
     def __str__(self):
         return self.location_name 
