@@ -95,7 +95,7 @@ class LoginPageState extends State<LoginPage> {
                           string1: "",
                           hyperString: "Forgot Password?",
                           string2: "",
-                          onTap: launchPasswordReset)
+                          onTap: getIt<AuthService>().launchPasswordReset),
                     ])),
 
             //-------------LOGIN BUTTON---------------------------------

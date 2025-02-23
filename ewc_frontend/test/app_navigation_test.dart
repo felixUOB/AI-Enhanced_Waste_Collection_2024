@@ -2,8 +2,18 @@ import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'mocks/mock_service_locator.dart';
+
 // This file contains tests for the App Navigation
 void main() {
+  setUp(() async {
+    await mockSetupLocator();
+  });
+
+  tearDown(() {
+    getIt.reset();
+  });
+
   // Group of tests for the App Navigation
   group('App Navigation Tests', () {
     // Test to check if the main navigation bar buttons function correctly

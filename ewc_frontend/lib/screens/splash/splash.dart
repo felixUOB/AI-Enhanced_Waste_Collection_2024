@@ -8,7 +8,7 @@ import 'package:ewc/widgets/main_navigation_bar.dart';
 // ignore: must_be_immutable
 class SplashPage extends StatefulWidget {
   final bool isTesting;
-  SplashPage({
+  const SplashPage({
     super.key,
     this.isTesting = false,
   });

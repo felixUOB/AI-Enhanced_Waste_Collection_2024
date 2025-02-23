@@ -1,18 +1,18 @@
 import 'dart:async';
-
 import 'package:ewc/screens/splash/splash.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:ewc/services/auth_service.dart';
 
 ThemeManager themeManager = ThemeManager();
 
-void main({Completer<void>? setupCompleter, bool? testing}) async {
+void main({Completer<void>? setupCompleter}) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await setupLocator();
+  if (setupCompleter == null) {
+    await setupLocator();
+  }
 
   setupCompleter?.complete();
 
