@@ -3,14 +3,19 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i7;
+import 'dart:async' as _i9;
 
-import 'package:ewc/services/auth_service.dart' as _i5;
+import 'package:ewc/models/stop_model.dart' as _i12;
+import 'package:ewc/services/auth_service.dart' as _i7;
 import 'package:ewc/services/encryption_service.dart' as _i2;
+import 'package:ewc/services/route_service.dart' as _i10;
+import 'package:ewc/services/stops_service.dart' as _i6;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:http/http.dart' as _i4;
+import 'package:latlong2/latlong.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i6;
+import 'package:mockito/src/dummies.dart' as _i8;
+import 'package:open_route_service/open_route_service.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -43,10 +48,21 @@ class _FakeResponse_2 extends _i1.SmartFake implements _i4.Response {
     : super(parent, parentInvocation);
 }
 
+class _FakeOpenRouteService_3 extends _i1.SmartFake
+    implements _i5.OpenRouteService {
+  _FakeOpenRouteService_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeStopsService_4 extends _i1.SmartFake implements _i6.StopsService {
+  _FakeStopsService_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthService extends _i1.Mock implements _i5.AuthService {
+class MockAuthService extends _i1.Mock implements _i7.AuthService {
   MockAuthService() {
     _i1.throwOnMissingStub(this);
   }
@@ -77,7 +93,7 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
   String get apiUrl =>
       (super.noSuchMethod(
             Invocation.getter(#apiUrl),
-            returnValue: _i6.dummyValue<String>(
+            returnValue: _i8.dummyValue<String>(
               this,
               Invocation.getter(#apiUrl),
             ),
@@ -88,7 +104,7 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
   String get adminUrl =>
       (super.noSuchMethod(
             Invocation.getter(#adminUrl),
-            returnValue: _i6.dummyValue<String>(
+            returnValue: _i8.dummyValue<String>(
               this,
               Invocation.getter(#adminUrl),
             ),
@@ -96,83 +112,83 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
           as String);
 
   @override
-  _i7.Future<void> initializeAuthService() =>
+  _i9.Future<void> initializeAuthService() =>
       (super.noSuchMethod(
             Invocation.method(#initializeAuthService, []),
-            returnValue: _i7.Future<void>.value(),
-            returnValueForMissingStub: _i7.Future<void>.value(),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
           )
-          as _i7.Future<void>);
+          as _i9.Future<void>);
 
   @override
-  _i7.Future<void> saveUserCredentials(String? username, String? password) =>
+  _i9.Future<void> saveUserCredentials(String? username, String? password) =>
       (super.noSuchMethod(
             Invocation.method(#saveUserCredentials, [username, password]),
-            returnValue: _i7.Future<void>.value(),
-            returnValueForMissingStub: _i7.Future<void>.value(),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
           )
-          as _i7.Future<void>);
+          as _i9.Future<void>);
 
   @override
-  _i7.Future<Map<String, String?>> loadUserCredentials() =>
+  _i9.Future<Map<String, String?>> loadUserCredentials() =>
       (super.noSuchMethod(
             Invocation.method(#loadUserCredentials, []),
-            returnValue: _i7.Future<Map<String, String?>>.value(
+            returnValue: _i9.Future<Map<String, String?>>.value(
               <String, String?>{},
             ),
           )
-          as _i7.Future<Map<String, String?>>);
+          as _i9.Future<Map<String, String?>>);
 
   @override
-  _i7.Future<void> clearCredentials() =>
+  _i9.Future<void> clearCredentials() =>
       (super.noSuchMethod(
             Invocation.method(#clearCredentials, []),
-            returnValue: _i7.Future<void>.value(),
-            returnValueForMissingStub: _i7.Future<void>.value(),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
           )
-          as _i7.Future<void>);
+          as _i9.Future<void>);
 
   @override
-  _i7.Future<bool> checkEmail(String? email) =>
+  _i9.Future<bool> checkEmail(String? email) =>
       (super.noSuchMethod(
             Invocation.method(#checkEmail, [email]),
-            returnValue: _i7.Future<bool>.value(false),
+            returnValue: _i9.Future<bool>.value(false),
           )
-          as _i7.Future<bool>);
+          as _i9.Future<bool>);
 
   @override
-  _i7.Future<void> login(String? username, String? password) =>
+  _i9.Future<void> login(String? username, String? password) =>
       (super.noSuchMethod(
             Invocation.method(#login, [username, password]),
-            returnValue: _i7.Future<void>.value(),
-            returnValueForMissingStub: _i7.Future<void>.value(),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
           )
-          as _i7.Future<void>);
+          as _i9.Future<void>);
 
   @override
-  _i7.Future<void> refreshAccessToken() =>
+  _i9.Future<void> refreshAccessToken() =>
       (super.noSuchMethod(
             Invocation.method(#refreshAccessToken, []),
-            returnValue: _i7.Future<void>.value(),
-            returnValueForMissingStub: _i7.Future<void>.value(),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
           )
-          as _i7.Future<void>);
+          as _i9.Future<void>);
 
   @override
-  _i7.Future<_i4.Response> makeAuthenticatedRequest(String? endpoint) =>
+  _i9.Future<_i4.Response> makeAuthenticatedRequest(String? endpoint) =>
       (super.noSuchMethod(
             Invocation.method(#makeAuthenticatedRequest, [endpoint]),
-            returnValue: _i7.Future<_i4.Response>.value(
+            returnValue: _i9.Future<_i4.Response>.value(
               _FakeResponse_2(
                 this,
                 Invocation.method(#makeAuthenticatedRequest, [endpoint]),
               ),
             ),
           )
-          as _i7.Future<_i4.Response>);
+          as _i9.Future<_i4.Response>);
 
   @override
-  _i7.Future<void> register({
+  _i9.Future<void> register({
     required String? username,
     required String? password,
     required dynamic email,
@@ -187,8 +203,77 @@ class MockAuthService extends _i1.Mock implements _i5.AuthService {
               #phoneNumber: phoneNumber,
               #address: address,
             }),
-            returnValue: _i7.Future<void>.value(),
-            returnValueForMissingStub: _i7.Future<void>.value(),
+            returnValue: _i9.Future<void>.value(),
+            returnValueForMissingStub: _i9.Future<void>.value(),
           )
-          as _i7.Future<void>);
+          as _i9.Future<void>);
+
+  @override
+  void launchPasswordReset() => super.noSuchMethod(
+    Invocation.method(#launchPasswordReset, []),
+    returnValueForMissingStub: null,
+  );
+}
+
+/// A class which mocks [RouteService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockRouteService extends _i1.Mock implements _i10.RouteService {
+  MockRouteService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.OpenRouteService get client =>
+      (super.noSuchMethod(
+            Invocation.getter(#client),
+            returnValue: _FakeOpenRouteService_3(
+              this,
+              Invocation.getter(#client),
+            ),
+          )
+          as _i5.OpenRouteService);
+
+  @override
+  _i6.StopsService get stopsService =>
+      (super.noSuchMethod(
+            Invocation.getter(#stopsService),
+            returnValue: _FakeStopsService_4(
+              this,
+              Invocation.getter(#stopsService),
+            ),
+          )
+          as _i6.StopsService);
+
+  @override
+  _i9.Future<List<_i11.LatLng>> getRoute(
+    double? startLat,
+    double? startLng,
+    double? endLat,
+    double? endLng,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getRoute, [startLat, startLng, endLat, endLng]),
+            returnValue: _i9.Future<List<_i11.LatLng>>.value(<_i11.LatLng>[]),
+          )
+          as _i9.Future<List<_i11.LatLng>>);
+
+  @override
+  _i9.Future<List<_i11.LatLng>> routePlanning(List<_i12.Stop>? stops) =>
+      (super.noSuchMethod(
+            Invocation.method(#routePlanning, [stops]),
+            returnValue: _i9.Future<List<_i11.LatLng>>.value(<_i11.LatLng>[]),
+          )
+          as _i9.Future<List<_i11.LatLng>>);
+
+  @override
+  _i9.Future<List<int>> getStopTimes(
+    _i11.LatLng? source,
+    List<_i11.LatLng>? stopLocations,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getStopTimes, [source, stopLocations]),
+            returnValue: _i9.Future<List<int>>.value(<int>[]),
+          )
+          as _i9.Future<List<int>>);
 }

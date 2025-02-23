@@ -1,10 +1,8 @@
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
-import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 
@@ -18,31 +16,10 @@ class MainNavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<MainNavigationBar> {
-  bool isRouteServiceInitialized = false;
   int currentPageIndex = 1; // Set default opening page to map
-  late RouteService? routeService;
-
-  Future<void> initRouteService() async {
-    await dotenv.load();
-    routeService = RouteService(dotenv.env['API_KEY']!);
-
-    setState(() {
-      isRouteServiceInitialized = true;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initRouteService();
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (!isRouteServiceInitialized) {
-      return Center(child: CircularProgressIndicator());
-    }
-
     // titles for each tab
     final List<String> appBarTitles = [
       'Journey Statistics',
@@ -61,41 +38,38 @@ class _NavigationBarState extends State<MainNavigationBar> {
       ),
       // Set the body of the scaffold to be the selected screen
       body: ChangeNotifierProvider(
-        create: (context) => LocationProvider(),
-        child: IndexedStack(
-          index: currentPageIndex,
-          children: [
-            MetricsPage(
-              key: ValueKey("metricsPage"),
-            ),
-            !widget.testing
-            ? MapPage(
-              key: ValueKey("mapPage"),
-            )
-            : Container(
-              key: ValueKey("mapPageReplacement"),
-              color: Colors.green,
-              child: Center(
-                child: Text("TESTING - MAP DISABLED"),
+          create: (context) => LocationProvider(),
+          child: IndexedStack(
+            index: currentPageIndex,
+            children: [
+              MetricsPage(
+                key: ValueKey("metricsPage"),
               ),
-            ),
-            !widget.testing
-            ? Schedule(
-              key: ValueKey("schedulePage"),
-            )
-            : Container(
-              key: ValueKey("schedulePageReplacement"),
-              color: Colors.green,
-              child: Center(
-                child: Text("TESTING - SCHEDULE DISABLED"),
-              ),
-            ),
-            SettingPage(
-              key : ValueKey("settingPage")
-            )
-          ],
-        )
-      ),
+              !widget.testing
+                  ? MapPage(
+                      key: ValueKey("mapPage"),
+                    )
+                  : Container(
+                      key: ValueKey("mapPageReplacement"),
+                      color: Colors.green,
+                      child: Center(
+                        child: Text("TESTING - MAP DISABLED"),
+                      ),
+                    ),
+              !widget.testing
+                  ? Schedule(
+                      key: ValueKey("schedulePage"),
+                    )
+                  : Container(
+                      key: ValueKey("schedulePageReplacement"),
+                      color: Colors.green,
+                      child: Center(
+                        child: Text("TESTING - SCHEDULE DISABLED"),
+                      ),
+                    ),
+              SettingPage(key: ValueKey("settingPage"))
+            ],
+          )),
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
             // This function is ran when the user clicks a tab on the navigation bar
@@ -125,8 +99,7 @@ class _NavigationBarState extends State<MainNavigationBar> {
             NavigationDestination(
                 icon: Icon(Icons.menu_rounded), label: "Schedule"),
 
-            NavigationDestination(
-                icon: Icon(Icons.settings), label: "Settings")
+            NavigationDestination(icon: Icon(Icons.settings), label: "Settings")
           ]),
     );
   }

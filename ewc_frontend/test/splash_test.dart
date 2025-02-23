@@ -4,6 +4,7 @@ import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
 
@@ -28,6 +29,14 @@ void main() {
 
       when(getIt<AuthService>().login("mockUsername", "mockPassword"))
           .thenAnswer((_) async {});
+
+      when(getIt<AuthService>().makeAuthenticatedRequest("route_env_data/"))
+          .thenAnswer((_) async => Future.value(
+                Response(
+                  '[{"route_env_data_id": 1, "distance": 10.5, "mpg": 8.2, "date": "2023-10-01"}]', // JSON array string body
+                  200, // Status code
+                ),
+              ));
 
       await tester.pumpWidget(
         MaterialApp(

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +7,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:ewc/services/route_plot_service.dart';
+import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -30,7 +30,6 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
-
   // Route variables
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
@@ -44,27 +43,30 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   bool? _locationStatus;
 
   // Journey state management (tracks whether a journey is currently active)
-  bool _journeyActive = false; // false means the journey hasn't started yet, true means it has.
+  bool _journeyActive =
+      false; // false means the journey hasn't started yet, true means it has.
 
   // User inputs (mileage / MPG)
   double _startMileage = 0;
   double _startMpg = 0;
   double _endMpg = 0;
 
-  // State initialisation 
+  // State initialisation
   @override
   void initState() {
     super.initState();
-    _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
-    Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+    _animatedMapController = AnimatedMapController(
+        vsync: this, duration: Duration(milliseconds: 1500));
+    Provider.of<LocationProvider>(context, listen: false)
+        .initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
   }
 
   void _initialiseLocationStatusStream() async {
     _locationStatus = await Geolocator.isLocationServiceEnabled();
-    _locationStatusStream = Geolocator.getServiceStatusStream()
-        .listen((ServiceStatus status) {
+    _locationStatusStream =
+        Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
       setState(() {
         _locationStatus = status == ServiceStatus.enabled;
       });
@@ -75,32 +77,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _initializeEnvAndService() async {
     try {
       _stops = await _stopsService.fetchAllStops();
-      // Initialize RouteService with API key
 
-      // Attempt to load the .env file
-      await dotenv.load(fileName: '.env');
-
-      // Check if the API key exists in .env; show an error message if not
-      final apiKey = dotenv.env['API_KEY'];
-      if (apiKey == null || apiKey.isEmpty) {
-        throw Exception("API key missing in .env file.");
-      }
-      // Initialize RouteService with the valid API key
-      _routeService = RouteService(dotenv.env['API_KEY']!);
+      _routeService = getIt<RouteService>();
 
       await _drawStopsMarker(Colors.blue);
 
       await _fetchOptimizedRoute();
       //Depot location marker
-      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+      _marker.add(
+          MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
-      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
+      _showErrorDialog(
+          "Failed to initialize map service. Please check API key and network connection.");
     }
-
-
   }
-
 
   // Function to draw a complete route between all stops
   // ignore: unused_element
@@ -111,9 +102,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       final start = _stops[i];
       final end = _stops[i + 1];
       final routePart = await _routeService.getRoute(
-          start.location.latitude, start.location.longitude,
-          end.location.latitude, end.location.longitude
-      );
+          start.location.latitude,
+          start.location.longitude,
+          end.location.latitude,
+          end.location.longitude);
       route.addAll(routePart);
     }
     setState(() {
@@ -128,24 +120,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-
-
-
   // Fetches route data from the ORS API between the two given stops, entered by their ID.
   // ignore: unused_element
-  Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
-
+  Future<void> _fetchRoute(int firstStopID, int secondStopID) async {
     LatLng startPoint = await _stopsService.fetchStop(firstStopID);
     LatLng collectionPoint = await _stopsService.fetchStop(secondStopID);
-
-
 
     final startLat = startPoint.latitude, startLng = startPoint.longitude;
     final endLat = collectionPoint.latitude, endLng = collectionPoint.longitude;
 
-
     // Get route points from the API and update _routePoints with the data
-    final List<LatLng> route = await _routeService.getRoute(startLat, startLng, endLat, endLng);
+    final List<LatLng> route =
+        await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
       // Remove any existing points
@@ -168,9 +154,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-
-
-
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
     showDialog(
@@ -188,107 +171,107 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
-
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-  
-    
     return Scaffold(
-      body: content(),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          children: [
-            // Single button toggling journey start/end
-            Expanded(
-              child: ElevatedButton(
-                child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
-                onPressed: () {
-                  if (_journeyActive) {
-                    _showEndJourneyDialog();
-                  } else {
-                    _showStartJourneyDialog();
-                  }
-                },
+        body: content(),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            children: [
+              // Single button toggling journey start/end
+              Expanded(
+                child: ElevatedButton(
+                  child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
+                  onPressed: () {
+                    if (_journeyActive) {
+                      _showEndJourneyDialog();
+                    } else {
+                      _showStartJourneyDialog();
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
+        floatingActionButton:
+            Column(mainAxisAlignment: MainAxisAlignment.end, children: [
           //ZOOM IN
           FloatingActionButton(
             heroTag: "zoom in",
             child: const Icon(Icons.add),
             onPressed: () {
-              _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
-
+              _animatedMapController.animatedZoomIn(
+                  duration: Duration(milliseconds: 500));
             },
-        ),
-        const SizedBox(height: 10), // Space between buttons
-        FloatingActionButton(
-          heroTag: "zoom out",
-          child: const Icon(Icons.remove),
-          onPressed: () {
-            _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
-          },
-        ),
-        const SizedBox(height: 10),
-        RecentreButton(onPressed: () async {
-          // If recentre button pressed recentre map over user location
-          // Check if location permissions have been granted.
-          if (await getLocationPermissions()) {
-            if (context.mounted) {
-              Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-              LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-              if (location != null) {
-                _animatedMapController.animateTo(
-                    dest: LatLng(
-                        location.latitude, location.longitude),
-                    zoom: 14);
-              }
-            }
-          } else {
-            // Request permission if not already granted.
-            if (await requestLocationPermissions()) {
+          ),
+          const SizedBox(height: 10), // Space between buttons
+          FloatingActionButton(
+            heroTag: "zoom out",
+            child: const Icon(Icons.remove),
+            onPressed: () {
+              _animatedMapController.animatedZoomOut(
+                  duration: Duration(milliseconds: 500));
+            },
+          ),
+          const SizedBox(height: 10),
+          RecentreButton(onPressed: () async {
+            // If recentre button pressed recentre map over user location
+            // Check if location permissions have been granted.
+            if (await getLocationPermissions()) {
               if (context.mounted) {
-
-                Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                Provider.of<LocationProvider>(context, listen: false)
+                    .initialisePositionStream();
+                LatLng? location =
+                    Provider.of<LocationProvider>(context, listen: false)
+                        .latestLocation;
                 if (location != null) {
                   _animatedMapController.animateTo(
-                      dest: LatLng(
-                          location.latitude, location.longitude),
+                      dest: LatLng(location.latitude, location.longitude),
                       zoom: 14);
                 }
               }
             } else {
-              //User denied location permissions, show an alert
-              if (context.mounted) {
-                showDialog(
+              // Request permission if not already granted.
+              if (await requestLocationPermissions()) {
+                if (context.mounted) {
+                  Provider.of<LocationProvider>(context, listen: false)
+                      .initialisePositionStream();
+                  LatLng? location =
+                      Provider.of<LocationProvider>(context, listen: false)
+                          .latestLocation;
+                  if (location != null) {
+                    _animatedMapController.animateTo(
+                        dest: LatLng(location.latitude, location.longitude),
+                        zoom: 14);
+                  }
+                }
+              } else {
+                //User denied location permissions, show an alert
+                if (context.mounted) {
+                  showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title : Text("Location Permission Required"),
-                      content : Text("This app requires location to function properly. Please consider turning location permission on."),
+                      title: Text("Location Permission Required"),
+                      content: Text(
+                          "This app requires location to function properly. Please consider turning location permission on."),
                       actions: [
                         TextButton(
-                            onPressed: () => Navigator.pop(context), //Dismiss dialog
+                            onPressed: () =>
+                                Navigator.pop(context), //Dismiss dialog
                             child: Text("OK"))
                       ],
                     ),
-                );
+                  );
+                }
               }
             }
-          }
-        }// Space for recentre button
-        )
-        ])
-    );
+          } // Space for recentre button
+              )
+        ]));
   }
-
 
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
@@ -300,11 +283,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         minZoom: 2.5,
         maxZoom: 19,
         initialZoom: 14,
-        interactionOptions:
-        InteractionOptions(
-            flags: ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
-            ~InteractiveFlag.rotate // Disable map rotation
-        ),
+        interactionOptions: InteractionOptions(
+            flags:
+                ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
+                    ~InteractiveFlag.rotate // Disable map rotation
+            ),
       ),
       children: [
         openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
@@ -319,26 +302,27 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-    urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    subdomains: ['a','b','c'],
-    retinaMode: RetinaMode.isHighDensity(context),
-    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-  );
+        urlTemplate:
+            'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        subdomains: ['a', 'b', 'c'],
+        retinaMode: RetinaMode.isHighDensity(context),
+        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+      );
 
   // Delete old code implementation
 
-    void _showStartJourneyDialog() {
+  void _showStartJourneyDialog() {
     StartJourneyDialog.show(context, (double mileage, double mpg) {
       setState(() {
         _startMileage = mileage;
         _startMpg = mpg;
         _journeyActive = true;
-        });
-        debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg'); 
       });
-    }
+      debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
+    });
+  }
 
-    void _showEndJourneyDialog() {
+  void _showEndJourneyDialog() {
     EndJourneyDialog.show(context, (double mpg) {
       setState(() {
         _endMpg = mpg;
@@ -349,13 +333,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
-
-
-
   @override
   void dispose() {
     _locationStatusStream.cancel();
     super.dispose();
   }
 }
-
