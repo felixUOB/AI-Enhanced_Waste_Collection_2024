@@ -45,6 +45,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Journey state management (tracks whether a journey is currently active)
   bool _journeyActive = false; // false means the journey hasn't started yet, true means it has.
+  bool _automaticRecentre = false; // True when user has centred on location, meaning camera should follow
 
   // User inputs (mileage / MPG)
   double _startMileage = 0;
@@ -188,6 +189,16 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
+  // This function manages map events
+  void _eventManager(MapEvent event) {
+    if (event is MapEventMoveStart) {
+      if (_automaticRecentre) {
+        setState(() {
+          _automaticRecentre = false;
+        });
+      }
+    }
+  }
 
   // Builds the main UI for the map screen
   @override
@@ -237,18 +248,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           },
         ),
         const SizedBox(height: 10),
-        RecentreButton(onPressed: () async {
+        RecentreButton(centred: _automaticRecentre, onPressed: () async {
           // If recentre button pressed recentre map over user location
           // Check if location permissions have been granted.
+          double zoom;
+          _journeyActive ? zoom = 16 : zoom = 14;
           if (await getLocationPermissions()) {
             if (context.mounted) {
               Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
               LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
               if (location != null) {
                 _animatedMapController.animateTo(
-                    dest: LatLng(
-                        location.latitude, location.longitude),
-                    zoom: 14);
+                    dest: location,
+                    zoom: zoom);
+
+                // Enable automatic following of location after user recentres
+                setState(() {
+                  _automaticRecentre = true;
+                });
               }
             }
           } else {
@@ -262,7 +279,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                   _animatedMapController.animateTo(
                       dest: LatLng(
                           location.latitude, location.longitude),
-                      zoom: 14);
+                      zoom: zoom);
+
+                  // Enable automatic following of location after user recentres
+                  setState(() {
+                    _automaticRecentre = true;
+                  });
                 }
               }
             } else {
@@ -293,18 +315,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
     LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
+    if (_journeyActive && _automaticRecentre) _animatedMapController.animateTo(dest: location, zoom: 16);
     return FlutterMap(
       mapController: _animatedMapController.mapController,
-      options: const MapOptions(
-        initialCenter: LatLng(51.4492, -2.5879),
+      options: MapOptions(
+        initialCenter: const LatLng(51.4492, -2.5879),
         minZoom: 2.5,
         maxZoom: 19,
         initialZoom: 14,
         interactionOptions:
-        InteractionOptions(
+        const InteractionOptions(
             flags: ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
             ~InteractiveFlag.rotate // Disable map rotation
         ),
+
+        onMapEvent: _eventManager, // delegates map events to the event manager
       ),
       children: [
         openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
