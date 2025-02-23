@@ -19,9 +19,7 @@ void main() {
     getIt.reset();
   });
 
-  // Group of tests for the Login Page
   group('LoginPage Widget Tests', () {
-    // Test to check if the LoginTextField has correct styling
     testWidgets('LoginTextField has correct styling',
         (WidgetTester tester) async {
       final controller = TextEditingController();
@@ -51,7 +49,6 @@ void main() {
       expect(borderSide.color, Colors.black);
     });
 
-    // Test to check if the LoginTextField displays hint and obscures text correctly
     testWidgets('LoginTextField displays hint and obscures text correctly',
         (WidgetTester tester) async {
       final controller = TextEditingController();
@@ -133,14 +130,12 @@ void main() {
       expect(find.byKey(ValueKey("registerPage")), findsOneWidget);
     });
 
-    // Test to check if the logo loads correctly
     testWidgets("Logo Loads Correctly", (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(home: LoginPage()));
       // Verify that the logo is displayed
       expect(find.byKey(ValueKey("logo")), findsOneWidget);
     });
 
-    // Test to check if the SignIn button functions correctly on correct login
     testWidgets("SignIn Button Functions Correctly On Correct Login",
         (WidgetTester tester) async {
       // Mock the login behavior
