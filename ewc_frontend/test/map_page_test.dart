@@ -23,7 +23,6 @@ class FakeGeolocatorPlatform extends GeolocatorPlatform {
     }
 }
 
-
 void main() {
   // Set the fake GeolocatorPlatform before tests run 
   setUpAll(() { GeolocatorPlatform.instance = FakeGeolocatorPlatform(); });
@@ -35,27 +34,62 @@ void main() {
       expect(find.byType(FlutterMap), findsOneWidget);
     });
 
-    testWidgets('Start Journey button shows dialog', (WidgetTester tester) async {
+    testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(home: MapPage()));
+    
+      // Open the journey dialog.
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsOneWidget);
+    
+      // Tap the Cancel button within the dialog.
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+    
+      // Expect the dialog to be dismissed.
+      expect(find.byType(AlertDialog), findsNothing);
     });
 
-    testWidgets('End Journey button shows dialog', (WidgetTester tester) async {
+    
+    testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(home: MapPage()));
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '100');
+      await tester.enterText(find.byType(TextField).first, '10');
       await tester.enterText(find.byType(TextField).last, '20');
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('End Journey'));
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsOneWidget);
+      // Tap the Cancel button within the dialog.
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      // Expect the dialog to be dismissed.
+      expect(find.byType(AlertDialog), findsNothing);
+    
+      // Expect the dialog to be dismissed.
+      expect(find.byType(AlertDialog), findsNothing);
     });
 
-    testWidgets('Invalid input shows error dialog', (WidgetTester tester) async {
+    testWidgets('End Journey button accepts correctly entered values', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: MapPage()));
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('End Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
+    });
+
+    testWidgets('Invalid input on Start Journey dialog shows error dialog', (WidgetTester tester) async {
       await tester.pumpWidget(MaterialApp(home: MapPage()));
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
@@ -64,6 +98,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Invalid Input'), findsOneWidget);
     });
+
 
     
 
