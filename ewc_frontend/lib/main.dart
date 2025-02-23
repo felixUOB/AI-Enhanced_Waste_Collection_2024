@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:ewc/screens/splash/splash.dart';
+import 'package:ewc/service_locator.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
@@ -6,19 +9,18 @@ import 'package:ewc/services/auth_service.dart';
 
 ThemeManager themeManager = ThemeManager();
 
-void main() async {
+void main({Completer<void>? setupCompleter, bool? testing}) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final authService = AuthService();
-  await authService
-      .initializeAuthService(); // Ensure environment variables are loaded
+  await setupLocator();
 
-  runApp(App(authService: authService));
+  setupCompleter?.complete();
+
+  runApp(App());
 }
 
 class App extends StatefulWidget {
-  final AuthService authService;
-  const App({super.key, required this.authService});
+  const App({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -54,7 +56,7 @@ class MyAppState extends State<App> {
     return MaterialApp(
         title: "EWC",
         debugShowCheckedModeBanner: false,
-        home: SplashPage(authService: widget.authService,),
+        home: SplashPage(),
         // theme management
         theme: AppTheme().lightTheme,
         darkTheme: AppTheme().darkTheme,

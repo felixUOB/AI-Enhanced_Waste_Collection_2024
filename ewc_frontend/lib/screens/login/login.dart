@@ -1,3 +1,4 @@
+import 'package:ewc/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/login_button.dart';
@@ -9,8 +10,7 @@ import 'package:ewc/widgets/main_navigation_bar.dart';
 
 // LoginPage is the screen where users can log in to the app
 class LoginPage extends StatefulWidget {
-  final AuthService authService;
-  const LoginPage({super.key, required this.authService});
+  const LoginPage({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -84,7 +84,7 @@ class LoginPageState extends State<LoginPage> {
                         children: [
                           Text("Remember Me?"),
                           Checkbox(
-                            key: Key("remember_me"),
+                              key: Key("remember_me"),
                               value: _rememberMe,
                               onChanged: (value) => setState(() {
                                     _rememberMe = value!;
@@ -109,12 +109,12 @@ class LoginPageState extends State<LoginPage> {
                 final navigator = Navigator.of(context);
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 try {
-                  await widget.authService.login(
-                      usernameController.text, passwordController.text);
+                  await getIt<AuthService>()
+                      .login(usernameController.text, passwordController.text);
                   // Navigate to the schedule page after successful login
 
                   if (_rememberMe) {
-                    await widget.authService.saveUserCredentials(
+                    await getIt<AuthService>().saveUserCredentials(
                         usernameController.text, passwordController.text);
                   }
                   // Navigate to home screen
