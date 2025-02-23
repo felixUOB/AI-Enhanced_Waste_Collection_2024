@@ -21,6 +21,8 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
 
+  final AuthService _authService = getIt<AuthService>();
+
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -95,7 +97,7 @@ class LoginPageState extends State<LoginPage> {
                           string1: "",
                           hyperString: "Forgot Password?",
                           string2: "",
-                          onTap: getIt<AuthService>().launchPasswordReset),
+                          onTap: _authService.launchPasswordReset),
                     ])),
 
             //-------------LOGIN BUTTON---------------------------------
@@ -109,12 +111,12 @@ class LoginPageState extends State<LoginPage> {
                 final navigator = Navigator.of(context);
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 try {
-                  await getIt<AuthService>()
-                      .login(usernameController.text, passwordController.text);
+                  await _authService.login(
+                      usernameController.text, passwordController.text);
                   // Navigate to the schedule page after successful login
 
                   if (_rememberMe) {
-                    await getIt<AuthService>().saveUserCredentials(
+                    await _authService.saveUserCredentials(
                         usernameController.text, passwordController.text);
                   }
                   // Navigate to home screen

@@ -28,16 +28,17 @@ class SplashPageState extends State<SplashPage> {
 
   // Attempts to auto-login using saved credentials
   void _attemptAutoLogin() async {
+    final AuthService authService = getIt<AuthService>();
     // await _authService.clearCredentials();
-    var credentials = await getIt<AuthService>().loadUserCredentials();
+    var credentials = await authService.loadUserCredentials();
 
     String? username = credentials['username'];
     String? password = credentials['password'];
 
     if (username != null && password != null) {
       try {
-        await getIt<AuthService>()
-            .login(username, password); // Attempt login with given credentials
+        await authService.login(
+            username, password); // Attempt login with given credentials
 
         if (mounted) {
           if (widget.isTesting) {
