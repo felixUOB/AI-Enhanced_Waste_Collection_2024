@@ -1,12 +1,13 @@
 import 'dart:async';
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
+import 'package:ewc/widgets/log_stop_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:ewc/widgets/marker_widget.dart';
@@ -36,7 +37,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final List<Marker> _marker = [];
   late RouteService _routeService;
   final StopsService _stopsService = StopsService();
-  late List<Stop> _stops = [];
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -75,20 +75,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      _stops = await _stopsService.fetchAllStops();
-      // Initialize RouteService with API key
-
-      // Attempt to load the .env file
-      await dotenv.load(fileName: '.env');
-
-      // Check if the API key exists in .env; show an error message if not
-      final apiKey = dotenv.env['API_KEY'];
-      if (apiKey == null || apiKey.isEmpty) {
-        throw Exception("API key missing in .env file.");
-      }
-      // Initialize RouteService with the valid API key
-      _routeService = RouteService(dotenv.env['API_KEY']!);
-
+      await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
+      _routeService = await RouteService.create();
       await _drawStopsMarker(Colors.blue);
 
       await _fetchOptimizedRoute();
@@ -98,8 +86,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       // Log the error and provide feedback
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
     }
-
-
   }
 
 
@@ -108,9 +94,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _drawCompleteRoute() async {
     // Alternatively store stops list as class attribute
     List<LatLng> route = [];
-    for (int i = 0; i < _stops.length - 1; i++) {
-      final start = _stops[i];
-      final end = _stops[i + 1];
+    List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    for (int i = 0; i < stops.length - 1; i++) {
+      final start = stops[i];
+      final end = stops[i + 1];
       final routePart = await _routeService.getRoute(
           start.location.latitude, start.location.longitude,
           end.location.latitude, end.location.longitude
@@ -124,8 +111,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
 
   Future<void> _drawStopsMarker(Color color) async {
-    for (int i = 0; i < _stops.length; i++) {
-      _marker.add(MarkerWidget.createMarker(_stops[i].location, color));
+    List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    for (int i = 0; i < stops.length; i++) {
+      _marker.add(MarkerWidget.createMarker(stops[i].location, color));
     }
   }
 
@@ -135,9 +123,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Fetches route data from the ORS API between the two given stops, entered by their ID.
   // ignore: unused_element
   Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
-
-    LatLng startPoint = await _stopsService.fetchStop(firstStopID);
-    LatLng collectionPoint = await _stopsService.fetchStop(secondStopID);
+    var stopsService = StopsService();
+    LatLng startPoint = await stopsService.fetchStop(firstStopID);
+    LatLng collectionPoint = await stopsService.fetchStop(secondStopID);
 
 
 
@@ -159,7 +147,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Optimized route planning
   Future<void> _fetchOptimizedRoute() async {
     try {
-      List<LatLng> optimizedRoute = await _routeService.routePlanning(_stops);
+      List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+      List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
       setState(() {
         _routePoints.clear();
         _routePoints.addAll(optimizedRoute);
@@ -230,8 +219,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          (_journeyActive) ?
+          // Log visit button
+          FloatingActionButton(
+            heroTag: "log visit",
+            child: const Icon(Icons.where_to_vote),
+            onPressed: () {
+              LogStopDialog.show(context,
+                (int stopID, int wasteCollected) {
+                  _stopsService.postStopCollection(stopID, wasteCollected);
+                  Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
+                }
+              );
+            },
+          ) : const SizedBox(),
+          (_journeyActive) ?
+          const SizedBox(height: 10) : const SizedBox(),
 
-          //ZOOM IN
+          // ZOOM IN
           FloatingActionButton(
             heroTag: "zoom in",
             child: const Icon(Icons.add),
@@ -242,6 +247,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 10), // Space between buttons
 
+          // ZOOM OUT
           FloatingActionButton(
             heroTag: "zoom out",
             child: const Icon(Icons.remove),

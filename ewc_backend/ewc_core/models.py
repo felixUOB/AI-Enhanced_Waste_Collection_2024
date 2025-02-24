@@ -35,7 +35,7 @@ class StopCollection(models.Model):
         db_column='stop_id'
     )
     weight_collected = models.IntegerField()
-    date = models.DateField(null=False)
+    date = models.DateField(auto_now_add=True, null=False)
 
     class Meta:
         db_table = 'ewc_core_stop_collection'

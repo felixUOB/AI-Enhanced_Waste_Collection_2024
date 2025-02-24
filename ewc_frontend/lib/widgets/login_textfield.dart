@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 class LoginTextfield extends StatelessWidget {
   final dynamic controller;
   final String hintText;
-  final bool obscured;
 
   // ignore: prefer_const_constructors_in_immutables
   LoginTextfield({
     super.key,
     required this.controller,
     required this.hintText,
-    required this.obscured,
     // required dynamic key,
   });
 
@@ -23,7 +21,6 @@ class LoginTextfield extends StatelessWidget {
         data: ThemeData.light(),
         child: TextField(
             controller: controller,
-            obscureText: obscured,
             decoration: InputDecoration(
               enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.white)),
