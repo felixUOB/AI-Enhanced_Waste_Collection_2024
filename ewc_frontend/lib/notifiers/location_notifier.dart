@@ -12,7 +12,19 @@ class LocationProvider extends ChangeNotifier {
   LatLng? _latestLocation;
   late StreamSubscription<Position>? _locationStream;
 
+  double _distanceTravelled = 0;
+  bool _trackingEnabled = false;
+
   LatLng? get latestLocation => _latestLocation;
+  double get distanceTravelled => _distanceTravelled;
+
+  void setTracking(bool setting) {
+    _trackingEnabled = setting;
+  }
+
+  void resetDistance() {
+    _distanceTravelled = 0;
+  }
 
   void initialiseLocationServices() async {
     // Ask user for location permissions
@@ -33,11 +45,18 @@ class LocationProvider extends ChangeNotifier {
   // device moves more than 5 metres from the previous latestLocation value.
   void initialisePositionStream() {
     final LocationSettings locationSettings = LocationSettings(
-      distanceFilter: 5, // Minimum distance device must move (in metres) to update the location
+      distanceFilter: 3, // Minimum distance device must move (in metres) to update the location
     );
     // Create a location stream which returns device location at regular intervals
     _locationStream = Geolocator.getPositionStream(locationSettings: locationSettings)
         .listen((Position? position) {
+
+      // Only track distance if tracking is enabled
+      if (_trackingEnabled && _latestLocation != null) {
+        double distance = Geolocator.distanceBetween(
+            position!.latitude, position.longitude, _latestLocation!.latitude, _latestLocation!.longitude);
+        _distanceTravelled += distance; // Add distance to currently accumulated distance
+      }
       _latestLocation = LatLng(position!.latitude, position.longitude);
       notifyListeners();
     });
