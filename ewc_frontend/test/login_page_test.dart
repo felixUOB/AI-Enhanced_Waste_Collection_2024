@@ -1,6 +1,7 @@
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/register/register.dart';
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
@@ -187,6 +188,8 @@ void main() {
                   200, // Status code
                 ),
               ));
+      
+      when(getIt<MetricsService>().fetchAllRoutes()).thenAnswer((_) async => []);
 
       await tester.pumpWidget(MaterialApp(
           home: Scaffold(

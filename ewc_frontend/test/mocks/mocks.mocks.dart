@@ -3,18 +3,20 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i9;
+import 'dart:async' as _i10;
 
 import 'package:ewc/models/stop_model.dart' as _i12;
-import 'package:ewc/services/auth_service.dart' as _i7;
-import 'package:ewc/services/encryption_service.dart' as _i2;
-import 'package:ewc/services/route_service.dart' as _i10;
+import 'package:ewc/screens/metrics/route_data.dart' as _i14;
+import 'package:ewc/services/auth_service/auth_service.dart' as _i7;
+import 'package:ewc/services/auth_service/encryption_service.dart' as _i2;
+import 'package:ewc/services/metrics_service.dart' as _i13;
+import 'package:ewc/services/route_service.dart' as _i11;
 import 'package:ewc/services/stops_service.dart' as _i6;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:http/http.dart' as _i4;
-import 'package:latlong2/latlong.dart' as _i11;
+import 'package:latlong2/latlong.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i8;
+import 'package:mockito/src/dummies.dart' as _i9;
 import 'package:open_route_service/open_route_service.dart' as _i5;
 
 // ignore_for_file: type=lint
@@ -59,6 +61,16 @@ class _FakeStopsService_4 extends _i1.SmartFake implements _i6.StopsService {
     : super(parent, parentInvocation);
 }
 
+class _FakeAuthService_5 extends _i1.SmartFake implements _i7.AuthService {
+  _FakeAuthService_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeLatLng_6 extends _i1.SmartFake implements _i8.LatLng {
+  _FakeLatLng_6(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -93,7 +105,7 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
   String get apiUrl =>
       (super.noSuchMethod(
             Invocation.getter(#apiUrl),
-            returnValue: _i8.dummyValue<String>(
+            returnValue: _i9.dummyValue<String>(
               this,
               Invocation.getter(#apiUrl),
             ),
@@ -104,7 +116,7 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
   String get adminUrl =>
       (super.noSuchMethod(
             Invocation.getter(#adminUrl),
-            returnValue: _i8.dummyValue<String>(
+            returnValue: _i9.dummyValue<String>(
               this,
               Invocation.getter(#adminUrl),
             ),
@@ -112,83 +124,102 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
           as String);
 
   @override
-  _i9.Future<void> initializeAuthService() =>
+  _i10.Future<void> initializeAuthService() =>
       (super.noSuchMethod(
             Invocation.method(#initializeAuthService, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> saveUserCredentials(String? username, String? password) =>
+  _i10.Future<void> saveUserCredentials(String? username, String? password) =>
       (super.noSuchMethod(
             Invocation.method(#saveUserCredentials, [username, password]),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<Map<String, String?>> loadUserCredentials() =>
+  _i10.Future<Map<String, String?>> loadUserCredentials() =>
       (super.noSuchMethod(
             Invocation.method(#loadUserCredentials, []),
-            returnValue: _i9.Future<Map<String, String?>>.value(
+            returnValue: _i10.Future<Map<String, String?>>.value(
               <String, String?>{},
             ),
           )
-          as _i9.Future<Map<String, String?>>);
+          as _i10.Future<Map<String, String?>>);
 
   @override
-  _i9.Future<void> clearCredentials() =>
+  _i10.Future<void> clearCredentials() =>
       (super.noSuchMethod(
             Invocation.method(#clearCredentials, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<bool> checkEmail(String? email) =>
+  _i10.Future<bool> checkEmail(String? email) =>
       (super.noSuchMethod(
             Invocation.method(#checkEmail, [email]),
-            returnValue: _i9.Future<bool>.value(false),
+            returnValue: _i10.Future<bool>.value(false),
           )
-          as _i9.Future<bool>);
+          as _i10.Future<bool>);
 
   @override
-  _i9.Future<void> login(String? username, String? password) =>
+  _i10.Future<void> login(String? username, String? password) =>
       (super.noSuchMethod(
             Invocation.method(#login, [username, password]),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<void> refreshAccessToken() =>
+  _i10.Future<void> refreshAccessToken() =>
       (super.noSuchMethod(
             Invocation.method(#refreshAccessToken, []),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i10.Future<void>);
 
   @override
-  _i9.Future<_i4.Response> makeAuthenticatedRequest(String? endpoint) =>
+  _i10.Future<_i4.Response> makeAuthenticatedRequest(String? endpoint) =>
       (super.noSuchMethod(
             Invocation.method(#makeAuthenticatedRequest, [endpoint]),
-            returnValue: _i9.Future<_i4.Response>.value(
+            returnValue: _i10.Future<_i4.Response>.value(
               _FakeResponse_2(
                 this,
                 Invocation.method(#makeAuthenticatedRequest, [endpoint]),
               ),
             ),
           )
-          as _i9.Future<_i4.Response>);
+          as _i10.Future<_i4.Response>);
 
   @override
-  _i9.Future<void> register({
+  _i10.Future<_i4.Response> makeAuthenticatedPostRequest(
+    String? endpoint,
+    Map<String, dynamic>? body,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#makeAuthenticatedPostRequest, [endpoint, body]),
+            returnValue: _i10.Future<_i4.Response>.value(
+              _FakeResponse_2(
+                this,
+                Invocation.method(#makeAuthenticatedPostRequest, [
+                  endpoint,
+                  body,
+                ]),
+              ),
+            ),
+          )
+          as _i10.Future<_i4.Response>);
+
+  @override
+  _i10.Future<void> register({
     required String? username,
     required String? password,
     required dynamic email,
@@ -203,10 +234,10 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
               #phoneNumber: phoneNumber,
               #address: address,
             }),
-            returnValue: _i9.Future<void>.value(),
-            returnValueForMissingStub: _i9.Future<void>.value(),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
           )
-          as _i9.Future<void>);
+          as _i10.Future<void>);
 
   @override
   void launchPasswordReset() => super.noSuchMethod(
@@ -218,7 +249,7 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
 /// A class which mocks [RouteService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRouteService extends _i1.Mock implements _i10.RouteService {
+class MockRouteService extends _i1.Mock implements _i11.RouteService {
   MockRouteService() {
     _i1.throwOnMissingStub(this);
   }
@@ -246,7 +277,7 @@ class MockRouteService extends _i1.Mock implements _i10.RouteService {
           as _i6.StopsService);
 
   @override
-  _i9.Future<List<_i11.LatLng>> getRoute(
+  _i10.Future<List<_i8.LatLng>> getRoute(
     double? startLat,
     double? startLng,
     double? endLat,
@@ -254,26 +285,92 @@ class MockRouteService extends _i1.Mock implements _i10.RouteService {
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getRoute, [startLat, startLng, endLat, endLng]),
-            returnValue: _i9.Future<List<_i11.LatLng>>.value(<_i11.LatLng>[]),
+            returnValue: _i10.Future<List<_i8.LatLng>>.value(<_i8.LatLng>[]),
           )
-          as _i9.Future<List<_i11.LatLng>>);
+          as _i10.Future<List<_i8.LatLng>>);
 
   @override
-  _i9.Future<List<_i11.LatLng>> routePlanning(List<_i12.Stop>? stops) =>
+  _i10.Future<List<_i8.LatLng>> routePlanning(List<_i12.Stop>? stops) =>
       (super.noSuchMethod(
             Invocation.method(#routePlanning, [stops]),
-            returnValue: _i9.Future<List<_i11.LatLng>>.value(<_i11.LatLng>[]),
+            returnValue: _i10.Future<List<_i8.LatLng>>.value(<_i8.LatLng>[]),
           )
-          as _i9.Future<List<_i11.LatLng>>);
+          as _i10.Future<List<_i8.LatLng>>);
 
   @override
-  _i9.Future<List<int>> getStopTimes(
-    _i11.LatLng? source,
-    List<_i11.LatLng>? stopLocations,
+  _i10.Future<List<int>> getStopTimes(
+    _i8.LatLng? source,
+    List<_i8.LatLng>? stopLocations,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getStopTimes, [source, stopLocations]),
-            returnValue: _i9.Future<List<int>>.value(<int>[]),
+            returnValue: _i10.Future<List<int>>.value(<int>[]),
           )
-          as _i9.Future<List<int>>);
+          as _i10.Future<List<int>>);
+}
+
+/// A class which mocks [StopsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockStopsService extends _i1.Mock implements _i6.StopsService {
+  MockStopsService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i7.AuthService get authService =>
+      (super.noSuchMethod(
+            Invocation.getter(#authService),
+            returnValue: _FakeAuthService_5(
+              this,
+              Invocation.getter(#authService),
+            ),
+          )
+          as _i7.AuthService);
+
+  @override
+  _i10.Future<void> postStopCollection(int? stopID, int? weightCollected) =>
+      (super.noSuchMethod(
+            Invocation.method(#postStopCollection, [stopID, weightCollected]),
+            returnValue: _i10.Future<void>.value(),
+            returnValueForMissingStub: _i10.Future<void>.value(),
+          )
+          as _i10.Future<void>);
+
+  @override
+  _i10.Future<_i8.LatLng> fetchStop(int? stopID) =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchStop, [stopID]),
+            returnValue: _i10.Future<_i8.LatLng>.value(
+              _FakeLatLng_6(this, Invocation.method(#fetchStop, [stopID])),
+            ),
+          )
+          as _i10.Future<_i8.LatLng>);
+
+  @override
+  _i10.Future<List<_i12.Stop>> fetchAllStops() =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchAllStops, []),
+            returnValue: _i10.Future<List<_i12.Stop>>.value(<_i12.Stop>[]),
+          )
+          as _i10.Future<List<_i12.Stop>>);
+}
+
+/// A class which mocks [MetricsService].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockMetricsService extends _i1.Mock implements _i13.MetricsService {
+  MockMetricsService() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i10.Future<List<_i14.JourneyRoute>> fetchAllRoutes() =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchAllRoutes, []),
+            returnValue: _i10.Future<List<_i14.JourneyRoute>>.value(
+              <_i14.JourneyRoute>[],
+            ),
+          )
+          as _i10.Future<List<_i14.JourneyRoute>>);
 }

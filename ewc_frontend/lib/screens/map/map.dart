@@ -36,7 +36,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
   late RouteService _routeService;
-  final StopsService _stopsService = StopsService();
+  final StopsService _stopsService = getIt<StopsService>();
 
   // Location variables
   late AnimatedMapController _animatedMapController;

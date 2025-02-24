@@ -1,4 +1,5 @@
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -27,6 +28,7 @@ void main() {
                   200, // Status code
                 ),
               ));
+      when(getIt<MetricsService>().fetchAllRoutes()).thenAnswer((_) async => []);
 
       // Build the MainNavigationBar widget inside a MaterialApp
       await tester.pumpWidget(MaterialApp(

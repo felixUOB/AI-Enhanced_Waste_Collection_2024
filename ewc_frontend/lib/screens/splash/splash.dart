@@ -1,6 +1,6 @@
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/service_locator.dart';
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 

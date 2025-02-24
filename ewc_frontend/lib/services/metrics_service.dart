@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:ewc/screens/metrics/route_data.dart';
 import 'package:ewc/service_locator.dart';
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
 
 class MetricsService {
   Future<List<JourneyRoute>> fetchAllRoutes() async {

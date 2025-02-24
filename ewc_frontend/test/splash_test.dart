@@ -1,6 +1,7 @@
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/splash/splash.dart';
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,6 +38,7 @@ void main() {
                   200, // Status code
                 ),
               ));
+      when(getIt<MetricsService>().fetchAllRoutes()).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -136,6 +138,10 @@ void main() {
       // Attempting to log in should fail because the password is missing
       when(getIt<AuthService>().login("mockUsername", ""))
           .thenThrow(Exception("Missing password"));
+
+      when(getIt<MetricsService>().fetchAllRoutes()).thenAnswer((_) async => []);
+
+      
 
       // Build the SplashPage with the mocked authService
       await tester.pumpWidget(

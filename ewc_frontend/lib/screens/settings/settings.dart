@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ewc/main.dart';
 import 'package:ewc/screens/login/forgot_password.dart';
 import 'package:ewc/screens/login/login.dart';
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});

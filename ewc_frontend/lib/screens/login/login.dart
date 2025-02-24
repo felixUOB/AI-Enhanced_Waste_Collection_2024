@@ -4,7 +4,7 @@ import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/theme_switch.dart';
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:ewc/widgets/password_textfield.dart';
