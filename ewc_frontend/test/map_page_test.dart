@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/notifiers/stops_notifier.dart';
+import 'package:provider/provider.dart';
 
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
   @override Future<bool> isLocationServiceEnabled() async => true;
@@ -29,14 +32,41 @@ void main() {
   group('Map Page Tests', () {
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
-      await tester.pumpWidget(MaterialApp(home: MapPage()));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(), // or a FakeLocationProvider if available
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(), // add if needed in map.dart
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
       expect(find.byType(MapPage), findsOneWidget);
       expect(find.byType(FlutterMap), findsOneWidget);
     });
 
     testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: MapPage()));
-    
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(), // or a FakeLocationProvider if available
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(), // add if needed in map.dart
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
       // Open the journey dialog.
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
@@ -52,7 +82,21 @@ void main() {
 
     
     testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: MapPage()));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(), // or a FakeLocationProvider if available
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(), // add if needed in map.dart
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, '10');
@@ -73,7 +117,21 @@ void main() {
     });
 
     testWidgets('End Journey button accepts correctly entered values', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: MapPage()));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(), // or a FakeLocationProvider if available
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(), // add if needed in map.dart
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, '10');
@@ -90,7 +148,21 @@ void main() {
     });
 
     testWidgets('Invalid input on Start Journey dialog shows error dialog', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: MapPage()));
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(), // or a FakeLocationProvider if available
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(), // add if needed in map.dart
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'invalid');
