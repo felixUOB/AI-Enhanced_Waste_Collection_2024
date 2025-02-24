@@ -1,76 +1,129 @@
+import 'package:ewc/notifiers/stops_notifier.dart';
+import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/widgets/timeline_tile.dart';
-import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:ewc/models/stop_model.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import 'package:ewc/notifiers/location_notifier.dart';
 
-class Schedule extends StatelessWidget {
-  // Hardcoded 'stop name' and 'minutes until stop reached' data
-  // until map api is implemented
-  final List<RouteStop> routes = [
-    RouteStop(label: "stop 1", time: DateTime(2024, 11, 14, 15, 30)),
-    RouteStop(label: "stop 2", time: DateTime(2024, 11, 14, 16, 00)),
-    RouteStop(label: "stop 3", time: DateTime(2024, 11, 14, 16, 13)),
-    RouteStop(label: "stop 4", time: DateTime(2024, 11, 14, 16, 30)),
-  ];
+class Schedule extends StatefulWidget {
+  const Schedule({super.key});
 
-  Schedule({super.key});
+  @override
+  State<Schedule> createState() => _Schedule();
+}
+
+class _Schedule extends State<Schedule> {
+  List<int>? _stopTimes;
+  late RouteService _routeService;
+
+  @override
+  void initState() {
+    super.initState();
+    initialiseStops();
+  }
+
+  Future<void> initialiseStops() async {
+    try {
+      // Initialize RouteService
+      _routeService = await RouteService.create();
+
+      // The next block of code creates a list _stopTimes where each element
+      // is the amount of time in minutes from the user's location to that stop
+      // while following the route
+      if (mounted) {
+        List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
+
+        LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+        if (location != null) {
+          // SelectedStops filters out already visited stops from the route calculation
+          var selectedStops = route.where((route) => !route.visited).map(
+            (route) => route.location).toList();
+          _stopTimes = [];
+          for (var _ in route.where((route) => route.visited)) {
+            _stopTimes?.add(0); // Pad out the stop times with 0s when some stops have been visited
+          }
+          _stopTimes?.addAll(await _routeService.getStopTimes(location, selectedStops));
+        }
+      }
+    } catch (e) {
+      // Log the error and provide feedback
+      throw Exception("Failed to initialize map service. Please check API key and network connection.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-// ------------Top app bar------------
 
-// ------------List of stops------------
-        // makes a scrollable list
-        body: Scaffold(
-            body: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 50.0),
-                child: ListView.builder(
-                    itemCount: routes.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return CustomTimelineTile(
-                        inPast: checkTimeLabel(routes[
-                            index]), // checks if its in the past or in the future
-                        isFirst: (index == 0)
-                            ? true
-                            : false, // if it is the first index set the property to true
-                        isLast: (index == routes.length - 1)
-                            ? true
-                            : false, // checks if its the last in the list
-                        eventCard: Row(children: [
-// ------------Stop name text------------
-                          Expanded(
-                              child: Text(routes[index].label,
-                                  textAlign:
-                                      TextAlign.left, // display the stop name
-                                  style: AppTheme().constWhiteTextLarge)),
-// ------------Minutes text------------
-                          Expanded(
-                              child: Text(
-                            DateFormat('kk:mm').format(
-                                routes[index].time), // display the stop time
+      // Add refresh indicator to allow drag down refresh
+      body: RefreshIndicator(
+
+        onRefresh: () async {
+          // When user refreshes, recalculate stop times based off of location and set new state
+          List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
+          LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+          if (location != null) {
+            // SelectedStops filters out already visited stops from the route calculation
+            var selectedStops = route.where((route) => !route.visited).map((route) => route.location).toList();
+            List<int> newStops = [];
+            for (var _ in route.where((route) => route.visited)) {
+              newStops.add(0); // Pad out the stop times with 0s when some stops have been visited
+            }
+            newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
+            setState(() {
+              _stopTimes = newStops; // Force reload of widget with new stop times
+            });
+          }
+        },
+
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          // makes a scrollable list
+          child: Consumer<StopsProvider>(
+            builder: (context, stopsProvider, child) {
+              final route = stopsProvider.stops;
+              return ListView.builder(
+                itemCount: route.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return CustomTimelineTile(
+                    inPast: route[index].visited,
+                    // checks if its in the past or in the future
+                    isFirst: index == 0,
+                    // if it is the first index set the property to true
+                    isLast: index == route.length - 1,
+                    // checks if its the last in the list
+                    eventCard: Row(children: [
+                      // ------------Stop name text------------
+                      Expanded(
+                          child: Text(route[index].name,
+                              textAlign:
+                              TextAlign.left, // display the stop name
+                              style: AppTheme().constWhiteTextLarge)
+                      ),
+                      // ------------Minutes text------------
+                      Expanded(
+                          child: (!route[index].visited && _stopTimes != null) ?
+                          Text(
+                            "${_stopTimes![index]} mins", // display the stop time
                             textAlign: TextAlign.right,
                             style: AppTheme().constWhiteTextLarge,
-                          ))
-                        ]),
-                      );
-                    }))));
-  }
-}
-
-// data structure for the stop
-class RouteStop {
-  final String label;
-  final DateTime time;
-  RouteStop({required this.label, required this.time});
-}
-
-// checkTimeLabel returns true if the time given to it is before the current time
-bool checkTimeLabel(RouteStop timeLable) {
-  DateTime now = DateTime.now();
-  if (timeLable.time.isBefore(now)) {
-    return true;
-  } else {
-    return false;
+                          ) : Text(
+                            "",
+                            textAlign: TextAlign.right,
+                            style: AppTheme().constWhiteTextLarge,
+                          )
+                      )
+                    ]),
+                  );
+                }
+              );
+            }
+          )
+        )
+      )
+    );
   }
 }

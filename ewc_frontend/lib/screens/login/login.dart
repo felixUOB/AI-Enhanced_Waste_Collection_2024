@@ -6,10 +6,12 @@ import 'package:ewc/widgets/theme_switch.dart';
 import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
+import 'package:ewc/widgets/password_textfield.dart';
 
 // LoginPage is the screen where users can log in to the app
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final AuthService authService;
+  const LoginPage({super.key, required this.authService});
 
   @override
   State<StatefulWidget> createState() {
@@ -19,7 +21,6 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
-  final AuthService _authService = AuthService();
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -58,18 +59,16 @@ class LoginPageState extends State<LoginPage> {
             LoginTextfield(
               controller: usernameController,
               hintText: "Username",
-              obscured: false,
-              key: Key("usernameFeild"),
+              key: Key("usernameField"),
             ),
             const SizedBox(
               height: 10,
             ),
 
             //-------------PASSWORD TXT-FIELD----------------------
-            LoginTextfield(
+            PasswordTextfield(
               controller: passwordController,
               hintText: "Password",
-              obscured: true,
               key: Key("passwordField"),
             ),
 
@@ -84,6 +83,7 @@ class LoginPageState extends State<LoginPage> {
                         children: [
                           Text("Remember Me?"),
                           Checkbox(
+                            key: Key("remember_me"),
                               value: _rememberMe,
                               onChanged: (value) => setState(() {
                                     _rememberMe = value!;
@@ -102,17 +102,18 @@ class LoginPageState extends State<LoginPage> {
               height: 20,
             ),
             LoginButton(
+              key: Key("loginButtonTop"), // Add a unique key
               text1: "Sign In",
               onPressed: () async {
                 final navigator = Navigator.of(context);
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 try {
-                  await _authService.login(
+                  await widget.authService.login(
                       usernameController.text, passwordController.text);
                   // Navigate to the schedule page after successful login
 
                   if (_rememberMe) {
-                    await _authService.saveUserCredentials(
+                    await widget.authService.saveUserCredentials(
                         usernameController.text, passwordController.text);
                   }
                   // Navigate to home screen

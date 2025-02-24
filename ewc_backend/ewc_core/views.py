@@ -1,12 +1,22 @@
 from rest_framework import viewsets, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from .models import UserProfile, StopCollection, Stops, RouteEnvData
 from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, UserSerializer
+
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetView
+from django.shortcuts import render, get_object_or_404, redirect
+
+from .forms import StopsForm
+from .models import Stops
+from django.contrib.auth.decorators import login_required, user_passes_test
+
 
 
 from rest_framework.decorators import api_view
@@ -29,6 +39,9 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
     queryset = RouteEnvData.objects.all()
     serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
+
+    def get_route_env_data(self, request):
+        return Response({"message"})
 
 # Waste Prediction ViewSet
 class StopsViewSet(viewsets.ModelViewSet):
@@ -59,3 +72,54 @@ class CheckEmailView(APIView):
         # Return JSON response indicating whether the email exists
         return Response({'exists': email_exists})
     
+def is_staff_user(user):
+    return user.is_staff
+# python manage.py createsuperuser
+
+@login_required
+@user_passes_test(is_staff_user)
+def stops_list_view(request):
+    """Admin/staff only: View that displays a list of Stops."""
+    stops = Stops.objects.all()
+    return render(request, 'stops/stops_list.html', {'stops': stops})
+
+@login_required
+@user_passes_test(is_staff_user)
+def stops_create_view(request):
+    """Admin/staff only: create a new Stops record."""
+    if request.method == 'POST':
+        form = StopsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('stops_list')
+    else:
+        form = StopsForm()
+    return render(request, 'stops/stops_form.html', {'form': form})
+
+@login_required
+@user_passes_test(is_staff_user)
+def stops_delete_view(request, pk):
+    """Admin/staff only: delete an existing Stop."""
+    stop_obj = get_object_or_404(Stops, pk=pk)
+
+    if request.method == 'POST':
+        # deletion logic
+        stop_obj.delete()
+        return redirect('stops_list')
+
+    # For GET requests: users may see ‘Are you sure you want to delete?’ confirmation page
+    return render(request, 'stops/stops_confirm_delete.html', {'stop': stop_obj})
+
+@login_required
+@user_passes_test(is_staff_user)
+def stops_edit_view(request, pk):
+    """Admin/staff only: edit an existing Stops record."""
+    stop_obj = get_object_or_404(Stops, pk=pk)
+    if request.method == 'POST':
+        form = StopsForm(request.POST, instance=stop_obj)
+        if form.is_valid():
+            form.save()
+            return redirect('stops_list')
+    else:
+        form = StopsForm(instance=stop_obj)
+    return render(request, 'stops/stops_form.html', {'form': form, 'stop': stop_obj})
