@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -8,8 +9,20 @@ class RouteService {
   final OpenRouteService client;
   final stopsService = StopsService();
 
-  //Constructor for initialization of the OpenRouteService client with an API key 
-  RouteService(String apiKey) : client = OpenRouteService(apiKey: apiKey);
+  RouteService._(this.client);
+
+  // Static constructor to instantiate using API key asynchronously
+  static Future<RouteService> create() async {
+    // Attempt to load the .env file
+    await dotenv.load(fileName: '.env');
+
+    // Check if the API key exists in .env; show an error message if not
+    final apiKey = dotenv.env['API_KEY'];
+    if (apiKey == null || apiKey.isEmpty) {
+      throw Exception("API key missing in .env file.");
+    }
+    return RouteService._(OpenRouteService(apiKey: apiKey));
+  }
 
   // Helper method to validate latitude values
   bool _isValidLatitude(double latitude) {
