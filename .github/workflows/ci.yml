@@ -37,7 +37,9 @@ jobs:
           flutter analyze
           flutter test --coverage
           genhtml coverage/lcov.info -o coverage/html
-
+          ls -l coverage/html  # Debug the HTML directory
+          pwd  # Print the working directory
+  
       - name: Upload Coverage HTML Report
         uses: actions/upload-artifact@v4
         with:
