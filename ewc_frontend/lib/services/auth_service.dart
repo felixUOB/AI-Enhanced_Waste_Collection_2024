@@ -167,6 +167,42 @@ class AuthService {
     return response;
   }
 
+  // Method to make an authenticated post request
+  Future<http.Response> makeAuthenticatedPostRequest(String endpoint, Map<String, dynamic>? body) async {
+    String? accessToken = await authStorage.read(key: 'accessToken');
+
+    final response = await http.post(
+      Uri.parse('$apiUrl/$endpoint'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+      body: body != null ? jsonEncode(body) : null
+    );
+
+    if (response.statusCode == 401) {
+      // If the token is expired, attempt to refresh it
+      await refreshAccessToken();
+
+      // Retry the request with the new token
+      String? newAccessToken = await authStorage.read(key: 'accessToken');
+      if (newAccessToken != null) {
+        return await http.post(
+          Uri.parse('$apiUrl/$endpoint'),
+          headers: {
+            'Authorization': 'Bearer $newAccessToken',
+            'Content-Type': 'application/json',
+          },
+          body: body != null ? jsonEncode(body) : null
+        );
+      } else {
+        throw Exception('Failed to obtain new access token');
+      }
+    }
+
+    return response;
+  }
+
   // Add registration method
   Future<void> register({
     required String username,

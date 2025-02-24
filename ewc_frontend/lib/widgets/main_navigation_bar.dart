@@ -1,3 +1,4 @@
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
@@ -20,6 +21,7 @@ class _NavigationBarState extends State<MainNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
+
     // titles for each tab
     final List<String> appBarTitles = [
       'Journey Statistics',
@@ -37,39 +39,45 @@ class _NavigationBarState extends State<MainNavigationBar> {
         ),
       ),
       // Set the body of the scaffold to be the selected screen
-      body: ChangeNotifierProvider(
-          create: (context) => LocationProvider(),
-          child: IndexedStack(
-            index: currentPageIndex,
-            children: [
-              MetricsPage(
-                key: ValueKey("metricsPage"),
+      body: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => LocationProvider()),
+          ChangeNotifierProvider(create: (context) => StopsProvider()),
+        ],
+        child: IndexedStack(
+          index: currentPageIndex,
+          children: [
+            MetricsPage(
+              key: ValueKey("metricsPage"),
+            ),
+            !widget.testing
+            ? MapPage(
+              key: ValueKey("mapPage"),
+            )
+            : Container(
+              key: ValueKey("mapPageReplacement"),
+              color: Colors.green,
+              child: Center(
+                child: Text("TESTING - MAP DISABLED"),
               ),
-              !widget.testing
-                  ? MapPage(
-                      key: ValueKey("mapPage"),
-                    )
-                  : Container(
-                      key: ValueKey("mapPageReplacement"),
-                      color: Colors.green,
-                      child: Center(
-                        child: Text("TESTING - MAP DISABLED"),
-                      ),
-                    ),
-              !widget.testing
-                  ? Schedule(
-                      key: ValueKey("schedulePage"),
-                    )
-                  : Container(
-                      key: ValueKey("schedulePageReplacement"),
-                      color: Colors.green,
-                      child: Center(
-                        child: Text("TESTING - SCHEDULE DISABLED"),
-                      ),
-                    ),
-              SettingPage(key: ValueKey("settingPage"))
-            ],
-          )),
+            ),
+            !widget.testing
+            ? Schedule(
+              key: ValueKey("schedulePage"),
+            )
+            : Container(
+              key: ValueKey("schedulePageReplacement"),
+              color: Colors.green,
+              child: Center(
+                child: Text("TESTING - SCHEDULE DISABLED"),
+              ),
+            ),
+            SettingPage(
+              key : ValueKey("settingPage")
+            )
+          ],
+        )
+      ),
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {
             // This function is ran when the user clicks a tab on the navigation bar

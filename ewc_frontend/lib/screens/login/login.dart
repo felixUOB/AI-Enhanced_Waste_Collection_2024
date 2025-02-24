@@ -7,6 +7,7 @@ import 'package:ewc/widgets/theme_switch.dart';
 import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
+import 'package:ewc/widgets/password_textfield.dart';
 
 // LoginPage is the screen where users can log in to the app
 class LoginPage extends StatefulWidget {
@@ -60,7 +61,6 @@ class LoginPageState extends State<LoginPage> {
             LoginTextfield(
               controller: usernameController,
               hintText: "Username",
-              obscured: false,
               key: Key("usernameField"),
             ),
             const SizedBox(
@@ -68,10 +68,9 @@ class LoginPageState extends State<LoginPage> {
             ),
 
             //-------------PASSWORD TXT-FIELD----------------------
-            LoginTextfield(
+            PasswordTextfield(
               controller: passwordController,
               hintText: "Password",
-              obscured: true,
               key: Key("passwordField"),
             ),
 

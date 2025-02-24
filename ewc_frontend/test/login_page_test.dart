@@ -4,6 +4,7 @@ import 'package:ewc/services/auth_service.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
+import 'package:ewc/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
@@ -30,7 +31,6 @@ void main() {
             body: LoginTextfield(
               controller: controller,
               hintText: 'Email',
-              obscured: false,
               key: Key("emailField"),
             ),
           ),
@@ -50,7 +50,8 @@ void main() {
       expect(borderSide.color, Colors.black);
     });
 
-    testWidgets('LoginTextField displays hint and obscures text correctly',
+    // Test to check if the LoginTextField displays hint text correctly
+    testWidgets('LoginTextField displays hint text correctly',
         (WidgetTester tester) async {
       final controller = TextEditingController();
 
@@ -60,7 +61,6 @@ void main() {
             body: LoginTextfield(
               controller: controller,
               hintText: 'Email',
-              obscured: true,
               key: Key("emailField"),
             ),
           ),
@@ -69,12 +69,47 @@ void main() {
 
       // Check if the hint text is displayed
       expect(find.text('Email'), findsOneWidget);
-
-      // Check if the text field is initially obscured
-      final textField = tester.widget<TextField>(find.byType(TextField));
-      expect(textField.obscureText, isTrue);
     });
 
+    // Test to check if the PasswordTextfield displays hint and obscures text correctly
+    testWidgets('PasswordTextfield displays hint and obscures text correctly',
+        (WidgetTester tester) async {
+      final controller = TextEditingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PasswordTextfield(
+              controller: controller,
+              hintText: 'Password',
+              key: Key("passwordField"),
+            ),
+          ),
+        ),
+      );
+
+      // Check if the hint text is displayed
+      expect(find.text('Password'), findsOneWidget);
+
+      // Check if the text field is initially obscured
+      var textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.obscureText, isTrue);
+
+      // Check if show password button correctly toggles obscuring text
+      await tester.tap(find.byType(IconButton)); // Simulates tapping show password button
+      await tester.pump();
+
+      textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.obscureText, isFalse); // Assure text is now not obscured
+
+      await tester.tap(find.byType(IconButton)); // Simulates tapping show password button
+      await tester.pump();
+
+      textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.obscureText, isTrue); // Assure text is obscured again
+    });
+
+    // Test to check if the Forgot Password button routes to email reset page
     testWidgets("Forgot Password button routes to email reset page",
         (WidgetTester tester) async {
       // Mock the URL launcher behavior
