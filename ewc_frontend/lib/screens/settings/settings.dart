@@ -1,3 +1,4 @@
+import 'package:ewc/service_locator.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ewc/main.dart';
@@ -13,10 +14,9 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  final AuthService authService = AuthService();
 
   Future<void> _logout() async {
-    await authService.clearCredentials();
+    await getIt<AuthService>().clearCredentials();
     if (!mounted) return;
     Navigator.pushAndRemoveUntil(
       context,
