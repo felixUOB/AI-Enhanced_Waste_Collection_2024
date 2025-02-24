@@ -26,6 +26,10 @@ jobs:
         env:
           api_key: ${{ secrets.API_KEY }}
 
+      - name: Install lcov
+        run: |
+          sudo apt-get update && sudo apt-get install -y lcov
+
       - name: Static Analysis & Unit Tests (Flutter)
         working-directory: "./ewc_frontend"
         run: |
