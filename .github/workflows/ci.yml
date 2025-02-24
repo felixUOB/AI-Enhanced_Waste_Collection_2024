@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: flutter-coverage-html
-          path: coverage/html/index.html
+          path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/coverage/html
 
 
   django_test:
