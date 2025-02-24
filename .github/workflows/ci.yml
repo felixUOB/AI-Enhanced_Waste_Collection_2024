@@ -31,7 +31,15 @@ jobs:
         run: |
           flutter pub get
           flutter analyze
-          flutter test
+          flutter test --coverage
+          genhtml coverage/lcov.info -o coverage/html
+
+      - name: Upload Coverage HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-coverage-html
+          path: coverage/html
+
 
   django_test:
     name: Run Django Tests & Analyze Coverage
