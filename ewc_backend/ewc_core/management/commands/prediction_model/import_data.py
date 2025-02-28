@@ -3,7 +3,7 @@ import os
 import io
 from django.conf import settings
 from django.http import HttpResponse
-from ewc_core.models import RouteEnvData, UserProfile
+from ewc_core.models import RouteEnvData, UserProfile, Stops
 from ewc_core.models import StopCollection
 
 # this file imports the data from the database and saves them as csv files
@@ -52,12 +52,12 @@ def export_routeenvdata_csv () :
         return None
 
 #Exporting stop collection data
-def export_stopdata_csv() :
+def export_stopdata_csv(stopid) :
     try:
         file_path = generate_csv(
             filename="stopdata.csv",
             headers=["Date","Weight Collected"],
-            queryset=StopCollection.objects.all(),
+            queryset=StopCollection.objects.all().filter(stop_id = stopid),
             data_extractor=lambda stopdata :
                 [
                     stopdata.date,
@@ -88,7 +88,13 @@ def export_userdata_csv (request) :
     except Exception as e:
         print(f"Error exporting User Profile Data {e}")
         return None
+    
+# get the maximum amount of weight that can be stored at each stop
+def get_threshold(stopid):
+    query = Stops.objects.get(stop_id=3)
+    max_weight = query.max_weight
+    return max_weight
 
-def generate_data():
-    return export_stopdata_csv()
+def generate_data(stopid):
+    return export_stopdata_csv(3)
     
