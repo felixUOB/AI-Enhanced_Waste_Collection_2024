@@ -1,11 +1,36 @@
 # Python
+import csv
+import os
+from django.conf import settings
 from ewc_core.models import RouteEnvData
 from ewc_core.models import StopCollection
 from ewc_core.models import UserProfile
 from django.http import HttpResponse
-from ewc_core.prediction_model.data import generate_csv
+# from ewc_core.prediction_model.data import generate_csv
 
 #csv files creation
+def generate_csv(filename, headers, queryset, data_extractor):
+    # Define the directory path
+    dir_path = os.path.join(settings.BASE_DIR, "ewc_core", "prediction_model")
+
+    # Ensure the directory exists
+    os.makedirs(dir_path, exist_ok=True)
+
+    # Define full file path
+    file_path = os.path.join(dir_path, filename)
+
+    # Write CSV file to the directory
+    with open(file_path, mode="w", newline="", encoding="utf-8") as file:
+        writer = csv.writer(file)
+        
+        # Write headers
+        writer.writerow(headers)
+        
+        # Write data rows
+        for query in queryset:
+            writer.writerow(data_extractor(query))
+
+    return file_path 
 
 #Exporting route environment data
 def export_routeenvdata_csv () :
@@ -96,5 +121,4 @@ def generate_csv_files(request) :
     print("Files Generated!!")
     return HttpResponse("DONE")
 
-
-# TODO model starts here
+export_stopdata_csv()

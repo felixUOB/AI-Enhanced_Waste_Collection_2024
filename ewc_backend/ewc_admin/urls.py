@@ -26,7 +26,7 @@ from django.contrib.auth import views as auth_views
 # from ewc_core.ml_model.data import export_routeenvdata_csv
 # from ewc_core.ml_model.data import export_stopdata_csv
 # from ewc_core.ml_model.data import export_userdata_csv
-from ewc_core.ml_model.model import generate_csv_files
+# from ewc_core.ml_model.model import generate_csv_files
 
 
 
@@ -44,7 +44,7 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
-    path('api/runmodel', generate_csv_files ,name='runmodel'), #Run Machine Learning Model
+    # path('api/runmodel', generate_csv_files ,name='runmodel'), #Run Machine Learning Model
     
 # -----------PASSWORD RESET ENDPOINTS--------------
     
