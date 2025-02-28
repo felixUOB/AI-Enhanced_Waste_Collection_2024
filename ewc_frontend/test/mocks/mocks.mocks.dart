@@ -7,14 +7,14 @@ import 'dart:async' as _i10;
 
 import 'package:ewc/models/stop_model.dart' as _i12;
 import 'package:ewc/screens/metrics/route_data.dart' as _i14;
-import 'package:ewc/services/auth_service/auth_service.dart' as _i7;
+import 'package:ewc/services/auth_service/auth_service.dart' as _i8;
 import 'package:ewc/services/auth_service/encryption_service.dart' as _i2;
 import 'package:ewc/services/metrics_service.dart' as _i13;
 import 'package:ewc/services/route_service.dart' as _i11;
 import 'package:ewc/services/stops_service.dart' as _i6;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i3;
 import 'package:http/http.dart' as _i4;
-import 'package:latlong2/latlong.dart' as _i8;
+import 'package:latlong2/latlong.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i9;
 import 'package:open_route_service/open_route_service.dart' as _i5;
@@ -61,20 +61,15 @@ class _FakeStopsService_4 extends _i1.SmartFake implements _i6.StopsService {
     : super(parent, parentInvocation);
 }
 
-class _FakeAuthService_5 extends _i1.SmartFake implements _i7.AuthService {
-  _FakeAuthService_5(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeLatLng_6 extends _i1.SmartFake implements _i8.LatLng {
-  _FakeLatLng_6(Object parent, Invocation parentInvocation)
+class _FakeLatLng_5 extends _i1.SmartFake implements _i7.LatLng {
+  _FakeLatLng_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AuthService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockAuthService extends _i1.Mock implements _i7.AuthService {
+class MockAuthService extends _i1.Mock implements _i8.AuthService {
   MockAuthService() {
     _i1.throwOnMissingStub(this);
   }
@@ -277,7 +272,7 @@ class MockRouteService extends _i1.Mock implements _i11.RouteService {
           as _i6.StopsService);
 
   @override
-  _i10.Future<List<_i8.LatLng>> getRoute(
+  _i10.Future<List<_i7.LatLng>> getRoute(
     double? startLat,
     double? startLng,
     double? endLat,
@@ -285,22 +280,22 @@ class MockRouteService extends _i1.Mock implements _i11.RouteService {
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getRoute, [startLat, startLng, endLat, endLng]),
-            returnValue: _i10.Future<List<_i8.LatLng>>.value(<_i8.LatLng>[]),
+            returnValue: _i10.Future<List<_i7.LatLng>>.value(<_i7.LatLng>[]),
           )
-          as _i10.Future<List<_i8.LatLng>>);
+          as _i10.Future<List<_i7.LatLng>>);
 
   @override
-  _i10.Future<List<_i8.LatLng>> routePlanning(List<_i12.Stop>? stops) =>
+  _i10.Future<List<_i7.LatLng>> routePlanning(List<_i12.Stop>? stops) =>
       (super.noSuchMethod(
             Invocation.method(#routePlanning, [stops]),
-            returnValue: _i10.Future<List<_i8.LatLng>>.value(<_i8.LatLng>[]),
+            returnValue: _i10.Future<List<_i7.LatLng>>.value(<_i7.LatLng>[]),
           )
-          as _i10.Future<List<_i8.LatLng>>);
+          as _i10.Future<List<_i7.LatLng>>);
 
   @override
   _i10.Future<List<int>> getStopTimes(
-    _i8.LatLng? source,
-    List<_i8.LatLng>? stopLocations,
+    _i7.LatLng? source,
+    List<_i7.LatLng>? stopLocations,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#getStopTimes, [source, stopLocations]),
@@ -318,17 +313,6 @@ class MockStopsService extends _i1.Mock implements _i6.StopsService {
   }
 
   @override
-  _i7.AuthService get authService =>
-      (super.noSuchMethod(
-            Invocation.getter(#authService),
-            returnValue: _FakeAuthService_5(
-              this,
-              Invocation.getter(#authService),
-            ),
-          )
-          as _i7.AuthService);
-
-  @override
   _i10.Future<void> postStopCollection(int? stopID, int? weightCollected) =>
       (super.noSuchMethod(
             Invocation.method(#postStopCollection, [stopID, weightCollected]),
@@ -338,14 +322,14 @@ class MockStopsService extends _i1.Mock implements _i6.StopsService {
           as _i10.Future<void>);
 
   @override
-  _i10.Future<_i8.LatLng> fetchStop(int? stopID) =>
+  _i10.Future<_i7.LatLng> fetchStop(int? stopID) =>
       (super.noSuchMethod(
             Invocation.method(#fetchStop, [stopID]),
-            returnValue: _i10.Future<_i8.LatLng>.value(
-              _FakeLatLng_6(this, Invocation.method(#fetchStop, [stopID])),
+            returnValue: _i10.Future<_i7.LatLng>.value(
+              _FakeLatLng_5(this, Invocation.method(#fetchStop, [stopID])),
             ),
           )
-          as _i10.Future<_i8.LatLng>);
+          as _i10.Future<_i7.LatLng>);
 
   @override
   _i10.Future<List<_i12.Stop>> fetchAllStops() =>
