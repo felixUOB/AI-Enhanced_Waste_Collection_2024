@@ -70,7 +70,7 @@ class RouteService {
   }
 
 
-  Future<List<LatLng>> routePlanning(List<Stop> stops) async {
+  Future<List<LatLng>> routePlanning(LatLng userLocation, List<Stop> stops) async {
     final depot = LatLng(51.4533, -2.6257);
     
     List<VroomJob> jobs = [];
@@ -88,7 +88,7 @@ class RouteService {
 
     VroomVehicle vehicle = VroomVehicle(
       id: 1,
-      start: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      start: ORSCoordinate(latitude: userLocation.latitude, longitude: userLocation.longitude),
       end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
       profile: 'driving-hgv',
     );

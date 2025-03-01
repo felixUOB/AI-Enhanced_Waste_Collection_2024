@@ -61,7 +61,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
-    Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
     Provider.of<LocationProvider>(context, listen: false).addListener(findNearestRoutePoint);
@@ -80,13 +79,16 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-      _routeService = await RouteService.create();
-      await _drawStopsMarker(Colors.blue);
+      await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+      if (mounted) {
+        await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
+        _routeService = await RouteService.create();
+        await _drawStopsMarker(Colors.blue);
 
-      await _fetchOptimizedRoute();
-      //Depot location marker
-      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+        await _fetchOptimizedRoute();
+        //Depot location marker
+        _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+      }
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
@@ -153,11 +155,14 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _fetchOptimizedRoute() async {
     try {
       List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
-      List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
-      setState(() {
-        _routePoints.clear();
-        _routePoints.addAll(optimizedRoute);
-      });
+      LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+      if (location != null) {
+        List<LatLng> optimizedRoute = await _routeService.routePlanning(location, stops);
+        setState(() {
+          _routePoints.clear();
+          _routePoints.addAll(optimizedRoute);
+        });
+      }
     } catch (e) {
       _showErrorDialog("Failed to fetch optimized route: $e");
     }
@@ -268,7 +273,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               // If recentre button pressed recentre map over user location
               // Check if location permissions have been granted.
               double zoom;
-              _journeyActive ? zoom = 16 : zoom = 14;
+              _journeyActive ? zoom = 17 : zoom = 14;
               if (await getLocationPermissions()) {
                 if (context.mounted) {
                   Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
@@ -335,12 +340,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         Provider.of<LocationProvider>(context).latestLocation;
     if (_journeyActive && _automaticRecentre) {
       double bearingBetween = Geolocator.bearingBetween(
-        _routePoints[_closestIndex].latitude,
-        _routePoints[_closestIndex].latitude,
         _routePoints[_closestIndex+1].latitude,
-        _routePoints[_closestIndex+1].latitude
+        _routePoints[_closestIndex+1].longitude,
+        _routePoints[_closestIndex].latitude,
+        _routePoints[_closestIndex].longitude
       );
-      _animatedMapController.animateTo(dest: location, zoom: 16, rotation: bearingBetween);
+      _animatedMapController.animateTo(dest: location, zoom: 17, rotation: 180 - bearingBetween);
     }
 
     return FlutterMap(
@@ -387,6 +392,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           _startMileage = mileage;
           _startMpg = mpg;
           _journeyActive = true;
+          _automaticRecentre = true;
         });
         debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
       });
