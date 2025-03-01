@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -163,5 +164,45 @@ class RouteService {
       // Rethrow the exception to allow higher-level handlers to manage it
       rethrow;
     }
+  }
+
+  double distanceFromSegment(LatLng location, LatLng startPoint, LatLng endPoint) {
+    // Vector from startPoint to user location
+    LatLng v = LatLng(
+        location.latitude-startPoint.latitude,
+        location.longitude-endPoint.longitude
+    );
+
+    // Vector representing line segment
+    LatLng w = LatLng(
+        endPoint.latitude-startPoint.latitude,
+        endPoint.longitude-startPoint.longitude
+    );
+
+    double dotProduct = w.latitude * v.latitude + w.longitude * v.longitude;
+
+    double routeSegmentLengthSquared =
+        w.latitude * w.latitude +
+            w.longitude * w.longitude;
+
+    double projection = dotProduct / routeSegmentLengthSquared;
+
+    // Clamp projection to ensure it lies on the routeSegment
+    double clampedProjection = projection.clamp(0, 1);
+
+    LatLng projectedPoint = LatLng(
+        startPoint.latitude + clampedProjection * w.latitude,
+        startPoint.longitude + clampedProjection * w.longitude
+    );
+
+    // Return distance from projected point
+    double distance = Geolocator.distanceBetween(
+        location.latitude,
+        location.longitude,
+        projectedPoint.latitude,
+        projectedPoint.longitude
+    );
+
+    return distance;
   }
 }

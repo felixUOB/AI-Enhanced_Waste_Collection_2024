@@ -40,7 +40,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final StopsService _stopsService = StopsService();
 
   int _closestIndex = 0;
-  double _minDistance = 0;
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -421,9 +420,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       return;
     }
 
-    // Find closest point on route by searching from current index and next 5
-    for (int i = _closestIndex; i <
-        min(_routePoints.length-2, _closestIndex + 5); i++) {
+    // Find closest point on route by searching from current index and the 3 either side
+    for (int i = max(0, _closestIndex-3); i <
+        min(_routePoints.length-1, _closestIndex+3); i++) {
 
       double newDistance = Geolocator.distanceBetween(
           location.latitude,
@@ -438,10 +437,19 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       }
     }
 
+    // Now the index variable reflects the index of the closest route point
+    // Must find the closest point on the route to calculate if the driver is lost,
+    // If so, route must be recalculated
+
+    // It is still not determined which segment of the route the driver is closest to,
+    // so calculate the perpendicular distance from the user to the two route segments
+    // either side of _routePoints[index]
+
+    
+
     // Update state to reflect new changes
     setState(() {
       _closestIndex = index;
-      _minDistance = minDistance;
     });
   }
 
