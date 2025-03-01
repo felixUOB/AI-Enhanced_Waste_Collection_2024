@@ -40,6 +40,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final StopsService _stopsService = StopsService();
 
   int _closestIndex = 0;
+  double _bearing = 0;
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -83,8 +84,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
         _routeService = await RouteService.create();
         await _drawStopsMarker(Colors.blue);
-
-        await _fetchOptimizedRoute();
         //Depot location marker
         _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
       }
@@ -338,13 +337,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     LatLng? location =
         Provider.of<LocationProvider>(context).latestLocation;
     if (_journeyActive && _automaticRecentre) {
-      double bearingBetween = Geolocator.bearingBetween(
-        _routePoints[_closestIndex+1].latitude,
-        _routePoints[_closestIndex+1].longitude,
-        _routePoints[_closestIndex].latitude,
-        _routePoints[_closestIndex].longitude
-      );
-      _animatedMapController.animateTo(dest: location, zoom: 17, rotation: 180 - bearingBetween);
+      _animatedMapController.animateTo(dest: location, zoom: 17, rotation: _bearing);
     }
 
     return FlutterMap(
@@ -410,12 +403,17 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
-  void findNearestRoutePoint() {
+  Future<void> findNearestRoutePoint() async {
     double minDistance = double.infinity;
     int index = 0;
     print("Calculating");
 
-    LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+    if (_routePoints.isEmpty) {
+      await _fetchOptimizedRoute();
+    }
+
+    LatLng? location;
+    if (mounted) location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
     if (location == null) {
       return;
     }
@@ -425,10 +423,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         min(_routePoints.length-1, _closestIndex+3); i++) {
 
       double newDistance = Geolocator.distanceBetween(
-          location.latitude,
-          location.longitude,
-          _routePoints[i].latitude,
-          _routePoints[i].longitude
+        location.latitude,
+        location.longitude,
+        _routePoints[i].latitude,
+        _routePoints[i].longitude
       );
 
       if (newDistance < minDistance) {
@@ -445,11 +443,52 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     // so calculate the perpendicular distance from the user to the two route segments
     // either side of _routePoints[index]
 
-    
+    double distance1 = double.infinity;
+    double distance2 = double.infinity;
+
+    if (index > 0) {
+      distance1 = _routeService.distanceFromSegment(
+        location, _routePoints[index-1], _routePoints[index]);
+    }
+    if (index < _routePoints.length-1) {
+      distance2 = _routeService.distanceFromSegment(
+        location, _routePoints[index], _routePoints[index+1]);
+    }
+
+    double bearing, distance;
+
+    // Take minimum distance between the two as distance from the line
+    if (distance1 < distance2) {
+      distance = distance1;
+      bearing = 180 - Geolocator.bearingBetween(
+        _routePoints[_closestIndex].latitude,
+        _routePoints[_closestIndex].longitude,
+        _routePoints[_closestIndex-1].latitude,
+        _routePoints[_closestIndex-1].longitude
+      );
+    } else {
+      distance = distance2;
+      bearing = 180 - Geolocator.bearingBetween(
+        _routePoints[_closestIndex+1].latitude,
+        _routePoints[_closestIndex+1].longitude,
+        _routePoints[_closestIndex].latitude,
+        _routePoints[_closestIndex].longitude
+      );
+    }
+
+    // _rerouteThreshold signifies how far the driver has to have gone off the route before
+    // the route is recalculated
+    double rerouteThreshold = _journeyActive ? 20 : 100;
+
+    // Check if user is far enough off route to trigger calculating a new route
+    if (distance > rerouteThreshold) {
+      // Recalculate route as driver has gone off route
+    }
 
     // Update state to reflect new changes
     setState(() {
       _closestIndex = index;
+      _bearing = bearing;
     });
   }
 
