@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
@@ -38,6 +39,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   late RouteService _routeService;
   final StopsService _stopsService = StopsService();
 
+  int _closestIndex = 0;
+  double _minDistance = 0;
+
   // Location variables
   late AnimatedMapController _animatedMapController;
   late StreamSubscription<ServiceStatus> _locationStatusStream;
@@ -60,6 +64,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
+    Provider.of<LocationProvider>(context, listen: false).addListener(findNearestRoutePoint);
   }
 
   void _initialiseLocationStatusStream() async {
@@ -326,8 +331,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
-    LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
-    if (_journeyActive && _automaticRecentre) _animatedMapController.animateTo(dest: location, zoom: 16);
+    LatLng? location =
+        Provider.of<LocationProvider>(context).latestLocation;
+    if (_journeyActive && _automaticRecentre) {
+      double bearingBetween = Geolocator.bearingBetween(
+        _routePoints[_closestIndex].latitude,
+        _routePoints[_closestIndex].latitude,
+        _routePoints[_closestIndex+1].latitude,
+        _routePoints[_closestIndex+1].latitude
+      );
+      _animatedMapController.animateTo(dest: location, zoom: 16, rotation: bearingBetween);
+    }
+
     return FlutterMap(
       mapController: _animatedMapController.mapController,
       options: MapOptions(
@@ -390,7 +405,39 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
+  void findNearestRoutePoint() {
+    double minDistance = double.infinity;
+    int index = 0;
+    print("Calculating");
 
+    LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+    if (location == null) {
+      return;
+    }
+
+    // Find closest point on route by searching from current index and next 5
+    for (int i = _closestIndex; i <
+        min(_routePoints.length-2, _closestIndex + 5); i++) {
+
+      double newDistance = Geolocator.distanceBetween(
+          location.latitude,
+          location.longitude,
+          _routePoints[i].latitude,
+          _routePoints[i].longitude
+      );
+
+      if (newDistance < minDistance) {
+        minDistance = newDistance;
+        index = i;
+      }
+    }
+
+    // Update state to reflect new changes
+    setState(() {
+      _closestIndex = index;
+      _minDistance = minDistance;
+    });
+  }
 
 
   @override
