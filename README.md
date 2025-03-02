@@ -9,14 +9,15 @@
 - [Tools and Resources](#tools-and-Resources)
 - [**Getting Started**](#getting-started)
   - [Prerequisites](#prerequisites)
-  - [App](#app)
-  - [Backend](#backend)
+  - [App (Flutter)](#app-flutter)
+  - [Backend (Django)](#backend-django)
 - [Kanban Chart](#kanban-Chart)
 - [Gantte Chart](#gantte-Chart)
 - [User Stories](#user-stories)
 - [Team Members](#team-Members)
 - [Supporting Mentor](#supporting-Mentor)
 - [Architecture Diagram ](#architecture-Diagram)
+- [Database Diagram](#database-diagram)
 
 
 ## **Project proposal**
@@ -122,46 +123,123 @@ To build this application, you’ll need the following tools:
 - Flutter SDK [Offical Documentation](https://docs.flutter.dev/get-started/install)
 - Python 3.12 [Offical Documentation](https://wiki.python.org/moin/BeginnersGuide/Download)
 
-First, clone the repository using `https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git` or `git@github.com:spe-uob/2024-AIEnhancedWasteCollection.git`.
+First, clone the repository using:
+```bash
+https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
+```
+
 
 ### App
-- Navigate to the Flutter root directory: `cd ewc-app`
-- Launch an iOS or Android emulator.
+- Navigate to the Flutter root directory: `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
 - Install all the necessary dependencies: `flutter pub get`
-- Start the application: `flutter run'
+- Launch an iOS or Android emulator.
+- Start the application: `flutter run` or, to specify a platform: `flutter run -d <DEVICE_ID>`
 
 ### Backend
-- Move to the ewc directory by running `cd ewc`
-- Install all required dependencies using `pip install -r requirements.txt`
-- Make sure that you have a .env file containing all necessary secrets for the app to function properly. This file should be located in the ewc directory. The following secrets are expected to be included:
+- Move to the ewc directory by running `cd 2024-AIEnhancedWasteCollection/ewc_backend`
+- Install Python dependencies:
+  ```bash
+  pip install --upgrade pip
+  pip install -r requirements.txt
+  ```
+- Configure environment variables in .env (which should be located under ewc_backend/.env).
 
-- DJANGO_SECRET_KEY
-- DATABASE_USERNAME
-- DATABASE_PASSWORD
-- DATABASE_HOST
-- DATABASE_PORT
+  - DJANGO_SECRET_KEY
+  - DATABASE_USERNAME
+  - DATABASE_PASSWORD
+  - DATABASE_HOST
+  - DATABASE_PORT
 
-  Example `.env` file:
+  
+Example `.env` file:
 
-  ```python
-  DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
-  DATABASE_USERNAME = "YOUR_DJANGO_SECRET_KEY"
-  DATABASE_PASSWORD = "YOUR_DJANGO_SECRET_KEY"
-  DATABASE_HOST = "YOUR_DJANGO_SECRET_KEY"
-  DATABASE_PORT = "YOUR_DJANGO_SECRET_KEY"
+    ```python
+    DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
+    DATABASE_USERNAME = "YOUR_DATABASE_USERNAME"
+    DATABASE_PASSWORD = "YOUR_DATABASE_PASSWORD"
+    DATABASE_HOST = "YOUR_DATABASE_HOST"
+    DATABASE_PORT = "YOUR_DATABASE_PORT"
+    ```
+
+- Run Migrations and Start the Django server:
+  ```bash 
+  python manage.py migrate
+  python manage.py runserver
   ```
 
-- To launch the local development server, execute: `python manage.py runserver`
-
 ### Flutter APIs
-Navigate to the root directory of the Flutter project `cd ewc-app/ewc`
+Navigate to the root directory of the Flutter project `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
 
-- Please make sure that you have a `.env` file and add the necessary enviroment variables to it in a key-value format.
+- Inside ewc_frontend/, you may store environment variables in a .env file for the Flutter app (e.g., an API_KEY for route calculation).
 
-    Example `.env` file: 
 
-    `API_KEY = "YOUR_ORS_SECRET_KEY"`
- 
+- Example `.env` file: 
+
+  ```bash
+  API_KEY = "YOUR_ORS_SECRET_KEY
+  ```
+  
+## **Project Structure**
+
+```bash
+2024-AIEnhancedWasteCollection
+├── .github/                       # GitHub Actions, Issue/PR Templates, etc.
+├── docs/                          # Documentation or design docs
+├── ewc_backend/                   # Django-based backend
+│   ├── ewc_admin/                 # Django project-level config
+│   │   ├── __init__.py
+│   │   ├── asgi.py                # ASGI entry point
+│   │   ├── settings.py            # Django settings (DB config, installed apps)
+│   │   ├── urls.py                # Root URL routes
+│   │   └── wsgi.py                # WSGI entry point
+│   ├── ewc_core/                  # Core Django app containing actual logic
+│   │   ├── migrations/            # DB migration files (auto-generated)
+│   │   ├── ml_model/              # ML-related code (Prophet, model training)
+│   │   ├── tests/                 # Django unit tests
+│   │   ├── admin.py               # Django admin site configurations
+│   │   ├── apps.py                # Django app config
+│   │   ├── forms.py               # Django forms
+│   │   ├── models.py              # Django models (UserProfile, Stops, etc.)
+│   │   ├── serializers.py         # DRF serializers
+│   │   └── views.py               # DRF views / endpoints
+│   ├── templates/                 # Django HTML templates
+│   ├── .dockerignore
+│   ├── .gitignore
+│   ├── docker-compose.yml         # Docker Compose for the backend
+│   ├── dockerfile                 # Docker build for the backend
+│   ├── manage.py                  # Django CLI entry point
+│   └── requirements.txt           # Python dependencies
+├── ewc_frontend/                  # Flutter-based mobile frontend
+│   ├── android/                   # Android-specific config (Gradle, Manifest)
+│   ├── assets/                    # Images, logos, etc.
+│   ├── build/                     # Generated build files
+│   ├── fonts/                     # Custom font files
+│   ├── ios/                       # iOS-specific config (Info.plist, Xcode)
+│   ├── lib/                       # Main Flutter/Dart source
+│   │   ├── models/                # Data models (Dart side)
+│   │   ├── notifiers/             # ChangeNotifier classes
+│   │   ├── screens/               # Flutter UI screens (login, register, etc.)
+│   │   ├── services/              # API services, AuthService, etc.
+│   │   ├── theme/                 # App-wide theme settings
+│   │   └── widgets/               # Reusable widgets (buttons, textfields, dialogs)
+│   ├── linux/
+│   ├── macos/
+│   ├── test/                      # Flutter widget/unit tests
+│   ├── web/
+│   ├── windows/
+│   ├── .dockerignore
+│   ├── .gitignore
+│   ├── analysis_options.yaml      # Lint rules
+│   ├── devtools_options.yaml
+│   ├── docker-compose.yml         # Docker Compose for frontend
+│   ├── dockerfile                 # Docker build for the frontend
+│   ├── pubspec.lock               # Locked Flutter package versions
+│   ├── pubspec.yaml               # Flutter dependencies & project config
+│   └── main.dart                  # main entry for the Flutter app
+├── LICENSE
+├── README.md                      # Project readme
+└── ... (others like EWC-ReleaseChecklist.pdf, etc.)
+```
 
 ## **Kanban Chart**
 [Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
