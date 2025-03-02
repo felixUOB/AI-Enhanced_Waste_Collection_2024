@@ -11,7 +11,7 @@
   - [Prerequisites](#prerequisites)
   - [App (Flutter)](#app-flutter)
   - [Backend (Django)](#backend-django)
-- [Project Structure](#Project Structure)
+- [Project Structure](#project-structure)
 - [Kanban Chart](#kanban-Chart)
 - [Gantte Chart](#gantte-Chart)
 - [User Stories](#user-stories)
