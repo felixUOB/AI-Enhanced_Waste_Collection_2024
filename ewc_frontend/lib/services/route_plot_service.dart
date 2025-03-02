@@ -114,11 +114,30 @@ class RouteService {
     final directionsResponse = await client.directionsMultiRouteCoordsPost(
       coordinates: optimizedOrder,
       profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
+      instructions: true,
     );
 
     if (directionsResponse.isEmpty) {
       throw Exception('No route could be found.');
     }
+    final dir = await client.directionsMultiRouteDataPost(
+      coordinates: optimizedOrder,
+      profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
+      instructions: true,
+    );
+
+    // Access geometry & instructions
+    for (var route in dir) {
+      // If route.geometry exists, parse as needed (e.g., polyline decoding).
+      final segments = route.segments;
+      for (var segment in segments) {
+        for (var step in (segment.steps)) {
+          print('Instruction: ${step.instruction}');
+          // Collect instructions into a list if you want to display them in the UI.
+        }
+      }
+    }
+
 
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
     return directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
