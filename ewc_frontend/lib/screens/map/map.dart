@@ -483,6 +483,17 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     // Check if user is far enough off route to trigger calculating a new route
     if (distance > rerouteThreshold) {
       // Recalculate route as driver has gone off route
+      await _fetchOptimizedRoute();
+
+      // As the route has just been fetched, the closest index can be safely
+      // assumed to be 0
+      index = 0;
+      bearing = 180 - Geolocator.bearingBetween(
+        _routePoints[1].latitude,
+        _routePoints[1].longitude,
+        _routePoints[0].latitude,
+        _routePoints[0].longitude
+      );
     }
 
     // Update state to reflect new changes
