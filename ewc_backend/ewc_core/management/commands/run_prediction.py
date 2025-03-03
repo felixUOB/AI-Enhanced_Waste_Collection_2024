@@ -17,5 +17,6 @@ class Command(BaseCommand):
         print(file_path)
         #threshold = get_threshold(stopid)
         threshold = 30
-        run_prediction_model(file_path, threshold)
+        result = run_prediction_model(file_path, threshold)
         self.stdout.write("Waste prediction completed!")
+        # return result

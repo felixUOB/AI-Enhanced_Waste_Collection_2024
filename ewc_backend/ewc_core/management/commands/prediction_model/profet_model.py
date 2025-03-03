@@ -128,7 +128,8 @@ def main(path, threshold):
     while (forecast["yhat"].iloc[counter] < forecast["yhat"].iloc[counter + 1] and forecast["yhat"].iloc[counter] < threshold and counter < len(forecast) + 30 -1):
         counter += 1
     print(forecast["ds"].iloc[counter])
+    return forecast["ds"].iloc[counter]
 
 
 def run_prediction_model(file_path, threshold):
-    main(file_path, threshold)
+    return main(file_path, threshold)
