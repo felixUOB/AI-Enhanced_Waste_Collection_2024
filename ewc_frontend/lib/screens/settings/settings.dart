@@ -1,8 +1,6 @@
 import 'package:ewc/service_locator.dart';
 import 'package:flutter/material.dart';
-
 import 'package:ewc/main.dart';
-import 'package:ewc/screens/login/forgot_password.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 
@@ -134,10 +132,7 @@ class _SettingPageState extends State<SettingPage> {
             iconColor: Colors.deepOrange,
             title: "Reset Password",
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ForgotPassword()),
-              );
+              getIt<AuthService>().launchPasswordReset();
             },
           ),
 
