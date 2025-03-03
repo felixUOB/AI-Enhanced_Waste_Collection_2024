@@ -17,7 +17,6 @@ import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
 import 'package:ewc/widgets/start_journey_dialog.dart';
 import 'package:ewc/widgets/end_journey_dialog.dart';
-
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 
@@ -40,7 +39,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final StopsService _stopsService = StopsService();
 
   int _closestIndex = 0;
+
   double _bearing = 0;
+  bool _lockedNorth = false; // Whether map rotation is locked to the north
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -192,6 +193,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       if (_automaticRecentre) {
         setState(() {
           _automaticRecentre = false;
+        });
+      }
+    }
+    else if (event is MapEventRotateStart) {
+      if (_lockedNorth) {
+        setState(() {
+          _lockedNorth = false;
         });
       }
     }
@@ -349,8 +357,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         initialZoom: 14,
         interactionOptions:
         const InteractionOptions(
-            flags: ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
-            ~InteractiveFlag.rotate // Disable map rotation
+          enableMultiFingerGestureRace: true,
+          flags: ~InteractiveFlag.doubleTapZoom // Disable double tap to zoom
         ),
 
         onMapEvent: _eventManager, // delegates map events to the event manager
@@ -403,6 +411,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
+  // This function finds the nearest point to on the route to the user's location
+  // If the distance to the nearest point > rerouteThreshold then the route is recalculated
+  // It also calculates the correct bearing for the camera
   Future<void> findNearestRoutePoint() async {
     double minDistance = double.infinity;
     int index = 0;
