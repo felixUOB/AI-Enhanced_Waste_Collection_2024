@@ -2,38 +2,36 @@
 
 <div align="center">
 
-[![Django Badge](https://img.shields.io/badge/Django-3.2%2B-brightgreen?style=flat-square&logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![Flutter Badge](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter&logoColor=white)](https://docs.flutter.dev/)
-[![OpenStreetMap Badge](https://img.shields.io/badge/OpenStreetMap-API-7EBC6F?style=flat-square&logo=OpenStreetMap&logoColor=white)](https://www.openstreetmap.org/)
-[![OpenRouteService Badge](https://img.shields.io/badge/OpenRouteService-Routing-FF7600?style=flat-square)](https://openrouteservice.org/)
-[![Prophet Badge](https://img.shields.io/badge/Prophet-TimeSeries-blue?style=flat-square)](https://facebook.github.io/prophet/)
-[![AWS Badge](https://img.shields.io/badge/AWS-EC2%20%7C%20RDS-orange?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![SendGrid Badge](https://img.shields.io/badge/SendGrid-Email-blue?style=flat-square&logo=sendgrid&logoColor=white)](https://sendgrid.com/)
+[![Django Badge](https://img.shields.io/badge/Django-3.2%2B-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Flutter Badge](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://docs.flutter.dev/)
+[![OpenStreetMap Badge](https://img.shields.io/badge/OpenStreetMap-API-7EBC6F?style=for-the-badge&logo=openstreetmap&logoColor=white)](https://www.openstreetmap.org/)
+[![OpenRouteService Badge](https://img.shields.io/badge/OpenRouteService-Routing-FF7600?style=for-the-badge)](https://openrouteservice.org/)
+[![Prophet Badge](https://img.shields.io/badge/Prophet-TimeSeries-4B4453?style=for-the-badge)](https://facebook.github.io/prophet/)
+[![AWS Badge](https://img.shields.io/badge/AWS-EC2%20%7C%20RDS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+[![SendGrid Badge](https://img.shields.io/badge/SendGrid-Email-4285F4?style=for-the-badge&logo=sendgrid&logoColor=white)](https://sendgrid.com/)
+
 
 </div>
 
 ---
 
 ## **Contents**
-- [Project proposal](#project-proposal)
-- [Stakeholders](#stakeholders)
-- [User stories](#user-stories)
-- [Value Proposition](#value-Proposition)
-- [Flow](#flow)
-- [Tools and Resources](#tools-and-Resources)
-- [**Getting Started**](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [App (Flutter)](#app)
-  - [Backend (Django)](#backend)
-  - [User Instructions](#User-Instructions)
-- [Project Structure](#project-structure)
-- [Kanban Chart](#kanban-Chart)
-- [Gantte Chart](#gantte-Chart)
-- [User Stories](#user-stories)
-- [Team Members](#team-Members)
-- [Supporting Mentor](#supporting-Mentor)
-- [Architecture Diagram ](#architecture-Diagram)
-- [Database Diagram](#database-diagram)
+1. [Project proposal](#project-proposal)  
+2. [Stakeholders](#stakeholders)  
+3. [User stories](#user-stories)  
+4. [Value Proposition](#value-proposition)  
+5. [Flow](#flow)  
+6. [Tools and Resources](#tools-and-resources)  
+7. [Getting Started](#getting-started)  
+   - [Prerequisites](#prerequisites)  
+   - [App (Flutter)](#app-flutter)  
+   - [Backend (Django)](#backend-django)  
+   - [User Instructions](#user-instructions)  
+8. [Project Structure](#project-structure)  
+9. [Team Members](#team-members)  
+10. [Architecture Diagram](#architecture-diagram)  
+11. [Database Diagram](#database-diagram)  
+12. [Supporting Mentor](#supporting-mentor)  
 
 ---
 
@@ -147,7 +145,6 @@ This project delivers a holistic solution that not only optimizes waste collecti
 
 ## Getting Started
 
-
 ### Prerequisites
 
 To build this application, you’ll need the following tools:
@@ -164,10 +161,10 @@ git clone https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
 
 ---
 
-### App
-1. Navigate to the Flutter root directory: `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
-2. Install all the necessary dependencies: `flutter pub get`
-3. Configure .env in ewc_frontend/.env for the Flutter app (e.g. API_KEY for route calculations, ):
+### App (Flutter)
+- Navigate to the Flutter root directory: `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
+- Install all the necessary dependencies: `flutter pub get`
+- Configure .env in ewc_frontend/.env for the Flutter app (e.g. API_KEY for route calculations, ):
 
   ```bash
   API_KEY="YOUR_ORS_SECRET_KEY"
@@ -175,13 +172,14 @@ git clone https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
   ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"
   ```
 If you also need anything like SENDGRID_SECRET_KEY or ENCRYPTION_KEY on the front-end side, you can place them here.
-4. Launch an iOS or Android emulator.
-5.	Run the application:`flutter run` 
+
+- Launch an iOS or Android emulator.
+- Run the application:`flutter run` 
 Or specify a device: `flutter run -d <DEVICE_ID>`
 
 ---
 
-### Backend
+### Backend (Django)
 - Move to the ewc directory by running `cd 2024-AIEnhancedWasteCollection/ewc_backend`
 - Install Python dependencies:
   ```bash
