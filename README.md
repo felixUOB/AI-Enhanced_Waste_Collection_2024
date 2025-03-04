@@ -1,5 +1,17 @@
 # 2024-AIEnhancedWasteCollection
 
+<div align="center">
+
+[![Django Badge](https://img.shields.io/badge/Django-3.2%2B-brightgreen?style=flat-square&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Flutter Badge](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter&logoColor=white)](https://docs.flutter.dev/)
+[![OpenStreetMap Badge](https://img.shields.io/badge/OpenStreetMap-API-7EBC6F?style=flat-square&logo=OpenStreetMap&logoColor=white)](https://www.openstreetmap.org/)
+[![OpenRouteService Badge](https://img.shields.io/badge/OpenRouteService-Routing-FF7600?style=flat-square)](https://openrouteservice.org/)
+[![Prophet Badge](https://img.shields.io/badge/Prophet-TimeSeries-blue?style=flat-square)](https://facebook.github.io/prophet/)
+[![AWS Badge](https://img.shields.io/badge/AWS-EC2%20%7C%20RDS-orange?style=flat-square&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+[![SendGrid Badge](https://img.shields.io/badge/SendGrid-Email-blue?style=flat-square&logo=sendgrid&logoColor=white)](https://sendgrid.com/)
+
+</div>
+
 ## **Contents**
 - [Project proposal](#project-proposal)
 - [Stakeholders](#stakeholders)
@@ -9,8 +21,9 @@
 - [Tools and Resources](#tools-and-Resources)
 - [**Getting Started**](#getting-started)
   - [Prerequisites](#prerequisites)
-  - [App (Flutter)](#app-flutter)
-  - [Backend (Django)](#backend-django)
+  - [App (Flutter)](#app)
+  - [Backend (Django)](#backend)
+  - [User Instructions](#User-Instructions)
 - [Project Structure](#project-structure)
 - [Kanban Chart](#kanban-Chart)
 - [Gantte Chart](#gantte-Chart)
@@ -22,21 +35,14 @@
 
 
 ## **Project proposal**
-In the realm of waste management, there is significant need to optimise systems to streamline waste collection as well as assess and reduce the environmental impact. 
-Current solution focus on either the logistics of waste collection or reporting the impact but there is a lack of integration between the two. 
-This project aims to combine these two elements and create a comprehensive AI-driven mobile application, compatible with both Android and iOS platforms for optimizing waste collection and a comprehensive system for quantifying environmental impacts, including carbon footprint reduction and energy savings. This integrated approach will enhance efficiency in waste management and provide valuable insights into environmental performance.
-
-
+In the realm of waste management, there is significant need to optimise systems to streamline waste collection as well as assess and reduce the environmental impact. Current solutions focus on either the logistics of waste collection or reporting the impact, but there is a lack of integration between the two. This project aims to combine these two elements and create a comprehensive AI-driven mobile application, compatible with both Android and iOS platforms, for optimizing waste collection and a comprehensive system for quantifying environmental impacts (including carbon footprint reduction and energy savings). This integrated approach will enhance efficiency in waste management and provide valuable insights into environmental performance.
 
 **The core functionality of this application revolves around:**
 
-**Real-Time Route Optimization:** An AI based algorithms that creates personalised routes per collection truck. The route will update dynamically based on traffic, weather and volume of waste. The aim of the route is to be as efficient as possible in both time, cost, fuel and environmental impact.
-
-**Historical Data Analysis:** Historical data from waste collection, such as volume and locations, is analysed to create predictions of where the most waste will be which will influence routes and frequency of waste collection.
-
-**Generating reports:** In depth analysis of relevant ecological metrics, performed using AI analysis, collated into a comprehensive report. These will involve fuel consumption, time saved, carbon footprint, carbon and energy saving.
-
-**The user interface:** This route will be displayed to specific users via the mobile application on a map. The user will receive notifications and audio prompts enabling hands-free use whilst driving. The report will also be available in the app to certain account types. 
+- **Real-Time Route Optimization**: An AI-based algorithm that creates personalized routes per collection truck, updating dynamically based on traffic, weather, and volume of waste.  
+- **Historical Data Analysis**: Collecting historical data for predictions on waste volume and location, influencing routes and frequency.  
+- **Generating Reports**: Detailed ecological metric analysis, including fuel consumption, time saved, and carbon/energy savings.  
+- **User Interface**: The route is displayed in a mobile app (map-based), with notifications/audio prompts. Relevant reports are accessible to certain user roles.
 
 ## **Stakeholders**
 
@@ -94,17 +100,8 @@ As a **household/business**, I want the **waste collection vehicles to have the 
 This project delivers a holistic solution that not only optimizes waste collection routes through AI but also provides actionable insights into the environmental impact of recycling activities. By integrating scheduling with impact reporting, the system supports better decision-making and enhances sustainability efforts. The unique combination of real-time optimization and detailed impact quantification sets this project apart in the market.
 
 ## **Flow**
-Normal FLow:
-1. Open app
-2. Navigate to the screen showing the route
-3. Follow the map
-4. Receive notification if something changes
-
-Exceptional Flow:
-1. Open app
-2. Navigate to the screen showing the route
-3. Go the wrong way
-4. Get diverted
+- **Normal Flow**: (1) Open app → (2) View route → (3) Follow route → (4) Receive notifications.  
+- **Exceptional Flow**: (1) Open app → (2) View route → (3) Deviate → (4) App re-routes.
 
 ## **Tools and Resources**
 - Development Tools: **Python**, machine learning libraries, and app development
@@ -124,17 +121,28 @@ To build this application, you’ll need the following tools:
 - Flutter SDK [Offical Documentation](https://docs.flutter.dev/get-started/install)
 - Python 3.12 [Offical Documentation](https://wiki.python.org/moin/BeginnersGuide/Download)
 
-First, clone the repository using:
+Clone the repository using:
 ```bash
-https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
+git clone https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
 ```
 
 
 ### App
-- Navigate to the Flutter root directory: `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
-- Install all the necessary dependencies: `flutter pub get`
-- Launch an iOS or Android emulator.
-- Start the application: `flutter run` or, to specify a platform: `flutter run -d <DEVICE_ID>`
+1. Navigate to the Flutter root directory: `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
+2. Install all the necessary dependencies: `flutter pub get`
+3. Configure .env in ewc_frontend/.env for the Flutter app (e.g. API_KEY for route calculations, ):
+
+  ```bash
+  API_KEY="YOUR_ORS_SECRET_KEY"
+  SENDGRID_SECRET_KEY="YOUR_SENDGRID_SECRET_KEY"
+  ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"
+  ```
+If you also need anything like SENDGRID_SECRET_KEY or ENCRYPTION_KEY on the front-end side, you can place them here.
+4. Launch an iOS or Android emulator.
+5.	Run the application:`flutter run` 
+Or specify a device: `flutter run -d <DEVICE_ID>`
+
+      
 
 ### Backend
 - Move to the ewc directory by running `cd 2024-AIEnhancedWasteCollection/ewc_backend`
@@ -154,13 +162,17 @@ https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
   
 Example `.env` file:
 
-    ```python
-    DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
-    DATABASE_USERNAME = "YOUR_DATABASE_USERNAME"
-    DATABASE_PASSWORD = "YOUR_DATABASE_PASSWORD"
-    DATABASE_HOST = "YOUR_DATABASE_HOST"
-    DATABASE_PORT = "YOUR_DATABASE_PORT"
-    ```
+```python
+DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
+POSTGRES_USER = "YOUR_DATABASE_USERNAME"
+POSTGRES_PASSWORD = "YOUR_DATABASE_PASSWORD"
+POSTGRES_HOST = "YOUR_DATABASE_HOST"
+POSTGRES_PORT = "YOUR_DATABASE_PORT"
+
+# Additional ENV for password reset & encryption
+SENDGRID_SECRET_KEY="YOUR_SENDGRID_API_KEY"    # for password reset email
+ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"           # for 'Remember Me' functionality
+```
 
 - Run Migrations and Start the Django server:
   ```bash 
@@ -168,18 +180,33 @@ Example `.env` file:
   python manage.py runserver
   ```
 
-### Flutter APIs
-Navigate to the root directory of the Flutter project `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
-
-- Inside ewc_frontend/, you may store environment variables in a .env file for the Flutter app (e.g., an API_KEY for route calculation).
-
-
-- Example `.env` file: 
-
-  ```bash
-  API_KEY = "YOUR_ORS_SECRET_KEY
-  ```
+You can now access the backend at http://127.0.0.1:8000.
   
+
+
+## **User Instructions**
+
+1.	Registration
+	•	Open the app and tap “Register.”
+	•	Enter your username, password, email, phone number, etc.
+	•	Upon success, the Django backend creates an account in the database.
+
+2. Login
+	•	On the “Sign In” screen, provide your username/password.
+	•	If you check “Remember Me,” your credentials will be encrypted with ENCRYPTION_KEY and stored locally, so you don’t have to re-enter them next time.
+
+3. Password Reset
+	•	From the “Forgot Password?” link, you’ll be taken to a page (or external link) that sends an email via SendGrid using SENDGRID_SECRET_KEY.
+	•	Follow the link in the email to reset your password.
+
+4. Viewing Routes
+	•	Once logged in, you’ll see a map with an optimised waste collection route.
+	•	Tap “Start Journey” to begin the route guidance.
+
+5.	Logging Waste Collection
+	•	In the app, input the waste volume at each stop. This data is sent to the backend for analytics and future route optimisations.
+
+
 ## **Project Structure**
 
 ```bash
@@ -242,12 +269,6 @@ Navigate to the root directory of the Flutter project `cd 2024-AIEnhancedWasteCo
 └── ... (others like EWC-ReleaseChecklist.pdf, etc.)
 ```
 
-## **Kanban Chart**
-[Kanban](https://github.com/orgs/spe-uob/projects/161/views/1)
-
-## **Gantte Chart**
-[Gantte Chart](https://uob-my.sharepoint.com/:x:/g/personal/yj23812_bristol_ac_uk/EfdWH23kdE5HvLSvT2PgaNkBh5i5-XZW6Zx429NoYpNWDw?e=cIhVW5)
-
 ## **Team Members**
 | Members                      | Email                                                 |
 | ---------------------------- | ----------------------------------------------------- |
@@ -263,7 +284,7 @@ Navigate to the root directory of the Flutter project `cd 2024-AIEnhancedWasteCo
 
 ## **Architecture Diagram**
 
-<img width="947" alt="Screenshot 2024-10-09 at 15 10 10" src="https://github.com/user-attachments/assets/47126bfd-216d-4ed0-af83-25c644637679">
+![Screenshot 2025-03-04 at 10.01.37 pm.png](../../../../var/folders/9g/30t_4t0s17v7zw1kw48zbmy00000gn/T/TemporaryItems/NSIRD_screencaptureui_jpAWXf/Screenshot%202025-03-04%20at%2010.01.37%E2%80%AFpm.png)
 
 # **Database Diagram**
 
