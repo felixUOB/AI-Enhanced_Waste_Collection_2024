@@ -12,6 +12,8 @@
 
 </div>
 
+---
+
 ## **Contents**
 - [Project proposal](#project-proposal)
 - [Stakeholders](#stakeholders)
@@ -33,16 +35,18 @@
 - [Architecture Diagram ](#architecture-Diagram)
 - [Database Diagram](#database-diagram)
 
+---
 
-## **Project proposal**
-In the realm of waste management, there is significant need to optimise systems to streamline waste collection as well as assess and reduce the environmental impact. Current solutions focus on either the logistics of waste collection or reporting the impact, but there is a lack of integration between the two. This project aims to combine these two elements and create a comprehensive AI-driven mobile application, compatible with both Android and iOS platforms, for optimizing waste collection and a comprehensive system for quantifying environmental impacts (including carbon footprint reduction and energy savings). This integrated approach will enhance efficiency in waste management and provide valuable insights into environmental performance.
+## Project proposal
+In the realm of waste management, there is a significant need to optimize systems to streamline waste collection and assess/reduce environmental impact. Current solutions often address either logistics **or** impact reporting, but not both cohesively. This project merges these elements into an AI-driven mobile application (Android/iOS) for **route optimization** plus a system to quantify environmental performance (carbon footprint, energy savings, etc.). This integrated approach enhances efficiency in waste management and provides valuable ecological insights.
 
-**The core functionality of this application revolves around:**
+**Core functionality** includes:
+- **Real-Time Route Optimization**: An AI-based algorithm generating personalized routes for each collection truck, adapting to traffic, weather, and waste volume.
+- **Historical Data Analysis**: Collecting data on volume/locations to forecast high-waste areas and plan frequencies.
+- **Comprehensive Reports**: Fuel consumption, time saved, and carbon/energy savings, compiled into a single view.
+- **User Interface**: A mobile map-based route interface, with push notifications and optional audio prompts.
 
-- **Real-Time Route Optimization**: An AI-based algorithm that creates personalized routes per collection truck, updating dynamically based on traffic, weather, and volume of waste.  
-- **Historical Data Analysis**: Collecting historical data for predictions on waste volume and location, influencing routes and frequency.  
-- **Generating Reports**: Detailed ecological metric analysis, including fuel consumption, time saved, and carbon/energy savings.  
-- **User Interface**: The route is displayed in a mobile app (map-based), with notifications/audio prompts. Relevant reports are accessible to certain user roles.
+---
 
 ## **Stakeholders**
 
@@ -51,63 +55,95 @@ In the realm of waste management, there is significant need to optimise systems 
 - Use for the system: RecycleNXT will utilise the application in a province of India, if this proof of concept is successful. RecycleNXT wants an application that provides an optimal that uses less fuel, collects data regarding user's waste collection , and an AI that could predict results based on previous waste collection. 
 
 **Waste collectors:**
-* Involvement: They are the primary users of the app, interacting directly with the mobile applications while on duty collecting waste.
-* Use for the system: The waste collectors will follow the routes shown on the maps in order to collect the waste. They will also be logging information about the amount of waste they are collecting.
+- Involvement: They are the primary users of the app, interacting directly with the mobile applications while on duty collecting waste.
+- Use for the system: The waste collectors will follow the routes shown on the maps in order to collect the waste. They will also be logging information about the amount of waste they are collecting.
 
 **City councils/Municipalities:**
-* Involvement: City councils are responsible for contracting waste management companies, organising collection and employment and training of the waste collectors. 
-* Use of the system: They are likely to want to use the application to plan waste collection in their city to get the most efficient results and save money.
+- Involvement: City councils are responsible for contracting waste management companies, organising collection and employment and training of the waste collectors. 
+- Use of the system: They are likely to want to use the application to plan waste collection in their city to get the most efficient results and save money.
 
 **Waste management companies:**
-* Involvement: Private waste managing companies, similarly to the city council, are responsible for organising collection.
-* Use of the system: They will be using the system to plan their routes and make sure they are being as efficient as possible.
+- Involvement: Private waste managing companies, similarly to the city council, are responsible for organising collection.
+- Use of the system: They will be using the system to plan their routes and make sure they are being as efficient as possible.
 
 **Environmental organisations:**
-* Involvement: Interested in viewing and using the reports to help monitor waste companies and inform decisions and legislations around waste collection and carbon emissions
-* Use of the system: The environmental organisation will access the reports to gather information about the carbon footprint, emissions and carbon and energy saving, which will help them monitor and protect the environment.
+- Involvement: Interested in viewing and using the reports to help monitor waste companies and inform decisions and legislations around waste collection and carbon emissions
+- Use of the system: The environmental organisation will access the reports to gather information about the carbon footprint, emissions and carbon and energy saving, which will help them monitor and protect the environment.
 
 **Households and businesses:**
-* Involvement: Whilst not directly involved they will be generating the waste and putting it out for collection.
-* Use of the system: Whist not directly using the system they will be contributing to the data, patterns and behaviours that allow the prediction algorithms to work. 
+- Involvement: Whilst not directly involved they will be generating the waste and putting it out for collection.
+- Use of the system: Whist not directly using the system they will be contributing to the data, patterns and behaviours that allow the prediction algorithms to work. 
+
+---
 
 ## User stories
-As a **waste collector**, I want to be able to **view the routes easily** so that I can **follow them and collect the waste**.
+As a **waste collector**, I want to be able to *view the routes easily* so that I can *follow them and collect the waste*.
 
-As a **waste collector,** I want to be able to **log data about waste volume** so that I can **help build a database to aid the predictions**.
+As a **waste collector,** I want to be able to *log data about waste volume* so that I can *help build a database to aid the predictions*.
 
-As a **city council/municipal**, I want to be able to **enter the area for collection/collection points and get the routes** so that my **employees can follow them and all the waste is collected.**
+As a **city council/municipal**, I want to be able to *enter the area for collection/collection points and get the routes* so that my *employees can follow them and all the waste is collected.*
 
-As a **city council/municipal/waste management company**, I want to be able to have the **most efficient route increase in terms of efficiency and reduction of carbon footprint**, so that we **save money and time**.
+As a **city council/municipal/waste management company**, I want to be able to have the *most efficient route increase in terms of efficiency and reduction of carbon footprint*, so that we *save money and time*.
 
-As a **city council/municipal/waste management company**, I want to **avoid the areas of most traffic**, so that we **reduce congestion in the busy areas**.
+As a **city council/municipal/waste management company**, I want to *avoid the areas of most traffic*, so that we *reduce congestion in the busy areas*.
 
-As a **city council/municipal/waste management company**, I want to be able to **see the environmental report**, so that we can **see if we are making a positive impact**.
+As a **city council/municipal/waste management company**, I want to be able to *see the environmental report*, so that we can *see if we are making a positive impact*.
 
-As an **environmental organization**, I want to be able to **see the reports on environment impacts**, so I can **view the data and use it in my own decisions**.
+As an **environmental organization**, I want to be able to *see the reports on environment impacts*, so I can *view the data and use it in my own decisions*.
 
-As an **environmental organization**, I want to be able to **see that the routes are reducing the amount of carbon and emissions via the report**, so I can be **sure the company is helping to protect the environment**.
+As an **environmental organization**, I want to be able to *see that the routes are reducing the amount of carbon and emissions via the report*, so I can be *sure the company is helping to protect the environment*.
 
-As a **system manager**, I want **well documented and modular code**, so that I can **install and maintain the code easily**.
+As a **system manager**, I want *well documented and modular code*, so that I can *install and maintain the code easily*.
 
-As a **legislator**, I want **secure code which is compliant with data protection**, so that **data is being handled correctly**.
+As a **legislator**, I want *secure code which is compliant with data protection*, so that *data is being handled correctly*.
 
-As a **household/business**, I want an **appropriate frequency of waste collection** so that the **bins are not overflowing**.
+As a **household/business**, I want an *appropriate frequency of waste collection* so that the *bins are not overflowing*.
 
-As a **household/business**, I want the **waste collection vehicles to have the most efficient routes**, so that they are **off the roads as soon as possible and not contributing to congestion**. 
+As a **household/business**, I want the *waste collection vehicles to have the most efficient routes*, so that they are *off the roads as soon as possible and not contributing to congestion*. 
 
+---
 
 ## **Value Proposition**
 This project delivers a holistic solution that not only optimizes waste collection routes through AI but also provides actionable insights into the environmental impact of recycling activities. By integrating scheduling with impact reporting, the system supports better decision-making and enhances sustainability efforts. The unique combination of real-time optimization and detailed impact quantification sets this project apart in the market.
+
+---
 
 ## **Flow**
 - **Normal Flow**: (1) Open app → (2) View route → (3) Follow route → (4) Receive notifications.  
 - **Exceptional Flow**: (1) Open app → (2) View route → (3) Deviate → (4) App re-routes.
 
+---
+
 ## **Tools and Resources**
-- Development Tools: **Python**, machine learning libraries, and app development
-frameworks.
-- Infrastructure: **Azure VM** for hosting and computation.
-- Collaboration and Documentation: **GitHub** for version control and project management.
+
+- **Python 3.12**  
+  Used for server-side logic, machine learning tasks, and Django-based backend.
+
+- **Django (3.2+)**  
+  Provides the main backend framework, REST API endpoints, and admin interface.
+
+- **Flutter (3.x)**  
+  Drives the cross-platform mobile frontend (Android/iOS) for route display and data input.
+
+- **Docker & Docker Compose**  
+  Used to containerize both the Django backend (`ewc_backend`) and the Flutter frontend (`ewc_frontend`) for easy deployment and consistent environments.
+
+- **AWS EC2/RDS**  
+  Cloud hosting for production environment; can host the Django server and database.
+
+- **OpenStreetMap & OpenRouteService**  
+  Provides map data and routing APIs for calculating optimized routes.
+
+- **Prophet**  
+  Used in the backend for time-series predictions on waste generation or other metrics.
+
+- **SendGrid**  
+  Handles password-reset emails and other email notifications.
+
+- **GitHub**  
+  Version control, pull requests, continuous integration (via GitHub Actions), and project management.
+
+---
 
 ## Getting Started
 
@@ -284,9 +320,10 @@ You can now access the backend at http://127.0.0.1:8000.
 
 ## **Architecture Diagram**
 
-![Screenshot 2025-03-04 at 10.01.37 pm.png](../../../../var/folders/9g/30t_4t0s17v7zw1kw48zbmy00000gn/T/TemporaryItems/NSIRD_screencaptureui_jpAWXf/Screenshot%202025-03-04%20at%2010.01.37%E2%80%AFpm.png)
+<div align="center">
+  <img src="docs/images/ArchitectureDiagram.png" alt="Architecture Diagram" width="600" />
+</div>
 
 # **Database Diagram**
 
 <img width="900" alt="image" src="https://github.com/user-attachments/assets/063dae5e-0fce-4dff-956f-77c55aae6129" />
-
