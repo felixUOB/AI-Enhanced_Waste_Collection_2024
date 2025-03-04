@@ -31,6 +31,10 @@ ALLOWED_HOSTS = ['*']
 
 # Application definition
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'ewc_core',
     'corsheaders',  # Added for CORS configuration
+    'whitenoise.runserver_nostatic'
 ]
 
 REST_FRAMEWORK = {
@@ -73,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'ewc_admin.urls'

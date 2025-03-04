@@ -44,6 +44,8 @@ jobs:
 
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
 
+          docker run --rm $REPO_URI:$IMAGE_TAG ls /app/staticfiles
+
       - name: Push Docker Image to AWS ECR
         run: |
           REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
