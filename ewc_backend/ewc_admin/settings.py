@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('AWS_ENV') != 'True'
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -80,6 +80,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://devnest.software',
+]
+
 
 ROOT_URLCONF = 'ewc_admin.urls'
 
