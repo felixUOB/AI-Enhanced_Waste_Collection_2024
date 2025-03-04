@@ -162,6 +162,7 @@ Clone the repository using:
 git clone https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
 ```
 
+---
 
 ### App
 1. Navigate to the Flutter root directory: `cd 2024-AIEnhancedWasteCollection/ewc_frontend`
@@ -178,7 +179,7 @@ If you also need anything like SENDGRID_SECRET_KEY or ENCRYPTION_KEY on the fron
 5.	Run the application:`flutter run` 
 Or specify a device: `flutter run -d <DEVICE_ID>`
 
-      
+---
 
 ### Backend
 - Move to the ewc directory by running `cd 2024-AIEnhancedWasteCollection/ewc_backend`
@@ -217,31 +218,33 @@ ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"           # for 'Remember Me' functionality
   ```
 
 You can now access the backend at http://127.0.0.1:8000.
-  
 
+---
 
 ## **User Instructions**
 
-1.	Registration
-	•	Open the app and tap “Register.”
-	•	Enter your username, password, email, phone number, etc.
-	•	Upon success, the Django backend creates an account in the database.
+1. **Registration**
+   - Open the app and tap **“Register”**.
+   - Enter your *username, password, email, phone number*, etc.
+   - Upon success, the Django backend creates an account in the database.
 
-2. Login
-	•	On the “Sign In” screen, provide your username/password.
-	•	If you check “Remember Me,” your credentials will be encrypted with ENCRYPTION_KEY and stored locally, so you don’t have to re-enter them next time.
+2. **Login**
+   - On the **“Sign In”** screen, provide your username/password.
+   - If you check **“Remember Me,”** your credentials are encrypted with `ENCRYPTION_KEY` and stored locally, so you won’t have to re-enter them next time.
 
-3. Password Reset
-	•	From the “Forgot Password?” link, you’ll be taken to a page (or external link) that sends an email via SendGrid using SENDGRID_SECRET_KEY.
-	•	Follow the link in the email to reset your password.
+3. **Password Reset**
+   - From the **“Forgot Password?”** link, you’ll go to a page (or external link) that sends an email via **SendGrid** using `SENDGRID_SECRET_KEY`.
+   - Follow the link in the email to reset your password.
 
-4. Viewing Routes
-	•	Once logged in, you’ll see a map with an optimised waste collection route.
-	•	Tap “Start Journey” to begin the route guidance.
+4. **Viewing Routes**
+   - Once logged in, you’ll see a map with an **optimized waste collection route**.
+   - Tap **“Start Journey”** to begin the route guidance.
 
-5.	Logging Waste Collection
-	•	In the app, input the waste volume at each stop. This data is sent to the backend for analytics and future route optimisations.
+5. **Logging Waste Collection**
+   - In the app, input the **waste volume** at each stop.
+   - This data is sent to the backend for analytics and future route optimizations.
 
+---
 
 ## **Project Structure**
 
@@ -304,6 +307,7 @@ You can now access the backend at http://127.0.0.1:8000.
 ├── README.md                      # Project readme
 └── ... (others like EWC-ReleaseChecklist.pdf, etc.)
 ```
+---
 
 ## **Team Members**
 | Members                      | Email                                                 |
@@ -315,15 +319,21 @@ You can now access the backend at http://127.0.0.1:8000.
 | Katie Pambakian              | [yj23812@bristol.ac.uk](mailto:yj23812@bristol.ac.uk) |
 | Marek Janiec                 | [qx23239@bristol.ac.uk](mailto:qx23239@bristol.ac.uk) |
 
-## **Supporting Mentor**
-- Matthew Cudby
+---
 
 ## **Architecture Diagram**
 
 <div align="center">
-  <img src="docs/images/ArchitectureDiagram.png" alt="Architecture Diagram" width="600" />
+  <img src="docs/images/ArchitectureDiagram.png" alt="Architecture Diagram" width="900" />
 </div>
+
+---
 
 # **Database Diagram**
 
 <img width="900" alt="image" src="https://github.com/user-attachments/assets/063dae5e-0fce-4dff-956f-77c55aae6129" />
+
+---
+
+## **Supporting Mentor**
+- Matthew Cudby
