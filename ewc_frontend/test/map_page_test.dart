@@ -57,6 +57,7 @@ void main() {
       );
       expect(find.byType(MapPage), findsOneWidget);
       expect(find.byType(FlutterMap), findsOneWidget);
+      expect(find.text('Start Journey'), findsOneWidget);
     });
 
     // testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
