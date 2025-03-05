@@ -198,6 +198,29 @@ void main() {
       expect(find.text('Invalid Input'), findsOneWidget);
     });
 
+    testWidgets('Ensure buttons load correctly', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(),
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(),
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
+
+      expect(find.byKey(Key("recentre button")), findsOneWidget);
+      expect(find.byKey(Key("zoom out")), findsOneWidget);
+      expect(find.byKey(Key("zoom in")), findsOneWidget);
+      expect(find.byKey(Key("orientate button")), findsOneWidget);
+    });
+
 
     
 

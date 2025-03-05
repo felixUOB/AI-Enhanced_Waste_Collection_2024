@@ -237,6 +237,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           (_journeyActive) ?
           // Log visit button
           FloatingActionButton(
+            key: Key("log visit"),
             heroTag: "log visit",
             child: const Icon(Icons.where_to_vote),
             onPressed: () {
@@ -252,6 +253,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           const SizedBox(height: 10) : const SizedBox(),
 
           OrientateButton(
+            key: Key("orientate button"),
             north: _lockedNorth,
             onPressed: () {
               if (_lockedNorth) {
@@ -278,6 +280,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
           // ZOOM IN
           FloatingActionButton(
+            key: Key("zoom in"),
             heroTag: "zoom in",
             child: const Icon(Icons.add),
             onPressed: () {
@@ -289,6 +292,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
           // ZOOM OUT
           FloatingActionButton(
+            key: Key("zoom out"),
             heroTag: "zoom out",
             child: const Icon(Icons.remove),
             onPressed: () {
@@ -298,6 +302,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           const SizedBox(height: 10),
 
           RecentreButton(
+            key: Key("recentre button"),
             centred: _automaticRecentre,
             onPressed: () async {
               // If recentre button pressed recentre map over user location
