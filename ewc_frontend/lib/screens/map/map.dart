@@ -4,6 +4,7 @@ import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
 import 'package:ewc/widgets/log_stop_dialog.dart';
+import 'package:ewc/widgets/orientate_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
@@ -40,8 +41,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   int _closestIndex = 0;
 
-  double _bearing = 0;
-  bool _lockedNorth = false; // Whether map rotation is locked to the north
+  double _autoBearing = 0;
+  double _savedBearing = -45;
+  bool _lockedNorth = true; // Whether map rotation is locked to the north
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -80,14 +82,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
-      if (mounted) {
-        await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-        _routeService = await RouteService.create();
-        await _drawStopsMarker(Colors.blue);
-        //Depot location marker
-        _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
-      }
+      if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
+      _routeService = await RouteService.create();
+      if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+      await _drawStopsMarker(Colors.blue);
+      //Depot location marker
+      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
@@ -197,11 +197,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       }
     }
     else if (event is MapEventRotateStart) {
-      if (_lockedNorth) {
-        setState(() {
-          _lockedNorth = false;
-        });
-      }
+      setState(() {
+        _automaticRecentre = false;
+        _lockedNorth = false;
+      });
     }
   }
 
@@ -251,6 +250,31 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           ) : const SizedBox(),
           (_journeyActive) ?
           const SizedBox(height: 10) : const SizedBox(),
+
+          OrientateButton(
+            north: _lockedNorth,
+            onPressed: () {
+              if (_lockedNorth) {
+                if (_journeyActive && _automaticRecentre) {
+                  _animatedMapController.animatedRotateTo(_autoBearing);
+                } else {
+                  _animatedMapController.animatedRotateTo(_savedBearing);
+                }
+                setState(() {
+                  _lockedNorth = !_lockedNorth;
+                });
+              } else {
+                double savedBearing =
+                  _animatedMapController.rotation; // Remember current bearing
+                _animatedMapController.animatedRotateReset(); // Reset bearing
+                setState(() {
+                  _savedBearing = savedBearing;
+                  _lockedNorth = !_lockedNorth;
+                });
+              }
+            }
+          ),
+          const SizedBox(height: 10),
 
           // ZOOM IN
           FloatingActionButton(
@@ -345,7 +369,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     LatLng? location =
         Provider.of<LocationProvider>(context).latestLocation;
     if (_journeyActive && _automaticRecentre) {
-      _animatedMapController.animateTo(dest: location, zoom: 17, rotation: _bearing);
+      double bearing = _autoBearing;
+      if (_lockedNorth) bearing = 0;
+      _animatedMapController.animateTo(dest: location, zoom: 17, rotation: bearing);
     }
 
     return FlutterMap(
@@ -417,7 +443,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> findNearestRoutePoint() async {
     double minDistance = double.infinity;
     int index = 0;
-    print("Calculating");
 
     if (_routePoints.isEmpty) {
       await _fetchOptimizedRoute();
@@ -510,7 +535,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     // Update state to reflect new changes
     setState(() {
       _closestIndex = index;
-      _bearing = bearing;
+      _autoBearing = bearing;
     });
   }
 

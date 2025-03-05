@@ -13,9 +13,12 @@ class OrientateButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-        onPressed: onPressed,
-        child: (north) ?
-          Transform.rotate(angle: -20, child: Icon(Icons.explore),):
-          Icon(Icons.explore)
+      heroTag: "orientate button",
+      onPressed: onPressed,
+      child: (north) ?
+      // Not sure which icons are intuitive here
+        Icon(Icons.arrow_circle_up):
+        Icon(Icons.change_circle_outlined)
     );
-  }}
+  }
+}
