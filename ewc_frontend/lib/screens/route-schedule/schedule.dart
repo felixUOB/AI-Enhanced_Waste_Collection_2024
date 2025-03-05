@@ -1,5 +1,6 @@
+import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
-import 'package:ewc/services/route_plot_service.dart';
+import 'package:ewc/services/route_service.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/widgets/timeline_tile.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,10 @@ class _Schedule extends State<Schedule> {
 
   Future<void> initialiseStops() async {
     try {
-      // Initialize RouteService
-      _routeService = await RouteService.create();
+      // Attempt to load the .env file
+
+      // Initialize RouteService with the valid API key
+      _routeService = getIt<RouteService>();
 
       // The next block of code creates a list _stopTimes where each element
       // is the amount of time in minutes from the user's location to that stop
@@ -39,18 +42,22 @@ class _Schedule extends State<Schedule> {
         LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
         if (location != null) {
           // SelectedStops filters out already visited stops from the route calculation
+          
           var selectedStops = route.where((route) => !route.visited).map(
             (route) => route.location).toList();
           _stopTimes = [];
           for (var _ in route.where((route) => route.visited)) {
-            _stopTimes?.add(0); // Pad out the stop times with 0s when some stops have been visited
+            _stopTimes?.add(
+                0); // Pad out the stop times with 0s when some stops have been visited
           }
-          _stopTimes?.addAll(await _routeService.getStopTimes(location, selectedStops));
+          _stopTimes?.addAll(
+              await _routeService.getStopTimes(location, selectedStops));
         }
       }
     } catch (e) {
       // Log the error and provide feedback
-      throw Exception("Failed to initialize map service. Please check API key and network connection.");
+      throw Exception(
+          "Failed to initialize map service. Please check API key and network connection.");
     }
   }
 
