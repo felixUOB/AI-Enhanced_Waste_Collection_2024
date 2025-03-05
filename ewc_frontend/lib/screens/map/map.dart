@@ -65,9 +65,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
 
   void _initialiseLocationStatusStream() async {
-    _locationStatus = await Geolocator.isLocationServiceEnabled();
+    _locationStatus = await getIt<GeolocatorPlatform>().isLocationServiceEnabled();
     _locationStatusStream =
-        Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
+        getIt<GeolocatorPlatform>().getServiceStatusStream().listen((ServiceStatus status) {
       setState(() {
         _locationStatus = status == ServiceStatus.enabled;
       });
