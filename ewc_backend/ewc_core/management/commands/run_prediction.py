@@ -12,11 +12,10 @@ class Command(BaseCommand):
         self.stdout.write("Starting waste prediction...")
         # pass into generate_data the stopid of the stop
         stopid = 3
-        #file_path = generate_data(stopid)
+        file_path = generate_data(stopid)
         file_path = 'ewc_core/management/commands/prediction_model/data/data.csv'
         print(file_path)
-        #threshold = get_threshold(stopid)
-        threshold = 30
+        threshold = get_threshold(stopid)
         result = run_prediction_model(file_path, threshold)
         self.stdout.write("Waste prediction completed!")
         # return result
