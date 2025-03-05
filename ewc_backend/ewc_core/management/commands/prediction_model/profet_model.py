@@ -108,26 +108,11 @@ def main(path, threshold):
     # train the model
     model, forecast = train_model(df_complete)
 
-    # plot 
-    # plot(model, forecast)
-    
-    # workout the monthely growth rate for the coming no
-    # workout the amount of waste that is expected to be produced per day
-    # from that work out when the waste needs to be collected
-
-    # work out the time betweent the two points
-    # predictedValue = forecast.tail(1) # the predicted value
-    # lastValue = df.tail(1) # the last actual data
-    # predicatedDate =pd.to_datetime(predictedValue['ds'].iloc[0])
-    # lastDate = pd.to_datetime(df['ds'].iloc[0])
-    # print(lastDate)
-    print(forecast.tail(30))
     # find the max value before it starts to fall
-    max = 0
     counter = len(df_complete) +1
     while (forecast["yhat"].iloc[counter] < forecast["yhat"].iloc[counter + 1] and forecast["yhat"].iloc[counter] < threshold and counter < len(forecast) + 30 -1):
         counter += 1
-    print(forecast["ds"].iloc[counter])
+
     return forecast["ds"].iloc[counter]
 
 

@@ -91,10 +91,10 @@ def export_userdata_csv (request) :
     
 # get the maximum amount of weight that can be stored at each stop
 def get_threshold(stopid):
-    query = Stops.objects.get(stop_id=3)
+    query = Stops.objects.get(stop_id=stopid)
     max_weight = query.max_weight
     return max_weight
 
 def generate_data(stopid):
-    return export_stopdata_csv(3)
+    return export_stopdata_csv(stopid)
     
