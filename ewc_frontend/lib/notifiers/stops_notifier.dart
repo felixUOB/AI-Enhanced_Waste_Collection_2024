@@ -1,3 +1,4 @@
+import 'package:ewc/service_locator.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:ewc/models/stop_model.dart';
@@ -5,7 +6,7 @@ import 'package:ewc/services/stops_service.dart';
 
 class StopsProvider extends ChangeNotifier {
   List<Stop> _stops = [];
-  final StopsService _stopsService = StopsService();
+  final StopsService _stopsService = getIt<StopsService>();
 
   List<Stop> get stops => _stops;
 

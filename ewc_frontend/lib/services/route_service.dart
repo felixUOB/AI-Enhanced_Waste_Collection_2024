@@ -1,3 +1,4 @@
+import 'package:ewc/service_locator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
@@ -7,7 +8,7 @@ import 'package:ewc/models/stop_model.dart';
 // A service class to manage route fetching from OpenRouteService API
 class RouteService {
   final OpenRouteService client;
-  final stopsService = StopsService();
+  final stopsService = getIt<StopsService>();
 
   RouteService._(this.client);
 
