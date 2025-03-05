@@ -36,10 +36,10 @@
 ---
 
 ## Project proposal
-In the realm of waste management, there is a significant need to optimize systems to streamline waste collection and assess/reduce environmental impact. Current solutions often address either logistics **or** impact reporting, but not both cohesively. This project merges these elements into an AI-driven mobile application (Android/iOS) for **route optimization** plus a system to quantify environmental performance (carbon footprint, energy savings, etc.). This integrated approach enhances efficiency in waste management and provides valuable ecological insights.
+In the realm of waste management, there is a significant need to optimise systems to streamline waste collection and assess/reduce environmental impact. Current solutions often address either logistics **or** impact reporting, but not both cohesively. This project merges these elements into an AI-driven mobile application (Android/iOS) for **route optimisation** plus a system to quantify environmental performance (carbon footprint, energy savings, etc.). This integrated approach enhances efficiency in waste management and provides valuable ecological insights.
 
 **Core functionality** includes:
-- **Real-Time Route Optimization**: An AI-based algorithm generating personalized routes for each collection truck, adapting to traffic, weather, and waste volume.
+- **Real-Time Route Optimisation**: An AI-based algorithm generating personalized routes for each collection truck, adapting to traffic, weather, and waste volume.
 - **Historical Data Analysis**: Collecting data on volume/locations to forecast high-waste areas and plan frequencies.
 - **Comprehensive Reports**: Fuel consumption, time saved, and carbon/energy savings, compiled into a single view.
 - **User Interface**: A mobile map-based route interface, with push notifications and optional audio prompts.
@@ -87,9 +87,9 @@ As a **city council/municipal/waste management company**, I want to *avoid the a
 
 As a **city council/municipal/waste management company**, I want to be able to *see the environmental report*, so that we can *see if we are making a positive impact*.
 
-As an **environmental organization**, I want to be able to *see the reports on environment impacts*, so I can *view the data and use it in my own decisions*.
+As an **environmental organisation**, I want to be able to *see the reports on environment impacts*, so I can *view the data and use it in my own decisions*.
 
-As an **environmental organization**, I want to be able to *see that the routes are reducing the amount of carbon and emissions via the report*, so I can be *sure the company is helping to protect the environment*.
+As an **environmental organisation**, I want to be able to *see that the routes are reducing the amount of carbon and emissions via the report*, so I can be *sure the company is helping to protect the environment*.
 
 As a **system manager**, I want *well documented and modular code*, so that I can *install and maintain the code easily*.
 
@@ -102,7 +102,7 @@ As a **household/business**, I want the *waste collection vehicles to have the m
 ---
 
 ## **Value Proposition**
-This project delivers a holistic solution that not only optimizes waste collection routes through AI but also provides actionable insights into the environmental impact of recycling activities. By integrating scheduling with impact reporting, the system supports better decision-making and enhances sustainability efforts. The unique combination of real-time optimization and detailed impact quantification sets this project apart in the market.
+This project delivers a holistic solution that not only optimises waste collection routes through AI but also provides actionable insights into the environmental impact of recycling activities. By integrating scheduling with impact reporting, the system supports better decision-making and enhances sustainability efforts. The unique combination of real-time optimisation and detailed impact quantification sets this project apart in the market.
 
 ---
 
@@ -124,13 +124,13 @@ This project delivers a holistic solution that not only optimizes waste collecti
   Drives the cross-platform mobile frontend (Android/iOS) for route display and data input.
 
 - **Docker & Docker Compose**  
-  Used to containerize both the Django backend (`ewc_backend`) and the Flutter frontend (`ewc_frontend`) for easy deployment and consistent environments.
+  Used to containerise both the Django backend (`ewc_backend`) and the Flutter frontend (`ewc_frontend`) for easy deployment and consistent environments.
 
 - **AWS EC2/RDS**  
   Cloud hosting for production environment; can host the Django server and database.
 
 - **OpenStreetMap & OpenRouteService**  
-  Provides map data and routing APIs for calculating optimized routes.
+  Provides map data and routing APIs for calculating optimised routes.
 
 - **Prophet**  
   Used in the backend for time-series predictions on waste generation or other metrics.
@@ -235,12 +235,12 @@ You can now access the backend at http://127.0.0.1:8000.
    - Follow the link in the email to reset your password.
 
 4. **Viewing Routes**
-   - Once logged in, you’ll see a map with an **optimized waste collection route**.
+   - Once logged in, you’ll see a map with an **optimised waste collection route**.
    - Tap **“Start Journey”** to begin the route guidance.
 
 5. **Logging Waste Collection**
    - In the app, input the **waste volume** at each stop.
-   - This data is sent to the backend for analytics and future route optimizations.
+   - This data is sent to the backend for analytics and future route optimisations.
 
 ---
 
