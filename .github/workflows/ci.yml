@@ -2,10 +2,6 @@ name: CI - Tests & Build
 
 on:
   push:
-# pull_request:
-  #   branches:
-  #     - main
-  #     - dev
 
 jobs:
   flutter_test:
@@ -139,3 +135,4 @@ jobs:
           flutter pub get
           flutter clean
           flutter build ios --no-codesign
+

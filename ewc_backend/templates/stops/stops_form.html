@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if stop %}Edit Stop: {{ stop.location_name }}{% else %}Create New Stop{% endif %} | SpaceNXT Labs-EWC
+{% endblock %}
+
+{% block content %}
+<!--
+  Heading changes depending on whether a 'stop' object already exists
+  (edit mode) or if it's a new stop (create mode).
+-->
+<h2 class="mb-4">
+  {% if stop %}
+    Edit Stop: {{ stop.location_name }}
+  {% else %}
+    Create New Stop
+  {% endif %}
+</h2>
+
+<div class="row">
+  <div class="col-md-8">
+    <!--
+      A Bootstrap card for styling the form container
+    -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+
+        <!--
+          The HTML form for creating or editing a Stop record
+          `method="POST"` so data is sent securely via POST.
+        -->
+        <form method="POST">
+          {% csrf_token %}
+          <!--
+            Django's security token to prevent cross-site request forgery (CSRF)
+          -->
+
+          <!--
+            "Manual rendering": we iterate over the form fields,
+            giving each field a label, help text, and error messages if any.
+          -->
+          {% for field in form %}
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label">
+                {{ field.label }}
+              </label>
+              <!-- The actual form input (text field, number field, etc.) -->
+              {{ field }}
+
+              <!-- If there's a help text for this field, display it below the input -->
+              {% if field.help_text %}
+              {% if field.name == "next_collection_due_date" %}
+                  <!-- For next_collection_due_date, show a blue info icon + text -->
+                  <small class="form-text red-help-text">
+                    <i class="bi bi-info-circle-fill"></i> {{ field.help_text }}
+                  </small>
+                {% else %}
+                  <!-- For other fields, keep the default muted styling -->
+                  <small class="form-text text-muted">
+                    {{ field.help_text }}
+                  </small>
+                {% endif %}
+              {% endif %}
+
+              {% if field.errors %}
+                <div class="text-danger mt-1">
+                  {{ field.errors }}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check"></i> Save
+          </button>
+          <a href="{% url 'stops_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Cancel
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

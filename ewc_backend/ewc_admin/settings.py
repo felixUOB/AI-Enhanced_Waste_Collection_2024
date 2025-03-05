@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('AWS_ENV') != 'True'
 
 ALLOWED_HOSTS = ['*']
 
@@ -60,8 +60,7 @@ else:
     # Restrict to specific domains in production environment
     CORS_ORIGIN_ALLOW_ALL = False
     CORS_ALLOWED_ORIGINS = [
-        "https://yourdomain.com",
-        "https://anothertrusteddomain.com"
+        "https://devnest.software",
     ]
 
 
@@ -152,7 +151,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -168,3 +168,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = config('SENDGRID_SECRET_KEY')
 DEFAULT_FROM_EMAIL = 'autoemail.authnoreply@gmail.com'
+
+# Automatically redirect non-logged-in users to /admin/login/
+LOGIN_URL = '/admin/login/'

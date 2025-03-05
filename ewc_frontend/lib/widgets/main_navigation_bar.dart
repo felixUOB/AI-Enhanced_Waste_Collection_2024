@@ -1,10 +1,9 @@
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
-import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 
@@ -18,34 +17,14 @@ class MainNavigationBar extends StatefulWidget {
 }
 
 class _NavigationBarState extends State<MainNavigationBar> {
-  bool isRouteServiceInitialized = false;
   int currentPageIndex = 1; // Set default opening page to map
-  late RouteService? routeService;
-
-  Future<void> initRouteService() async {
-    await dotenv.load();
-    routeService = RouteService(dotenv.env['API_KEY']!);
-
-    setState(() {
-      isRouteServiceInitialized = true;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    initRouteService();
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (!isRouteServiceInitialized) {
-      return Center(child: CircularProgressIndicator());
-    }
 
     // titles for each tab
     final List<String> appBarTitles = [
-      'Metrics',
+      'Journey Statistics',
       'RecycleNXT',
       'Schedule',
       'Settings',
@@ -60,8 +39,11 @@ class _NavigationBarState extends State<MainNavigationBar> {
         ),
       ),
       // Set the body of the scaffold to be the selected screen
-      body: ChangeNotifierProvider(
-        create: (context) => LocationProvider(),
+      body: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => LocationProvider()),
+          ChangeNotifierProvider(create: (context) => StopsProvider()),
+        ],
         child: IndexedStack(
           index: currentPageIndex,
           children: [

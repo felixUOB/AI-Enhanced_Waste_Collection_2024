@@ -23,10 +23,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
 from ewc_core import views
 from django.contrib.auth import views as auth_views
-# from ewc_core.ml_model.data import export_routeenvdata_csv
-# from ewc_core.ml_model.data import export_stopdata_csv
-# from ewc_core.ml_model.data import export_userdata_csv
-# from ewc_core.ml_model.model import generate_csv_files
+from ewc_core.management.commands.run_prediction import model
+from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view
 
 
 
@@ -44,8 +42,15 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
-    # path('api/runmodel', generate_csv_files ,name='runmodel'), #Run Machine Learning Model
-    
+    path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
+    path('api/runmodel', model ,name='runmodel'), #Run Machine Learning Model
+
+# -----------Stops HTML Form URLs------------------
+    path('stops/', stops_list_view, name='stops_list'),                # List
+    path('stops/new/', stops_create_view, name='stops_create'),        # Create
+    path('stops/<int:pk>/edit/', stops_edit_view, name='stops_edit'),  # Edit
+    path('stops/<int:pk>/delete/', stops_delete_view, name='stops_delete'), # delete
+
 # -----------PASSWORD RESET ENDPOINTS--------------
     
     path('check-email/', views.CheckEmailView.as_view(), name='check-email'), #DEPRECATED BUT LEFT IN FOR LATER USE

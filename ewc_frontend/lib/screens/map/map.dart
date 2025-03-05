@@ -1,18 +1,22 @@
 import 'dart:async';
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
+import 'package:ewc/widgets/log_stop_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
+import 'package:ewc/widgets/start_journey_dialog.dart';
+import 'package:ewc/widgets/end_journey_dialog.dart';
+
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 
@@ -33,7 +37,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final List<Marker> _marker = [];
   late RouteService _routeService;
   final StopsService _stopsService = StopsService();
-  late List<Stop> _stops = [];
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -71,38 +74,29 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      _stops = await _stopsService.fetchAllStops();
-      // Initialize RouteService with API key
-
-      // Attempt to load the .env file
-      await dotenv.load(fileName: '.env');
-
-      // Check if the API key exists in .env; show an error message if not
-      final apiKey = dotenv.env['API_KEY'];
-      if (apiKey == null || apiKey.isEmpty) {
-        throw Exception("API key missing in .env file.");
-      }
-      // Initialize RouteService with the valid API key
-      _routeService = RouteService(dotenv.env['API_KEY']!);
-      await _drawCompleteRoute();
+      await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
+      _routeService = await RouteService.create();
       await _drawStopsMarker(Colors.blue);
 
+      await _fetchOptimizedRoute();
+      //Depot location marker
+      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
     }
-
-
   }
 
 
   // Function to draw a complete route between all stops
+  // ignore: unused_element
   Future<void> _drawCompleteRoute() async {
     // Alternatively store stops list as class attribute
     List<LatLng> route = [];
-    for (int i = 0; i < _stops.length - 1; i++) {
-      final start = _stops[i];
-      final end = _stops[i + 1];
+    List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    for (int i = 0; i < stops.length - 1; i++) {
+      final start = stops[i];
+      final end = stops[i + 1];
       final routePart = await _routeService.getRoute(
           start.location.latitude, start.location.longitude,
           end.location.latitude, end.location.longitude
@@ -116,8 +110,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
 
   Future<void> _drawStopsMarker(Color color) async {
-    for (int i = 0; i < _stops.length; i++) {
-      _marker.add(MarkerWidget.createMarker(_stops[i].location, color));
+    List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    for (int i = 0; i < stops.length; i++) {
+      _marker.add(MarkerWidget.createMarker(stops[i].location, color));
     }
   }
 
@@ -127,9 +122,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Fetches route data from the ORS API between the two given stops, entered by their ID.
   // ignore: unused_element
   Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
-
-    LatLng startPoint = await _stopsService.fetchStop(firstStopID);
-    LatLng collectionPoint = await _stopsService.fetchStop(secondStopID);
+    var stopsService = StopsService();
+    LatLng startPoint = await stopsService.fetchStop(firstStopID);
+    LatLng collectionPoint = await stopsService.fetchStop(secondStopID);
 
 
 
@@ -147,6 +142,22 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       _routePoints.addAll(route);
     });
   }
+
+  // Optimized route planning
+  Future<void> _fetchOptimizedRoute() async {
+    try {
+      List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+      List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
+      setState(() {
+        _routePoints.clear();
+        _routePoints.addAll(optimizedRoute);
+      });
+    } catch (e) {
+      _showErrorDialog("Failed to fetch optimized route: $e");
+    }
+  }
+
+
 
 
   // Displays an error dialog with the provided message
@@ -166,140 +177,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
-  /// Shows a dialog when an invalid (non-numeric) value is provided.
-  void _showInvalidInputDialog(String fieldLabel) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Invalid Input"),
-        content: Text("Please enter a valid numeric value for $fieldLabel."),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// Dialog for starting a journey: asks for mileage and MPG.
-  /// After validating the input, it updates the state fields and sets
-  /// [_journeyActive] to true.
-  void _showStartJourneyDialog() {
-    String mileageInput = '';
-    String mpgInput = '';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Start Journey'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                TextField(
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: 'Mileage'),
-                  onChanged: (value) => mileageInput = value,
-                ),
-                TextField(
-                  keyboardType: TextInputType.number,
-                  decoration:
-                  const InputDecoration(labelText: 'Miles per Gallon'),
-                  onChanged: (value) => mpgInput = value,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                // Parse user inputs
-                final parsedMileage = double.tryParse(mileageInput);
-                if (parsedMileage == null) {
-                  _showInvalidInputDialog('Mileage');
-                  return;
-                }
-
-                final parsedMpg = double.tryParse(mpgInput);
-                if (parsedMpg == null) {
-                  _showInvalidInputDialog('Miles per Gallon');
-                  return;
-                }
-
-                // Valid input: update state
-                setState(() {
-                  _startMileage = parsedMileage;
-                  _startMpg = parsedMpg;
-                  _journeyActive = true;
-                });
-
-                debugPrint('Start Mileage: $_startMileage');
-                debugPrint('Start MPG: $_startMpg');
-
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// Dialog for ending a journey: asks only for MPG.
-  /// After validating, it updates the [_endMpg] field and sets [_journeyActive] to false.
-  void _showEndJourneyDialog() {
-    String mpgInput = '';
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('End Journey'),
-          content: TextField(
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Miles per Gallon'),
-            onChanged: (value) => mpgInput = value,
-          ),
-          actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Confirm'),
-              onPressed: () {
-                final parsedMpg = double.tryParse(mpgInput);
-                if (parsedMpg == null) {
-                  _showInvalidInputDialog('Miles per Gallon');
-                  return;
-                }
-
-                setState(() {
-                  _endMpg = parsedMpg;
-                  _journeyActive = false;
-                });
-
-                debugPrint('End MPG: $_endMpg');
-
-                Navigator.of(context).pop(); // Dismiss dialog
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   // Builds the main UI for the map screen
   @override
@@ -328,37 +205,96 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           ],
         ),
       ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          (_journeyActive) ?
+          // Log visit button
+          FloatingActionButton(
+            heroTag: "log visit",
+            child: const Icon(Icons.where_to_vote),
+            onPressed: () {
+              LogStopDialog.show(context,
+                (int stopID, int wasteCollected) {
+                  _stopsService.postStopCollection(stopID, wasteCollected);
+                  Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
+                }
+              );
+            },
+          ) : const SizedBox(),
+          (_journeyActive) ?
+          const SizedBox(height: 10) : const SizedBox(),
 
+          // ZOOM IN
+          FloatingActionButton(
+            heroTag: "zoom in",
+            child: const Icon(Icons.add),
+            onPressed: () {
+              _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
 
-      floatingActionButton: RecentreButton(onPressed: () async {
-        // If recentre button pressed recentre map over user location
-        // Check if location permissions have been granted.
-        if (await getLocationPermissions()) {
-          if (context.mounted) {
-            LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-            if (location != null) {
-              _animatedMapController.animateTo(
-                  dest: LatLng(
-                      location.latitude, location.longitude),
-                  zoom: 14);
-            }
-          }
-        } else {
-          // Request permission if not already granted.
-          if (await requestLocationPermissions()) {
-            if (context.mounted) {
-              Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-              LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-              if (location != null) {
-                _animatedMapController.animateTo(
-                    dest: LatLng(
-                        location.latitude, location.longitude),
-                    zoom: 14);
+            },
+          ),
+          const SizedBox(height: 10), // Space between buttons
+
+          // ZOOM OUT
+          FloatingActionButton(
+            heroTag: "zoom out",
+            child: const Icon(Icons.remove),
+            onPressed: () {
+              _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
+            },
+          ),
+          const SizedBox(height: 10),
+          
+          RecentreButton(onPressed: () async {
+            // If recentre button pressed recentre map over user location
+            // Check if location permissions have been granted.
+            if (await getLocationPermissions()) {
+              if (context.mounted) {
+                Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                if (location != null) {
+                  _animatedMapController.animateTo(
+                      dest: LatLng(
+                          location.latitude, location.longitude),
+                      zoom: 14);
+                }
+              }
+            } else {
+              // Request permission if not already granted.
+              if (await requestLocationPermissions()) {
+                if (context.mounted) {
+  
+                  Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                  LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                  if (location != null) {
+                    _animatedMapController.animateTo(
+                        dest: LatLng(
+                            location.latitude, location.longitude),
+                        zoom: 14);
+                  }
+                }
+              } else {
+                //User denied location permissions, show an alert
+                if (context.mounted) {
+                  showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title : Text("Location Permission Required"),
+                        content : Text("This app requires location to function properly. Please consider turning location permission on."),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context), //Dismiss dialog
+                              child: Text("OK"))
+                        ],
+                      ),
+                  );
+                }
               }
             }
           }
-        }
-      }),
+        )]
+      )
     );
   }
 
@@ -392,9 +328,38 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    subdomains: ['a','b','c'],
+    retinaMode: RetinaMode.isHighDensity(context),
     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
   );
+
+  // Delete old code implementation
+
+    void _showStartJourneyDialog() {
+    StartJourneyDialog.show(context, (double mileage, double mpg) {
+      setState(() {
+        _startMileage = mileage;
+        _startMpg = mpg;
+        _journeyActive = true;
+        });
+        debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg'); 
+      });
+    }
+
+    void _showEndJourneyDialog() {
+    EndJourneyDialog.show(context, (double mpg) {
+      setState(() {
+        _endMpg = mpg;
+        _journeyActive = false;
+      });
+
+      debugPrint('End MPG: $_endMpg');
+    });
+  }
+
+
+
 
   @override
   void dispose() {

@@ -35,7 +35,7 @@ class StopCollection(models.Model):
         db_column='stop_id'
     )
     weight_collected = models.IntegerField()
-    date = models.DateField(null=False)
+    date = models.DateField(auto_now_add=True, null=False)
 
     class Meta:
         db_table = 'ewc_core_stop_collection'
@@ -54,6 +54,8 @@ class Stops(models.Model):
 
     class Meta:
         db_table = 'ewc_core_stops'
+        verbose_name = "Stop"
+        verbose_name_plural = "Stops"
 
     def __str__(self):
         return self.location_name 
