@@ -60,152 +60,152 @@ void main() {
       expect(find.text('Start Journey'), findsOneWidget);
     });
 
-    // testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: MultiProvider(
-    //         providers: [
-    //           ChangeNotifierProvider<LocationProvider>(
-    //             create: (_) => LocationProvider(),
-    //           ),
-    //           ChangeNotifierProvider<StopsProvider>(
-    //             create: (_) => StopsProvider(),
-    //           ),
-    //         ],
-    //         child: MapPage(),
-    //       ),
-    //     ),
-    //   );
-    //   // Open the journey dialog.
-    //   await tester.tap(find.text('Start Journey'));
-    //   await tester.pumpAndSettle();
-    //   expect(find.byType(AlertDialog), findsOneWidget);
+    testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(),
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(),
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
+      // Open the journey dialog.
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
     
-    //   // Tap the Cancel button within the dialog.
-    //   await tester.tap(find.text('Cancel'));
-    //   await tester.pumpAndSettle();
+      // Tap the Cancel button within the dialog.
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
     
-    //   // Expect the dialog to be dismissed.
-    //   expect(find.byType(AlertDialog), findsNothing);
-    // });
+      // Expect the dialog to be dismissed.
+      expect(find.byType(AlertDialog), findsNothing);
+    });
 
     
-    // testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: MultiProvider(
-    //         providers: [
-    //           ChangeNotifierProvider<LocationProvider>(
-    //             create: (_) => LocationProvider(),
-    //           ),
-    //           ChangeNotifierProvider<StopsProvider>(
-    //             create: (_) => StopsProvider(),
-    //           ),
-    //         ],
-    //         child: MapPage(),
-    //       ),
-    //     ),
-    //   );
-    //   await tester.tap(find.text('Start Journey'));
-    //   await tester.pumpAndSettle();
-    //   await tester.enterText(find.byType(TextField).first, '10');
-    //   await tester.enterText(find.byType(TextField).last, '20');
-    //   await tester.tap(find.text('Confirm'));
-    //   await tester.pumpAndSettle();
-    //   await tester.tap(find.text('End Journey'));
-    //   await tester.pumpAndSettle();
-    //   expect(find.byType(AlertDialog), findsOneWidget);
-    //   // Tap the Cancel button within the dialog.
-    //   await tester.tap(find.text('Cancel'));
-    //   await tester.pumpAndSettle();
-    //   // Expect the dialog to be dismissed.
-    //   expect(find.byType(AlertDialog), findsNothing);
-    // });
+    testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(),
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(),
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('End Journey'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      // Tap the Cancel button within the dialog.
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      // Expect the dialog to be dismissed.
+      expect(find.byType(AlertDialog), findsNothing);
+    });
 
-    // testWidgets('End Journey button accepts correctly entered values', (WidgetTester tester) async {
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: MultiProvider(
-    //         providers: [
-    //           ChangeNotifierProvider<LocationProvider>(
-    //             create: (_) => LocationProvider(),
-    //           ),
-    //           ChangeNotifierProvider<StopsProvider>(
-    //             create: (_) => StopsProvider(),
-    //           ),
-    //         ],
-    //         child: MapPage(),
-    //       ),
-    //     ),
-    //   );
-    //   await tester.tap(find.text('Start Journey'));
-    //   await tester.pumpAndSettle();
-    //   await tester.enterText(find.byType(TextField).first, '10');
-    //   await tester.enterText(find.byType(TextField).last, '20');
-    //   await tester.tap(find.text('Confirm'));
-    //   await tester.pumpAndSettle();
-    //   await tester.tap(find.text('End Journey'));
-    //   await tester.pumpAndSettle();
-    //   await tester.enterText(find.byType(TextField).first, '10');
-    //   await tester.enterText(find.byType(TextField).last, '20');
-    //   await tester.tap(find.text('Confirm'));
-    //   await tester.pumpAndSettle();
-    //   expect(find.byType(AlertDialog), findsNothing);
-    // });
+    testWidgets('End Journey button accepts correctly entered values', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(),
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(),
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('End Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
+    });
 
-    // testWidgets('Invalid input on Start Journey dialog shows error dialog', (WidgetTester tester) async {
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: MultiProvider(
-    //         providers: [
-    //           ChangeNotifierProvider<LocationProvider>(
-    //             create: (_) => LocationProvider(),
-    //           ),
-    //           ChangeNotifierProvider<StopsProvider>(
-    //             create: (_) => StopsProvider(),
-    //           ),
-    //         ],
-    //         child: MapPage(),
-    //       ),
-    //     ),
-    //   );
-    //   await tester.tap(find.text('Start Journey'));
-    //   await tester.pumpAndSettle();
-    //   await tester.enterText(find.byType(TextField).first, 'invalid');
-    //   await tester.tap(find.text('Confirm'));
-    //   await tester.pumpAndSettle();
-    //   expect(find.text('Invalid Input'), findsOneWidget);
-    // });
+    testWidgets('Invalid input on Start Journey dialog shows error dialog', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(),
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(),
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, 'invalid');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(find.text('Invalid Input'), findsOneWidget);
+    });
 
-    // testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: MultiProvider(
-    //         providers: [
-    //           ChangeNotifierProvider<LocationProvider>(
-    //             create: (_) => LocationProvider(),
-    //           ),
-    //           ChangeNotifierProvider<StopsProvider>(
-    //             create: (_) => StopsProvider(),
-    //           ),
-    //         ],
-    //         child: MapPage(),
-    //       ),
-    //     ),
-    //   );
-    //   await tester.tap(find.text('Start Journey'));
-    //   await tester.pumpAndSettle();
-    //   await tester.enterText(find.byType(TextField).first, '10');
-    //   await tester.enterText(find.byType(TextField).last, '20');
-    //   await tester.tap(find.text('Confirm'));
-    //   await tester.pumpAndSettle();
-    //   await tester.tap(find.text('End Journey'));
-    //   await tester.pumpAndSettle();
-    //   await tester.enterText(find.byType(TextField).first, 'invalid');
-    //   await tester.tap(find.text('Confirm'));
-    //   await tester.pumpAndSettle();
-    //   expect(find.text('Invalid Input'), findsOneWidget);
-    // });
+    testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(),
+              ),
+              ChangeNotifierProvider<StopsProvider>(
+                create: (_) => StopsProvider(),
+              ),
+            ],
+            child: MapPage(),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('End Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, 'invalid');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+      expect(find.text('Invalid Input'), findsOneWidget);
+    });
 
 
     
