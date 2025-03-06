@@ -17,6 +17,7 @@ import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
 import 'package:ewc/widgets/start_journey_dialog.dart';
 import 'package:ewc/widgets/end_journey_dialog.dart';
+import 'package:flutter_map/memory_tile_provider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
@@ -296,7 +297,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
     final bool inTestMode = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
-    // LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
+    LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
     return FlutterMap(
       mapController: _animatedMapController.mapController,
       options: const MapOptions(
