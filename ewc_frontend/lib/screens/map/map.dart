@@ -19,6 +19,7 @@ import 'package:ewc/widgets/end_journey_dialog.dart';
 
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/widgets/navigation_banner.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
@@ -188,7 +189,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   
     
     return Scaffold(
-      body: content(),
+      body: Column(
+        children: [
+          const NavigationBanner(), // Add the NavigationBanner at the top
+          Expanded(child: content()), // The map content
+        ],
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(
