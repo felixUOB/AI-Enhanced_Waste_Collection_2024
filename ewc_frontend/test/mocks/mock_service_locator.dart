@@ -1,4 +1,5 @@
 import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/services/route_service.dart';
@@ -18,6 +19,7 @@ Future<void> mockSetupLocator() async {
   getIt.registerSingleton<MetricsService>(MockMetricsService());
   getIt.registerSingleton<GeolocatorPlatform>(FakeGeolocatorPlatform());
   getIt.registerSingleton<LocationProvider>(MockLocationProvider());
+  getIt.registerSingleton<Config>(MockConfig());
 
   await getIt.allReady();
 }

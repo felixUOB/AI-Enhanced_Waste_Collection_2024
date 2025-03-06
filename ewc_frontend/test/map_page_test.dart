@@ -51,6 +51,7 @@ void main() {
       when(getIt<LocationProvider>().initialiseLocationServices()).thenAnswer((_) async => Future.value());
       when(getIt<LocationProvider>().latestLocation).thenReturn(LatLng(0, 0));
       when(MockLocationProvider().latestLocation).thenReturn(LatLng(0, 0));
+      when(getIt<Config>().inTestMode).thenReturn(true);
       
 
       await tester.pumpWidget(

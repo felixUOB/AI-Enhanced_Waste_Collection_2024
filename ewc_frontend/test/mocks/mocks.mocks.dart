@@ -9,6 +9,7 @@ import 'dart:ui' as _i19;
 import 'package:ewc/models/stop_model.dart' as _i13;
 import 'package:ewc/notifiers/location_notifier.dart' as _i18;
 import 'package:ewc/notifiers/stops_notifier.dart' as _i20;
+import 'package:ewc/screens/map/map.dart' as _i21;
 import 'package:ewc/screens/metrics/route_data.dart' as _i15;
 import 'package:ewc/services/auth_service/auth_service.dart' as _i9;
 import 'package:ewc/services/auth_service/encryption_service.dart' as _i2;
@@ -639,6 +640,26 @@ class MockStopsProvider extends _i1.Mock implements _i20.StopsProvider {
   @override
   void notifyListeners() => super.noSuchMethod(
     Invocation.method(#notifyListeners, []),
+    returnValueForMissingStub: null,
+  );
+}
+
+/// A class which mocks [Config].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfig extends _i1.Mock implements _i21.Config {
+  MockConfig() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  bool get inTestMode =>
+      (super.noSuchMethod(Invocation.getter(#inTestMode), returnValue: false)
+          as bool);
+
+  @override
+  set inTestMode(bool? _inTestMode) => super.noSuchMethod(
+    Invocation.setter(#inTestMode, _inTestMode),
     returnValueForMissingStub: null,
   );
 }

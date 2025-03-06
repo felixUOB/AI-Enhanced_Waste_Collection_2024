@@ -305,7 +305,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
-    final bool inTestMode = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
     return Consumer<LocationProvider>(
       builder: (context, locationProvider, child) {
         return FlutterMap(
@@ -323,14 +322,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       ),
       children: [
         // openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-        if (inTestMode)
-          TileLayer(
-            tileProvider: IgnoreTileProvider(),
-            urlTemplate: '',
-          )
-        else
-          openStreetMapTileLayer,
-
+        if (!getIt<Config>().inTestMode) openStreetMapTileLayer,
+        
         RoutePolylineLayer(routePoints: _routePoints),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
@@ -382,3 +375,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.dispose();
   }
 }
+
+
+class Config {
+  bool inTestMode;
+  Config({this.inTestMode = false});
+}
+
