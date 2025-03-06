@@ -1,4 +1,5 @@
-
+import 'package:mockito/mockito.dart';
+import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,47 +27,46 @@ class FakeGeolocatorPlatform extends GeolocatorPlatform {
     }
 }
 
+Widget pumpMap() {
+  return MaterialApp(
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LocationProvider>(
+          create: (_) => LocationProvider(),
+        ),
+        ChangeNotifierProvider<StopsProvider>(
+          create: (_) => StopsProvider(),
+        ),
+      ],
+      child: MapPage(),
+    ),
+  );
+}
+
 void main() {
   // Set the fake GeolocatorPlatform before tests run 
-  setUpAll(() { GeolocatorPlatform.instance = FakeGeolocatorPlatform(); });
+  setUp(() async {
+    await mockSetupLocator();
+    when(getIt<Config>().inTestMode).thenReturn(true);
+    GeolocatorPlatform.instance = FakeGeolocatorPlatform();
+  });
+
+  tearDown(() async {
+    await getIt.reset();
+  });
+
   group('Map Page Tests', () {
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => LocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => StopsProvider(), 
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(pumpMap());
+
       expect(find.byType(MapPage), findsOneWidget);
       expect(find.byType(FlutterMap), findsOneWidget);
     });
 
     testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => LocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => StopsProvider(),
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(pumpMap());
+
       // Open the journey dialog.
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
@@ -82,21 +82,8 @@ void main() {
 
     
     testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => LocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => StopsProvider(),
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(pumpMap());
+
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, '10');
@@ -114,21 +101,8 @@ void main() {
     });
 
     testWidgets('End Journey button accepts correctly entered values', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => LocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => StopsProvider(),
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(pumpMap());
+
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, '10');
@@ -145,21 +119,8 @@ void main() {
     });
 
     testWidgets('Invalid input on Start Journey dialog shows error dialog', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => LocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => StopsProvider(),
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(pumpMap());
+
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, 'invalid');
@@ -169,21 +130,8 @@ void main() {
     });
 
     testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => LocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => StopsProvider(),
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(pumpMap());
+
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField).first, '10');
@@ -199,21 +147,7 @@ void main() {
     });
 
     testWidgets('Ensure buttons load correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => LocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => StopsProvider(),
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
+      await tester.pumpWidget(pumpMap());
 
       expect(find.byKey(Key("recentre button")), findsOneWidget);
       expect(find.byKey(Key("zoom out")), findsOneWidget);

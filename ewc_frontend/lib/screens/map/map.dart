@@ -201,26 +201,42 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: content(),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          children: [
-            // Single button toggling journey start/end
-            Expanded(
-              child: ElevatedButton(
-                child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
-                onPressed: () {
-                  if (_journeyActive) {
-                    _showEndJourneyDialog();
-                  } else {
-                    _showStartJourneyDialog();
-                  }
-                },
+      body: Stack(
+        children: [
+          content(),
+
+          // Start / End Journey button
+          Container(
+            alignment: Alignment.bottomCenter,
+            margin: EdgeInsets.only(bottom: 10),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _journeyActive ? Color(0xFFE7342F) : Color(0xFF4BB543),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               ),
-            ),
-          ],
-        ),
+              child: Text(
+                _journeyActive ? 'End Journey' : 'Start Journey',
+                style: TextStyle(
+                  fontSize: 16, // Font size
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                if (_journeyActive) {
+                  _showEndJourneyDialog();
+                } else {
+                  _showStartJourneyDialog();
+                }
+              }
+            )
+          ),
+
+          
+        ]
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -385,7 +401,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         onMapEvent: _eventManager, // delegates map events to the event manager
       ),
       children: [
-        openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        if (!getIt<Config>().inTestMode) openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
         RoutePolylineLayer(routePoints: _routePoints),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
@@ -540,4 +556,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     _locationStatusStream.cancel();
     super.dispose();
   }
+}
+
+class Config {
+  bool inTestMode;
+  Config({this.inTestMode = false});
 }

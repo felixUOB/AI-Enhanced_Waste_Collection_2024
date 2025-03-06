@@ -6,6 +6,7 @@
 import 'dart:async' as _i10;
 
 import 'package:ewc/models/stop_model.dart' as _i12;
+import 'package:ewc/screens/map/map.dart' as _i15;
 import 'package:ewc/screens/metrics/route_data.dart' as _i14;
 import 'package:ewc/services/auth_service/auth_service.dart' as _i8;
 import 'package:ewc/services/auth_service/encryption_service.dart' as _i2;
@@ -376,4 +377,24 @@ class MockMetricsService extends _i1.Mock implements _i13.MetricsService {
             ),
           )
           as _i10.Future<List<_i14.JourneyRoute>>);
+}
+
+/// A class which mocks [Config].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockConfig extends _i1.Mock implements _i15.Config {
+  MockConfig() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  bool get inTestMode =>
+      (super.noSuchMethod(Invocation.getter(#inTestMode), returnValue: false)
+          as bool);
+
+  @override
+  set inTestMode(bool? _inTestMode) => super.noSuchMethod(
+    Invocation.setter(#inTestMode, _inTestMode),
+    returnValueForMissingStub: null,
+  );
 }
