@@ -30,16 +30,6 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPage();
 }
 
-/// TileProvider for testing. Ignore the actual network request and return an empty image.
-class IgnoreTileProvider extends TileProvider {
-  IgnoreTileProvider();
-
-  @override
-  ImageProvider getImage(TileCoordinates coordinates, TileLayer options) {
-    return const NetworkImage('');
-  }
-}
-
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
@@ -271,7 +261,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                 if (context.mounted) {
   
                   Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                  LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
+                  LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                   if (location != null) {
                     _animatedMapController.animateTo(
                         dest: LatLng(

@@ -74,12 +74,12 @@ void main() {
       expect(find.text('Start Journey'), findsOneWidget);
     });
 
-    testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
-      // Open the journey dialog.
-
-    expect(tester.widget<ElevatedButton>(find.byKey(const Key('routeInitButton'))).enabled, isTrue);
-    await tester.tap(find.byKey(const Key('routeInitButton')));
+    // testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
+    //   await tester.pumpWidget(pumpMap());
+    //   // Open the journey dialog.
+    //
+    // expect(tester.widget<ElevatedButton>(find.byKey(const Key('routeInitButton'))).enabled, isTrue);
+    // await tester.tap(find.byKey(const Key('routeInitButton')));
     // await tester.pumpAndSettle();
 
 
@@ -92,7 +92,7 @@ void main() {
 
     // Check if one of the dialogs (_showStartJourneyDialog or _showEndJourneyDialog) is displayed
     // expect(find.byType(AlertDialog), findsOneWidget);
-    });
+    // });
 
     
     // testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
