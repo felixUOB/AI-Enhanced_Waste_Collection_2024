@@ -17,7 +17,7 @@ import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
 import 'package:ewc/widgets/start_journey_dialog.dart';
 import 'package:ewc/widgets/end_journey_dialog.dart';
-import 'package:flutter_map/memory_tile_provider.dart';
+import 'ignore_tile_provider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
@@ -29,6 +29,16 @@ class MapPage extends StatefulWidget {
   // Creates and returns the private _MapPage state instance to manage the widget's state
   @override
   State<MapPage> createState() => _MapPage();
+}
+
+/// TileProvider for testing. Ignore the actual network request and return an empty image.
+class IgnoreTileProvider extends TileProvider {
+  const IgnoreTileProvider();
+
+  @override
+  ImageProvider getImage(TileCoordinates coords, TileLayer options) {
+    return const NetworkImage('');
+  }
 }
 
 // Private State class for MapPage, manages state and map interactions
@@ -313,12 +323,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       ),
       children: [
         // openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-        inTestMode
-        ? TileLayer(
-            tileProvider: const MemoryTileProvider(),
+        if (inTestMode)
+          TileLayer(
+            tileProvider: const IgnoreTileProvider(),
             urlTemplate: '',
           )
-        :openStreetMapTileLayer,
+        else
+          openStreetMapTileLayer,
 
         RoutePolylineLayer(routePoints: _routePoints),
         MarkerLayer(markers: _marker),
