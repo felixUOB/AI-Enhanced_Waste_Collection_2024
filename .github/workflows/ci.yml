@@ -2,6 +2,7 @@ name: CI - Tests & Build
 
 on:
   push:
+  
 
 jobs:
   flutter_test:
@@ -26,12 +27,25 @@ jobs:
         env:
           api_key: ${{ secrets.API_KEY }}
 
+      - name: Install lcov
+        run: |
+          sudo apt-get update && sudo apt-get install -y lcov
+
       - name: Static Analysis & Unit Tests (Flutter)
         working-directory: "./ewc_frontend"
         run: |
           flutter pub get
           flutter analyze
-          flutter test
+          flutter test --coverage
+          genhtml coverage/lcov.info -o coverage/html
+
+  
+      - name: Upload Coverage HTML Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-coverage-html
+          path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/coverage/html
+
 
   django_test:
     name: Run Django Tests & Analyze Coverage

@@ -107,8 +107,7 @@ class _NavigationBarState extends State<MainNavigationBar> {
             NavigationDestination(
                 icon: Icon(Icons.menu_rounded), label: "Schedule"),
 
-            NavigationDestination(
-                icon: Icon(Icons.settings), label: "Settings")
+            NavigationDestination(icon: Icon(Icons.settings), label: "Settings")
           ]),
     );
   }
