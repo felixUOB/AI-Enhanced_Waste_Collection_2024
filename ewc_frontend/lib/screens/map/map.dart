@@ -295,7 +295,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
-    LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
+    final bool inTestMode = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
+    // LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
     return FlutterMap(
       mapController: _animatedMapController.mapController,
       options: const MapOptions(
@@ -310,7 +311,14 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             ),
       ),
       children: [
-        openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        // openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        inTestMode
+        ? TileLayer(
+            tileProvider: const MemoryTileProvider(),
+            urlTemplate: '',
+          )
+        :openStreetMapTileLayer,
+
         RoutePolylineLayer(routePoints: _routePoints),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
