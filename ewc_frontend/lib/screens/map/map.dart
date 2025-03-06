@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
+import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
 import 'package:ewc/widgets/log_stop_dialog.dart';
 import 'package:ewc/widgets/orientate_button.dart';
@@ -10,7 +12,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -32,12 +33,11 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
-
   // Route variables
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
   late RouteService _routeService;
-  final StopsService _stopsService = StopsService();
+  final StopsService _stopsService = getIt<StopsService>();
 
   int _closestIndex = 0;
 
@@ -59,7 +59,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   double _startMpg = 0;
   double _endMpg = 0;
 
-  // State initialisation 
+  // State initialisation
   @override
   void initState() {
     super.initState();
@@ -71,8 +71,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   void _initialiseLocationStatusStream() async {
     _locationStatus = await Geolocator.isLocationServiceEnabled();
-    _locationStatusStream = Geolocator.getServiceStatusStream()
-        .listen((ServiceStatus status) {
+    _locationStatusStream =
+        Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
       setState(() {
         _locationStatus = status == ServiceStatus.enabled;
       });
@@ -87,13 +87,14 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
       await _drawStopsMarker(Colors.blue);
       //Depot location marker
-      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+      _marker.add(
+          MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
-      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
+      _showErrorDialog(
+          "Failed to initialize map service. Please check API key and network connection.");
     }
   }
-
 
   // Function to draw a complete route between all stops
   // ignore: unused_element
@@ -105,9 +106,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       final start = stops[i];
       final end = stops[i + 1];
       final routePart = await _routeService.getRoute(
-          start.location.latitude, start.location.longitude,
-          end.location.latitude, end.location.longitude
-      );
+          start.location.latitude,
+          start.location.longitude,
+          end.location.latitude,
+          end.location.longitude);
       route.addAll(routePart);
     }
     setState(() {
@@ -123,24 +125,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-
-
-
   // Fetches route data from the ORS API between the two given stops, entered by their ID.
   // ignore: unused_element
-  Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
-    var stopsService = StopsService();
-    LatLng startPoint = await stopsService.fetchStop(firstStopID);
-    LatLng collectionPoint = await stopsService.fetchStop(secondStopID);
-
-
+  Future<void> _fetchRoute(int firstStopID, int secondStopID) async {
+    LatLng startPoint = await _stopsService.fetchStop(firstStopID);
+    LatLng collectionPoint = await _stopsService.fetchStop(secondStopID);
 
     final startLat = startPoint.latitude, startLng = startPoint.longitude;
     final endLat = collectionPoint.latitude, endLng = collectionPoint.longitude;
 
-
     // Get route points from the API and update _routePoints with the data
-    final List<LatLng> route = await _routeService.getRoute(startLat, startLng, endLat, endLng);
+    final List<LatLng> route =
+        await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
       // Remove any existing points
@@ -166,9 +162,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       _showErrorDialog("Failed to fetch optimized route: $e");
     }
   }
-
-
-
 
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
@@ -207,8 +200,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-  
-    
     return Scaffold(
       body: content(),
       bottomNavigationBar: Padding(
@@ -284,8 +275,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             heroTag: "zoom in",
             child: const Icon(Icons.add),
             onPressed: () {
-              _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
-
+              _animatedMapController.animatedZoomIn(
+                  duration: Duration(milliseconds: 500));
             },
           ),
           const SizedBox(height: 10), // Space between buttons
@@ -368,7 +359,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
-
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
     LatLng? location =
@@ -407,29 +397,29 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-    urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    subdomains: ['a','b','c'],
-    retinaMode: RetinaMode.isHighDensity(context),
-    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-  );
+        urlTemplate:
+            'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        subdomains: ['a', 'b', 'c'],
+        retinaMode: RetinaMode.isHighDensity(context),
+        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+      );
 
-  // Delete old code implementation
-
-    void _showStartJourneyDialog() {
-      StartJourneyDialog.show(context, (double mileage, double mpg) {
-        // Start tracking distance travelled as journey is now active
-        Provider.of<LocationProvider>(context, listen: false).setTracking(true);
-        setState(() {
-          _startMileage = mileage;
-          _startMpg = mpg;
-          _journeyActive = true;
-          _automaticRecentre = true;
-        });
-        debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
+  void _showStartJourneyDialog() {
+    StartJourneyDialog.show(context, (double mileage, double mpg) {
+      // Start tracking distance travelled as journey is now active
+      Provider.of<LocationProvider>(context, listen: false).setTracking(true);
+      setState(() {
+        _startMileage = mileage;
+        _startMpg = mpg;
+        _journeyActive = true;
+        _automaticRecentre = true;
       });
-    }
+      debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
+    });
+    debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
+  }
 
-    void _showEndJourneyDialog() {
+  void _showEndJourneyDialog() {
     EndJourneyDialog.show(context, (double mpg) {
       // Stop tracking distance travelled as journey has been stopped
       Provider.of<LocationProvider>(context, listen: false).setTracking(false);
@@ -551,4 +541,3 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.dispose();
   }
 }
-
