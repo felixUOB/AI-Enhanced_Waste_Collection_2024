@@ -257,7 +257,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             if (await getLocationPermissions()) {
               if (context.mounted) {
                 Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
+                LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                 if (location != null) {
                   _animatedMapController.animateTo(
                       dest: LatLng(
