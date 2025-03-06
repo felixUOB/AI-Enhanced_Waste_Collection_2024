@@ -1,4 +1,6 @@
 import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/service_locator.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
@@ -6,8 +8,10 @@ import 'package:ewc/widgets/main_navigation_bar.dart';
 // ignore: must_be_immutable
 class SplashPage extends StatefulWidget {
   final bool isTesting;
-  dynamic authService;
-  SplashPage({super.key, required this.authService, this.isTesting = false,});
+  const SplashPage({
+    super.key,
+    this.isTesting = false,
+  });
 
   @override
   State<StatefulWidget> createState() {
@@ -16,8 +20,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class SplashPageState extends State<SplashPage> {
-  
-
   @override
   void initState() {
     super.initState();
@@ -26,26 +28,27 @@ class SplashPageState extends State<SplashPage> {
 
   // Attempts to auto-login using saved credentials
   void _attemptAutoLogin() async {
+    final AuthService authService = getIt<AuthService>();
     // await _authService.clearCredentials();
-    var credentials = await widget.authService.loadUserCredentials();
+    var credentials = await authService.loadUserCredentials();
 
     String? username = credentials['username'];
     String? password = credentials['password'];
 
     if (username != null && password != null) {
       try {
-        await widget.authService.login(
+        await authService.login(
             username, password); // Attempt login with given credentials
 
         if (mounted) {
           if (widget.isTesting) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => MainNavigationBar(
-                testing: true,
-              ), // Moving pages
-            ),
-          );
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => MainNavigationBar(
+                  testing: true,
+                ), // Moving pages
+              ),
+            );
           } else {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
@@ -61,7 +64,7 @@ class SplashPageState extends State<SplashPage> {
         if (mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => LoginPage(authService: widget.authService,), // Moving pages
+              builder: (context) => LoginPage(), // Moving pages
             ),
           );
         }
@@ -71,7 +74,7 @@ class SplashPageState extends State<SplashPage> {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => LoginPage(authService: widget.authService,), // Moving pages
+            builder: (context) => LoginPage(), // Moving pages
           ),
         );
       }

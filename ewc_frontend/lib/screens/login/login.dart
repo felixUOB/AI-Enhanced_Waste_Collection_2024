@@ -1,17 +1,17 @@
+import 'package:ewc/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/theme_switch.dart';
-import 'package:ewc/services/auth_service.dart';
+import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:ewc/widgets/password_textfield.dart';
 
 // LoginPage is the screen where users can log in to the app
 class LoginPage extends StatefulWidget {
-  final AuthService authService;
-  const LoginPage({super.key, required this.authService});
+  const LoginPage({super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,6 +21,8 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   bool _rememberMe = false;
+
+  final AuthService _authService = getIt<AuthService>();
 
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
@@ -83,7 +85,7 @@ class LoginPageState extends State<LoginPage> {
                         children: [
                           Text("Remember Me?"),
                           Checkbox(
-                            key: Key("remember_me"),
+                              key: Key("remember_me"),
                               value: _rememberMe,
                               onChanged: (value) => setState(() {
                                     _rememberMe = value!;
@@ -94,7 +96,7 @@ class LoginPageState extends State<LoginPage> {
                           string1: "",
                           hyperString: "Forgot Password?",
                           string2: "",
-                          onTap: launchPasswordReset)
+                          onTap: _authService.launchPasswordReset),
                     ])),
 
             //-------------LOGIN BUTTON---------------------------------
@@ -108,12 +110,12 @@ class LoginPageState extends State<LoginPage> {
                 final navigator = Navigator.of(context);
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 try {
-                  await widget.authService.login(
+                  await _authService.login(
                       usernameController.text, passwordController.text);
                   // Navigate to the schedule page after successful login
 
                   if (_rememberMe) {
-                    await widget.authService.saveUserCredentials(
+                    await _authService.saveUserCredentials(
                         usernameController.text, passwordController.text);
                   }
                   // Navigate to home screen
