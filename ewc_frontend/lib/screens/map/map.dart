@@ -35,6 +35,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Route variables
   final List<LatLng> _routePoints = [];
+  final Map<List<double>, String> _routeInstructions = {};
   final List<Marker> _marker = [];
   late RouteService _routeService;
   final StopsService _stopsService = StopsService();
@@ -155,7 +156,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       Map<List<double>, String> instructionsMap = result.instructionsMap;
       setState(() {
         _routePoints.clear();
+        _routeInstructions.clear();
         _routePoints.addAll(optimizedRoute);
+        _routeInstructions.addAll(instructionsMap);
       });
     } catch (e) {
       _showErrorDialog("Failed to fetch optimized route: $e");
@@ -191,7 +194,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     return Scaffold(
       body: Column(
         children: [
-          const NavigationBanner(), // Add the NavigationBanner at the top
+          NavigationBanner(instruction: _routeInstructions.values.first, icon:Icons.navigation), // Add the NavigationBanner at the top
           Expanded(child: content()), // The map content
         ],
       ),
