@@ -4,6 +4,8 @@ import 'package:ewc/main.dart';
 import 'package:ewc/screens/login/forgot_password.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/services/auth_service.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
@@ -80,7 +82,6 @@ class _SettingPageState extends State<SettingPage> {
                   title: "Feedback",
                   subtitle: "Share your feedback with us",
                   onTap: () {
-                    // TODO: Implement feedback page navigation
                     showDialog(
                         context: context,
                         builder: (context) {
@@ -121,6 +122,7 @@ class _SettingPageState extends State<SettingPage> {
                   iconColor: Colors.yellow,
                   title: "Privacy Policy",
                   onTap: () {
+
                     // TODO: Implement privacy policy page
                   },
                 ),
@@ -132,7 +134,11 @@ class _SettingPageState extends State<SettingPage> {
                   title: "Share app",
                   subtitle: "Share this app with your friends",
                   onTap: () {
-                    // TODO: Implement share logic
+                    Share.share(
+                      "Check out this awesome app: https://play.google.com/store/apps/details?id=com.example.app",
+                      subject: "Try this amazing app!",
+                      // TODO app link to be added when deployed in iOS store or app store...
+                    );
                   },
                 ),
 

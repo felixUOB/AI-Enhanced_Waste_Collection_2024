@@ -8,8 +8,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  final String apiUrl = 'http://127.0.0.1:8000/api';
-  final String adminUrl = 'http://127.0.0.1:8000/admin';
+  final String apiUrl = 'http://10.0.2.2:8000/api';
+  final String adminUrl = 'http://10.0.2.2:8000/admin';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
@@ -239,7 +239,7 @@ class AuthService {
 }
 
 Future<void> launchPasswordReset() async {
-  final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
+  final Uri resetUri = Uri.parse("http://10.0.2.2:8000/reset_password/");
 
   if (await canLaunchUrl(resetUri)) {
     await launchUrl(resetUri, mode: LaunchMode.externalApplication);
