@@ -58,16 +58,15 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(
         vsync: this, duration: Duration(milliseconds: 1500));
-    Provider.of<LocationProvider>(context, listen: false)
-        .initialiseLocationServices();
+    Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
   }
 
   void _initialiseLocationStatusStream() async {
-    _locationStatus = await Geolocator.isLocationServiceEnabled();
+    _locationStatus = await getIt<GeolocatorPlatform>().isLocationServiceEnabled();
     _locationStatusStream =
-        Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
+        getIt<GeolocatorPlatform>().getServiceStatusStream().listen((ServiceStatus status) {
       setState(() {
         _locationStatus = status == ServiceStatus.enabled;
       });
@@ -187,6 +186,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             // Single button toggling journey start/end
             Expanded(
               child: ElevatedButton(
+                key: const Key('routeInitButton'),
                 child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
                 onPressed: () {
                   if (_journeyActive) {
@@ -295,8 +295,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
-    LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
-    return FlutterMap(
+    return Consumer<LocationProvider>(
+      builder: (context, locationProvider, child) {
+        return FlutterMap(
       mapController: _animatedMapController.mapController,
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
@@ -310,14 +311,19 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             ),
       ),
       children: [
-        openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        // openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        if (!getIt<Config>().inTestMode) openStreetMapTileLayer,
+        
         RoutePolylineLayer(routePoints: _routePoints),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
-        if (_locationStatus != null && location != null)
-          if (_locationStatus!) LocationMarker(location: location),
+        if (_locationStatus != null && locationProvider.latestLocation != null)
+          if (_locationStatus!) LocationMarker(location: locationProvider.latestLocation!),
       ],
     );
+      },
+    );
+  
   }
 
   // Tile layer for OpenStreetMap tiles
@@ -359,3 +365,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.dispose();
   }
 }
+
+
+class Config {
+  bool inTestMode;
+  Config({this.inTestMode = false});
+}
+
