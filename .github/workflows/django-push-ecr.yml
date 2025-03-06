@@ -2,8 +2,7 @@ name: CD - Build and Push Django Docker Image to ECR
 
 on:
   push:
-    branches:
-      - dev
+
       
 jobs:
   build-and-push:
@@ -42,6 +41,7 @@ jobs:
             --secret id=postgres_port,env=POSTGRES_PORT \
             --secret id=sendgrid_secret_key,env=SENDGRID_SECRET_KEY \
             -t $REPO_URI:$IMAGE_TAG .
+          python manage.py collectstatic --noinput
 
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
 
