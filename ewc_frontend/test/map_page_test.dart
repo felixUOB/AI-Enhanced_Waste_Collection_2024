@@ -61,7 +61,7 @@ void main() {
     });
 
     testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-      tester.binding.window.physicalSizeTestValue = const Size(800, 1600);
+      tester.view.physicalSize = const Size(800, 1600);
       await tester.pumpWidget(
         MaterialApp(
           home: MultiProvider(
