@@ -31,5 +31,3 @@ class TestWastePrediction(TestCase):
         # check that the predicted date is after the last data point
         last_date = datetime.strptime("2024-02-25", "%Y-%m-%d")
         self.assertTrue(predicted_date > last_date)
-        # check that the predicted date is more than four days 
-        self.assertTrue(predicted_date > (last_date))
