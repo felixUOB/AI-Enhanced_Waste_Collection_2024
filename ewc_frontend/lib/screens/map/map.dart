@@ -147,7 +147,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _fetchOptimizedRoute() async {
     try {
       List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
-      List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
+      // List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
+      RouteResult result = await _routeService.routePlanning(stops);
+      List<LatLng> optimizedRoute = result.routeCoordinates;
+      // ignore: unused_local_variable
+      Map<List<double>, String> instructionsMap = result.instructionsMap;
       setState(() {
         _routePoints.clear();
         _routePoints.addAll(optimizedRoute);

@@ -4,6 +4,13 @@ import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 
+class RouteResult {
+  final List<LatLng> routeCoordinates;
+  final Map<List<double>, String> instructionsMap;
+
+  RouteResult(this.routeCoordinates, this.instructionsMap);
+}
+
 // A service class to manage route fetching from OpenRouteService API
 class RouteService {
   final OpenRouteService client;
@@ -70,7 +77,7 @@ class RouteService {
   }
 
 
-  Future<List<LatLng>> routePlanning(List<Stop> stops) async {
+  Future<RouteResult> routePlanning(List<Stop> stops) async {
     final depot = LatLng(51.4533, -2.6257);
     
     List<VroomJob> jobs = [];
@@ -120,27 +127,28 @@ class RouteService {
     if (directionsResponse.isEmpty) {
       throw Exception('No route could be found.');
     }
-    final dir = await client.directionsMultiRouteDataPost(
+    final directionsDataResponse = await client.directionsMultiRouteDataPost(
       coordinates: optimizedOrder,
       profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
       instructions: true,
     );
 
-    // Access geometry & instructions
-    for (var route in dir) {
-      // If route.geometry exists, parse as needed (e.g., polyline decoding).
+    final Map<List<double>, String> instructionsMap = {};
+
+    for (var route in directionsDataResponse) {
       final segments = route.segments;
       for (var segment in segments) {
         for (var step in (segment.steps)) {
-          print('Instruction: ${step.instruction}');
-          // Collect instructions into a list if you want to display them in the UI.
+          instructionsMap[step.wayPoints] = step.instruction;
+          print('Instruction: ${step.instruction} ${step.wayPoints} ${step.name}' );
         }
       }
     }
 
-
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
-    return directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
+    List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
+
+    return RouteResult(routeCoordinates, instructionsMap);
 
   }
 
