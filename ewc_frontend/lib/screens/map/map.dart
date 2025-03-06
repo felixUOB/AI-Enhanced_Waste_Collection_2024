@@ -68,7 +68,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(
         vsync: this, duration: Duration(milliseconds: 1500));
-    getIt<LocationProvider>().initialiseLocationServices();
+    Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
   }
@@ -257,7 +257,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             if (await getLocationPermissions()) {
               if (context.mounted) {
                 Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                LatLng? location = getIt<LocationProvider>().latestLocation;
+                LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
                 if (location != null) {
                   _animatedMapController.animateTo(
                       dest: LatLng(
@@ -270,8 +270,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               if (await requestLocationPermissions()) {
                 if (context.mounted) {
   
-                  getIt<LocationProvider>().initialisePositionStream();
-                  LatLng? location = getIt<LocationProvider>().latestLocation;
+                  Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                  LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
                   if (location != null) {
                     _animatedMapController.animateTo(
                         dest: LatLng(
