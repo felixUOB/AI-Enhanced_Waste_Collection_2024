@@ -82,20 +82,38 @@ class _SettingPageState extends State<SettingPage> {
                   onTap: () {
                     // TODO: Implement feedback page navigation
                     showDialog(
-                      context: context,
-                      builder: (_) => AlertDialog(
-                        title: Text("Feedback"),
-                        content: Text("This feature is under construction."),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text("OK"),
-                          )
-                        ],
-                      ),
-                    );
+                        context: context,
+                        builder: (context) {
+                          Future.delayed(Duration(milliseconds: 500), () async {
+                            final Uri url =
+                            Uri.parse("https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxUNlRDNjZNVk9OUFVFRUlQT0szVDFKR1VNNi4u");
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url,
+                                  mode: LaunchMode.externalApplication);
+                              Navigator.pop(context); // Close dialog after redirect
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                    Text("Feedback form currently not working")),
+                              );
+                            }
+                          });
+                          return AlertDialog(
+                            title: Text("Redirecting..."),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(), // Loading indicator
+                                SizedBox(height: 10),
+                                Text("Redirecting to feedback form..."),
+                              ],
+                            ),
+                          );
+                        });
                   },
                 ),
+
 
                 // 3) Privacy Policy
                 _buildSettingsItem(
