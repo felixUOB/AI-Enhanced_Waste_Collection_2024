@@ -17,7 +17,6 @@ import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
 import 'package:ewc/widgets/start_journey_dialog.dart';
 import 'package:ewc/widgets/end_journey_dialog.dart';
-import 'ignore_tile_provider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
@@ -33,10 +32,10 @@ class MapPage extends StatefulWidget {
 
 /// TileProvider for testing. Ignore the actual network request and return an empty image.
 class IgnoreTileProvider extends TileProvider {
-  const IgnoreTileProvider();
+  IgnoreTileProvider();
 
   @override
-  ImageProvider getImage(TileCoordinates coords, TileLayer options) {
+  ImageProvider getImage(TileCoordinates coordinates, TileLayer options) {
     return const NetworkImage('');
   }
 }
@@ -325,7 +324,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         // openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
         if (inTestMode)
           TileLayer(
-            tileProvider: const IgnoreTileProvider(),
+            tileProvider: IgnoreTileProvider(),
             urlTemplate: '',
           )
         else
