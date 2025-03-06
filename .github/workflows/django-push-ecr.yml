@@ -43,6 +43,8 @@ jobs:
             -t $REPO_URI:$IMAGE_TAG .
 
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
+          
+          docker run --rm $REPO_URI:$IMAGE_TAG python manage.py collectstatic --noinput
 
           docker run --rm $REPO_URI:$IMAGE_TAG ls /app/staticfiles
 
