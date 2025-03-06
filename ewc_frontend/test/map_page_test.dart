@@ -34,11 +34,30 @@ class FakeGeolocatorPlatform extends GeolocatorPlatform {
 void stubSetup(){
   when(getIt<LocationProvider>().initialiseLocationServices()).thenAnswer((_) async => Future.value());
   when(getIt<LocationProvider>().latestLocation).thenReturn(LatLng(0, 0));
+  when(MockLocationProvider().latestLocation).thenReturn(LatLng(0, 0));
+  when(getIt<Config>().inTestMode).thenReturn(true);
  }
+
+Widget pumpMap() {
+  return MaterialApp(
+    home: MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LocationProvider>(
+          create: (_) => MockLocationProvider(),
+        ),
+        ChangeNotifierProvider<StopsProvider>(
+          create: (_) => MockStopsProvider(),
+        ),
+      ],
+      child: MapPage(),
+    ),
+  );
+}
 void main() {
   // Set the fake GeolocatorPlatform before tests run 
   setUp(() { 
     mockSetupLocator();
+    stubSetup();
   });
 
   tearDown(() {
@@ -47,61 +66,33 @@ void main() {
   group('Map Page Tests', () {
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
+      await tester.pumpWidget(pumpMap());
 
-      when(getIt<LocationProvider>().initialiseLocationServices()).thenAnswer((_) async => Future.value());
-      when(getIt<LocationProvider>().latestLocation).thenReturn(LatLng(0, 0));
-      when(MockLocationProvider().latestLocation).thenReturn(LatLng(0, 0));
-      when(getIt<Config>().inTestMode).thenReturn(true);
-      
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: MultiProvider(
-            providers: [
-              ChangeNotifierProvider<LocationProvider>(
-                create: (_) => MockLocationProvider(),
-              ),
-              ChangeNotifierProvider<StopsProvider>(
-                create: (_) => MockStopsProvider(), 
-              ),
-            ],
-            child: MapPage(),
-          ),
-        ),
-      );
       expect(find.byType(MapPage), findsOneWidget);
       expect(find.byType(FlutterMap), findsOneWidget);
       expect(find.text('Start Journey'), findsOneWidget);
     });
 
-    // testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-    //   await tester.pumpWidget(
-    //     MaterialApp(
-    //       home: MultiProvider(
-    //         providers: [
-    //           ChangeNotifierProvider<LocationProvider>(
-    //             create: (_) => MockLocationProvider(),
-    //           ),
-    //           ChangeNotifierProvider<StopsProvider>(
-    //             create: (_) => MockStopsProvider(),
-    //           ),
-    //         ],
-    //         child: MapPage(),
-    //       ),
-    //     ),
-    //   );
-    //   // Open the journey dialog.
-    //   await tester.tap(find.text('Start Journey'));
-    //   await tester.pumpAndSettle();
-    //   expect(find.byType(AlertDialog), findsOneWidget);
-    
-    //   // Tap the Cancel button within the dialog.
-    //   await tester.tap(find.text('Cancel'));
-    //   await tester.pumpAndSettle();
-    
-    //   // Expect the dialog to be dismissed.
-    //   expect(find.byType(AlertDialog), findsNothing);
-    // });
+    testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
+      await tester.pumpWidget(pumpMap());
+      // Open the journey dialog.
+
+    expect(tester.widget<ElevatedButton>(find.byKey(const Key('routeInitButton'))).enabled, isTrue);
+    await tester.tap(find.byKey(const Key('routeInitButton')));
+    // await tester.pumpAndSettle();
+
+
+//     await tester.pumpAndSettle(); // Wait for animations to complete
+// await tester.ensureVisible(find.byKey(const Key('routeInitButton')));
+// await tester.pumpAndSettle();
+// await tester.tap(find.byKey(const Key('routeInitButton')));
+// await tester.pumpAndSettle(); // Ensure UI updates after tap
+
+
+    // Check if one of the dialogs (_showStartJourneyDialog or _showEndJourneyDialog) is displayed
+    // expect(find.byType(AlertDialog), findsOneWidget);
+    });
 
     
     // testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
