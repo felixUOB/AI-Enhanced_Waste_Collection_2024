@@ -1,3 +1,4 @@
+import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/services/route_service.dart';
@@ -21,6 +22,8 @@ Future<void> setupLocator() async {
   getIt.registerSingleton<StopsService>(StopsService());
 
   getIt.registerSingleton<MetricsService>(MetricsService());
+
+  getIt.registerSingleton<LocationProvider>(LocationProvider());
 
   getIt.registerSingleton<GeolocatorPlatform>(GeolocatorPlatform.instance);
 

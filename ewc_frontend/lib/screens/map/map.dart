@@ -68,8 +68,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(
         vsync: this, duration: Duration(milliseconds: 1500));
-    Provider.of<LocationProvider>(context, listen: false)
-        .initialiseLocationServices();
+    getIt<LocationProvider>().initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
   }
@@ -197,6 +196,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             // Single button toggling journey start/end
             Expanded(
               child: ElevatedButton(
+                key: const Key('routeInitButton'),
                 child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
                 onPressed: () {
                   if (_journeyActive) {
@@ -257,7 +257,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             if (await getLocationPermissions()) {
               if (context.mounted) {
                 Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                LatLng? location = getIt<LocationProvider>().latestLocation;
                 if (location != null) {
                   _animatedMapController.animateTo(
                       dest: LatLng(
@@ -270,8 +270,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               if (await requestLocationPermissions()) {
                 if (context.mounted) {
   
-                  Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                  LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                  getIt<LocationProvider>().initialisePositionStream();
+                  LatLng? location = getIt<LocationProvider>().latestLocation;
                   if (location != null) {
                     _animatedMapController.animateTo(
                         dest: LatLng(
@@ -306,8 +306,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
     final bool inTestMode = bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
-    LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
-    return FlutterMap(
+    return Consumer<LocationProvider>(
+      builder: (context, locationProvider, child) {
+        return FlutterMap(
       mapController: _animatedMapController.mapController,
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
@@ -333,10 +334,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         RoutePolylineLayer(routePoints: _routePoints),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
-        if (_locationStatus != null && location != null)
-          if (_locationStatus!) LocationMarker(location: location),
+        if (_locationStatus != null && locationProvider.latestLocation != null)
+          if (_locationStatus!) LocationMarker(location: locationProvider.latestLocation!),
       ],
     );
+      },
+    );
+  
   }
 
   // Tile layer for OpenStreetMap tiles
