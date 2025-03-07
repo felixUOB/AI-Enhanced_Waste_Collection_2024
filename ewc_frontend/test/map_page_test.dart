@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/services/stops_service.dart';
+import 'package:ewc/widgets/orientate_button.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
@@ -59,6 +60,7 @@ void main() {
     await mockSetupLocator();
     when(getIt<Config>().inTestMode).thenReturn(true);
     when(getIt<StopsService>().fetchAllStops()).thenAnswer((request) {return getMockStopList();} );
+    when(getIt<StopsService>().postStopCollection(1, 10)).thenAnswer((request) {return Completer<void>().future;});
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
   });
 
@@ -167,9 +169,74 @@ void main() {
       expect(find.byKey(Key("orientate button")), findsOneWidget);
     });
 
+    testWidgets('Ensure orientate button toggles north variable', (WidgetTester tester) async {
+      await tester.pumpWidget(pumpMap());
+      await tester.pumpAndSettle();
 
-    
+      OrientateButton orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
+      expect(orientateButton.north, true);
 
+      await tester.tap(find.byKey(Key("orientate button")));
+      await tester.pumpAndSettle();
+      orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
+      expect(orientateButton.north, false);
+
+      await tester.tap(find.byKey(Key("orientate button")));
+      await tester.pumpAndSettle();
+      orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
+      expect(orientateButton.north, true);
+    });
+
+    testWidgets('Ensure register stop shows alters visited attributed of stop', (WidgetTester tester) async {
+      var stopsProvider = StopsProvider();
+      await tester.pumpWidget(MaterialApp(
+        home: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<LocationProvider>(
+              create: (_) => LocationProvider(),
+            ),
+            ChangeNotifierProvider<StopsProvider>
+              .value(value: stopsProvider),
+          ],
+          child: MapPage(),
+        ),
+      ));
+      await tester.pumpAndSettle();
+
+      // Start journey
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      // Ensure stop is not visited before logging result
+      expect(stopsProvider.stops.first.visited, false);
+
+      await tester.tap(find.byKey(Key('log visit')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(Key('register collection dialog')), findsOneWidget);
+      expect(find.byKey(Key('waste collected')), findsOneWidget);
+      expect(find.byKey(Key('dropdown')), findsOneWidget);
+
+      await tester.enterText(find.byKey(Key('waste collected')), '10');
+
+      await tester.tap(find.byKey(Key('dropdown')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('test').last);
+      await tester.pumpAndSettle();
+      
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(Key('invalid dialog')), findsNothing);
+      expect(find.byKey(Key('register collection dialog')), findsNothing);
+      // Check stop is now visited
+      expect(stopsProvider.stops.first.visited, true);
+    });
   });
 
 }

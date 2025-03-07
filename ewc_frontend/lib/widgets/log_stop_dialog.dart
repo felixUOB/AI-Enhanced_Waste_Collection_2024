@@ -34,11 +34,13 @@ class LogStopDialog {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          key: Key('register collection dialog'),
           title: const Text('Register Collection'),
           content: SingleChildScrollView(
-            child: ListBody(
+            child: Column(
               children: [
                 DropdownMenu<int>(
+                  key: Key('dropdown'),
                   enableSearch: false,
                   hintText: 'Select stop',
                   dropdownMenuEntries:
@@ -46,6 +48,7 @@ class LogStopDialog {
                   onSelected: (value) => selectedStop = value,
                 ),
                 TextField(
+                  key: Key('waste collected'),
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(labelText: 'Mass of waste collected (kg)'),
                   onChanged: (value) => wasteCollectedInput = value,
@@ -90,6 +93,7 @@ class LogStopDialog {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          key: Key('invalid dialog'),
           title: const Text('Invalid Input'),
           content: Text('Please enter a valid $field.'),
           actions: [
