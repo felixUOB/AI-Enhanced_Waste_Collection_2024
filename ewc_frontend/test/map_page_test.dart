@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'package:ewc/models/stop_model.dart';
+import 'package:ewc/services/stops_service.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/map/map.dart';
@@ -43,11 +47,18 @@ Widget pumpMap() {
   );
 }
 
+Future<List<Stop>> getMockStopList(){
+  var completer = Completer<List<Stop>>();
+  completer.complete([Stop(id: 1, name: 'test', location: LatLng(0, 0))]);
+  return completer.future;
+}
+
 void main() {
   // Set the fake GeolocatorPlatform before tests run 
   setUp(() async {
     await mockSetupLocator();
     when(getIt<Config>().inTestMode).thenReturn(true);
+    when(getIt<StopsService>().fetchAllStops()).thenAnswer((request) {return getMockStopList();} );
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
   });
 
@@ -62,6 +73,7 @@ void main() {
 
       expect(find.byType(MapPage), findsOneWidget);
       expect(find.byType(FlutterMap), findsOneWidget);
+      expect(find.byType(FloatingActionButton), findsExactly(4));
     });
 
     testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {

@@ -83,7 +83,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _initializeEnvAndService() async {
     try {
       if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-      _routeService = await RouteService.create();
+      _routeService = getIt<RouteService>();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
       await _drawStopsMarker(Colors.blue);
       //Depot location marker
