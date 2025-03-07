@@ -206,88 +206,83 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             icon: Icons.navigation,
           ),
         ),
+        Positioned(
+          left: 12.0,
+          right: 12.0,
+          bottom: 8.0,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _journeyActive ? Colors.red : Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+            ),
+            child: Text(
+              _journeyActive ? 'End Journey' : 'Start Journey',
+              style: const TextStyle(color: Colors.white,         
+              fontWeight: FontWeight.bold,
+              fontSize: 18,),
+            ),
+            onPressed: () {
+              if (_journeyActive) {
+                _showEndJourneyDialog();
+              } else {
+                _showStartJourneyDialog();
+              }
+            },
+          ),
+        ),
       ],
     ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 56.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            // Single button toggling journey start/end
-            Expanded(
-              child: ElevatedButton(
-                child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
-                onPressed: () {
-                  if (_journeyActive) {
-                    _showEndJourneyDialog();
-                  } else {
-                    _showStartJourneyDialog();
+            (_journeyActive) ?
+            // Log visit button
+            FloatingActionButton(
+              heroTag: "log visit",
+              child: const Icon(Icons.where_to_vote),
+              onPressed: () {
+                LogStopDialog.show(context,
+                  (int stopID, int wasteCollected) {
+                    _stopsService.postStopCollection(stopID, wasteCollected);
+                    Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
                   }
-                },
-              ),
+                );
+              },
+            ) : const SizedBox(),
+            (_journeyActive) ?
+            const SizedBox(height: 10) : const SizedBox(),
+
+            // ZOOM IN
+            FloatingActionButton(
+              heroTag: "zoom in",
+              child: const Icon(Icons.add),
+              onPressed: () {
+                _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
+
+              },
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          (_journeyActive) ?
-          // Log visit button
-          FloatingActionButton(
-            heroTag: "log visit",
-            child: const Icon(Icons.where_to_vote),
-            onPressed: () {
-              LogStopDialog.show(context,
-                (int stopID, int wasteCollected) {
-                  _stopsService.postStopCollection(stopID, wasteCollected);
-                  Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
-                }
-              );
-            },
-          ) : const SizedBox(),
-          (_journeyActive) ?
-          const SizedBox(height: 10) : const SizedBox(),
+            const SizedBox(height: 10), // Space between buttons
 
-          // ZOOM IN
-          FloatingActionButton(
-            heroTag: "zoom in",
-            child: const Icon(Icons.add),
-            onPressed: () {
-              _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
-
-            },
-          ),
-          const SizedBox(height: 10), // Space between buttons
-
-          // ZOOM OUT
-          FloatingActionButton(
-            heroTag: "zoom out",
-            child: const Icon(Icons.remove),
-            onPressed: () {
-              _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
-            },
-          ),
-          const SizedBox(height: 10),
-          
-          RecentreButton(onPressed: () async {
-            // If recentre button pressed recentre map over user location
-            // Check if location permissions have been granted.
-            if (await getLocationPermissions()) {
-              if (context.mounted) {
-                Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-                if (location != null) {
-                  _animatedMapController.animateTo(
-                      dest: LatLng(
-                          location.latitude, location.longitude),
-                      zoom: 14);
-                }
-              }
-            } else {
-              // Request permission if not already granted.
-              if (await requestLocationPermissions()) {
+            // ZOOM OUT
+            FloatingActionButton(
+              heroTag: "zoom out",
+              child: const Icon(Icons.remove),
+              onPressed: () {
+                _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
+              },
+            ),
+            const SizedBox(height: 10),
+            
+            RecentreButton(onPressed: () async {
+              // If recentre button pressed recentre map over user location
+              // Check if location permissions have been granted.
+              if (await getLocationPermissions()) {
                 if (context.mounted) {
-  
                   Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
                   LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                   if (location != null) {
@@ -298,26 +293,41 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                   }
                 }
               } else {
-                //User denied location permissions, show an alert
-                if (context.mounted) {
-                  showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title : Text("Location Permission Required"),
-                        content : Text("This app requires location to function properly. Please consider turning location permission on."),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context), //Dismiss dialog
-                              child: Text("OK"))
-                        ],
-                      ),
-                  );
+                // Request permission if not already granted.
+                if (await requestLocationPermissions()) {
+                  if (context.mounted) {
+    
+                    Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                    LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                    if (location != null) {
+                      _animatedMapController.animateTo(
+                          dest: LatLng(
+                              location.latitude, location.longitude),
+                          zoom: 14);
+                    }
+                  }
+                } else {
+                  //User denied location permissions, show an alert
+                  if (context.mounted) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title : Text("Location Permission Required"),
+                          content : Text("This app requires location to function properly. Please consider turning location permission on."),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context), //Dismiss dialog
+                                child: Text("OK"))
+                          ],
+                        ),
+                    );
+                  }
                 }
               }
             }
-          }
-        )]
-      )
+          )]
+        )
+      ),
     );
   }
 
