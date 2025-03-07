@@ -166,8 +166,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
 
 
-
-
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
     showDialog(
@@ -183,6 +181,19 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         ],
       ),
     );
+  }
+
+  IconData getInstructionIcon(String instruction) {
+    instruction = instruction.toLowerCase();
+    if (instruction.contains("left")) {
+      return Icons.turn_left;
+    } else if (instruction.contains("right")) {
+      return Icons.turn_right;
+    } else if (instruction.contains("straight")) {
+      return Icons.straight;
+    } else {
+      return Icons.navigation;
+    }
   }
 
 
@@ -202,8 +213,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           right: 0,
           child: NavigationBanner(
             visible: _journeyActive,
-            instruction: _routeInstructions.values.first,
-            icon: Icons.navigation,
+            instruction: _routeInstructions.values.elementAt(1),
+            icon: getInstructionIcon(_routeInstructions.values.elementAt(1)),
           ),
         ),
         Positioned(
