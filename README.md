@@ -2,13 +2,14 @@
 
 <div align="center">
 
-[![Django Badge](https://img.shields.io/badge/Django-3.2%2B-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
-[![Flutter Badge](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://docs.flutter.dev/)
-[![OpenStreetMap Badge](https://img.shields.io/badge/OpenStreetMap-API-7EBC6F?style=for-the-badge&logo=openstreetmap&logoColor=white)](https://www.openstreetmap.org/)
-[![OpenRouteService Badge](https://img.shields.io/badge/OpenRouteService-Routing-FF7600?style=for-the-badge)](https://openrouteservice.org/)
-[![Prophet Badge](https://img.shields.io/badge/Prophet-TimeSeries-4B4453?style=for-the-badge)](https://facebook.github.io/prophet/)
-[![AWS Badge](https://img.shields.io/badge/AWS-EC2%20%7C%20RDS-FF9900?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
-[![SendGrid Badge](https://img.shields.io/badge/SendGrid-Email-4285F4?style=for-the-badge&logo=sendgrid&logoColor=white)](https://sendgrid.com/)
+[![Django Badge](https://img.shields.io/badge/Django-3.2%2B-0C4B33?style=for-the-badge&logo=django&logoColor=white&labelColor=1F2F2C)](https://www.djangoproject.com/)
+[![Flutter Badge](https://img.shields.io/badge/Flutter-3.x-4AB3F4?style=for-the-badge&logo=flutter&logoColor=white&labelColor=025B85)](https://docs.flutter.dev/)
+[![OpenStreetMap Badge](https://img.shields.io/badge/OpenStreetMap-API-87B649?style=for-the-badge&logo=openstreetmap&logoColor=white&labelColor=546F3F)](https://www.openstreetmap.org/)
+[![OpenRouteService Badge](https://img.shields.io/badge/OpenRouteService-Routing-FCA503?style=for-the-badge&labelColor=9B6A00)](https://openrouteservice.org/)
+[![Prophet Badge](https://img.shields.io/badge/Prophet-TimeSeries-8A2BE2?style=for-the-badge&labelColor=5B1B8A)](https://facebook.github.io/prophet/)
+[![AWS Badge](https://img.shields.io/badge/AWS-EC2%20%7C%20RDS-FEBD69?style=for-the-badge&logo=amazon-aws&logoColor=black&labelColor=6D5324)](https://aws.amazon.com/)
+[![SendGrid Badge](https://img.shields.io/badge/SendGrid-Email-0055BA?style=for-the-badge&logo=sendgrid&logoColor=white&labelColor=003A6D)](https://sendgrid.com/)
+
 
 
 </div>
@@ -168,14 +169,13 @@ git clone https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git
 
   ```bash
   API_KEY="YOUR_ORS_SECRET_KEY"
-  SENDGRID_SECRET_KEY="YOUR_SENDGRID_SECRET_KEY"
   ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"
   ```
-If you also need anything like SENDGRID_SECRET_KEY or ENCRYPTION_KEY on the front-end side, you can place them here.
+If you also need anything like ENCRYPTION_KEY on the front-end side, you can place them here.
 
 - Launch an iOS or Android emulator.
 - Run the application:`flutter run` 
-Or specify a device: `flutter run -d <DEVICE_ID>`
+- Or run on specify a device: `flutter run -d <DEVICE_ID>`
 
 ---
 
@@ -206,7 +206,6 @@ POSTGRES_PORT = "YOUR_DATABASE_PORT"
 
 # Additional ENV for password reset & encryption
 SENDGRID_SECRET_KEY="YOUR_SENDGRID_API_KEY"    # for password reset email
-ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"           # for 'Remember Me' functionality
 ```
 
 - Run Migrations and Start the Django server:
