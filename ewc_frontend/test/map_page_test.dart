@@ -237,6 +237,59 @@ void main() {
       // Check stop is now visited
       expect(stopsProvider.stops.first.visited, true);
     });
+
+    testWidgets('Ensure entering invalid data brings up invalid dialog', (WidgetTester tester) async {
+      await tester.pumpWidget(pumpMap());
+      await tester.pumpAndSettle();
+
+      // Start journey
+      await tester.tap(find.text('Start Journey'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField).first, '10');
+      await tester.enterText(find.byType(TextField).last, '20');
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(Key('log visit')));
+      await tester.pumpAndSettle();
+
+      // Test blank boxes
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(Key('invalid dialog')), findsOneWidget);
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      // Select item from dropdown
+      await tester.tap(find.byKey(Key('dropdown')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('test').last);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(Key('invalid dialog')), findsOneWidget);
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      // Test with invalid weight value
+      await tester.enterText(find.byKey(Key('waste collected')), '-1');
+
+      await tester.tap(find.text('Confirm'));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(Key('invalid dialog')), findsOneWidget);
+      await tester.tap(find.text('OK'));
+      await tester.pumpAndSettle();
+
+      // Cancel dialog
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(Key('register collection dialog')), findsNothing);
+    });
   });
 
 }
