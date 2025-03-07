@@ -192,12 +192,22 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   
     
     return Scaffold(
-      body: Column(
-        children: [
-          NavigationBanner(instruction: _routeInstructions.values.first, icon:Icons.navigation), // Add the NavigationBanner at the top
-          Expanded(child: content()), // The map content
-        ],
-      ),
+      body: Stack(
+      children: [
+        Positioned.fill(child: content()),
+        // Overlay the NavigationBanner at the top of the map
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: NavigationBanner(
+            visible: _journeyActive,
+            instruction: _routeInstructions.values.first,
+            icon: Icons.navigation,
+          ),
+        ),
+      ],
+    ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(
