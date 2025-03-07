@@ -10,7 +10,7 @@ import 'package:ewc/services/location_service.dart';
 // This class provides location updates to any consumers which may require them
 class LocationProvider extends ChangeNotifier {
   LatLng? _latestLocation;
-  late StreamSubscription<Position>? _locationStream;
+  StreamSubscription<Position>? _locationStream;
 
   LatLng? get latestLocation => _latestLocation;
 
