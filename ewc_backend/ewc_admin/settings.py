@@ -25,11 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('AWS_ENV') != 'True'
+DEBUG = config('DEV_ENV', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'ewc_core',
     'corsheaders',  # Added for CORS configuration
+    'whitenoise.runserver_nostatic'
 ]
 
 REST_FRAMEWORK = {
@@ -73,7 +78,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://devnest.software',
+]
+
 
 ROOT_URLCONF = 'ewc_admin.urls'
 
