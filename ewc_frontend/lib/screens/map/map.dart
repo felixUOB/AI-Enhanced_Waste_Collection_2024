@@ -35,7 +35,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
   final List<Marker> _marker = [];
-  late RouteService _routeService;
+  final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
 
   // Location variables
@@ -77,8 +77,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     try {
       await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
-
-      _routeService = getIt<RouteService>();
 
       await _drawStopsMarker(Colors.blue);
 
