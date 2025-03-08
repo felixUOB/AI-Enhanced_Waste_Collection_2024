@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
+import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
 import 'package:ewc/widgets/log_stop_dialog.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +10,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_animations/flutter_map_animations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:ewc/services/route_plot_service.dart';
 import 'package:ewc/widgets/route_polyline_layer.dart';
 import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -32,13 +33,12 @@ class MapPage extends StatefulWidget {
 
 // Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
-
   // Route variables
   final List<LatLng> _routePoints = [];
   final Map<List<double>, String> _routeInstructions = {};
   final List<Marker> _marker = [];
   late RouteService _routeService;
-  final StopsService _stopsService = StopsService();
+  final StopsService _stopsService = getIt<StopsService>();
 
   // Location variables
   late AnimatedMapController _animatedMapController;
@@ -46,27 +46,29 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   bool? _locationStatus;
 
   // Journey state management (tracks whether a journey is currently active)
-  bool _journeyActive = false; // false means the journey hasn't started yet, true means it has.
+  bool _journeyActive =
+      false; // false means the journey hasn't started yet, true means it has.
 
   // User inputs (mileage / MPG)
   double _startMileage = 0;
   double _startMpg = 0;
   double _endMpg = 0;
 
-  // State initialisation 
+  // State initialisation
   @override
   void initState() {
     super.initState();
-    _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
+    _animatedMapController = AnimatedMapController(
+        vsync: this, duration: Duration(milliseconds: 1500));
     Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
   }
 
   void _initialiseLocationStatusStream() async {
-    _locationStatus = await Geolocator.isLocationServiceEnabled();
-    _locationStatusStream = Geolocator.getServiceStatusStream()
-        .listen((ServiceStatus status) {
+    _locationStatus = await getIt<GeolocatorPlatform>().isLocationServiceEnabled();
+    _locationStatusStream =
+        getIt<GeolocatorPlatform>().getServiceStatusStream().listen((ServiceStatus status) {
       setState(() {
         _locationStatus = status == ServiceStatus.enabled;
       });
@@ -77,18 +79,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _initializeEnvAndService() async {
     try {
       await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-      _routeService = await RouteService.create();
+
+      _routeService = getIt<RouteService>();
+
       await _drawStopsMarker(Colors.blue);
 
       await _fetchOptimizedRoute();
       //Depot location marker
-      _marker.add(MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+      _marker.add(
+          MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
-      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
+      _showErrorDialog(
+          "Failed to initialize map service. Please check API key and network connection.");
     }
   }
-
 
   // Function to draw a complete route between all stops
   // ignore: unused_element
@@ -100,9 +105,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       final start = stops[i];
       final end = stops[i + 1];
       final routePart = await _routeService.getRoute(
-          start.location.latitude, start.location.longitude,
-          end.location.latitude, end.location.longitude
-      );
+          start.location.latitude,
+          start.location.longitude,
+          end.location.latitude,
+          end.location.longitude);
       route.addAll(routePart);
     }
     setState(() {
@@ -118,24 +124,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-
-
-
   // Fetches route data from the ORS API between the two given stops, entered by their ID.
   // ignore: unused_element
-  Future<void> _fetchRoute(int firstStopID,int secondStopID) async {
-    var stopsService = StopsService();
-    LatLng startPoint = await stopsService.fetchStop(firstStopID);
-    LatLng collectionPoint = await stopsService.fetchStop(secondStopID);
-
-
+  Future<void> _fetchRoute(int firstStopID, int secondStopID) async {
+    LatLng startPoint = await _stopsService.fetchStop(firstStopID);
+    LatLng collectionPoint = await _stopsService.fetchStop(secondStopID);
 
     final startLat = startPoint.latitude, startLng = startPoint.longitude;
     final endLat = collectionPoint.latitude, endLng = collectionPoint.longitude;
 
-
     // Get route points from the API and update _routePoints with the data
-    final List<LatLng> route = await _routeService.getRoute(startLat, startLng, endLat, endLng);
+    final List<LatLng> route =
+        await _routeService.getRoute(startLat, startLng, endLat, endLng);
 
     setState(() {
       // Remove any existing points
@@ -214,8 +214,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
-  
-    
     return Scaffold(
       body: Stack(
       children: [
@@ -356,56 +354,62 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
-
   // Widget that creates and displays map with initial configurations, route and markers
   Widget content() {
-    LatLng? location = Provider.of<LocationProvider>(context).latestLocation;
-    return FlutterMap(
+    return Consumer<LocationProvider>(
+      builder: (context, locationProvider, child) {
+        return FlutterMap(
       mapController: _animatedMapController.mapController,
       options: const MapOptions(
         initialCenter: LatLng(51.4492, -2.5879),
         minZoom: 2.5,
         maxZoom: 19,
         initialZoom: 14,
-        interactionOptions:
-        InteractionOptions(
-            flags: ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
-            ~InteractiveFlag.rotate // Disable map rotation
-        ),
+        interactionOptions: InteractionOptions(
+            flags:
+                ~InteractiveFlag.doubleTapZoom & // Disable double tap to zoom
+                    ~InteractiveFlag.rotate // Disable map rotation
+            ),
       ),
       children: [
-        openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        // openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
+        if (!getIt<Config>().inTestMode) openStreetMapTileLayer,
+        
         RoutePolylineLayer(routePoints: _routePoints),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
-        if (_locationStatus != null && location != null)
-          if (_locationStatus!) LocationMarker(location: location),
+        if (_locationStatus != null && locationProvider.latestLocation != null)
+          if (_locationStatus!) LocationMarker(location: locationProvider.latestLocation!),
       ],
     );
+      },
+    );
+  
   }
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-    urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-    subdomains: ['a','b','c'],
-    retinaMode: RetinaMode.isHighDensity(context),
-    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-  );
+        urlTemplate:
+            'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+        subdomains: ['a', 'b', 'c'],
+        retinaMode: RetinaMode.isHighDensity(context),
+        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+      );
 
   // Delete old code implementation
 
-    void _showStartJourneyDialog() {
+  void _showStartJourneyDialog() {
     StartJourneyDialog.show(context, (double mileage, double mpg) {
       setState(() {
         _startMileage = mileage;
         _startMpg = mpg;
         _journeyActive = true;
-        });
-        debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg'); 
       });
-    }
+      debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
+    });
+  }
 
-    void _showEndJourneyDialog() {
+  void _showEndJourneyDialog() {
     EndJourneyDialog.show(context, (double mpg) {
       setState(() {
         _endMpg = mpg;
@@ -416,13 +420,16 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
-
-
-
   @override
   void dispose() {
     _locationStatusStream.cancel();
     super.dispose();
   }
+}
+
+
+class Config {
+  bool inTestMode;
+  Config({this.inTestMode = false});
 }
 
