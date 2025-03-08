@@ -136,15 +136,14 @@ class RouteService {
 
     final Map<List<double>, String> instructionsMap = {};
 
-    for (var route in directionsDataResponse) {
-      final segments = route.segments;
-      for (var segment in segments) {
-        for (var step in (segment.steps)) {
-          instructionsMap[step.wayPoints] = step.instruction;
-          print('Instruction: ${step.instruction} ${step.wayPoints} ${step.name}' );
-        }
+
+    final route = directionsDataResponse.first;
+    for (var segment in route.segments) {
+      for (var step in (segment.steps)) {
+        instructionsMap[step.wayPoints] = step.instruction;
       }
     }
+  
 
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
     List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
