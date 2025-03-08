@@ -297,9 +297,21 @@ class MockRouteService extends _i1.Mock implements _i12.RouteService {
           as _i11.Future<List<_i7.LatLng>>);
 
   @override
-  _i11.Future<List<_i7.LatLng>> routePlanning(List<_i13.Stop>? stops) =>
+  _i11.Future<List<_i13.Stop>> routePlanning(
+    _i7.LatLng? location,
+    List<_i13.Stop>? stops,
+    _i7.LatLng? depot,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#routePlanning, [stops]),
+            Invocation.method(#routePlanning, [location, stops, depot]),
+            returnValue: _i11.Future<List<_i13.Stop>>.value(<_i13.Stop>[]),
+          )
+          as _i11.Future<List<_i13.Stop>>);
+
+  @override
+  _i11.Future<List<_i7.LatLng>> getCompleteRoute(List<_i7.LatLng>? stops) =>
+      (super.noSuchMethod(
+            Invocation.method(#getCompleteRoute, [stops]),
             returnValue: _i11.Future<List<_i7.LatLng>>.value(<_i7.LatLng>[]),
           )
           as _i11.Future<List<_i7.LatLng>>);
@@ -550,10 +562,13 @@ class MockLocationProvider extends _i1.Mock implements _i18.LocationProvider {
           as bool);
 
   @override
-  void initialiseLocationServices() => super.noSuchMethod(
-    Invocation.method(#initialiseLocationServices, []),
-    returnValueForMissingStub: null,
-  );
+  _i11.Future<void> initialiseLocationServices() =>
+      (super.noSuchMethod(
+            Invocation.method(#initialiseLocationServices, []),
+            returnValue: _i11.Future<void>.value(),
+            returnValueForMissingStub: _i11.Future<void>.value(),
+          )
+          as _i11.Future<void>);
 
   @override
   void initialisePositionStream() => super.noSuchMethod(
@@ -612,6 +627,12 @@ class MockStopsProvider extends _i1.Mock implements _i20.StopsProvider {
             returnValueForMissingStub: _i11.Future<void>.value(),
           )
           as _i11.Future<void>);
+
+  @override
+  void updateStopOrder(List<_i13.Stop>? newStops) => super.noSuchMethod(
+    Invocation.method(#updateStopOrder, [newStops]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   void setVisited(int? stopID) => super.noSuchMethod(
