@@ -48,6 +48,10 @@ def generate_pdf():
     styles = getSampleStyleSheet()
 
 
+# ========================================================================================================
+# ============================================= Icon =====================================================
+# ========================================================================================================
+
     icon_path = "static/images/RecycleNXT-Logo_Update_Black.png" 
     aspect_ratio = 2.7
     height = 80
@@ -56,6 +60,11 @@ def generate_pdf():
 
     elements.append(icon)
     elements.append(Spacer(1, 20))
+
+
+# ========================================================================================================
+# =========================================== Title ======================================================
+# ========================================================================================================
     
     # Custom Title Style
     title_style = ParagraphStyle(
@@ -76,6 +85,12 @@ def generate_pdf():
     The focus is on carbon emissions over the last month."""
     elements.append(Paragraph(summary_text, styles['BodyText']))
     elements.append(Spacer(1, 10))
+
+
+# ========================================================================================================
+# ================================== Aggregated Data For Last Month ======================================
+# ========================================================================================================
+
 
     # Filter data where the date is within the last month
     one_month_ago = timezone.now().date() - timedelta(days=30)
@@ -111,7 +126,6 @@ def generate_pdf():
     
     avg_mpg = total_distance / total_fuel_consumption if total_fuel_consumption else 0
     avg_carbon_emissions = total_carbon_emissions / total_distance if total_distance else 0
-    avg_energy_consumption = total_energy_consumption / total_distance if total_distance else 0
     avg_cost_per_mile = total_cost / total_distance if total_distance else 0
 
     aggregated_data = f"""
@@ -121,14 +135,71 @@ def generate_pdf():
     Total Energy Consumption: {total_energy_consumption:.2f} gallons<br />
     Average Miles per Gallon (MPG): {avg_mpg:.2f}<br />
     Average Carbon Emissions per Mile: {avg_carbon_emissions:.2f} lbs/mile<br />
-    Average Energy Consumption per Mile: {avg_energy_consumption:.2f} gallons/mile<br />
     Average Cost per Mile: {avg_cost_per_mile:.2f} dollars/mile<br />
     """
 
     # Add the aggregated data with line breaks to the PDF
-    elements.append(Paragraph("Aggregated Data for the Last Month", styles['Heading2']))
+    elements.append(Paragraph("Aggregated Data for the Last Year (Exclusive)", styles['Heading2']))
     elements.append(Paragraph(aggregated_data, styles['BodyText']))
     elements.append(Spacer(1, 20))
+
+
+# ========================================================================================================
+# ================================== Aggregated Data For Last Year =======================================
+# ========================================================================================================
+
+
+    # Calculate the date one year ago from today
+    today = timezone.now().date()
+
+    one_year_ago = today - timedelta(days=365)
+
+    # Calculate the date one month ago from today
+    one_month_ago = today - timedelta(days=30)
+
+    # Filter the data from one year ago to one month ago, excluding the last month
+    data_last_year_excluding_last_month = RouteEnvData.objects.filter(date__gte=one_year_ago, date__lt=one_month_ago)
+
+    total_distance_year = 0
+    total_fuel_consumption_year = 0
+    total_carbon_emissions_year = 0
+    total_energy_consumption_year = 0
+    total_cost_year = 0
+
+    for obj in data_last_year_excluding_last_month:
+        distance = obj.distance
+        mpg = obj.mpg
+
+        # Calculate aggregated values
+        total_distance_year += distance
+        total_fuel_consumption_year += (distance / mpg)  # Fuel consumption = Distance / MPG
+        total_carbon_emissions_year += calculate_carbon_emissions_per_route(distance, mpg)
+        total_energy_consumption_year += calculate_energy_consumption_per_route(distance, mpg)
+        total_cost_year += calculate_cost_per_route(distance, mpg, 3.095)
+
+    
+    avg_mpg_year = total_distance_year / total_fuel_consumption_year if total_fuel_consumption_year else 0
+    avg_carbon_emissions_year = total_carbon_emissions_year / total_distance_year if total_distance_year else 0
+    avg_cost_per_mile_year = total_cost_year / total_distance_year if total_distance_year else 0
+
+    aggregated_data_year = f"""
+    Total Distance Traveled: {total_distance_year:.2f} miles<br />
+    Total Fuel Consumption: {total_fuel_consumption_year:.2f} gallons<br />
+    Total Carbon Emissions: {total_carbon_emissions_year:.2f} lbs<br />
+    Total Energy Consumption: {total_energy_consumption_year:.2f} gallons<br />
+    Average Miles per Gallon (MPG): {avg_mpg_year:.2f}<br />
+    Average Carbon Emissions per Mile: {avg_carbon_emissions_year:.2f} lbs/mile<br />
+    Average Cost per Mile: {avg_cost_per_mile_year:.2f} dollars/mile<br />
+    """
+
+    # Add the aggregated data with line breaks to the PDF
+    elements.append(Paragraph("Aggregated Data for the Last Month", styles['Heading2']))
+    elements.append(Paragraph(aggregated_data_year, styles['BodyText']))
+    elements.append(Spacer(1, 20))
+
+# ========================================================================================================
+# ================================== Charts ==============================================================
+# ========================================================================================================
 
 
     # Bar Chart for Carbon Emissions
