@@ -15,8 +15,8 @@ admin.site.register(StopCollection)
 admin.site.register(Stops)
 
 class RouteEnvDataAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'created_at']  # Customize as needed
-    change_list_template = "admin/yourmodel_changelist.html"  # Custom template
+    list_display = ['route_env_data_id', 'distance', 'mpg', 'date']  # Customize as needed
+    change_list_template = "admin/route_env_data_changelist.html"  # Custom template
 
     def get_urls(self):
         urls = super().get_urls()
