@@ -195,7 +195,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       return Icons.navigation;
     }
   }
+  // To be used later with the useres location - for modification
+  List<double>? getInstructionRangeKey(int userIndex) {
+    // Find the first instruction range that the user's index falls within the defined range.
+    List<double>? activeRange;
+    _routeInstructions.forEach((range, instruction) {
+      final start = range[0].toInt();
+      final end = range[1].toInt();
+      if (userIndex >= start && userIndex <= end) {
+        activeRange = range;
+      }
+  });
 
+  // Return the range (key) if found
+  return activeRange;
+}
 
   // Builds the main UI for the map screen
   @override
