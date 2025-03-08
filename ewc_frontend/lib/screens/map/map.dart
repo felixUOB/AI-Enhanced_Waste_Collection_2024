@@ -183,19 +183,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
-  IconData getInstructionIcon(String instruction) {
-    instruction = instruction.toLowerCase();
-    if (instruction.contains("left")) {
-      return Icons.turn_left;
-    } else if (instruction.contains("right")) {
-      return Icons.turn_right;
-    } else if (instruction.contains("straight")) {
-      return Icons.straight;
-    } else {
-      return Icons.navigation;
-    }
-  }
-  // To be used later with the useres location - for modification
+  // To be used later with the users location - for modification
   List<double>? getInstructionRangeKey(int userIndex) {
     // Find the first instruction range that the user's index falls within the defined range.
     List<double>? activeRange;
@@ -226,7 +214,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           child: NavigationBanner(
             visible: _journeyActive,
             instruction: _routeInstructions.values.elementAt(1),
-            icon: getInstructionIcon(_routeInstructions.values.elementAt(1)),
           ),
         ),
         Positioned(

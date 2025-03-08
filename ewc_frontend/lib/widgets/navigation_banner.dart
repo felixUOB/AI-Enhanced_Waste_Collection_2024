@@ -4,19 +4,33 @@ import 'package:flutter/material.dart';
 class NavigationBanner extends StatelessWidget {
   final bool visible;
   final String instruction;
-  final IconData icon;
   final Duration animationDuration;
 
   const NavigationBanner({
     super.key,
     required this.visible,
     required this.instruction,
-    required this.icon,
     this.animationDuration = const Duration(milliseconds: 300),
   });
 
+
+  IconData getInstructionIcon(String instruction) {
+    instruction = instruction.toLowerCase();
+    if (instruction.contains("left")) {
+      return Icons.turn_left;
+    } else if (instruction.contains("right")) {
+      return Icons.turn_right;
+    } else if (instruction.contains("straight")) {
+      return Icons.straight;
+    } else {
+      return Icons.navigation;
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
+    final icon = getInstructionIcon(instruction);
     return AnimatedSlide(
       offset: visible ? Offset(0, 0) : Offset(0, -1),
       duration: animationDuration,
