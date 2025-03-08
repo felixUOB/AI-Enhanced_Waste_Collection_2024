@@ -16,6 +16,21 @@ class StopsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateStopOrder(List<Stop> newStops) {
+    // Previously visited stops must be added to new list first so they remain
+    // at top of schedule page list
+    List<Stop> newStopOrder = [];
+    for (Stop stop in _stops) {
+      if (stop.visited) {
+        newStopOrder.add(stop);
+      }
+    }
+
+    newStopOrder.addAll(newStops);
+    _stops = newStopOrder;
+    notifyListeners();
+  }
+
   void setVisited(int stopID) {
     for (Stop stop in _stops) {
       if (stop.id == stopID) {

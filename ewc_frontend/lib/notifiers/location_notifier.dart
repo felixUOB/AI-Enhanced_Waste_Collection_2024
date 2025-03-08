@@ -14,7 +14,7 @@ class LocationProvider extends ChangeNotifier {
 
   LatLng? get latestLocation => _latestLocation;
 
-  void initialiseLocationServices() async {
+  Future<void> initialiseLocationServices() async {
     // Ask user for location permissions
     _latestLocation = null;
     bool locationAccessible = await getLocationPermissions();

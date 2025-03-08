@@ -35,9 +35,6 @@ class RouteService {
     return longitude >= -180.0 && longitude <= 180.0;
   }
 
-
-
-
   // Form Route between coordinates returning a list of LatLng objects representing the route
   Future<List<LatLng>> getRoute(double startLat, double startLng, double endLat, double endLng) async {
     // Input Validation
@@ -71,17 +68,20 @@ class RouteService {
   }
 
 
-  Future<List<LatLng>> routePlanning(List<Stop> stops) async {
-    final depot = LatLng(51.4533, -2.6257);
-    
+  Future<List<Stop>> routePlanning(LatLng location, List<Stop> stops, LatLng depot) async {
     List<VroomJob> jobs = [];
+    // Have to use map to link id to stop name
+    Map<int, String> nameMapping = {};
 
     for (int idx = 0; idx < stops.length; idx++) {
-      LatLng stop = stops[idx].location;
-      jobs.add(VroomJob(
-        id: idx + 1,
-        location: ORSCoordinate(latitude: stop.latitude, longitude: stop.longitude),
-      ));
+      if (!stops[idx].visited) {
+        nameMapping[stops[idx].id] = stops[idx].name;
+        LatLng stopLocation = stops[idx].location;
+        jobs.add(VroomJob(
+          id: stops[idx].id,
+          location: ORSCoordinate(latitude: stopLocation.latitude, longitude: stopLocation.longitude),
+        ));
+      }
     }
 
 
@@ -89,7 +89,7 @@ class RouteService {
 
     VroomVehicle vehicle = VroomVehicle(
       id: 1,
-      start: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      start: ORSCoordinate(latitude: location.latitude, longitude: location.longitude),
       end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
       profile: 'driving-hgv',
     );
@@ -101,19 +101,36 @@ class RouteService {
     if (response.routes.isEmpty) {
       throw Exception('No optimized route could be found.');
     }
-    
-     // Extract the optimized order of stops
-    final optimizedOrder = <ORSCoordinate>[];
+
+    // Extract the optimized order of stops
+    List<Stop> newStopOrder = [];
     if (response.routes.first.steps != null) {
-      for (var step in response.routes.first.steps!) {
-        final location = step.location;
-        optimizedOrder.add(ORSCoordinate(latitude: location.latitude, longitude: location.longitude)); // Assuming location has latitude and longitude properties
+      for (OptimizationRouteStep step in response.routes.first.steps!) {
+        print(step.id);
+        if (step.id != null) {
+          final location = step.location;
+          newStopOrder.add(Stop(
+            id: step.id!,
+            name: nameMapping[step.id]!,
+            location: LatLng(location.latitude, location.longitude)
+          ));
+        }
       }
     }
 
-      // Get the detailed route coordinates for the optimized order
+    return newStopOrder;
+  }
+
+  Future<List<LatLng>> getCompleteRoute(List<LatLng> stops) async {
+    List<ORSCoordinate> coordinates =
+    stops.map((stop) => ORSCoordinate(
+      latitude: stop.latitude,
+      longitude: stop.longitude
+    )).toList();
+
+    // Get the detailed route coordinates for the optimized order
     final directionsResponse = await client.directionsMultiRouteCoordsPost(
-      coordinates: optimizedOrder,
+      coordinates: coordinates,
       profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
     );
 
@@ -123,7 +140,6 @@ class RouteService {
 
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
     return directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
-
   }
 
 

@@ -58,7 +58,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(
         vsync: this, duration: Duration(milliseconds: 1500));
-    Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
   }
@@ -77,6 +76,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _initializeEnvAndService() async {
     try {
       await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
+      if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
 
       _routeService = getIt<RouteService>();
 
@@ -147,11 +147,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _fetchOptimizedRoute() async {
     try {
       List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
-      List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
-      setState(() {
-        _routePoints.clear();
-        _routePoints.addAll(optimizedRoute);
-      });
+      LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+      if (location != null) {
+        final depot = LatLng(51.4533, -2.6257);
+        List<Stop> optimisedOrder = await _routeService.routePlanning(location, stops, depot);
+        if (mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(optimisedOrder);
+        List<LatLng> optimisedOrderLatLng = optimisedOrder.map((stop) => stop.location).toList();
+        optimisedOrderLatLng.insert(0, location);
+        optimisedOrderLatLng.add(depot);
+        List<LatLng> optimizedRoute = await _routeService.getCompleteRoute(optimisedOrderLatLng);
+
+        setState(() {
+          _routePoints.clear();
+          _routePoints.addAll(optimizedRoute);
+        });
+      }
     } catch (e) {
       _showErrorDialog("Failed to fetch optimized route: $e");
     }
