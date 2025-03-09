@@ -24,6 +24,8 @@ class NavigationBanner extends StatelessWidget {
       return Icons.turn_right;
     } else if (instruction.contains("straight")) {
       return Icons.straight;
+    } else if (instruction.contains("u-turn")) {
+      return Icons.u_turn_left;
     } else {
       return Icons.navigation;
     }
@@ -51,15 +53,19 @@ class NavigationBanner extends StatelessWidget {
             padding: EdgeInsets.all(12),
             // Styling for the banner container.
             decoration: BoxDecoration(
-              color: Colors.blueAccent,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
+              gradient: const LinearGradient(
+                colors: [Color(0xFF1976D2), Color(0xFF0D47A1)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
+                  blurRadius: 8,
+                  offset: Offset(0, 4),
                 ),
               ],
+              borderRadius: BorderRadius.circular(10),
             ),
             // Layout the instruction text and computed icon side by side.
             child: Row(
@@ -78,7 +84,15 @@ class NavigationBanner extends StatelessWidget {
                   flex: 1,
                   child: Align(
                     alignment: Alignment.centerRight,
-                    child: Icon(icon, color: Colors.white, size: 32),
+                    child: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: Colors.white24,
+                      child: Icon(
+                        icon,
+                        color: Colors.white,
+                        size: 28,
+                      ),
+                    ),
                   ),
                 ),
               ],
