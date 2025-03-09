@@ -1,6 +1,9 @@
+import io
+import os
+from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
-from datetime import timedelta
+from datetime import datetime, timedelta
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
@@ -11,7 +14,11 @@ from reportlab.graphics.charts.textlabels import Label
 from .models import RouteEnvData
 from reportlab.platypus import Image
 from reportlab.platypus import PageBreak
-from reportlab.lib.enums import TA_CENTER  # Import alignment constant
+from reportlab.lib.enums import TA_CENTER
+
+import matplotlib
+matplotlib.use('Agg')  # Set the backend to Agg (non-GUI)
+import matplotlib.pyplot as plt
 
 
 def calculate_percentage_change(old_value, new_value):
@@ -214,10 +221,10 @@ def generate_pdf():
     elements.append(Spacer(1, 20))
 
     # Executive Summary
-    summary_text = """This report presents the environmental impact analysis based on recent data collection. 
-    The focus is on carbon emissions over the last month."""
-    elements.append(Paragraph(summary_text, styles['BodyText']))
-    elements.append(Spacer(1, 10))
+    # summary_text = """This report presents the environmental impact analysis based on recent data collection. 
+    # The focus is on carbon emissions over the last month."""
+    # elements.append(Paragraph(summary_text, styles['BodyText']))
+    # elements.append(Spacer(1, 10))
 
 
 # ========================================================================================================
@@ -265,6 +272,8 @@ def generate_pdf():
 # ========================================================================================================
 
     elements.append(Paragraph("Aggregated Data for the Last Year", centered_style_heading2))
+    elements.append(Spacer(1, 10))
+
 
     # List of data points (each row should be a list)
     aggregated_data_year = [
@@ -298,6 +307,48 @@ def generate_pdf():
 # ================================== Charts ==============================================================
 # ========================================================================================================
 
+    # Create an in-memory buffer
+    img_buffer = io.BytesIO()
+
+    # Get the current date
+    current_date = datetime.now()
+
+    # Generate the last 6 months (including the current month)
+    months = [current_date - timedelta(days=30 * i) for i in range(6)]
+
+    # Extract the months as strings (e.g., 'Jan', 'Feb', 'Mar', etc.)
+    month_labels = [month.strftime('%b') for month in months]
+
+    # Example data for the last 6 months (you can replace this with actual data)
+    data = [10, 20, 25, 30, 40, 50]  # Replace with dynamic data
+
+    # Plot the data
+    fig, ax = plt.subplots()
+
+    # Plot the data with the months on the x-axis
+    ax.plot(month_labels, data, marker='o', linestyle='-', color='b')
+
+    # Add title and labels
+    ax.set_title('Data for the Last 6 Months')
+    ax.set_xlabel('Month')
+    ax.set_ylabel('Value')
+
+    # Rotate x-axis labels for better readability
+    plt.xticks(rotation=45)
+
+
+
+    
+    # Save the figure to the buffer instead of a file
+    plt.savefig(img_buffer, format='png', bbox_inches='tight')
+    plt.close(fig)  # Close figure to free memory
+
+    # Move the buffer cursor to the beginning
+    img_buffer.seek(0)
+
+    # Use the in-memory image in ReportLab
+    reportlab_img = Image(img_buffer, width=400, height=250)
+    elements.append(reportlab_img)
 
     # Make table stretch across the page
     page_width, _ = letter
