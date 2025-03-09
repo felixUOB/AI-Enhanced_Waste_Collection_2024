@@ -1,13 +1,13 @@
 # AI-Enhanced Waste Collection Handover Document
 
 ## Contents
-- Introduction [#Introduction]
-- Build and Execution [#Build_and_Execution]
-- System Architecture [#System_Architecture]
-- Project Structure [#Project_Structure]
-- Database Structure [#Database_Structure]
-- AWS Setup [#AWS_Setup]
-- Further Documentation [#Further_Documentation]
+- [Introduction](#Introduction)
+- [Build and Execution] (#Build-and-Execution)
+- [System Architecture] (#System-Architecture)
+- [Project Structure] (#Project-Structure)
+- [Database Structure] (#Database-Structure)
+- [AWS Setup] (#AWS Setup)
+- [Further Documentation] (#Further_Documentation)
 
 ## Introduction 
 This document contains all the essential information required for handover. Including the structure of our project and everything required to takeover development.
@@ -164,8 +164,14 @@ The main structure for the project is as followed:
 ## Database Structure
 The structure of the database is as followed:
 
+![database diagram](images/database-diagram.png)
+
 During development our database is hosted on Neon, for deployment we host our database on AWS.
 
 ## AWS Setup
 
-## Further Documentation
+The setup of our AWS is as followed:
+![cloud architecture diagram](images/cloud-architecture.png)
+
+You can access the deployed version of the Django server via ```https://devnest.software/admin/```
+
