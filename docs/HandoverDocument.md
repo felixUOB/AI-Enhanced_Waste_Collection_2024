@@ -2,8 +2,7 @@
 
 ## Contents
 - Introduction [#Introduction]
-- Build [#Build]
-- Execution [#Execution]
+- Build and Execution [#Build_and_Execution]
 - System Architecture [#System_Architecture]
 - Project Structure [#Project_Structure]
 - Database Structure [#Database_Structure]
@@ -14,7 +13,7 @@
 This document contains all the essential information required for handover. Including the structure of our project and everything required to takeover development.
 Additional information can be found in the README.md in the root directory and under the Further Documentation section.
 
-## Build
+## Build and Execution
 
 ### Requirements/Prerequisites 
 
@@ -25,14 +24,58 @@ Additional information can be found in the README.md in the root directory and u
 | Android Studios | https://developer.android.com/studio/install | | Used to create android emulators for Android app development. |
 | Android SDK and Command Line Tools | SDK manager in android studios. | Version 14 and later. | Required to build android apps. |
 | XCode | https://apps.apple.com/gb/app/xcode/id497799835?mt=12 | Latest | Used for iOS development and running iOS simulator. |
-| Python dependencies | pip install -r requirements.txt | Defined in requirements.txt | This will get all the python packages needed. |
-| Flutter dependencies | flutter pub get | Defined in pubspec.yaml | This will get all the flutter dependencies needed. |  
+| Python dependencies | ```pip install -r requirements.txt``` | Defined in requirements.txt | This will get all the python packages needed. |
+| Flutter dependencies | ```flutter pub get``` | Defined in pubspec.yaml | This will get all the flutter dependencies needed. |  
 
 For more information on flutter and android sdk set up view our set up guide view here.[#docs/set-up-guide/fronend-flutter.md]
 
-# Building the emulator
+### Clone Repository
 
-## Execution
+Clone the repository:
+``` git clone https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git ```
+
+### Setup Environment Variables - Backend
+For the project to run there needs to be a ```.env``` file int the root directory of the backend. This is located at ```/2024-AIEnhancedWasteCollection/ewc_backend/```.
+This ```.env``` file should contain:
+```env
+DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
+POSTGRES_USER = "YOUR_DATABASE_USERNAME"
+POSTGRES_PASSWORD = "YOUR_DATABASE_PASSWORD"
+POSTGRES_HOST = "YOUR_DATABASE_HOST"
+POSTGRES_PORT = "YOUR_DATABASE_PORT"
+
+# Additional ENV for password reset & encryption
+SENDGRID_SECRET_KEY="YOUR_SENDGRID_API_KEY"    # for password reset email
+
+```
+
+### Setup Environment Variables - Frontend
+You also need to have an ```.env``` file in the root directory of the backend. This is located at ```/2024-AIEnhancedWasteCollection/ewc_frontend/```.
+This ```.env``` file should contain:
+```env
+API_KEY="YOUR_ORS_SECRET_KEY"
+ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"
+```
+
+> [!NOTE]
+> Note that the value so these environment variables will need to be set to the correct values instead of the placeholders. If these values are changed the github secretes also need to be updated in order for the continuous deployment to function correctly. 
+
+### Running the application 
+In order to run the application correctly, the backend Django server must be running. To start the server run
+```
+python manage.py migrate
+python manage.py runserver
+```
+This will run the server on http://127.0.0.1:8000
+
+To run the front end, start either an android or iOS emulator, then run
+
+```
+flutter run
+```
+
+> [!NOTE]
+> If you are running an android emulator you may need to change the apiURL and adminURL in the auth_service.dart file to 10.0.2.2 inorder to connect to the backend correctly.
 
 ## System Architecture 
 
@@ -99,7 +142,6 @@ For more information on flutter and android sdk set up view our set up guide vie
 ```
 
 ## Database Structure
-
 
 ## AWS Setup
 
