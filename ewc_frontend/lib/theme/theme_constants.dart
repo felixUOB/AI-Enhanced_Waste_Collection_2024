@@ -106,6 +106,12 @@ class AppTheme {
 
   //------------SECTION FOR CONSTANT TEXT COLOURS--------------------
 
+  final constWhiteTextSmall = TextStyle(
+    color: Colors.white,
+    fontFamily: "Questrial",
+    fontSize: 12,
+  );
+
   final constWhiteTextMedium = TextStyle(
     color: Colors.white,
     fontFamily: "Questrial",

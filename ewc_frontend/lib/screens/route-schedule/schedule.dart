@@ -98,6 +98,7 @@ class _Schedule extends State<Schedule> {
                     // checks if its the last in the list
                     eventCard: ScheduleTile(
                       name: route[index].name,
+                      visited: route[index].visited,
                       minutes: (!route[index].visited && _stopTimes != null) ? _stopTimes![index] : 0
                     ),
                   );
