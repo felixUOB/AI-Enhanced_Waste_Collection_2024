@@ -41,7 +41,7 @@ class StopCollection(models.Model):
         db_table = 'ewc_core_stop_collection'
         
     def __str__(self):
-        return self.stop_collection_id
+        return f"Route Data {self.stop_collection_id}" 
     
 # Stops
 class Stops(models.Model):
