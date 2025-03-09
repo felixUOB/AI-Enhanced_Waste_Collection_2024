@@ -77,12 +77,32 @@ flutter run
 > [!NOTE]
 > If you are running an android emulator you may need to change the apiURL and adminURL in the auth_service.dart file to 10.0.2.2 inorder to connect to the backend correctly.
 
+### Running the application test
+We have developed tests for both the frontend and backend.
+To run the frontend (flutter) tests, navigate to the frontend root directory (```2024-AIEnhancedWasteCollection/ewc_frontend/```)and run:
+
+```flutter test```
+
+To run the backend (django) tests, navigate to the backend root directory (```2024-AIEnhancedWasteCollection/ewc_backend/```) and run: 
+
+```python manage.py test ewc_core.tests```
+
+For more information about testing, view our testing documentation [#TESTING_GUIDE]
+
 ## System Architecture 
+The system architecture for this project is 
+![architecture diagram](images/ArchitectureDiagram.png)
 
 ## Project Structure
+The main structure for the project is as followed:
 ```bash
 2024-AIEnhancedWasteCollection
-├── .github/                       # GitHub Actions, Issue/PR Templates, etc.
+├── .github/                       
+│   ├── ISSUE_TEMPLATE/            # templates for Kanban Issues
+│   │   ├── ...
+│   ├── workflows/                 # for CI and CD
+│   │   ├── ...
+│   ├── pull_request_template.md
 ├── docs/                          # Contains documentation, meeting minuets, research etc.
 ├── ewc_backend/                   # Django-based backend
 │   ├── ewc_admin/                 # Django project-level config
@@ -142,6 +162,9 @@ flutter run
 ```
 
 ## Database Structure
+The structure of the database is as followed:
+
+During development our database is hosted on Neon, for deployment we host our database on AWS.
 
 ## AWS Setup
 
