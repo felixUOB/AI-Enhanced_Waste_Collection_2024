@@ -43,7 +43,7 @@ def plot(model, forecast):
     fig = model.plot(forecast)
     plt.show()
     
-# fill in the mising days with the accumulating growth i.e. interpolate the daily waste weight
+# fill in the missing days with the accumulating growth i.e. interpolate the daily waste weight
 def fillInDates(df): 
     print("filling in data")
     
@@ -51,7 +51,7 @@ def fillInDates(df):
     filled_data=[]
     # get the weight at the first collection
     current_weight = float(df['y'].iloc[0])
-    # get the data the the first collection occured
+    # get the data the the first collection occurred
     last_collection_day = pd.to_datetime(df['ds'].iloc[0])
     
     # append the first line of the data
@@ -82,7 +82,7 @@ def fillInDates(df):
 
 def train_model(df):
     # fit the model
-    # instantiate a new Prohet object with uncertainty interval to 95%
+    # instantiate a new Prophet object with uncertainty interval to 95%
     model = Prophet()
     model.fit(df)
      # predict the next data point

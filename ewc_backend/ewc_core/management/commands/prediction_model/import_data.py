@@ -71,7 +71,7 @@ def export_stopdata_csv(stopid) :
 
 
 #Exporting user data
-def export_userdata_csv (request) :
+def export_userdata_csv () :
     try:
         file_path = generate_csv(
             filename="userdata.csv",
