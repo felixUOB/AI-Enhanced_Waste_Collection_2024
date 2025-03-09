@@ -213,7 +213,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           right: 0,
           child: NavigationBanner(
             visible: _journeyActive,
-            instruction: _routeInstructions.values.elementAt(1),
+            instruction: _routeInstructions.values.length > 1 
+                        ? _routeInstructions.values.elementAt(1) 
+                        : "No instructions available",
           ),
         ),
         Positioned(

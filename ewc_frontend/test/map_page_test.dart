@@ -3,7 +3,7 @@ import 'package:ewc/screens/map/map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:geolocator/geolocator.dart';
-// import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:latlong2/latlong.dart';
@@ -65,14 +65,14 @@ void main() {
   });
   group('Map Page Tests', () {
     // Setup and Initialisation Tests
-    // testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
-    //   await tester.pumpWidget(pumpMap());
+    testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
+      await tester.pumpWidget(pumpMap());
 
 
-    //   expect(find.byType(MapPage), findsOneWidget);
-    //   expect(find.byType(FlutterMap), findsOneWidget);
-    //   expect(find.text('Start Journey'), findsOneWidget);
-    // });
+      expect(find.byType(MapPage), findsOneWidget);
+      expect(find.byType(FlutterMap), findsOneWidget);
+      expect(find.text('Start Journey'), findsOneWidget);
+    });
 
     // testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
     //   await tester.pumpWidget(pumpMap());
