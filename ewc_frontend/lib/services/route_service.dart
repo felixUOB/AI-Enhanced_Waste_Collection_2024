@@ -1,9 +1,21 @@
 import 'package:ewc/service_locator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
+
+// A class to store the result of a route planning request.
+class RouteResult {
+  // A list of LatLng objects representing the route
+  final List<LatLng> routeCoordinates;
+  // A map of instructions with the key as a list of coordinates(that are the range between which the instruction should be displayed) 
+  // and the value as the instruction message.
+  final Map<List<double>, String> instructionsMap;
+
+  RouteResult(this.routeCoordinates, this.instructionsMap);
+}
 
 // A service class to manage route fetching from OpenRouteService API
 class RouteService {
@@ -67,90 +79,95 @@ class RouteService {
     }
   }
 
+  // Plans and returns the optimized route between a list of stops and the navigation instructions for that route.
+  Future<RouteResult> routePlanning(LatLng userLocation, List<Stop> stops) async {
+    final depot = LatLng(51.4533, -2.6257);
 
-  Future<List<Stop>> routePlanning(LatLng location, List<Stop> stops, LatLng depot) async {
     List<VroomJob> jobs = [];
-    // Have to use map to link id to stop name
-    Map<int, String> nameMapping = {};
-
+    // Iterate through each stop and create a VroomJob object for it.
+    // This is used to define the locations that need to be visited.
     for (int idx = 0; idx < stops.length; idx++) {
-      if (!stops[idx].visited) {
-        nameMapping[stops[idx].id] = stops[idx].name;
-        LatLng stopLocation = stops[idx].location;
-        jobs.add(VroomJob(
-          id: stops[idx].id,
-          location: ORSCoordinate(latitude: stopLocation.latitude, longitude: stopLocation.longitude),
-        ));
-      }
+      LatLng stop = stops[idx].location;
+      jobs.add(VroomJob(
+        id: idx + 1,
+        location: ORSCoordinate(latitude: stop.latitude, longitude: stop.longitude),
+      ));
     }
 
 
     List<VroomVehicle> vehicles = [];
-
+    // Create a VroomVehicle object for each vehicle.
+    // This is used to define the starting and ending locations for each vehicle.
     VroomVehicle vehicle = VroomVehicle(
       id: 1,
-      start: ORSCoordinate(latitude: location.latitude, longitude: location.longitude),
+      start: ORSCoordinate(latitude: userLocation.latitude, longitude: userLocation.longitude),
       end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
       profile: 'driving-hgv',
     );
 
     vehicles.add(vehicle);
-
+    // Send the optimization request to the API which returns the optimized route order.
     final response = await client.optimizationDataPost(jobs: jobs, vehicles: vehicles);
-  
+
     if (response.routes.isEmpty) {
       throw Exception('No optimized route could be found.');
     }
 
     // Extract the optimized order of stops
-    List<Stop> newStopOrder = [];
+    final optimizedOrder = <ORSCoordinate>[];
     if (response.routes.first.steps != null) {
-      for (OptimizationRouteStep step in response.routes.first.steps!) {
-        print(step.id);
-        if (step.id != null) {
-          final location = step.location;
-          newStopOrder.add(Stop(
-            id: step.id!,
-            name: nameMapping[step.id]!,
-            location: LatLng(location.latitude, location.longitude)
-          ));
-        }
+      for (var step in response.routes.first.steps!) {
+        final location = step.location;
+        optimizedOrder.add(ORSCoordinate(latitude: location.latitude, longitude: location.longitude)); // Assuming location has latitude and longitude properties
       }
     }
 
-    return newStopOrder;
-  }
-
-  Future<List<LatLng>> getCompleteRoute(List<LatLng> stops) async {
-    List<ORSCoordinate> coordinates =
-    stops.map((stop) => ORSCoordinate(
-      latitude: stop.latitude,
-      longitude: stop.longitude
-    )).toList();
-
     // Get the detailed route coordinates for the optimized order
     final directionsResponse = await client.directionsMultiRouteCoordsPost(
-      coordinates: coordinates,
+      coordinates: optimizedOrder,
       profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
+      instructions: true,
     );
 
     if (directionsResponse.isEmpty) {
       throw Exception('No route could be found.');
     }
+    // Get the detailed route data for the optimized order
+    final directionsDataResponse = await client.directionsMultiRouteDataPost(
+      coordinates: optimizedOrder,
+      profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
+      instructions: true,
+    );
+    // Initialize an empty map to store instructions with waypoints as keys and instruction messages as values.
+    final Map<List<double>, String> instructionsMap = {};
+
+    //Extract the instructions from the response
+    final route = directionsDataResponse.first;
+    for (var segment in route.segments) {
+      for (var step in (segment.steps)) {
+        // Map the waypoints to the corresponding instruction message.
+        instructionsMap[step.wayPoints] = step.instruction;
+      }
+    }
+
 
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
-    return directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
+    List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
+
+    return RouteResult(routeCoordinates, instructionsMap);
+
   }
 
 
   // This function takes two values, source and destinations and returns
   // a matrix of the time it takes to get from that source to each destination
   Future<List<int>> getStopTimes(LatLng source, List<LatLng> stopLocations) async {
-
     // Convert stopLocations list from LatLng to ORSCoordinates
     stopLocations.insert(0, source); // Add source as initial item in array
     List<ORSCoordinate> convertedList = stopLocations.map(
-            (latlng) => ORSCoordinate(latitude: latlng.latitude, longitude: latlng.longitude)).toList();
+      (latlng) => ORSCoordinate(
+        latitude: latlng.latitude, longitude: latlng.longitude)
+    ).toList();
 
     try {
       // Request time duration matrix from ORS API
@@ -174,11 +191,56 @@ class RouteService {
 
       // Return as array with each element as time to that stop
       return finalDurations;
-
     } catch (e) {
       print('Error calculating stop timings: $e');
       // Rethrow the exception to allow higher-level handlers to manage it
       rethrow;
     }
+  }
+
+  // This function takes user location, a start point and an endpoint
+  // It then calculates the perpendicular distance of the user from the line between
+  // startPoint and endPoint and returns it as a double
+  double distanceFromSegment(LatLng location, LatLng startPoint, LatLng endPoint) {
+    // Vector from startPoint to user location
+    LatLng v = LatLng(
+        location.latitude-startPoint.latitude,
+        location.longitude-endPoint.longitude
+    );
+
+    // Vector representing line segment
+    LatLng w = LatLng(
+        endPoint.latitude-startPoint.latitude,
+        endPoint.longitude-startPoint.longitude
+    );
+
+    // Project v onto w using dot product
+    double dotProduct = w.latitude * v.latitude + w.longitude * v.longitude;
+
+    // Calculate squared length of line segment
+    double routeSegmentLengthSquared =
+        w.latitude * w.latitude +
+            w.longitude * w.longitude;
+
+    double projection = dotProduct / routeSegmentLengthSquared;
+
+    // Clamp projection to ensure it lies on the routeSegment
+    double clampedProjection = projection.clamp(0, 1);
+
+    // Calculate LatLng of projected point
+    LatLng projectedPoint = LatLng(
+        startPoint.latitude + clampedProjection * w.latitude,
+        startPoint.longitude + clampedProjection * w.longitude
+    );
+
+    // Return distance between user location and projected point
+    double distance = Geolocator.distanceBetween(
+        location.latitude,
+        location.longitude,
+        projectedPoint.latitude,
+        projectedPoint.longitude
+    );
+
+    return distance;
   }
 }

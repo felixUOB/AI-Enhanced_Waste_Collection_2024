@@ -54,7 +54,6 @@ class _MetricsPageState extends State<MetricsPage> {
 
   Future<void> _fetchMetricsDate() async{
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
-    print(fetchedRoutes);
     fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
 
     // fill in the spare days
@@ -64,15 +63,11 @@ class _MetricsPageState extends State<MetricsPage> {
       for (int i=0; i<len; i++){
         // get the first day
         DateTime current = DateTime.parse(fetchedRoutes[i].date);
-        print("current $current");
         // get the day after
         DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
-        print("next $next");
-        print(current.add(Duration(days: 1)).isAtSameMomentAs(next));
         if (current != next) {
           // see if the day after current is the next day or identify if there is a gap
           while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
-            //print("add day");
             current = current.add(Duration(days: 1));
             // add a filler day
             fetchedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
@@ -81,7 +76,6 @@ class _MetricsPageState extends State<MetricsPage> {
       }
     }
     fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
-    print(fetchedRoutes);
     routeList = fetchedRoutes;
     _calculateDetails();
     thisWeeksJoruneys = _calculateThisWeek();

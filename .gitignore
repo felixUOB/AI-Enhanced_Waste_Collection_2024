@@ -23,3 +23,5 @@ coverage/
 # Coverage.py result files
 .coverage
 htmlcov/
+
+/android/app/.cxx/
