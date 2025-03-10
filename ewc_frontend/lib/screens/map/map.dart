@@ -21,6 +21,7 @@ import 'package:ewc/widgets/start_journey_dialog.dart';
 import 'package:ewc/widgets/end_journey_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/widgets/navigation_banner.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
@@ -35,6 +36,7 @@ class MapPage extends StatefulWidget {
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
+  final Map<List<double>, String> _routeInstructions = {};
   final List<Marker> _marker = [];
   late RouteService _routeService;
   final StopsService _stopsService = getIt<StopsService>();
@@ -153,10 +155,14 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
       LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
       if (location != null) {
-        List<LatLng> optimizedRoute = await _routeService.routePlanning(location, stops);
+        RouteResult result = await _routeService.routePlanning(location, stops);
+        List<LatLng> optimizedRoute = result.routeCoordinates;
+        Map<List<double>, String> instructionsMap = result.instructionsMap;
         setState(() {
           _routePoints.clear();
+          _routeInstructions.clear();
           _routePoints.addAll(optimizedRoute);
+          _routeInstructions.addAll(instructionsMap);
         });
       }
     } catch (e) {
@@ -207,33 +213,58 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
+  // To be used later with the users location - for modification
+  List<double>? getInstructionRangeKey(int userIndex) {
+    // Find the first instruction range that the user's index falls within the defined range.
+    List<double>? activeRange;
+    _routeInstructions.forEach((range, instruction) {
+      final start = range[0].toInt();
+      final end = range[1].toInt();
+      if (userIndex >= start && userIndex <= end) {
+        activeRange = range;
+      }
+  });
+
+  // Return the range (key) if found
+  return activeRange;
+}
+
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          content(),
-
-          // Start / End Journey button
-          Container(
-            alignment: Alignment.bottomCenter,
-            margin: EdgeInsets.only(bottom: 10),
+          Positioned.fill(child: content()),
+          // Overlay the NavigationBanner at the top of the map
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: NavigationBanner(
+              visible: _journeyActive,
+              instruction: _routeInstructions.values.length > 1
+                          ? _routeInstructions.values.elementAt(1)
+                          : "No instructions available",
+            ),
+          ),
+          Positioned(
+            left: 12.0,
+            right: 12.0,
+            bottom: 8.0,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: _journeyActive ? Color(0xFFE7342F) : Color(0xFF4BB543),
-                foregroundColor: Colors.white,
+                backgroundColor: _journeyActive ? Colors.red : Colors.green,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(16.0),
                 ),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
               ),
               child: Text(
                 _journeyActive ? 'End Journey' : 'Start Journey',
-                style: TextStyle(
-                  fontSize: 16, // Font size
-                  fontWeight: FontWeight.bold,
-                ),
+                style: const TextStyle(color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,),
               ),
               onPressed: () {
                 if (_journeyActive) {
@@ -241,124 +272,107 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                 } else {
                   _showStartJourneyDialog();
                 }
-              }
-            )
+              },
+            ),
           ),
-
-          
-        ]
+        ],
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          (_journeyActive) ?
-          // Log visit button
-          FloatingActionButton(
-            key: Key("log visit"),
-            heroTag: "log visit",
-            child: const Icon(Icons.where_to_vote),
-            onPressed: () {
-              LogStopDialog.show(context,
-                (int stopID, int wasteCollected) {
-                  _stopsService.postStopCollection(stopID, wasteCollected);
-                  Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
-                }
-              );
-            },
-          ) : const SizedBox(),
-          (_journeyActive) ?
-          const SizedBox(height: 10) : const SizedBox(),
-
-          OrientateButton(
-            key: Key("orientate button"),
-            north: _lockedNorth,
-            onPressed: () {
-              if (_lockedNorth) {
-                // If user is already orientated north, check if the journey is active
-                // If it is then rotate the map to the according to the bearing
-                // between closest route points. If not rotate camera according to the
-                // previously saved bearing.
-                if (_journeyActive && _automaticRecentre) {
-                  _animatedMapController.animatedRotateTo(_autoBearing);
-                } else {
-                  _animatedMapController.animatedRotateTo(_savedBearing);
-                }
-                setState(() {
-                  // Toggle lockedNorth value
-                  _lockedNorth = !_lockedNorth;
-                });
-              } else {
-                // User is not already locked north, therefore reset bearing to 0
-                double savedBearing =
-                  _animatedMapController.rotation; // Remember current bearing
-                _animatedMapController.animatedRotateReset(); // Reset bearing
-                setState(() {
-                  _savedBearing = savedBearing;
-                  _lockedNorth = !_lockedNorth;
-                });
-              }
-            }
-          ),
-          const SizedBox(height: 10),
-
-          // ZOOM IN
-          FloatingActionButton(
-            key: Key("zoom in"),
-            heroTag: "zoom in",
-            child: const Icon(Icons.add),
-            onPressed: () {
-              _animatedMapController.animatedZoomIn(
-                  duration: Duration(milliseconds: 500));
-            },
-          ),
-          const SizedBox(height: 10), // Space between buttons
-
-          // ZOOM OUT
-          FloatingActionButton(
-            key: Key("zoom out"),
-            heroTag: "zoom out",
-            child: const Icon(Icons.remove),
-            onPressed: () {
-              _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
-            },
-          ),
-          const SizedBox(height: 10),
-
-          RecentreButton(
-            key: Key("recentre button"),
-            centred: _automaticRecentre,
-            onPressed: () async {
-              // If recentre button pressed recentre map over user location
-              // Check if location permissions have been granted.
-              double zoom;
-              // Set zoom to higher value if journey is currently active
-              _journeyActive ? zoom = 17 : zoom = 14;
-              if (await getLocationPermissions()) {
-                if (context.mounted) {
-                  Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                  LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-                  if (location != null) {
-                    _animatedMapController.animateTo(
-                        dest: location,
-                        zoom: zoom);
-
-                    // Enable automatic following of location after user recentres
-                    setState(() {
-                      _automaticRecentre = true;
-                    });
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 56.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            (_journeyActive) ?
+            // Log visit button
+            FloatingActionButton(
+              key: Key("log visit"),
+              heroTag: "log visit",
+              child: const Icon(Icons.where_to_vote),
+              onPressed: () {
+                LogStopDialog.show(context,
+                  (int stopID, int wasteCollected) {
+                    _stopsService.postStopCollection(stopID, wasteCollected);
+                    Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
                   }
-                }
-              } else {
-                // Request permission if not already granted.
-                if (await requestLocationPermissions()) {
-                  if (context.mounted) {
+                );
+              },
+            ) : const SizedBox(),
+            (_journeyActive) ?
+            const SizedBox(height: 10) : const SizedBox(),
 
+            OrientateButton(
+              key: Key("orientate button"),
+              north: _lockedNorth,
+              onPressed: () {
+                if (_lockedNorth) {
+                  // If user is already orientated north, check if the journey is active
+                  // If it is then rotate the map to the according to the bearing
+                  // between closest route points. If not rotate camera according to the
+                  // previously saved bearing.
+                  if (_journeyActive && _automaticRecentre) {
+                    _animatedMapController.animatedRotateTo(_autoBearing);
+                  } else {
+                    _animatedMapController.animatedRotateTo(_savedBearing);
+                  }
+                  setState(() {
+                    // Toggle lockedNorth value
+                    _lockedNorth = !_lockedNorth;
+                  });
+                } else {
+                  // User is not already locked north, therefore reset bearing to 0
+                  double savedBearing =
+                      _animatedMapController.rotation; // Remember current bearing
+                  _animatedMapController.animatedRotateReset(); // Reset bearing
+                  setState(() {
+                    _savedBearing = savedBearing;
+                    _lockedNorth = !_lockedNorth;
+                  });
+                }
+              }
+            ),
+            const SizedBox(height: 10),
+
+            // ZOOM IN
+            FloatingActionButton(
+              key: Key("zoom in"),
+              heroTag: "zoom in",
+              child: const Icon(Icons.add),
+              onPressed: () {
+                _animatedMapController.animatedZoomIn(
+                    duration: Duration(milliseconds: 500));
+              },
+            ),
+            const SizedBox(height: 10), // Space between buttons
+
+            // ZOOM OUT
+            FloatingActionButton(
+              key: Key("zoom out"),
+              heroTag: "zoom out",
+              child: const Icon(Icons.remove),
+              onPressed: () {
+                _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
+              },
+            ),
+            const SizedBox(height: 10),
+
+            RecentreButton(
+              key: Key("recentre button"),
+              centred: _automaticRecentre,
+              onPressed: () async {
+                // If recentre button pressed recentre map over user location
+                // Check if location permissions have been granted.
+                double zoom;
+                // Set zoom to higher value if journey is currently active
+                _journeyActive ? zoom = 17 : zoom = 14;
+                // If recentre button pressed recentre map over user location
+                // Check if location permissions have been granted.
+                if (await getLocationPermissions()) {
+                  if (context.mounted) {
                     Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
                     LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                     if (location != null) {
                       _animatedMapController.animateTo(
-                          dest: LatLng(
-                              location.latitude, location.longitude),
+                          dest: location,
                           zoom: zoom);
 
                       // Enable automatic following of location after user recentres
@@ -368,26 +382,46 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                     }
                   }
                 } else {
-                  //User denied location permissions, show an alert
-                  if (context.mounted) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title : Text("Location Permission Required"),
-                        content : Text("This app requires location to function properly. Please consider turning location permission on."),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context), //Dismiss dialog
-                              child: Text("OK"))
-                        ],
-                      ),
-                    );
+                  // Request permission if not already granted.
+                  if (await requestLocationPermissions()) {
+                    if (context.mounted) {
+
+                      Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                      LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                      if (location != null) {
+                        _animatedMapController.animateTo(
+                            dest: LatLng(
+                                location.latitude, location.longitude),
+                            zoom: zoom);
+
+                        // Enable automatic following of location after user recentres
+                        setState(() {
+                          _automaticRecentre = true;
+                        });
+                      }
+                    }
+                  } else {
+                    //User denied location permissions, show an alert
+                    if (context.mounted) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title : Text("Location Permission Required"),
+                          content : Text("This app requires location to function properly. Please consider turning location permission on."),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context), //Dismiss dialog
+                                child: Text("OK"))
+                          ],
+                        ),
+                      );
+                    }
                   }
                 }
               }
-            }
-          )
-        ]
+            )
+          ]
+        )
       )
     );
   }
