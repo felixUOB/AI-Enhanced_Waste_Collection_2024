@@ -1,5 +1,6 @@
 import 'package:ewc/service_locator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:open_route_service/open_route_service.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -82,7 +83,7 @@ class RouteService {
   }
 
   // Plans and returns the optimized route between a list of stops and the navigation instructions for that route.
-  Future<RouteResult> routePlanning(List<Stop> stops) async {
+  Future<RouteResult> routePlanning(LatLng userLocation, List<Stop> stops) async {
     final depot = LatLng(51.4533, -2.6257);
     
     List<VroomJob> jobs = [];
@@ -102,7 +103,7 @@ class RouteService {
     // This is used to define the starting and ending locations for each vehicle.
     VroomVehicle vehicle = VroomVehicle(
       id: 1,
-      start: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      start: ORSCoordinate(latitude: userLocation.latitude, longitude: userLocation.longitude),
       end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
       profile: 'driving-hgv',
     );
@@ -164,17 +165,19 @@ class RouteService {
   // This function takes two values, source and destinations and returns
   // a matrix of the time it takes to get from that source to each destination
   Future<List<int>> getStopTimes(LatLng source, List<LatLng> stopLocations) async {
-
     // Convert stopLocations list from LatLng to ORSCoordinates
     stopLocations.insert(0, source); // Add source as initial item in array
     List<ORSCoordinate> convertedList = stopLocations.map(
-            (latlng) => ORSCoordinate(latitude: latlng.latitude, longitude: latlng.longitude)).toList();
+            (latlng) => ORSCoordinate(
+            latitude: latlng.latitude, longitude: latlng.longitude))
+        .toList();
 
     try {
       // Request time duration matrix from ORS API
       TimeDistanceMatrix matrix = await client.matrixPost(
         locations: convertedList,
-        destinations: List.generate(stopLocations.length - 1, (index) => index + 1),
+        destinations: List.generate(
+            stopLocations.length - 1, (index) => index + 1),
         sources: List.generate(stopLocations.length - 1, (index) => index),
         profileOverride: ORSProfile.drivingHgv,
       );
@@ -192,11 +195,56 @@ class RouteService {
 
       // Return as array with each element as time to that stop
       return finalDurations;
-
     } catch (e) {
       print('Error calculating stop timings: $e');
       // Rethrow the exception to allow higher-level handlers to manage it
       rethrow;
     }
+  }
+
+  // This function takes user location, a start point and an endpoint
+  // It then calculates the perpendicular distance of the user from the line between
+  // startPoint and endPoint and returns it as a double
+  double distanceFromSegment(LatLng location, LatLng startPoint, LatLng endPoint) {
+    // Vector from startPoint to user location
+    LatLng v = LatLng(
+        location.latitude-startPoint.latitude,
+        location.longitude-endPoint.longitude
+    );
+
+    // Vector representing line segment
+    LatLng w = LatLng(
+        endPoint.latitude-startPoint.latitude,
+        endPoint.longitude-startPoint.longitude
+    );
+
+    // Project v onto w using dot product
+    double dotProduct = w.latitude * v.latitude + w.longitude * v.longitude;
+
+    // Calculate squared length of line segment
+    double routeSegmentLengthSquared =
+        w.latitude * w.latitude +
+        w.longitude * w.longitude;
+
+    double projection = dotProduct / routeSegmentLengthSquared;
+
+    // Clamp projection to ensure it lies on the routeSegment
+    double clampedProjection = projection.clamp(0, 1);
+
+    // Calculate LatLng of projected point
+    LatLng projectedPoint = LatLng(
+        startPoint.latitude + clampedProjection * w.latitude,
+        startPoint.longitude + clampedProjection * w.longitude
+    );
+
+    // Return distance between user location and projected point
+    double distance = Geolocator.distanceBetween(
+        location.latitude,
+        location.longitude,
+        projectedPoint.latitude,
+        projectedPoint.longitude
+    );
+
+    return distance;
   }
 }
