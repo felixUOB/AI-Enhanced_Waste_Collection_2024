@@ -35,6 +35,12 @@
           <!--
             Django's security token to prevent cross-site request forgery (CSRF)
           -->
+          <!-- Input field and button for fetching coordinates -->
+          <div class="mb-3">
+            <label for="stop_name" class="form-label">Stop Name</label>
+            <input type="text" class="form-control" id="stop_name" name="stop_name">
+            <button type="button" class="btn btn-primary mt-2" onclick="fetchCoordinates()">Fetch Coordinates</button>
+          </div>
 
           <!--
             "Manual rendering": we iterate over the form fields,
@@ -82,4 +88,19 @@
     </div>
   </div>
 </div>
+<script>
+  function fetchCoordinates() {
+    const stopName = document.getElementById('stop_name').value;
+    fetch(`/stops/get_coordinates/?name=${stopName}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          document.getElementById('id_latitude').value = data.latitude;
+          document.getElementById('id_longitude').value = data.longitude;
+        }
+      });
+  }
+</script>
 {% endblock %}

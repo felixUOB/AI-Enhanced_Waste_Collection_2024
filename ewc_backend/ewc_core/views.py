@@ -132,7 +132,7 @@ def stops_edit_view(request, pk):
 @user_passes_test(is_staff_user)
 def get_coordinates_by_name(request):
     stop_name = request.GET.get('name')
-    api_key = settings.OPENCAGE_API_KEY
+    api_key = settings.OPENROUTESERVICE_API_KEY
     url = f'https://api.openrouteservice.org/geocode/search?api_key={api_key}&text={stop_name}'
     response = requests.get(url)
     data = response.json()
