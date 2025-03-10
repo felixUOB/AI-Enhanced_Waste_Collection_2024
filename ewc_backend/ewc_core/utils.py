@@ -69,9 +69,8 @@ def generate_pdf():
         alignment=TA_CENTER  # Center align the text
     )
 
-
 # ========================================================================================================
-# ============================================= Data Retreival ===========================================
+# ============================================= Data Retrieval ===========================================
 # ========================================================================================================
 
        # Calculate the date one year ago from today
@@ -84,15 +83,10 @@ def generate_pdf():
 
 
     # Filter the data from one year ago to one month ago, excluding the last month
-    year_data = RouteEnvData.objects.filter(date__gte=one_year_ago)
-
-    month_data = RouteEnvData.objects.filter(date__gte=one_month_ago)
-
-    month_before_data = RouteEnvData.objects.filter(date__gte=one_month_ago - timedelta(days=30), date__lt=one_month_ago)
-
+    data = RouteEnvData.objects.filter(date__gte=one_year_ago)
 
 # ========================================================================================================
-# ============================================= Month Calculations =======================================
+# ============================================= Data Calculations =======================================
 # ========================================================================================================
 
     # Extract field names (table headers)
@@ -101,67 +95,11 @@ def generate_pdf():
     # Prepare table data (headers + records)
     table_data = [field_names]  # Add headers as the first row
 
-
-    # Aggregated Data Calculations
     total_distance = 0
     total_fuel_consumption = 0
     total_carbon_emissions = 0
     total_energy_consumption = 0
     total_cost = 0
-
-    for obj in month_data:
-        row = [str(getattr(obj, field.name)) for field in RouteEnvData._meta.fields]
-        table_data.append(row)
-
-        distance = obj.distance
-        mpg = obj.mpg
-
-        # Calculate aggregated values
-        total_distance += distance
-        total_fuel_consumption += (distance / mpg)  # Fuel consumption = Distance / MPG
-        total_carbon_emissions += calculate_carbon_emissions_per_route(distance, mpg)
-        total_energy_consumption += calculate_energy_consumption_per_route(distance, mpg)
-        total_cost += calculate_cost_per_route(distance, mpg, 3.095)
-
-    
-    avg_mpg = total_distance / total_fuel_consumption if total_fuel_consumption else 0
-    avg_carbon_emissions = total_carbon_emissions / total_distance if total_distance else 0
-    avg_cost_per_mile = total_cost / total_distance if total_distance else 0
-
-
-
-# ========================================================================================================
-# ============================================= Month Before Calculations ================================
-# ========================================================================================================
-
-    # Aggregated Data Calculations
-    total_distance_mb = 0
-    total_fuel_consumption_mb = 0
-    total_carbon_emissions_mb = 0
-    total_energy_consumption_mb = 0
-    total_cost_mb = 0
-
-    for obj in month_before_data:
-        distance = obj.distance
-        mpg = obj.mpg
-
-        # Calculate aggregated values
-        total_distance_mb += distance
-        total_fuel_consumption_mb += (distance / mpg)  # Fuel consumption = Distance / MPG
-        total_carbon_emissions_mb += calculate_carbon_emissions_per_route(distance, mpg)
-        total_energy_consumption_mb += calculate_energy_consumption_per_route(distance, mpg)
-        total_cost_mb += calculate_cost_per_route(distance, mpg, 3.095)
-
-    
-    avg_mpg_mb = total_distance_mb / total_fuel_consumption_mb if total_fuel_consumption_mb else 0
-    avg_carbon_emissions_mb = total_carbon_emissions_mb / total_distance_mb if total_distance_mb else 0
-    avg_cost_per_mile_mb = total_cost_mb / total_distance_mb if total_distance_mb else 0
-
-
-# ========================================================================================================
-# ============================================= Year Calculations ========================================
-# ========================================================================================================
-
 
     total_distance_year = 0
     total_fuel_consumption_year = 0
@@ -169,7 +107,14 @@ def generate_pdf():
     total_energy_consumption_year = 0
     total_cost_year = 0
 
-    for obj in year_data:
+    total_distance_mb = 0
+    total_fuel_consumption_mb = 0
+    total_carbon_emissions_mb = 0
+    total_energy_consumption_mb = 0
+    total_cost_mb = 0
+
+
+    for obj in data:
         distance = obj.distance
         mpg = obj.mpg
 
@@ -178,16 +123,42 @@ def generate_pdf():
         total_fuel_consumption_year += (distance / mpg)  # Fuel consumption = Distance / MPG
         total_carbon_emissions_year += calculate_carbon_emissions_per_route(distance, mpg)
         total_energy_consumption_year += calculate_energy_consumption_per_route(distance, mpg)
-        total_cost_year += calculate_cost_per_route(distance, mpg, 3.095)
+        total_cost_year += calculate_cost_per_route(distance, mpg, 3.095)  
 
-    
+        if obj.date > one_month_ago:
+            row = [str(getattr(obj, field.name)) for field in RouteEnvData._meta.fields]
+            table_data.append(row)
+
+            distance = obj.distance
+            mpg = obj.mpg
+
+            # Calculate aggregated values
+            total_distance += distance
+            total_fuel_consumption += (distance / mpg)  # Fuel consumption = Distance / MPG
+            total_carbon_emissions += calculate_carbon_emissions_per_route(distance, mpg)
+            total_energy_consumption += calculate_energy_consumption_per_route(distance, mpg)
+            total_cost += calculate_cost_per_route(distance, mpg, 3.095)
+
+        if obj.date > one_month_ago - timedelta(days=30) and obj.date < one_month_ago:
+             # Calculate aggregated values
+            total_distance_mb += distance
+            total_fuel_consumption_mb += (distance / mpg)  # Fuel consumption = Distance / MPG
+            total_carbon_emissions_mb += calculate_carbon_emissions_per_route(distance, mpg)
+            total_energy_consumption_mb += calculate_energy_consumption_per_route(distance, mpg)
+            total_cost_mb += calculate_cost_per_route(distance, mpg, 3.095)
+
+    avg_mpg_mb = total_distance_mb / total_fuel_consumption_mb if total_fuel_consumption_mb else 0
+    avg_carbon_emissions_mb = total_carbon_emissions_mb / total_distance_mb if total_distance_mb else 0
+    avg_cost_per_mile_mb = total_cost_mb / total_distance_mb if total_distance_mb else 0
+
+    avg_mpg = total_distance / total_fuel_consumption if total_fuel_consumption else 0
+    avg_carbon_emissions = total_carbon_emissions / total_distance if total_distance else 0
+    avg_cost_per_mile = total_cost / total_distance if total_distance else 0
+
     avg_mpg_year = total_distance_year / total_fuel_consumption_year if total_fuel_consumption_year else 0
     avg_carbon_emissions_year = total_carbon_emissions_year / total_distance_year if total_distance_year else 0
     avg_cost_per_mile_year = total_cost_year / total_distance_year if total_distance_year else 0
 
-
-
-    
 # ========================================================================================================
 # ============================================= Icon =====================================================
 # ========================================================================================================
@@ -200,7 +171,6 @@ def generate_pdf():
 
     elements.append(icon)
     elements.append(Spacer(1, 20))
-
 
 # ========================================================================================================
 # =========================================== Title ======================================================
@@ -219,13 +189,6 @@ def generate_pdf():
     # Title Page
     elements.append(Paragraph("Environmental Impact Report", title_style))
     elements.append(Spacer(1, 20))
-
-    # Executive Summary
-    # summary_text = """This report presents the environmental impact analysis based on recent data collection. 
-    # The focus is on carbon emissions over the last month."""
-    # elements.append(Paragraph(summary_text, styles['BodyText']))
-    # elements.append(Spacer(1, 10))
-
 
 # ========================================================================================================
 # ================================== Aggregated Data For Last Month ======================================
@@ -248,11 +211,10 @@ def generate_pdf():
     ]
 
     aggregated_data_table.extend(aggregated_data)
-    # Convert data into Paragraphs to maintain styling
     aggregated_table_data = [(Paragraph(row[0], styles['BodyText']), Paragraph(row[1], styles['BodyText'])) for row in aggregated_data_table]
 
     # Create the table
-    aggregated_table = Table(aggregated_table_data, colWidths=[300, 100])  # Adjust column widths as needed
+    aggregated_table = Table(aggregated_table_data, colWidths=[300, 100])
     aggregated_table.setStyle(TableStyle([
         ('GRID', (0,0), (-1,-1), 0.5, colors.grey),  # Light grid lines
         ('ALIGN', (0,0), (0,-1), 'LEFT'),  # Align first column left
@@ -306,49 +268,6 @@ def generate_pdf():
 # ========================================================================================================
 # ================================== Charts ==============================================================
 # ========================================================================================================
-
-    # Create an in-memory buffer
-    img_buffer = io.BytesIO()
-
-    # Get the current date
-    current_date = datetime.now()
-
-    # Generate the last 6 months (including the current month)
-    months = [current_date - timedelta(days=30 * i) for i in range(6)]
-
-    # Extract the months as strings (e.g., 'Jan', 'Feb', 'Mar', etc.)
-    month_labels = [month.strftime('%b') for month in months]
-
-    # Example data for the last 6 months (you can replace this with actual data)
-    data = [10, 20, 25, 30, 40, 50]  # Replace with dynamic data
-
-    # Plot the data
-    fig, ax = plt.subplots()
-
-    # Plot the data with the months on the x-axis
-    ax.plot(month_labels, data, marker='o', linestyle='-', color='b')
-
-    # Add title and labels
-    ax.set_title('Data for the Last 6 Months')
-    ax.set_xlabel('Month')
-    ax.set_ylabel('Value')
-
-    # Rotate x-axis labels for better readability
-    plt.xticks(rotation=45)
-
-
-
-    
-    # Save the figure to the buffer instead of a file
-    plt.savefig(img_buffer, format='png', bbox_inches='tight')
-    plt.close(fig)  # Close figure to free memory
-
-    # Move the buffer cursor to the beginning
-    img_buffer.seek(0)
-
-    # Use the in-memory image in ReportLab
-    reportlab_img = Image(img_buffer, width=400, height=250)
-    elements.append(reportlab_img)
 
     # Make table stretch across the page
     page_width, _ = letter
