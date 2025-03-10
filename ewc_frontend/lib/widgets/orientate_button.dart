@@ -16,9 +16,8 @@ class OrientateButton extends StatelessWidget {
       heroTag: "orientate button",
       onPressed: onPressed,
       child: (north) ?
-      // Not sure which icons are intuitive here
-        Icon(Icons.arrow_circle_up):
-        Icon(Icons.change_circle_outlined)
+        Icon(Icons.navigation):
+        Icon(Icons.near_me_outlined)
     );
   }
 }

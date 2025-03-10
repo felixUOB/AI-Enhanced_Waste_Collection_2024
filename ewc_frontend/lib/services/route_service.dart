@@ -131,17 +131,19 @@ class RouteService {
   // This function takes two values, source and destinations and returns
   // a matrix of the time it takes to get from that source to each destination
   Future<List<int>> getStopTimes(LatLng source, List<LatLng> stopLocations) async {
-
     // Convert stopLocations list from LatLng to ORSCoordinates
     stopLocations.insert(0, source); // Add source as initial item in array
     List<ORSCoordinate> convertedList = stopLocations.map(
-            (latlng) => ORSCoordinate(latitude: latlng.latitude, longitude: latlng.longitude)).toList();
+            (latlng) => ORSCoordinate(
+            latitude: latlng.latitude, longitude: latlng.longitude))
+        .toList();
 
     try {
       // Request time duration matrix from ORS API
       TimeDistanceMatrix matrix = await client.matrixPost(
         locations: convertedList,
-        destinations: List.generate(stopLocations.length - 1, (index) => index + 1),
+        destinations: List.generate(
+            stopLocations.length - 1, (index) => index + 1),
         sources: List.generate(stopLocations.length - 1, (index) => index),
         profileOverride: ORSProfile.drivingHgv,
       );
@@ -159,7 +161,6 @@ class RouteService {
 
       // Return as array with each element as time to that stop
       return finalDurations;
-
     } catch (e) {
       print('Error calculating stop timings: $e');
       // Rethrow the exception to allow higher-level handlers to manage it
@@ -167,6 +168,9 @@ class RouteService {
     }
   }
 
+  // This function takes user location, a start point and an endpoint
+  // It then calculates the perpendicular distance of the user from the line between
+  // startPoint and endPoint and returns it as a double
   double distanceFromSegment(LatLng location, LatLng startPoint, LatLng endPoint) {
     // Vector from startPoint to user location
     LatLng v = LatLng(
@@ -180,23 +184,26 @@ class RouteService {
         endPoint.longitude-startPoint.longitude
     );
 
+    // Project v onto w using dot product
     double dotProduct = w.latitude * v.latitude + w.longitude * v.longitude;
 
+    // Calculate squared length of line segment
     double routeSegmentLengthSquared =
         w.latitude * w.latitude +
-            w.longitude * w.longitude;
+        w.longitude * w.longitude;
 
     double projection = dotProduct / routeSegmentLengthSquared;
 
     // Clamp projection to ensure it lies on the routeSegment
     double clampedProjection = projection.clamp(0, 1);
 
+    // Calculate LatLng of projected point
     LatLng projectedPoint = LatLng(
         startPoint.latitude + clampedProjection * w.latitude,
         startPoint.longitude + clampedProjection * w.longitude
     );
 
-    // Return distance from projected point
+    // Return distance between user location and projected point
     double distance = Geolocator.distanceBetween(
         location.latitude,
         location.longitude,

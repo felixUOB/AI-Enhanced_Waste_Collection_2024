@@ -12,16 +12,19 @@ class LocationProvider extends ChangeNotifier {
   LatLng? _latestLocation;
   StreamSubscription<Position>? _locationStream;
 
+  // Variable to keep track of how far user has travelled
   double _distanceTravelled = 0;
-  bool _trackingEnabled = false;
+  bool _trackingEnabled = false; // Whether user's distance is being tracked
 
   LatLng? get latestLocation => _latestLocation;
   double get distanceTravelled => _distanceTravelled;
 
+  // Function to set whether tracking is enabled or disabled
   void setTracking(bool setting) {
     _trackingEnabled = setting;
   }
 
+  // Function to reset distance after end of route
   void resetDistance() {
     _distanceTravelled = 0;
   }

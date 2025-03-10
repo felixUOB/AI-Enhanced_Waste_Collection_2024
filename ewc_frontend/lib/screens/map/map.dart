@@ -39,10 +39,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   late RouteService _routeService;
   final StopsService _stopsService = getIt<StopsService>();
 
+  // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
 
-  double _autoBearing = 0;
-  double _savedBearing = -45;
+  double _autoBearing = 0; // Bearing set automatically by navigation view
+  double _savedBearing = -45; // Bearing set by user rotating map
   bool _lockedNorth = true; // Whether map rotation is locked to the north
 
   // Location variables
@@ -171,6 +172,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         title: Text("Error"),
         content: Text(message),
         actions: [
+          // Optional retry button
           if (retryFunction != null)
             TextButton(
               onPressed: () {
@@ -272,15 +274,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             north: _lockedNorth,
             onPressed: () {
               if (_lockedNorth) {
+                // If user is already orientated north, check if the journey is active
+                // If it is then rotate the map to the according to the bearing
+                // between closest route points. If not rotate camera according to the
+                // previously saved bearing.
                 if (_journeyActive && _automaticRecentre) {
                   _animatedMapController.animatedRotateTo(_autoBearing);
                 } else {
                   _animatedMapController.animatedRotateTo(_savedBearing);
                 }
                 setState(() {
+                  // Toggle lockedNorth value
                   _lockedNorth = !_lockedNorth;
                 });
               } else {
+                // User is not already locked north, therefore reset bearing to 0
                 double savedBearing =
                   _animatedMapController.rotation; // Remember current bearing
                 _animatedMapController.animatedRotateReset(); // Reset bearing
@@ -323,6 +331,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               // If recentre button pressed recentre map over user location
               // Check if location permissions have been granted.
               double zoom;
+              // Set zoom to higher value if journey is currently active
               _journeyActive ? zoom = 17 : zoom = 14;
               if (await getLocationPermissions()) {
                 if (context.mounted) {
@@ -421,12 +430,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // Tile layer for OpenStreetMap tiles
   TileLayer get openStreetMapTileLayer => TileLayer(
-        urlTemplate:
-            'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
-        subdomains: ['a', 'b', 'c'],
-        retinaMode: RetinaMode.isHighDensity(context),
-        userAgentPackageName: 'dev.fleaflet.flutter_map.example',
-      );
+    urlTemplate:
+      'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    subdomains: ['a', 'b', 'c'],
+    retinaMode: RetinaMode.isHighDensity(context),
+    userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+  );
 
   void _showStartJourneyDialog() {
     StartJourneyDialog.show(context, (double mileage, double mpg) {
@@ -464,18 +473,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     int index = 0;
 
     if (_routePoints.isEmpty) {
+      // Route not yet defined so request new route
       await _fetchOptimizedRoute();
     }
 
     LatLng? location;
     if (mounted) location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
     if (location == null) {
+      // Location not defined yet so exit function
       return;
     }
 
-    // Find closest point on route by searching from current index and the 3 either side
+    // Find new closest route point by searching 3 behind and 6 in front
+    // of the previous closest index
     for (int i = max(0, _closestIndex-3); i <
-        min(_routePoints.length-1, _closestIndex+3); i++) {
+        min(_routePoints.length-1, _closestIndex+6); i++) {
 
       double newDistance = Geolocator.distanceBetween(
         location.latitude,
@@ -512,7 +524,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     double bearing, distance;
 
-    // Take minimum distance between the two as distance from the line
+    // Take minimum distance between the two as distance from the line,
+    // then calculate new bearing for map camera
     if (distance1 < distance2) {
       distance = distance1;
       bearing = 180 - Geolocator.bearingBetween(
@@ -543,6 +556,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       // As the route has just been fetched, the closest index can be safely
       // assumed to be 0
       index = 0;
+
+      // Calculate new bearing between route points user is between
       bearing = 180 - Geolocator.bearingBetween(
         _routePoints[1].latitude,
         _routePoints[1].longitude,
