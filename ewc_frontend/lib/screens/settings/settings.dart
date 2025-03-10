@@ -17,6 +17,7 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
   final AuthService authService = AuthService();
 
+  //Helper for logout
   Future<void> _logout() async {
     await authService.clearCredentials();
     if (!mounted) return;
@@ -26,6 +27,18 @@ class _SettingPageState extends State<SettingPage> {
           (route) => false,
     );
   }
+
+  //Helper for feedback form, contact us and privacy policy
+  void _launchUrlFromInput(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw "Could not launch $url";
+    }
+  }
+
 
     /// Helper method to build each settings item to avoid repeating 
     /// Padding → Card → ListTile. (pass the icon, color, title, etc.)
@@ -81,38 +94,7 @@ class _SettingPageState extends State<SettingPage> {
                   iconColor: Colors.blue,
                   title: "Feedback",
                   subtitle: "Share your feedback with us",
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          Future.delayed(Duration(milliseconds: 500), () async {
-                            final Uri url =
-                            Uri.parse("https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxUNlRDNjZNVk9OUFVFRUlQT0szVDFKR1VNNi4u");
-                            if (await canLaunchUrl(url)) {
-                              await launchUrl(url,
-                                  mode: LaunchMode.externalApplication);
-                              Navigator.pop(context); // Close dialog after redirect
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content:
-                                    Text("Feedback form currently not working")),
-                              );
-                            }
-                          });
-                          return AlertDialog(
-                            title: Text("Redirecting..."),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                CircularProgressIndicator(), // Loading indicator
-                                SizedBox(height: 10),
-                                Text("Redirecting to feedback form..."),
-                              ],
-                            ),
-                          );
-                        });
-                  },
+                  onTap: () => _launchUrlFromInput("https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxUNlRDNjZNVk9OUFVFRUlQT0szVDFKR1VNNi4u"),
                 ),
 
 
@@ -121,10 +103,7 @@ class _SettingPageState extends State<SettingPage> {
                   icon: Icons.privacy_tip_outlined,
                   iconColor: Colors.yellow,
                   title: "Privacy Policy",
-                  onTap: () {
-
-                    // TODO: Implement privacy policy page
-                  },
+                  onTap: () => _launchUrlFromInput("https://docs.google.com/document/d/1C5pWZDzJLd2fnowOf-S9JmdOSM2ZDsfflpHorGLOQ-c/edit?usp=sharing"),
                 ),
 
                 // 4) Share app
@@ -148,9 +127,7 @@ class _SettingPageState extends State<SettingPage> {
                   iconColor: Colors.blue,
                   title: "Contact us",
                   subtitle: "Contact if you need help",
-                  onTap: () {
-                    // TODO: Implement contact
-                  },
+                  onTap: () => _launchUrlFromInput("https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxURDgzSVVSRUZZTjhaMU5YMU05RllDRFNITi4u"),
                 ),
 
                 // 6) Reset Password
