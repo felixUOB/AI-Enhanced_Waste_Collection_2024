@@ -1,0 +1,1 @@
+/Users/katiepambakian/BSc Computer Science Y2/SEP/2024-AIEnhancedWasteCollection/ewc_frontend/build/app/intermediates/cxx/Debug/6a36713f/obj/armeabi-v7a

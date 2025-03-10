@@ -5,7 +5,7 @@ import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:latlong2/latlong.dart';
 
 class StopsService {
-
+  
   Future<void> postStopCollection(int stopID, int weightCollected) async {
     final body = {'stop': stopID, 'weight_collected': weightCollected};
     final response = await getIt<AuthService>().makeAuthenticatedPostRequest('stop_collection/', body);

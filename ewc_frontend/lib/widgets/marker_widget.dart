@@ -8,12 +8,17 @@ class MarkerWidget {
       width: 60.0,
       height: 60.0,
       point: location,
-      child: Align(alignment: Alignment.topCenter,
-        child: Icon(
-          Icons.location_on,
-          color: color,
-          size: 30,
-        )
+      child: GestureDetector(
+        onTap: () {
+          print('Widget taped');
+        },
+        child: Align(alignment: Alignment.topCenter,
+          child: Icon(
+            Icons.location_on,
+            color: color,
+            size: 30,
+          )
+        ),
       ),
     );
   }
