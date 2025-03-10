@@ -42,7 +42,7 @@ class LocationProvider extends ChangeNotifier {
 
   // Function to initialise location stream.
   // The stream updates the latestLocation variable to new location if the
-  // device moves more than 5 metres from the previous latestLocation value.
+  // device moves more than 3 metres from the previous latestLocation value.
   void initialisePositionStream() {
     final LocationSettings locationSettings = LocationSettings(
       distanceFilter: 3, // Minimum distance device must move (in metres) to update the location

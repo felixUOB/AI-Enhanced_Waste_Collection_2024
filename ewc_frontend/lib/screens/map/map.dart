@@ -159,18 +159,26 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         });
       }
     } catch (e) {
-      _showErrorDialog("Failed to fetch optimized route: $e");
+      _showErrorDialog("Failed to calculate viable route. Are all stops accessible by car from your location?", _fetchOptimizedRoute);
     }
   }
 
   // Displays an error dialog with the provided message
-  void _showErrorDialog(String message) {
+  void _showErrorDialog(String message, [Function()? retryFunction]) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text("Error"),
         content: Text(message),
         actions: [
+          if (retryFunction != null)
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                retryFunction();
+              },
+              child: Text("Retry"),
+          ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             child: Text("OK"),
