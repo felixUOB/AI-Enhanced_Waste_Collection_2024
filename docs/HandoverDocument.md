@@ -2,15 +2,15 @@
 
 ## Contents
 - [Introduction](#Introduction)
-- [Build and Execution] (#Build-and-Execution)
-- [System Architecture] (#System-Architecture)
-- [Project Structure] (#Project-Structure)
-- [Database Structure] (#Database-Structure)
-- [AWS Setup] (#AWS Setup)
-- [Further Documentation] (#Further_Documentation)
+- [Build and Execution](#Build-and-Execution)
+- [System Architecture](#System-Architecture)
+- [Project Structure](#Project-Structure)
+- [Database Structure](#Database-Structure)
+- [AWS Setup](#AWS-Setup)
+- [Further Documentation](#Further-Documentation)
 
 ## Introduction 
-This document contains all the essential information required for handover. Including the structure of our project and everything required to takeover development.
+This document contains all the essential information required for handover, including the structure of our project and everything required to take over development.
 Additional information can be found in the README.md in the root directory and under the Further Documentation section.
 
 ## Build and Execution
@@ -18,12 +18,12 @@ Additional information can be found in the README.md in the root directory and u
 ### Requirements/Prerequisites 
 
 | Requirements | Download Instruction | Version | Notes|
-| ---------- | -------------------- | ----- | 
-| Flutter SDK | https://docs.flutter.dev/get-started/install | Use latest version. | Use for frontend development, follow the install instructions on the flutter website to install the SDK correctly. |
-| Python | https://www.python.org/downloads/ | 3.12 or later | Used backend development. | 
-| Android Studios | https://developer.android.com/studio/install | | Used to create android emulators for Android app development. |
+|--------------------------|--------------------------------------------------------|------------------------|-------------------------------------------------------------|
+| Flutter SDK | [Install Flutter](https://docs.flutter.dev/get-started/install) | Use latest version. | Use for frontend development, follow the install instructions on the flutter website to install the SDK correctly. |
+| Python | [Install Python](https://www.python.org/downloads/) | 3.12 or later | Used backend development. | 
+| Android Studios | [Install Android Studios](https://developer.android.com/studio/install) | | Used to create android emulators for Android app development. |
 | Android SDK and Command Line Tools | SDK manager in android studios. | Version 14 and later. | Required to build android apps. |
-| XCode | https://apps.apple.com/gb/app/xcode/id497799835?mt=12 | Latest | Used for iOS development and running iOS simulator. |
+| XCode | [Install XCode](https://apps.apple.com/gb/app/xcode/id497799835?mt=12) | Latest | Used for iOS development and running iOS simulator. |
 | Python dependencies | ```pip install -r requirements.txt``` | Defined in requirements.txt | This will get all the python packages needed. |
 | Flutter dependencies | ```flutter pub get``` | Defined in pubspec.yaml | This will get all the flutter dependencies needed. |  
 
@@ -35,7 +35,7 @@ Clone the repository:
 ``` git clone https://github.com/spe-uob/2024-AIEnhancedWasteCollection.git ```
 
 ### Setup Environment Variables - Backend
-For the project to run there needs to be a ```.env``` file int the root directory of the backend. This is located at ```/2024-AIEnhancedWasteCollection/ewc_backend/```.
+For the project to run there needs to be a ```.env``` file in the root directory of the backend. This is located at ```/2024-AIEnhancedWasteCollection/ewc_backend/```.
 This ```.env``` file should contain:
 ```env
 DJANGO_SECRET_KEY = "YOUR_DJANGO_SECRET_KEY"
@@ -50,15 +50,15 @@ SENDGRID_SECRET_KEY="YOUR_SENDGRID_API_KEY"    # for password reset email
 ```
 
 ### Setup Environment Variables - Frontend
-You also need to have an ```.env``` file in the root directory of the backend. This is located at ```/2024-AIEnhancedWasteCollection/ewc_frontend/```.
+You also need to have an ```.env``` file in the root directory of the frontend. This is located at ```/2024-AIEnhancedWasteCollection/ewc_frontend/```.
 This ```.env``` file should contain:
 ```env
-API_KEY="YOUR_ORS_SECRET_KEY"
+API_KEY="YOUR_OPENROUTESERVICE_SECRET_KEY"
 ENCRYPTION_KEY="YOUR_ENCRYPTION_KEY"
 ```
 
 > [!NOTE]
-> Note that the value so these environment variables will need to be set to the correct values instead of the placeholders. If these values are changed the github secretes also need to be updated in order for the continuous deployment to function correctly. 
+> Note that the value so these environment variables will need to be set to the correct values instead of the placeholders. If these values are changed the github secrets also need to be updated in order for the continuous deployment to function correctly. 
 
 ### Running the application 
 In order to run the application correctly, the backend Django server must be running. To start the server run
@@ -87,11 +87,11 @@ To run the backend (django) tests, navigate to the backend root directory (```20
 
 ```python manage.py test ewc_core.tests```
 
-For more information about testing, view our testing documentation [#TESTING_GUIDE]
+For more information about testing, view our testing documentation [#TESTING_GUIDE](/docs/TESTING_GUIDE/)
 
 ## System Architecture 
 The system architecture for this project is 
-![architecture diagram](images/ArchitectureDiagram.png)
+![architecture diagram](/docs/images/ArchitectureDiagram.png)
 
 ## Project Structure
 The main structure for the project is as followed:
@@ -164,14 +164,14 @@ The main structure for the project is as followed:
 ## Database Structure
 The structure of the database is as followed:
 
-![database diagram](images/database-diagram.png)
+![database diagram](/docs/images/database-diagram.png)
 
 During development our database is hosted on Neon, for deployment we host our database on AWS.
 
 ## AWS Setup
 
 The setup of our AWS is as followed:
-![cloud architecture diagram](images/cloud-architecture.png)
+![cloud architecture diagram](/docs/images/cloud-diagram.png)
 
 You can access the deployed version of the Django server via ```https://devnest.software/admin/```
 
