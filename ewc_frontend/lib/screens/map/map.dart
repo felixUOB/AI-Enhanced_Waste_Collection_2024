@@ -38,7 +38,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final List<LatLng> _routePoints = [];
   final Map<List<double>, String> _routeInstructions = {};
   final List<Marker> _marker = [];
-  late RouteService _routeService;
+  final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
@@ -86,7 +86,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _initializeEnvAndService() async {
     try {
       if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-      _routeService = getIt<RouteService>();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
       await _drawStopsMarker(Colors.blue);
       //Depot location marker
@@ -580,7 +579,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     // _rerouteThreshold signifies how far the driver has to have gone off the route before
     // the route is recalculated
-    double rerouteThreshold = _journeyActive ? 20 : 100;
+    double rerouteThreshold = _journeyActive ? 30 : 150;
 
     // Check if user is far enough off route to trigger calculating a new route
     if (distance > rerouteThreshold) {
