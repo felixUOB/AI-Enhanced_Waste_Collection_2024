@@ -182,3 +182,6 @@ DEFAULT_FROM_EMAIL = 'autoemail.authnoreply@gmail.com'
 
 # Automatically redirect non-logged-in users to /admin/login/
 LOGIN_URL = '/admin/login/'
+
+# Load OpenRouteService API key
+OPENROUTESERVICE_API_KEY = config('OPENROUTESERVICE_API_KEY')

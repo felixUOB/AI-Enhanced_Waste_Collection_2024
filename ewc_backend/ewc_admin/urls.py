@@ -27,7 +27,7 @@ from django.contrib.auth import views as auth_views
 # from ewc_core.ml_model.data import export_stopdata_csv
 # from ewc_core.ml_model.data import export_userdata_csv
 from ewc_core.ml_model.model import generate_csv_files
-from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view
+from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name
 
 
 # Router configuration for REST API endpoints
@@ -52,6 +52,7 @@ urlpatterns = [
     path('stops/new/', stops_create_view, name='stops_create'),        # Create
     path('stops/<int:pk>/edit/', stops_edit_view, name='stops_edit'),  # Edit
     path('stops/<int:pk>/delete/', stops_delete_view, name='stops_delete'), # delete
+    path('stops/get_coordinates/', get_coordinates_by_name, name='get_coordinates_by_name'), # get coordinates by name
 
 # -----------PASSWORD RESET ENDPOINTS--------------
     
