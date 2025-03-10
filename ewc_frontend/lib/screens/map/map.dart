@@ -20,6 +20,7 @@ import 'package:ewc/widgets/end_journey_dialog.dart';
 
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/widgets/navigation_banner.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
@@ -34,6 +35,7 @@ class MapPage extends StatefulWidget {
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
+  final Map<List<double>, String> _routeInstructions = {};
   final List<Marker> _marker = [];
   late RouteService _routeService;
   final StopsService _stopsService = getIt<StopsService>();
@@ -147,15 +149,22 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _fetchOptimizedRoute() async {
     try {
       List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
-      List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
+      // List<LatLng> optimizedRoute = await _routeService.routePlanning(stops);
+      RouteResult result = await _routeService.routePlanning(stops);
+      List<LatLng> optimizedRoute = result.routeCoordinates;
+      // ignore: unused_local_variable
+      Map<List<double>, String> instructionsMap = result.instructionsMap;
       setState(() {
         _routePoints.clear();
+        _routeInstructions.clear();
         _routePoints.addAll(optimizedRoute);
+        _routeInstructions.addAll(instructionsMap);
       });
     } catch (e) {
       _showErrorDialog("Failed to fetch optimized route: $e");
     }
   }
+
 
   // Displays an error dialog with the provided message
   void _showErrorDialog(String message) {
@@ -174,92 +183,118 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     );
   }
 
+  // To be used later with the users location - for modification
+  List<double>? getInstructionRangeKey(int userIndex) {
+    // Find the first instruction range that the user's index falls within the defined range.
+    List<double>? activeRange;
+    _routeInstructions.forEach((range, instruction) {
+      final start = range[0].toInt();
+      final end = range[1].toInt();
+      if (userIndex >= start && userIndex <= end) {
+        activeRange = range;
+      }
+  });
+
+  // Return the range (key) if found
+  return activeRange;
+}
+
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: content(),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          children: [
-            // Single button toggling journey start/end
-            Expanded(
-              child: ElevatedButton(
-                key: const Key('routeInitButton'),
-                child: Text(_journeyActive ? 'End Journey' : 'Start Journey'),
-                onPressed: () {
-                  if (_journeyActive) {
-                    _showEndJourneyDialog();
-                  } else {
-                    _showStartJourneyDialog();
-                  }
-                },
-              ),
-            ),
-          ],
+      body: Stack(
+      children: [
+        Positioned.fill(child: content()),
+        // Overlay the NavigationBanner at the top of the map
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: NavigationBanner(
+            visible: _journeyActive,
+            instruction: _routeInstructions.values.length > 1 
+                        ? _routeInstructions.values.elementAt(1) 
+                        : "No instructions available",
+          ),
         ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          (_journeyActive) ?
-          // Log visit button
-          FloatingActionButton(
-            heroTag: "log visit",
-            child: const Icon(Icons.where_to_vote),
+        Positioned(
+          left: 12.0,
+          right: 12.0,
+          bottom: 8.0,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _journeyActive ? Colors.red : Colors.green,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+            ),
+            child: Text(
+              _journeyActive ? 'End Journey' : 'Start Journey',
+              style: const TextStyle(color: Colors.white,         
+              fontWeight: FontWeight.bold,
+              fontSize: 18,),
+            ),
             onPressed: () {
-              LogStopDialog.show(context,
-                (int stopID, int wasteCollected) {
-                  _stopsService.postStopCollection(stopID, wasteCollected);
-                  Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
-                }
-              );
-            },
-          ) : const SizedBox(),
-          (_journeyActive) ?
-          const SizedBox(height: 10) : const SizedBox(),
-
-          // ZOOM IN
-          FloatingActionButton(
-            heroTag: "zoom in",
-            child: const Icon(Icons.add),
-            onPressed: () {
-              _animatedMapController.animatedZoomIn(
-                  duration: Duration(milliseconds: 500));
-            },
-          ),
-          const SizedBox(height: 10), // Space between buttons
-
-          // ZOOM OUT
-          FloatingActionButton(
-            heroTag: "zoom out",
-            child: const Icon(Icons.remove),
-            onPressed: () {
-              _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
-            },
-          ),
-          const SizedBox(height: 10),
-          
-          RecentreButton(onPressed: () async {
-            // If recentre button pressed recentre map over user location
-            // Check if location permissions have been granted.
-            if (await getLocationPermissions()) {
-              if (context.mounted) {
-                Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
-                LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-                if (location != null) {
-                  _animatedMapController.animateTo(
-                      dest: LatLng(
-                          location.latitude, location.longitude),
-                      zoom: 14);
-                }
+              if (_journeyActive) {
+                _showEndJourneyDialog();
+              } else {
+                _showStartJourneyDialog();
               }
-            } else {
-              // Request permission if not already granted.
-              if (await requestLocationPermissions()) {
+            },
+          ),
+        ),
+      ],
+    ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 56.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            (_journeyActive) ?
+            // Log visit button
+            FloatingActionButton(
+              heroTag: "log visit",
+              child: const Icon(Icons.where_to_vote),
+              onPressed: () {
+                LogStopDialog.show(context,
+                  (int stopID, int wasteCollected) {
+                    _stopsService.postStopCollection(stopID, wasteCollected);
+                    Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
+                  }
+                );
+              },
+            ) : const SizedBox(),
+            (_journeyActive) ?
+            const SizedBox(height: 10) : const SizedBox(),
+
+            // ZOOM IN
+            FloatingActionButton(
+              heroTag: "zoom in",
+              child: const Icon(Icons.add),
+              onPressed: () {
+                _animatedMapController.animatedZoomIn(duration: Duration(milliseconds: 500));
+
+              },
+            ),
+            const SizedBox(height: 10), // Space between buttons
+
+            // ZOOM OUT
+            FloatingActionButton(
+              heroTag: "zoom out",
+              child: const Icon(Icons.remove),
+              onPressed: () {
+                _animatedMapController.animatedZoomOut(duration: Duration(milliseconds: 500));
+              },
+            ),
+            const SizedBox(height: 10),
+            
+            RecentreButton(onPressed: () async {
+              // If recentre button pressed recentre map over user location
+              // Check if location permissions have been granted.
+              if (await getLocationPermissions()) {
                 if (context.mounted) {
-  
                   Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
                   LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                   if (location != null) {
@@ -270,26 +305,41 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                   }
                 }
               } else {
-                //User denied location permissions, show an alert
-                if (context.mounted) {
-                  showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title : Text("Location Permission Required"),
-                        content : Text("This app requires location to function properly. Please consider turning location permission on."),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context), //Dismiss dialog
-                              child: Text("OK"))
-                        ],
-                      ),
-                  );
+                // Request permission if not already granted.
+                if (await requestLocationPermissions()) {
+                  if (context.mounted) {
+    
+                    Provider.of<LocationProvider>(context, listen: false).initialisePositionStream();
+                    LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                    if (location != null) {
+                      _animatedMapController.animateTo(
+                          dest: LatLng(
+                              location.latitude, location.longitude),
+                          zoom: 14);
+                    }
+                  }
+                } else {
+                  //User denied location permissions, show an alert
+                  if (context.mounted) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title : Text("Location Permission Required"),
+                          content : Text("This app requires location to function properly. Please consider turning location permission on."),
+                          actions: [
+                            TextButton(
+                                onPressed: () => Navigator.pop(context), //Dismiss dialog
+                                child: Text("OK"))
+                          ],
+                        ),
+                    );
+                  }
                 }
               }
             }
-          }
-        )]
-      )
+          )]
+        )
+      ),
     );
   }
 

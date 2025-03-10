@@ -5,6 +5,17 @@ import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 
+// A class to store the result of a route planning request.
+class RouteResult {
+  // A list of LatLng objects representing the route
+  final List<LatLng> routeCoordinates;
+  // A map of instructions with the key as a list of coordinates(that are the range between which the instruction should be displayed) 
+  // and the value as the instruction message.
+  final Map<List<double>, String> instructionsMap;
+
+  RouteResult(this.routeCoordinates, this.instructionsMap);
+}
+
 // A service class to manage route fetching from OpenRouteService API
 class RouteService {
   final OpenRouteService client;
@@ -70,12 +81,13 @@ class RouteService {
     }
   }
 
-
-  Future<List<LatLng>> routePlanning(List<Stop> stops) async {
+  // Plans and returns the optimized route between a list of stops and the navigation instructions for that route.
+  Future<RouteResult> routePlanning(List<Stop> stops) async {
     final depot = LatLng(51.4533, -2.6257);
     
     List<VroomJob> jobs = [];
-
+    // Iterate through each stop and create a VroomJob object for it.
+    // This is used to define the locations that need to be visited.
     for (int idx = 0; idx < stops.length; idx++) {
       LatLng stop = stops[idx].location;
       jobs.add(VroomJob(
@@ -86,7 +98,8 @@ class RouteService {
 
 
     List<VroomVehicle> vehicles = [];
-
+    // Create a VroomVehicle object for each vehicle.
+    // This is used to define the starting and ending locations for each vehicle.
     VroomVehicle vehicle = VroomVehicle(
       id: 1,
       start: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
@@ -95,7 +108,7 @@ class RouteService {
     );
 
     vehicles.add(vehicle);
-
+    // Send the optimization request to the API which returns the optimized route order.
     final response = await client.optimizationDataPost(jobs: jobs, vehicles: vehicles);
   
     if (response.routes.isEmpty) {
@@ -115,14 +128,35 @@ class RouteService {
     final directionsResponse = await client.directionsMultiRouteCoordsPost(
       coordinates: optimizedOrder,
       profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
+      instructions: true,
     );
 
     if (directionsResponse.isEmpty) {
       throw Exception('No route could be found.');
     }
+    // Get the detailed route data for the optimized order
+    final directionsDataResponse = await client.directionsMultiRouteDataPost(
+      coordinates: optimizedOrder,
+      profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
+      instructions: true,
+    );
+    // Initialize an empty map to store instructions with waypoints as keys and instruction messages as values.
+    final Map<List<double>, String> instructionsMap = {};
+
+    //Extract the instructions from the response
+    final route = directionsDataResponse.first;
+    for (var segment in route.segments) {
+      for (var step in (segment.steps)) {
+        // Map the waypoints to the corresponding instruction message.
+        instructionsMap[step.wayPoints] = step.instruction;
+      }
+    }
+  
 
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
-    return directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
+    List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
+
+    return RouteResult(routeCoordinates, instructionsMap);
 
   }
 
