@@ -103,7 +103,8 @@ class _SettingPageState extends State<SettingPage> {
                   icon: Icons.privacy_tip_outlined,
                   iconColor: Colors.yellow,
                   title: "Privacy Policy",
-                  onTap: () => _launchUrlFromInput("https://docs.google.com/document/d/1C5pWZDzJLd2fnowOf-S9JmdOSM2ZDsfflpHorGLOQ-c/edit?usp=sharing"),
+                    // TODO app link to be added when deployed in iOS store or app store...
+                  onTap: () => _launchUrlFromInput("https://recyclenxt.com/"),
                 ),
 
                 // 4) Share app
@@ -116,7 +117,6 @@ class _SettingPageState extends State<SettingPage> {
                     Share.share(
                       "Check out this awesome app: https://play.google.com/store/apps/details?id=com.example.app",
                       subject: "Try this amazing app!",
-                      // TODO app link to be added when deployed in iOS store or app store...
                     );
                   },
                 ),
