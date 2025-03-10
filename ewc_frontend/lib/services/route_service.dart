@@ -8,13 +8,17 @@ import 'package:ewc/models/stop_model.dart';
 
 // A class to store the result of a route planning request.
 class RouteResult {
+
+  // Optimised order of stops
+  final List<Stop> optimisedOrder;
+
   // A list of LatLng objects representing the route
   final List<LatLng> routeCoordinates;
   // A map of instructions with the key as a list of coordinates(that are the range between which the instruction should be displayed) 
   // and the value as the instruction message.
   final Map<List<double>, String> instructionsMap;
 
-  RouteResult(this.routeCoordinates, this.instructionsMap);
+  RouteResult(this.optimisedOrder, this.routeCoordinates, this.instructionsMap);
 }
 
 // A service class to manage route fetching from OpenRouteService API
@@ -83,15 +87,23 @@ class RouteService {
   Future<RouteResult> routePlanning(LatLng userLocation, List<Stop> stops) async {
     final depot = LatLng(51.4533, -2.6257);
 
+    // Use map to link id to stop name
+    Map<int, String> nameMapping = {};
+
     List<VroomJob> jobs = [];
     // Iterate through each stop and create a VroomJob object for it.
     // This is used to define the locations that need to be visited.
     for (int idx = 0; idx < stops.length; idx++) {
-      LatLng stop = stops[idx].location;
-      jobs.add(VroomJob(
-        id: idx + 1,
-        location: ORSCoordinate(latitude: stop.latitude, longitude: stop.longitude),
-      ));
+      if (!stops[idx].visited) {
+
+        // Link stop name with stop id in map
+        nameMapping[stops[idx].id] = stops[idx].name;
+        LatLng stopLocation = stops[idx].location;
+        jobs.add(VroomJob(
+          id: stops[idx].id,
+          location: ORSCoordinate(latitude: stopLocation.latitude, longitude: stopLocation.longitude),
+        ));
+      }
     }
 
 
@@ -114,13 +126,37 @@ class RouteService {
     }
 
     // Extract the optimized order of stops
-    final optimizedOrder = <ORSCoordinate>[];
+    List<Stop> newStopOrder = [];
     if (response.routes.first.steps != null) {
-      for (var step in response.routes.first.steps!) {
-        final location = step.location;
-        optimizedOrder.add(ORSCoordinate(latitude: location.latitude, longitude: location.longitude)); // Assuming location has latitude and longitude properties
+      for (OptimizationRouteStep step in response.routes.first.steps!) {
+        print(step.id);
+        if (step.id != null) {
+          final location = step.location;
+          newStopOrder.add(Stop(
+            id: step.id!,
+            name: nameMapping[step.id]!,
+            location: LatLng(location.latitude, location.longitude),
+          ));
+        }
       }
     }
+
+    // Convert to list of ORSCoordinates to input back into route finding algorithm
+    List<ORSCoordinate> optimizedOrder = newStopOrder.map((stop) =>
+      ORSCoordinate(
+        latitude: stop.location.latitude,
+        longitude: stop.location.longitude)).toList();
+
+    // Add location and depot to start and end of order respectively
+    optimizedOrder.insert(0,
+      ORSCoordinate(
+        latitude: userLocation.latitude,
+        longitude: userLocation.longitude));
+
+    optimizedOrder.add(
+      ORSCoordinate(
+        latitude: depot.latitude,
+        longitude: depot.longitude));
 
     // Get the detailed route coordinates for the optimized order
     final directionsResponse = await client.directionsMultiRouteCoordsPost(
@@ -150,11 +186,10 @@ class RouteService {
       }
     }
 
-
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
     List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
 
-    return RouteResult(routeCoordinates, instructionsMap);
+    return RouteResult(newStopOrder, routeCoordinates, instructionsMap);
 
   }
 
@@ -166,14 +201,14 @@ class RouteService {
     stopLocations.insert(0, source); // Add source as initial item in array
     List<ORSCoordinate> convertedList = stopLocations.map(
       (latlng) => ORSCoordinate(
-        latitude: latlng.latitude, longitude: latlng.longitude)
-    ).toList();
+        latitude: latlng.latitude, longitude: latlng.longitude)).toList();
 
     try {
       // Request time duration matrix from ORS API
       TimeDistanceMatrix matrix = await client.matrixPost(
         locations: convertedList,
-        destinations: List.generate(stopLocations.length - 1, (index) => index + 1),
+        destinations: List.generate(
+          stopLocations.length - 1, (index) => index + 1),
         sources: List.generate(stopLocations.length - 1, (index) => index),
         profileOverride: ORSProfile.drivingHgv,
       );
@@ -220,7 +255,7 @@ class RouteService {
     // Calculate squared length of line segment
     double routeSegmentLengthSquared =
         w.latitude * w.latitude +
-            w.longitude * w.longitude;
+        w.longitude * w.longitude;
 
     double projection = dotProduct / routeSegmentLengthSquared;
 

@@ -156,6 +156,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
       if (location != null) {
         RouteResult result = await _routeService.routePlanning(location, stops);
+
+        // Update stops list to new order of stops
+        if (mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(result.optimisedOrder);
+
         List<LatLng> optimizedRoute = result.routeCoordinates;
         Map<List<double>, String> instructionsMap = result.instructionsMap;
         setState(() {
