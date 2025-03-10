@@ -12,8 +12,7 @@ from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.graphics.charts.textlabels import Label
 from .models import RouteEnvData
-from reportlab.platypus import Image
-from reportlab.platypus import PageBreak
+from reportlab.platypus import Image, PageBreak
 from reportlab.lib.enums import TA_CENTER
 
 import matplotlib
@@ -56,6 +55,11 @@ def generate_pdf():
     Generate a PDF report based on environmental impact data.
     '''
 
+
+# ========================================================================================================
+# ============================================= Page Setup ===============================================
+# ========================================================================================================
+
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="environmental_impact_report.pdf"'
 
@@ -81,7 +85,6 @@ def generate_pdf():
     # Calculate the date one month ago from today
     one_month_ago = today - timedelta(days=30)
 
-
     # Filter the data from one year ago to one month ago, excluding the last month
     data = RouteEnvData.objects.filter(date__gte=one_year_ago)
 
@@ -93,13 +96,13 @@ def generate_pdf():
     field_names = [field.verbose_name if field.verbose_name else field.name for field in RouteEnvData._meta.fields]
 
     # Prepare table data (headers + records)
-    table_data = [field_names]  # Add headers as the first row
+    route_table_data = [field_names]  # Add headers as the first row
 
-    total_distance = 0
-    total_fuel_consumption = 0
-    total_carbon_emissions = 0
-    total_energy_consumption = 0
-    total_cost = 0
+    total_distance_current_month = 0
+    total_fuel_consumption_current_month = 0
+    total_carbon_emissions_current_month = 0
+    total_energy_consumption_current_month = 0
+    total_cost_current_month = 0
 
     total_distance_year = 0
     total_fuel_consumption_year = 0
@@ -107,11 +110,11 @@ def generate_pdf():
     total_energy_consumption_year = 0
     total_cost_year = 0
 
-    total_distance_mb = 0
-    total_fuel_consumption_mb = 0
-    total_carbon_emissions_mb = 0
-    total_energy_consumption_mb = 0
-    total_cost_mb = 0
+    total_distance_last_month = 0
+    total_fuel_consumption_last_month = 0
+    total_carbon_emissions_last_month = 0
+    total_energy_consumption_last_month = 0
+    total_cost_last_month = 0
 
 
     for obj in data:
@@ -126,34 +129,30 @@ def generate_pdf():
         total_cost_year += calculate_cost_per_route(distance, mpg, 3.095)  
 
         if obj.date > one_month_ago:
+            total_distance_current_month += distance
+            total_fuel_consumption_current_month += (distance / mpg)
+            total_carbon_emissions_current_month += calculate_carbon_emissions_per_route(distance, mpg)
+            total_energy_consumption_current_month += calculate_energy_consumption_per_route(distance, mpg)
+            total_cost_current_month += calculate_cost_per_route(distance, mpg, 3.095)
+
             row = [str(getattr(obj, field.name)) for field in RouteEnvData._meta.fields]
-            table_data.append(row)
-
-            distance = obj.distance
-            mpg = obj.mpg
-
-            # Calculate aggregated values
-            total_distance += distance
-            total_fuel_consumption += (distance / mpg)  # Fuel consumption = Distance / MPG
-            total_carbon_emissions += calculate_carbon_emissions_per_route(distance, mpg)
-            total_energy_consumption += calculate_energy_consumption_per_route(distance, mpg)
-            total_cost += calculate_cost_per_route(distance, mpg, 3.095)
+            route_table_data.append(row)
 
         if obj.date > one_month_ago - timedelta(days=30) and obj.date < one_month_ago:
-             # Calculate aggregated values
-            total_distance_mb += distance
-            total_fuel_consumption_mb += (distance / mpg)  # Fuel consumption = Distance / MPG
-            total_carbon_emissions_mb += calculate_carbon_emissions_per_route(distance, mpg)
-            total_energy_consumption_mb += calculate_energy_consumption_per_route(distance, mpg)
-            total_cost_mb += calculate_cost_per_route(distance, mpg, 3.095)
 
-    avg_mpg_mb = total_distance_mb / total_fuel_consumption_mb if total_fuel_consumption_mb else 0
-    avg_carbon_emissions_mb = total_carbon_emissions_mb / total_distance_mb if total_distance_mb else 0
-    avg_cost_per_mile_mb = total_cost_mb / total_distance_mb if total_distance_mb else 0
+            total_distance_last_month += distance
+            total_fuel_consumption_last_month += (distance / mpg)  # Fuel consumption = Distance / MPG
+            total_carbon_emissions_last_month += calculate_carbon_emissions_per_route(distance, mpg)
+            total_energy_consumption_last_month += calculate_energy_consumption_per_route(distance, mpg)
+            total_cost_last_month += calculate_cost_per_route(distance, mpg, 3.095)
 
-    avg_mpg = total_distance / total_fuel_consumption if total_fuel_consumption else 0
-    avg_carbon_emissions = total_carbon_emissions / total_distance if total_distance else 0
-    avg_cost_per_mile = total_cost / total_distance if total_distance else 0
+    avg_mpg_last_month = total_distance_last_month / total_fuel_consumption_last_month if total_fuel_consumption_last_month else 0
+    avg_carbon_emissions_last_month = total_carbon_emissions_last_month / total_distance_last_month if total_distance_last_month else 0
+    avg_cost_per_mile_last_month = total_cost_last_month / total_distance_last_month if total_distance_last_month else 0
+
+    avg_mpg_current_month = total_distance_current_month / total_fuel_consumption_current_month if total_fuel_consumption_current_month else 0
+    avg_carbon_emissions_current_month = total_carbon_emissions_current_month / total_distance_current_month if total_distance_current_month else 0
+    avg_cost_per_mile_current_month = total_cost_current_month / total_distance_current_month if total_distance_current_month else 0
 
     avg_mpg_year = total_distance_year / total_fuel_consumption_year if total_fuel_consumption_year else 0
     avg_carbon_emissions_year = total_carbon_emissions_year / total_distance_year if total_distance_year else 0
@@ -194,20 +193,19 @@ def generate_pdf():
 # ================================== Aggregated Data For Last Month ======================================
 # ========================================================================================================
     
-
     # Add the aggregated data with line breaks to the PDF
     elements.append(Paragraph("Aggregated Data for the Last Month", centered_style_heading2))
 
     aggregated_data_table = [("Metric", "% Diff from Last Month")]
     # Data for the table: (Main Text, Percentage Change)
     aggregated_data = [
-        (f"Total Distance Traveled: {total_distance:.2f} miles", f"{calculate_percentage_change(total_distance_mb, total_distance)}% change"),
-        (f"Total Fuel Consumption: {total_fuel_consumption:.2f} gallons", f"{calculate_percentage_change(total_fuel_consumption_mb, total_fuel_consumption)}% change"),
-        (f"Total Carbon Emissions: {total_carbon_emissions:.2f} lbs", f"{calculate_percentage_change(total_carbon_emissions_mb, total_carbon_emissions)}% change"),
-        (f"Total Energy Consumption: {total_energy_consumption:.2f} gallons", f"{calculate_percentage_change(total_energy_consumption_mb, total_energy_consumption)}% change"),
-        (f"Average Miles per Gallon (MPG): {avg_mpg:.2f}", f"{calculate_percentage_change(avg_mpg_mb, avg_mpg)}% change"),
-        (f"Average Carbon Emissions per Mile: {avg_carbon_emissions:.2f} lbs/mile", f"{calculate_percentage_change(avg_carbon_emissions_mb, avg_carbon_emissions)}% change"),
-        (f"Average Cost per Mile: {avg_cost_per_mile:.2f} dollars/mile", f"{calculate_percentage_change(avg_cost_per_mile_mb, avg_cost_per_mile)}% change")
+        (f"Total Distance Traveled: {total_distance_current_month:.2f} miles", f"{calculate_percentage_change(total_distance_last_month, total_distance_current_month)}% change"),
+        (f"Total Fuel Consumption: {total_fuel_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_fuel_consumption_last_month, total_fuel_consumption_current_month)}% change"),
+        (f"Total Carbon Emissions: {total_carbon_emissions_current_month:.2f} lbs", f"{calculate_percentage_change(total_carbon_emissions_last_month, total_carbon_emissions_current_month)}% change"),
+        (f"Total Energy Consumption: {total_energy_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_energy_consumption_last_month, total_energy_consumption_current_month)}% change"),
+        (f"Average Miles per Gallon (MPG): {avg_mpg_current_month:.2f}", f"{calculate_percentage_change(avg_mpg_last_month, avg_mpg_current_month)}% change"),
+        (f"Average Carbon Emissions per Mile: {avg_carbon_emissions_current_month:.2f} lbs/mile", f"{calculate_percentage_change(avg_carbon_emissions_last_month, avg_carbon_emissions_current_month)}% change"),
+        (f"Average Cost per Mile: {avg_cost_per_mile_current_month:.2f} dollars/mile", f"{calculate_percentage_change(avg_cost_per_mile_last_month, avg_cost_per_mile_current_month)}% change")
     ]
 
     aggregated_data_table.extend(aggregated_data)
@@ -227,7 +225,6 @@ def generate_pdf():
     # Append the table to the elements list
     elements.append(aggregated_table)
     elements.append(Spacer(1, 20))
-
 
 # ========================================================================================================
 # ================================== Aggregated Data For Last Year =======================================
@@ -274,7 +271,7 @@ def generate_pdf():
     col_widths = [(page_width - 100) / len(field_names)] * len(field_names)  # Distribute width equally
 
     # Create and style the table
-    table = Table(table_data, colWidths=col_widths)
+    table = Table(route_table_data, colWidths=col_widths)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.darkgreen),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
