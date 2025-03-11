@@ -1,28 +1,22 @@
-from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
 from datetime import datetime, timedelta
-from psycopg2 import STRING
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.graphics.shapes import Drawing, String
-from reportlab.graphics.charts.barcharts import VerticalBarChart
-from reportlab.graphics.charts.textlabels import Label
 from .models import RouteEnvData
 from reportlab.platypus import Image, PageBreak
 from reportlab.lib.enums import TA_CENTER
 from reportlab.graphics.charts.lineplots import LinePlot
-from reportlab.graphics import renderPDF
-from reportlab.graphics.charts.axes import XValueAxis, YValueAxis, XCategoryAxis
-from reportlab.graphics.widgets.markers import uSymbol2Symbol, makeMarker
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-
+from reportlab.graphics.charts.axes import XValueAxis, YValueAxis
+from reportlab.graphics.widgets.markers import makeMarker
 
 def create_line_chart(db_data):
+    '''
+    Creates a line chart representing carbon emissions over the last six months.
+    '''
     drawing = Drawing(400, 180)  # Increased height to fit labels
 
     # Map months to numeric positions (0 to 5)
@@ -80,15 +74,21 @@ def create_line_chart(db_data):
     lp.xValueAxis.valueStep = 1
     lp.xValueAxis.labels.visible = False
     lp.xValueAxis.visibleGrid = 1
-
-
+    x_axis_label = String(225, 10, "Time Period", fontSize=10, fillColor=colors.black)
+    drawing.add(x_axis_label)  # Add label to the drawing
 
     # Configure Y-Axis
     lp.yValueAxis = YValueAxis()
+    lp.yValueAxis.labels.boxAnchor = 'e'
     lp.yValueAxis.valueMin = 0
-    lp.yValueAxis.valueMax = round(max(month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data) + 100, -2)
+
+    # Calculate y-axis max rounded to the nearest 100
+    max_value = max(month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data)
+    lp.yValueAxis.valueMax = round(max_value + 50, -2)  # Adding 50 before rounding for better scaling
     lp.yValueAxis.valueStep = 100
     lp.yValueAxis.visibleGrid = 1
+    y_axis_label = String(-40, 110, "Carbon Emissions (lbs)", fontSize=9, fillColor=colors.black)
+    drawing.add(y_axis_label)  # Add label to the drawing
 
     # Add manual month labels below X-axis
     for i, month in enumerate(months):
