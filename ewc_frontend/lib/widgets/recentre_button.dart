@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 class RecentreButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final bool centred;
 
   const RecentreButton({
     super.key,
+    required this.centred,
     required this.onPressed
   });
 
@@ -12,6 +14,6 @@ class RecentreButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: onPressed,
-      child: Icon(Icons.my_location)
+      child: (centred) ? Icon(Icons.my_location) : Icon(Icons.location_searching)
     );
   }}
