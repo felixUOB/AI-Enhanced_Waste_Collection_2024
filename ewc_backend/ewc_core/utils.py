@@ -22,17 +22,38 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-def create_line_chart():
+def create_line_chart(db_data, isCarbon=True):
     drawing = Drawing(400, 180)  # Increased height to fit labels
 
     # Map months to numeric positions (0 to 5)
     months = get_last_6_months()
     x_positions = list(range(6))  # 0, 1, 2, 3, 4, 5
 
+    month_0_data = 0
+    month_1_data = 0
+    month_2_data = 0
+    month_3_data = 0
+    month_4_data = 0
+    month_5_data = 0
+
+    if isCarbon:
+        for obj in db_data:
+            if obj.date.strftime("%b %Y") == months[0]:
+                month_0_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+            elif obj.date.strftime("%b %Y") == months[1]:
+                month_1_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+            elif obj.date.strftime("%b %Y") == months[2]:
+                month_2_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+            elif obj.date.strftime("%b %Y") == months[3]:
+                month_3_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+            elif obj.date.strftime("%b %Y") == months[4]:
+                month_4_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+            elif obj.date.strftime("%b %Y") == months[5]:
+                month_5_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+
     # Define Data (Using x_positions instead of month names)
     data = [
-        [(x_positions[i], y) for i, y in enumerate([1, 2, 1, 3, 5, 4])],  # First Line
-        [(x_positions[i], y) for i, y in enumerate([2, 3, 2, 5, 6, 5])]   # Second Line
+        [(x_positions[i], y) for i, y in enumerate([month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data])],  # First Line
     ]
 
     # Create Line Plot
@@ -60,11 +81,12 @@ def create_line_chart():
     lp.xValueAxis.visibleGrid = 1
 
 
+    val_max = round(max(month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data) + 100, -2)
     # Configure Y-Axis
     lp.yValueAxis = YValueAxis()
     lp.yValueAxis.valueMin = 0
-    lp.yValueAxis.valueMax = 7
-    lp.yValueAxis.valueStep = 1
+    lp.yValueAxis.valueMax = val_max
+    lp.yValueAxis.valueStep = 100
     lp.yValueAxis.visibleGrid = 1
 
     # Add manual month labels below X-axis
@@ -116,7 +138,6 @@ def generate_pdf():
     Generate a PDF report based on environmental impact data.
     '''
 
-
 # ========================================================================================================
 # ============================================= Page Setup ===============================================
 # ========================================================================================================
@@ -130,7 +151,7 @@ def generate_pdf():
 
     centered_style_heading2 = ParagraphStyle(
         'CenteredStyle',
-        parent=styles['Heading2'],
+        parent=styles['Heading2'], 
         alignment=TA_CENTER  # Center align the text
     )
 
@@ -147,7 +168,7 @@ def generate_pdf():
     one_month_ago = today - timedelta(days=30)
 
     # Filter the data from one year ago to one month ago, excluding the last month
-    data = RouteEnvData.objects.filter(date__gte=one_year_ago)
+    db_data = RouteEnvData.objects.filter(date__gte=one_year_ago)
 
 # ========================================================================================================
 # ============================================= Data Calculations ========================================
@@ -177,7 +198,7 @@ def generate_pdf():
     total_energy_consumption_last_month = 0
     total_cost_last_month = 0
 
-    for obj in data:
+    for obj in db_data:
         distance = obj.distance
         mpg = obj.mpg
 
@@ -240,7 +261,6 @@ def generate_pdf():
         parent=styles['Title'],
         fontSize=20,
         textColor=colors.darkgreen,
-        spaceAfter=20,
         alignment=1 
     )
 
@@ -278,7 +298,7 @@ def generate_pdf():
     ]))
 
     elements.append(aggregated_table)
-    elements.append(Spacer(1, 20))
+    elements.append(Spacer(1, 10))
 
 # ========================================================================================================
 # ================================== Aggregated Data For Last Year =======================================
@@ -308,7 +328,6 @@ def generate_pdf():
     ]))
 
     elements.append(aggregated_table_year)
-    elements.append(PageBreak())
 
     
 # ========================================================================================================
@@ -318,9 +337,8 @@ def generate_pdf():
 
 
     # Create a line graph for carbon emissions
-    drawing = create_line_chart()
+    drawing = create_line_chart(db_data)
     elements.append(drawing)
-    
 
     # Make table stretch across the page
     page_width, _ = letter
