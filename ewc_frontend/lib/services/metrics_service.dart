@@ -3,12 +3,6 @@ import 'package:ewc/screens/metrics/route_data.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 
-
-import 'dart:convert';
-import 'package:ewc/screens/metrics/route_data.dart';
-import 'package:ewc/service_locator.dart';
-import 'package:ewc/services/auth_service/auth_service.dart';
-
 /// A service class for handling route-related data.
 /// Includes methods to fetch all existing routes from the server
 /// and send new route data (distance, MPG, date) when a journey finishes.
