@@ -1,24 +1,86 @@
-import io
-import os
 from django.conf import settings
 from django.http import HttpResponse
 from django.utils import timezone
 from datetime import datetime, timedelta
+from psycopg2 import STRING
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.graphics.shapes import Drawing
+from reportlab.graphics.shapes import Drawing, String
 from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.graphics.charts.textlabels import Label
 from .models import RouteEnvData
 from reportlab.platypus import Image, PageBreak
 from reportlab.lib.enums import TA_CENTER
+from reportlab.graphics.charts.lineplots import LinePlot
+from reportlab.graphics import renderPDF
+from reportlab.graphics.charts.axes import XValueAxis, YValueAxis, XCategoryAxis
+from reportlab.graphics.widgets.markers import uSymbol2Symbol, makeMarker
+
 
 import matplotlib
-matplotlib.use('Agg')  # Set the backend to Agg (non-GUI)
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+
+def create_line_chart():
+    drawing = Drawing(400, 250)  # Increased height to fit labels
+
+    # Map months to numeric positions (0 to 5)
+    months = get_last_6_months()
+    x_positions = list(range(6))  # 0, 1, 2, 3, 4, 5
+
+    # Define Data (Using x_positions instead of month names)
+    data = [
+        [(x_positions[i], y) for i, y in enumerate([1, 2, 1, 3, 5, 4])],  # First Line
+        [(x_positions[i], y) for i, y in enumerate([2, 3, 2, 5, 6, 5])]   # Second Line
+    ]
+
+    # Create Line Plot
+    lp = LinePlot()
+    lp.x = 50
+    lp.y = 50
+    lp.height = 125
+    lp.width = 300
+    lp.data = data
+    lp.joinedLines = 1
+    lp.lineLabelFormat = '%2.0f'
+    lp.strokeColor = colors.black
+
+    # Style the lines
+    lp.lines[0].strokeColor = colors.red
+    lp.lines[0].symbol = makeMarker('FilledCircle')
+    lp.lines[1].strokeColor = colors.blue
+    lp.lines[1].symbol = makeMarker('FilledDiamond')
+
+    # Configure X-Axis (using numerical indices)
+    lp.xValueAxis = XValueAxis()
+    lp.xValueAxis.valueMin = 0
+    lp.xValueAxis.valueMax = 5
+    lp.xValueAxis.valueStep = 1
+    lp.xValueAxis.labels.visible = False
+
+
+    # Configure Y-Axis
+    lp.yValueAxis = YValueAxis()
+    lp.yValueAxis.valueMin = 0
+    lp.yValueAxis.valueMax = 7
+    lp.yValueAxis.valueStep = 1
+
+    # Add manual month labels below X-axis
+    for i, month in enumerate(months):
+        drawing.add(String(50 + (i * 60), 30, month, fontSize=10, fillColor=colors.black))
+
+    drawing.add(lp)
+    
+    return drawing
+
+def get_last_6_months():
+    """Returns a list of last 6 months in 'MMM YYYY' format (e.g., 'Mar 2024')."""
+    today = datetime.today()
+    months = [(today - timedelta(days=30 * i)).strftime("%b %Y") for i in range(5, -1, -1)]
+    return months
 
 def calculate_percentage_change(old_value, new_value):
     '''
@@ -89,7 +151,7 @@ def generate_pdf():
     data = RouteEnvData.objects.filter(date__gte=one_year_ago)
 
 # ========================================================================================================
-# ============================================= Data Calculations =======================================
+# ============================================= Data Calculations ========================================
 # ========================================================================================================
 
     # Extract field names (table headers)
@@ -115,7 +177,6 @@ def generate_pdf():
     total_carbon_emissions_last_month = 0
     total_energy_consumption_last_month = 0
     total_cost_last_month = 0
-
 
     for obj in data:
         distance = obj.distance
@@ -175,17 +236,15 @@ def generate_pdf():
 # =========================================== Title ======================================================
 # ========================================================================================================
     
-    # Custom Title Style
     title_style = ParagraphStyle(
         'TitleStyle',
         parent=styles['Title'],
         fontSize=20,
         textColor=colors.darkgreen,
         spaceAfter=20,
-        alignment=1  # Center align
+        alignment=1 
     )
 
-    # Title Page
     elements.append(Paragraph("Environmental Impact Report", title_style))
     elements.append(Spacer(1, 20))
 
@@ -193,11 +252,9 @@ def generate_pdf():
 # ================================== Aggregated Data For Last Month ======================================
 # ========================================================================================================
     
-    # Add the aggregated data with line breaks to the PDF
     elements.append(Paragraph("Aggregated Data for the Last Month", centered_style_heading2))
 
     aggregated_data_table = [("Metric", "% Diff from Last Month")]
-    # Data for the table: (Main Text, Percentage Change)
     aggregated_data = [
         (f"Total Distance Traveled: {total_distance_current_month:.2f} miles", f"{calculate_percentage_change(total_distance_last_month, total_distance_current_month)}% change"),
         (f"Total Fuel Consumption: {total_fuel_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_fuel_consumption_last_month, total_fuel_consumption_current_month)}% change"),
@@ -211,7 +268,6 @@ def generate_pdf():
     aggregated_data_table.extend(aggregated_data)
     aggregated_table_data = [(Paragraph(row[0], styles['BodyText']), Paragraph(row[1], styles['BodyText'])) for row in aggregated_data_table]
 
-    # Create the table
     aggregated_table = Table(aggregated_table_data, colWidths=[300, 100])
     aggregated_table.setStyle(TableStyle([
         ('GRID', (0,0), (-1,-1), 0.5, colors.grey),  # Light grid lines
@@ -222,7 +278,6 @@ def generate_pdf():
         ('GRID', (0, 0), (-1, -1), 1, colors.white)
     ]))
 
-    # Append the table to the elements list
     elements.append(aggregated_table)
     elements.append(Spacer(1, 20))
 
@@ -233,8 +288,6 @@ def generate_pdf():
     elements.append(Paragraph("Aggregated Data for the Last Year", centered_style_heading2))
     elements.append(Spacer(1, 10))
 
-
-    # List of data points (each row should be a list)
     aggregated_data_year = [
         [f"Total Distance Traveled: {total_distance_year:.2f} miles"],
         [f"Total Fuel Consumption: {total_fuel_consumption_year:.2f} gallons"],
@@ -245,10 +298,7 @@ def generate_pdf():
         [f"Average Cost per Mile: {avg_cost_per_mile_year:.2f} dollars/mile"]
     ]
 
-    # Convert each row into a Paragraph for proper formatting
     aggregated_table_year_data = [[Paragraph(row[0], styles['BodyText'])] for row in aggregated_data_year]
-
-    # Create the table with proper column width
     aggregated_table_year = Table(aggregated_table_year_data, colWidths=[400])  # Adjust width as needed
     aggregated_table_year.setStyle(TableStyle([
         ('GRID', (0,0), (-1,-1), 0.5, colors.grey),  # Light grid lines
@@ -258,19 +308,21 @@ def generate_pdf():
         ('GRID', (0, 0), (-1, -1), 1, colors.white)
     ]))
 
-    # Add the table to the PDF
     elements.append(aggregated_table_year)
     elements.append(Spacer(1, 20))
     
 # ========================================================================================================
-# ================================== Charts ==============================================================
+# ================================== Graphs ==============================================================
 # ========================================================================================================
+
+    # Create a line graph for carbon emissions
+    drawing = create_line_chart()
+    elements.append(drawing)
 
     # Make table stretch across the page
     page_width, _ = letter
-    col_widths = [(page_width - 100) / len(field_names)] * len(field_names)  # Distribute width equally
+    col_widths = [(page_width - 100) / len(field_names)] * len(field_names)
 
-    # Create and style the table
     table = Table(route_table_data, colWidths=col_widths)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.darkgreen),
@@ -288,7 +340,6 @@ def generate_pdf():
 
     elements.append(table)
     elements.append(Spacer(1, 30))
-
 
     # Build PDF
     doc.build(elements)
