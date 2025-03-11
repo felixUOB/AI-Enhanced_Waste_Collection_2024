@@ -486,11 +486,17 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
   }
 
-  void _showEndJourneyDialog() {
+  /// Shows a dialog to end the journey and then processes the final route data.
+/// 1. Retrieves the tracked distance from `LocationProvider` (in meters).
+/// 2. Converts meters to miles (1 mile ≈ 1609.34 m).
+/// 3. Creates a date string (format: YYYY-MM-DD).
+/// 4. Sends the data (distance in miles, mpg, date) to the backend using `postRouteData()`.
+/// 5. Displays success or error messages via `ScaffoldMessenger`.
+/// 6. Stops tracking, resets distance, and updates local state (`_endMpg`, `_journeyActive`).
+void _showEndJourneyDialog() {
   EndJourneyDialog.show(context, (double endMpg) async {
-    // 1) Retrieve the distanceTravelled that was tracked
+    // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
-    double totalDistance = locProvider.distanceTravelled;
 
     // 1) Distance is stored in meters. Let's get it from `locProvider`.
     double distanceInMeters = locProvider.distanceTravelled;
@@ -501,26 +507,29 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     // 2) Construct a date string in "YYYY-MM-DD" format.
     String currentDate = DateTime.now().toIso8601String().substring(0, 10);
 
-    // 3) POST to the server
+    // 3) Try sending route data to the server.
     try {
       await getIt<MetricsService>().postRouteData(
-        distance: totalDistance,
+        distance: distanceInMiles,
         mpg: endMpg,
         date: currentDate,
       );
-      // After await, check if the widget is still mounted
-      if (!mounted) return; // If it's already disposed, skip the code below
-      // If saved successfully
+
+      // After the async call, check if this widget is still mounted.
+      // If the widget was disposed, we shouldn't access context or setState.
+      if (!mounted) return;
+
+      // Successfully saved data to the server, show a success message.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Journey data successfully saved.')),
       );
     } catch (e) {
-      // Log the actual error or handle it internally:
+      // Log the exception in the debug console for developers.
       debugPrint('Error saving journey data: $e');
 
       if (!mounted) return;
 
-      // Show a more general message to the user:
+      // Show a user-friendly message without exposing the raw error.
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to save journey data. Please try again.'),
@@ -528,20 +537,22 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       );
     }
 
-    // Check again before modifying state or provider
+    // Check again before modifying any state or provider data.
     if (!mounted) return;
 
-    // 1) Stop tracking
+    // 4) Stop tracking location updates since the journey has ended.
     locProvider.setTracking(false);
 
-    // 2) Reset the distance to 0 for the next journey
+    // Reset the distance in `LocationProvider` for the next journey.
     locProvider.resetDistance();
 
-    // 3) Update local state (_endMpg, _journeyActive)
+    // 5) Update local state variables.
     setState(() {
       _endMpg = endMpg;
       _journeyActive = false;
     });
+
+    // For debugging: confirm in the console what the final MPG is.
     debugPrint('End MPG: $_endMpg');
   });
 }
