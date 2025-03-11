@@ -502,16 +502,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         mpg: endMpg,
         date: currentDate,
       );
+      // After await, check if the widget is still mounted
+      if (!mounted) return; // If it's already disposed, skip the code below
       // If saved successfully
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Journey data successfully saved.')),
       );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to save journey data: $e')),
       );
     }
 
+    // check before using context or calling setState
+    if (!mounted) return;
     // 4) turn off tracking, set mpg
     locProvider.setTracking(false);
     setState(() {
