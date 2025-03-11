@@ -22,7 +22,7 @@ For example in the code:
 
     testWidgets("Auto Login Success Functions as Expected", (WidgetTester tester) async {
 
-      when(mockAuthService.loadUserCredentials()).thenAnswer((_) async => <String, String?>{
+      when(getIt<AuthService>().loadUserCredentials()).thenAnswer((_) async => <String, String?>{
         "username": "mockUsername",
         "password": "mockPassword",
       });
@@ -30,12 +30,12 @@ For example in the code:
       print("MOCKING LOGIN");
 
 
-      when(mockAuthService.login("mockUsername", "mockPassword"))
+      when(getIt<AuthService>().login("mockUsername", "mockPassword"))
         .thenAnswer((_) async {});
 
       await tester.pumpWidget(
         MaterialApp(
-          home: SplashPage(authService: mockAuthService, isTesting: true,),
+          home: SplashPage(authService: getIt<AuthService>(), isTesting: true,),
           
         ),
       );
@@ -49,8 +49,8 @@ For example in the code:
 
 
       // Verify that the auto-login process was called
-      verify(mockAuthService.loadUserCredentials()).called(1);
-      verify(mockAuthService.login("mockUsername", "mockPassword")).called(1);
+      verify(getIt<AuthService>().loadUserCredentials()).called(1);
+      verify(getIt<AuthService>().login("mockUsername", "mockPassword")).called(1);
 
 
       // Verify that the CircularProgressIndicator is no longer displayed

@@ -1,4 +1,5 @@
 import 'package:ewc/screens/metrics/route_data.dart';
+import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/graphs/bar-graph/bar_graph.dart';
 import 'package:ewc/widgets/graphs/line-graph/line_graph.dart';
@@ -18,7 +19,7 @@ class MetricsPage extends StatefulWidget {
 class _MetricsPageState extends State<MetricsPage> {
   List<JourneyRoute> routeList = [];
   // instantiate the variables
-  final MetricsService _metricsService = MetricsService();
+  final MetricsService _metricsService = getIt<MetricsService>();
 
   bool get isTesting => widget.testingMode;
 
