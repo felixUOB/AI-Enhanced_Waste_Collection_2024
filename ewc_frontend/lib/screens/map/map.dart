@@ -37,13 +37,14 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
   final Map<List<double>, String> _routeInstructions = {};
-  final List<Marker> _marker = [];
+  List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
 
+  // Map rotation variables
   double _autoBearing = 0; // Bearing set automatically by navigation view
   double _savedBearing = -45; // Bearing set by user rotating map
   bool _lockedNorth = true; // Whether map rotation is locked to the north
@@ -68,9 +69,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(
         vsync: this, duration: Duration(milliseconds: 1500));
+    Provider.of<LocationProvider>(context, listen: false).addListener(_findNearestRoutePoint);
+    Provider.of<StopsProvider>(context, listen: false).addListener(_updateStopsMarkers);
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
-    Provider.of<LocationProvider>(context, listen: false).addListener(findNearestRoutePoint);
   }
 
   void _initialiseLocationStatusStream() async {
@@ -88,10 +90,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     try {
       await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
-      await _drawStopsMarker(Colors.blue);
-      //Depot location marker
-      _marker.add(
-          MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -121,11 +119,26 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> _drawStopsMarker(Color color) async {
+  // This function runs each time stops is updated in stops provider
+  // i.e each time a stop is marked as visited
+  void _updateStopsMarkers() {
+    List<Marker> markers = [];
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
-      _marker.add(MarkerWidget.createMarker(stops[i].location, color));
+      // Determine colour based on if stop has been visited yet
+      Color colour = Colors.blue;
+      if (stops[i].visited) {
+        colour = Colors.green;
+      }
+      markers.add(MarkerWidget.createMarker(stops[i].location, colour));
     }
+    //Depot location marker
+    markers.add(
+      MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+
+    setState(() {
+      _marker = markers;
+    });
   }
 
   // Fetches route data from the ORS API between the two given stops, entered by their ID.
@@ -297,6 +310,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                   (int stopID, int wasteCollected) {
                     _stopsService.postStopCollection(stopID, wasteCollected);
                     Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
+                    _fetchOptimizedRoute(); // Recalculate route with visited stop removed
                   }
                 );
               },
@@ -506,7 +520,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function finds the nearest point to on the route to the user's location
   // If the distance to the nearest point > rerouteThreshold then the route is recalculated
   // It also calculates the correct bearing for the camera
-  Future<void> findNearestRoutePoint() async {
+  Future<void> _findNearestRoutePoint() async {
     double minDistance = double.infinity;
     int index = 0;
 

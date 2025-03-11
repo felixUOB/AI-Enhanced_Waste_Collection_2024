@@ -129,7 +129,6 @@ class RouteService {
     List<Stop> newStopOrder = [];
     if (response.routes.first.steps != null) {
       for (OptimizationRouteStep step in response.routes.first.steps!) {
-        print(step.id);
         if (step.id != null) {
           final location = step.location;
           newStopOrder.add(Stop(

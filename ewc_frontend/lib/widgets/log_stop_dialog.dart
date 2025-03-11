@@ -8,7 +8,10 @@ class LogStopDialog {
   static void show(BuildContext context, Function(int, int) onConfirm) {
     int? selectedStop;
     String wasteCollectedInput = '';
-    List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    List<Stop> fetchedStops = Provider.of<StopsProvider>(context, listen: false).stops;
+
+    // Filter stops to only include non-visited ones
+    List<Stop> stops = fetchedStops.where((stop) => !stop.visited).toList();
 
     // Check if stops are empty before displaying dropdown
     if (stops.isEmpty) {

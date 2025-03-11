@@ -8,7 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  final String apiUrl = 'http://127.0.0.1:8000/api';
+  final String siteUrl = 'http://127.0.0.1:8000';
   final String adminUrl = 'http://127.0.0.1:8000/admin';
 
   Future<void> initializeAuthService() async {
@@ -63,7 +63,7 @@ class AuthService {
 
   Future<bool> checkEmail(String email) async {
     final response = await http
-        .get(Uri.parse("$apiUrl/check-email/?email=$email"), headers: {
+        .get(Uri.parse("$siteUrl/api/check-email/?email=$email"), headers: {
       'Content-Type': 'application/json',
     });
     if (response.statusCode == 500) {
@@ -81,7 +81,7 @@ class AuthService {
   Future<void> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$apiUrl/token/'),
+        Uri.parse('$siteUrl/api/token/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'username': username, 'password': password}),
       );
@@ -109,7 +109,7 @@ class AuthService {
 
     if (refreshToken != null) {
       final response = await http.post(
-        Uri.parse('$apiUrl/token/refresh/'),
+        Uri.parse('$siteUrl/api/token/refresh/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refresh': refreshToken}),
       );
@@ -138,7 +138,7 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.get(
-      Uri.parse('$apiUrl/$endpoint'),
+      Uri.parse('$siteUrl/api/$endpoint'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
@@ -153,7 +153,7 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.get(
-          Uri.parse('$apiUrl/$endpoint'),
+          Uri.parse('$siteUrl/api/$endpoint'),
           headers: {
             'Authorization': 'Bearer $newAccessToken',
             'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.post(
-      Uri.parse('$apiUrl/$endpoint'),
+      Uri.parse('$siteUrl/api/$endpoint'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
@@ -188,7 +188,7 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.post(
-          Uri.parse('$apiUrl/$endpoint'),
+          Uri.parse('$siteUrl/api/$endpoint'),
           headers: {
             'Authorization': 'Bearer $newAccessToken',
             'Content-Type': 'application/json',
@@ -213,7 +213,7 @@ class AuthService {
     // Additional fields if needed
   }) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/register/'),
+      Uri.parse('$siteUrl/api/register/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
@@ -238,7 +238,7 @@ class AuthService {
   }
 
   void launchPasswordReset() async {
-    final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
+    final Uri resetUri = Uri.parse("$siteUrl/reset_password/");
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);
