@@ -510,8 +510,14 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       );
     } catch (e) {
       if (!mounted) return;
+      // Log the actual error or handle it internally:
+      debugPrint('An error occurred while saving journey data: $e');
+
+      // Show a more general message to the user:
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save journey data: $e')),
+        const SnackBar(
+          content: Text('Failed to save journey data. Please try again.'),
+        ),
       );
     }
 
