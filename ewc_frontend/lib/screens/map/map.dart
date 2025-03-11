@@ -22,6 +22,7 @@ import 'package:ewc/widgets/end_journey_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/widgets/navigation_banner.dart';
+import 'package:ewc/services/metrics_service.dart';
 
 // MapPage is a stateful widget displaying a map and plotting a route
 class MapPage extends StatefulWidget {
@@ -486,13 +487,30 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
 
   void _showEndJourneyDialog() {
-    EndJourneyDialog.show(context, (double mpg) {
-      // Stop tracking distance travelled as journey has been stopped
-      Provider.of<LocationProvider>(context, listen: false).setTracking(false);
-      setState(() {
-        _endMpg = mpg;
-        _journeyActive = false;
-      });
+  EndJourneyDialog.show(context, (double endMpg) async {
+    // 1) Retrieve the distanceTravelled that was tracked
+    final locProvider = Provider.of<LocationProvider>(context, listen: false);
+    double totalDistance = locProvider.distanceTravelled;
+
+    // 2) Create a date string (YYYY-MM-DD format)
+    String currentDate = DateTime.now().toIso8601String().substring(0, 10);
+
+    // 3) POST to the server
+    try {
+      await getIt<MetricsService>().postRouteData(
+        distance: totalDistance,
+        mpg: endMpg,
+        date: currentDate,
+      );
+      // If saved successfully
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Journey data successfully saved.')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save journey data: $e')),
+      );
+    }
 
       debugPrint('End MPG: $_endMpg');
     });
