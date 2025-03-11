@@ -512,7 +512,15 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       );
     }
 
+    // 4) turn off tracking, set mpg
+    locProvider.setTracking(false);
+    setState(() {
+      _endMpg = endMpg;
+      _journeyActive = false;
     });
+    debugPrint('End MPG: $_endMpg');
+  });
+}
 
   // This function finds the nearest point to on the route to the user's location
   // If the distance to the nearest point > rerouteThreshold then the route is recalculated
