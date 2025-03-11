@@ -509,9 +509,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         const SnackBar(content: Text('Journey data successfully saved.')),
       );
     } catch (e) {
-      if (!mounted) return;
       // Log the actual error or handle it internally:
-      debugPrint('An error occurred while saving journey data: $e');
+      debugPrint('Error saving journey data: $e');
+
+      if (!mounted) return;
 
       // Show a more general message to the user:
       ScaffoldMessenger.of(context).showSnackBar(
@@ -521,10 +522,16 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       );
     }
 
-    // check before using context or calling setState
+    // Check again before modifying state or provider
     if (!mounted) return;
-    // 4) turn off tracking, set mpg
+
+    // 1) Stop tracking
     locProvider.setTracking(false);
+
+    // 2) Reset the distance to 0 for the next journey
+    locProvider.resetDistance();
+
+    // 3) Update local state (_endMpg, _journeyActive)
     setState(() {
       _endMpg = endMpg;
       _journeyActive = false;
