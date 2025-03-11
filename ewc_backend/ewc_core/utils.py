@@ -22,13 +22,14 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-def create_line_chart(db_data, isCarbon=True):
+def create_line_chart(db_data):
     drawing = Drawing(400, 180)  # Increased height to fit labels
 
     # Map months to numeric positions (0 to 5)
     months = get_last_6_months()
     x_positions = list(range(6))  # 0, 1, 2, 3, 4, 5
 
+    # Initialize data for each month
     month_0_data = 0
     month_1_data = 0
     month_2_data = 0
@@ -36,24 +37,24 @@ def create_line_chart(db_data, isCarbon=True):
     month_4_data = 0
     month_5_data = 0
 
-    if isCarbon:
-        for obj in db_data:
-            if obj.date.strftime("%b %Y") == months[0]:
-                month_0_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
-            elif obj.date.strftime("%b %Y") == months[1]:
-                month_1_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
-            elif obj.date.strftime("%b %Y") == months[2]:
-                month_2_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
-            elif obj.date.strftime("%b %Y") == months[3]:
-                month_3_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
-            elif obj.date.strftime("%b %Y") == months[4]:
-                month_4_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
-            elif obj.date.strftime("%b %Y") == months[5]:
-                month_5_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+    # Calculate carbon emissions for each month    
+    for obj in db_data:
+        if obj.date.strftime("%b %Y") == months[0]:
+            month_0_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+        elif obj.date.strftime("%b %Y") == months[1]:
+            month_1_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+        elif obj.date.strftime("%b %Y") == months[2]:
+            month_2_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+        elif obj.date.strftime("%b %Y") == months[3]:
+            month_3_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+        elif obj.date.strftime("%b %Y") == months[4]:
+            month_4_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
+        elif obj.date.strftime("%b %Y") == months[5]:
+            month_5_data += calculate_carbon_emissions_per_route(obj.distance, obj.mpg)
 
     # Define Data (Using x_positions instead of month names)
     data = [
-        [(x_positions[i], y) for i, y in enumerate([month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data])],  # First Line
+        [(x_positions[i], y) for i, y in enumerate([month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data])],
     ]
 
     # Create Line Plot
@@ -81,11 +82,11 @@ def create_line_chart(db_data, isCarbon=True):
     lp.xValueAxis.visibleGrid = 1
 
 
-    val_max = round(max(month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data) + 100, -2)
+
     # Configure Y-Axis
     lp.yValueAxis = YValueAxis()
     lp.yValueAxis.valueMin = 0
-    lp.yValueAxis.valueMax = val_max
+    lp.yValueAxis.valueMax = round(max(month_0_data, month_1_data, month_2_data, month_3_data, month_4_data, month_5_data) + 100, -2)
     lp.yValueAxis.valueStep = 100
     lp.yValueAxis.visibleGrid = 1
 
@@ -152,14 +153,14 @@ def generate_pdf():
     centered_style_heading2 = ParagraphStyle(
         'CenteredStyle',
         parent=styles['Heading2'], 
-        alignment=TA_CENTER  # Center align the text
+        alignment=TA_CENTER
     )
 
 # ========================================================================================================
 # ============================================= Data Retrieval ===========================================
 # ========================================================================================================
 
-       # Calculate the date one year ago from today
+    # Calculate the date one year ago from today
     today = timezone.now().date()
 
     one_year_ago = today - timedelta(days=365)
@@ -167,7 +168,7 @@ def generate_pdf():
     # Calculate the date one month ago from today
     one_month_ago = today - timedelta(days=30)
 
-    # Filter the data from one year ago to one month ago, excluding the last month
+    # Filter the data from one year ago to today
     db_data = RouteEnvData.objects.filter(date__gte=one_year_ago)
 
 # ========================================================================================================
@@ -180,6 +181,7 @@ def generate_pdf():
     # Prepare table data (headers + records)
     route_table_data = [field_names]  # Add headers as the first row
 
+    # Initialize aggregated values
     total_distance_current_month = 0
     total_fuel_consumption_current_month = 0
     total_carbon_emissions_current_month = 0
@@ -202,13 +204,14 @@ def generate_pdf():
         distance = obj.distance
         mpg = obj.mpg
 
-        # Calculate aggregated values
+        # Calculate aggregated values for the year
         total_distance_year += distance
         total_fuel_consumption_year += (distance / mpg)  # Fuel consumption = Distance / MPG
         total_carbon_emissions_year += calculate_carbon_emissions_per_route(distance, mpg)
         total_energy_consumption_year += calculate_energy_consumption_per_route(distance, mpg)
         total_cost_year += calculate_cost_per_route(distance, mpg, 3.095)  
 
+        # Calculate aggregated values for the current month
         if obj.date > one_month_ago:
             total_distance_current_month += distance
             total_fuel_consumption_current_month += (distance / mpg)
@@ -219,6 +222,7 @@ def generate_pdf():
             row = [str(getattr(obj, field.name)) for field in RouteEnvData._meta.fields]
             route_table_data.append(row)
 
+        # Calculate aggregated values for the last month
         if obj.date > one_month_ago - timedelta(days=30) and obj.date < one_month_ago:
 
             total_distance_last_month += distance
@@ -227,6 +231,7 @@ def generate_pdf():
             total_energy_consumption_last_month += calculate_energy_consumption_per_route(distance, mpg)
             total_cost_last_month += calculate_cost_per_route(distance, mpg, 3.095)
 
+    # Calculate averages
     avg_mpg_last_month = total_distance_last_month / total_fuel_consumption_last_month if total_fuel_consumption_last_month else 0
     avg_carbon_emissions_last_month = total_carbon_emissions_last_month / total_distance_last_month if total_distance_last_month else 0
     avg_cost_per_mile_last_month = total_cost_last_month / total_distance_last_month if total_distance_last_month else 0
@@ -273,8 +278,8 @@ def generate_pdf():
     
     elements.append(Paragraph("Aggregated Data for the Last Month", centered_style_heading2))
 
-    aggregated_data_table = [("Metric", "% Diff from Last Month")]
-    aggregated_data = [
+    aggregated_data= [("Metric", "% Diff from Last Month")]
+    aggregated_data_temp = [
         (f"Total Distance Traveled: {total_distance_current_month:.2f} miles", f"{calculate_percentage_change(total_distance_last_month, total_distance_current_month)}% change"),
         (f"Total Fuel Consumption: {total_fuel_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_fuel_consumption_last_month, total_fuel_consumption_current_month)}% change"),
         (f"Total Carbon Emissions: {total_carbon_emissions_current_month:.2f} lbs", f"{calculate_percentage_change(total_carbon_emissions_last_month, total_carbon_emissions_current_month)}% change"),
@@ -284,15 +289,15 @@ def generate_pdf():
         (f"Average Cost per Mile: {avg_cost_per_mile_current_month:.2f} dollars/mile", f"{calculate_percentage_change(avg_cost_per_mile_last_month, avg_cost_per_mile_current_month)}% change")
     ]
 
-    aggregated_data_table.extend(aggregated_data)
-    aggregated_table_data = [(Paragraph(row[0], styles['BodyText']), Paragraph(row[1], styles['BodyText'])) for row in aggregated_data_table]
+    aggregated_data.extend(aggregated_data_temp)
+    aggregated_data_table = [(Paragraph(row[0], styles['BodyText']), Paragraph(row[1], styles['BodyText'])) for row in aggregated_data]
 
-    aggregated_table = Table(aggregated_table_data, colWidths=[300, 100])
+    aggregated_table = Table(aggregated_data_table, colWidths=[300, 100])
     aggregated_table.setStyle(TableStyle([
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),  # Light grid lines
-        ('ALIGN', (0,0), (0,-1), 'LEFT'),  # Align first column left
-        ('ALIGN', (1,0), (-1,-1), 'RIGHT'),  # Align percentage change right
-        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),  # Vertical alignment to middle
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),  
+        ('ALIGN', (0,0), (0,-1), 'LEFT'),  
+        ('ALIGN', (1,0), (-1,-1), 'RIGHT'), 
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),  
         ('TEXTCOLOR', (1,0), (1,-1), colors.red),
         ('GRID', (0, 0), (-1, -1), 1, colors.white)
     ]))
@@ -307,7 +312,7 @@ def generate_pdf():
     elements.append(Paragraph("Aggregated Data for the Last Year", centered_style_heading2))
     elements.append(Spacer(1, 10))
 
-    aggregated_data_year = [
+    aggregated_data = [
         [f"Total Distance Traveled: {total_distance_year:.2f} miles"],
         [f"Total Fuel Consumption: {total_fuel_consumption_year:.2f} gallons"],
         [f"Total Carbon Emissions: {total_carbon_emissions_year:.2f} lbs"],
@@ -317,35 +322,31 @@ def generate_pdf():
         [f"Average Cost per Mile: {avg_cost_per_mile_year:.2f} dollars/mile"]
     ]
 
-    aggregated_table_year_data = [[Paragraph(row[0], styles['BodyText'])] for row in aggregated_data_year]
-    aggregated_table_year = Table(aggregated_table_year_data, colWidths=[400])  # Adjust width as needed
-    aggregated_table_year.setStyle(TableStyle([
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),  # Light grid lines
-        ('ALIGN', (0,0), (0,-1), 'LEFT'),  # Align first column left
-        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),  # Vertical alignment to middle
-        ('TEXTCOLOR', (1,0), (1,-1), colors.red),
-        ('GRID', (0, 0), (-1, -1), 1, colors.white)
-    ]))
+    aggregated_data_table = [[Paragraph(row[0], styles['BodyText'])] for row in aggregated_data]
+    aggregated_table = Table(aggregated_data_table, colWidths=[400])
+   
+    elements.append(aggregated_table)
 
-    elements.append(aggregated_table_year)
-
-    
 # ========================================================================================================
 # ================================== Graphs ==============================================================
 # ========================================================================================================
+
     elements.append(Paragraph("Carbon Emissions", centered_style_heading2))
 
-
     # Create a line graph for carbon emissions
-    drawing = create_line_chart(db_data)
-    elements.append(drawing)
+    carbon_emmision_graph = create_line_chart(db_data)
+    elements.append(carbon_emmision_graph)
+
+# ========================================================================================================
+# ================================== Route Table ==============================================================
+# ========================================================================================================
 
     # Make table stretch across the page
     page_width, _ = letter
     col_widths = [(page_width - 100) / len(field_names)] * len(field_names)
 
-    table = Table(route_table_data, colWidths=col_widths)
-    table.setStyle(TableStyle([
+    route_table = Table(route_table_data, colWidths=col_widths)
+    route_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.darkgreen),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -359,7 +360,7 @@ def generate_pdf():
     elements.append(PageBreak())
     elements.append(Paragraph("Routes Recorded in last 30 days", centered_style_heading2))
 
-    elements.append(table)
+    elements.append(route_table)
     elements.append(Spacer(1, 30))
 
     # Build PDF
