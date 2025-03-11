@@ -492,7 +492,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
     double totalDistance = locProvider.distanceTravelled;
 
-    // 2) Create a date string (YYYY-MM-DD format)
+    // 1) Distance is stored in meters. Let's get it from `locProvider`.
+    double distanceInMeters = locProvider.distanceTravelled;
+
+    // Convert meters to miles (approx. 1 mile = 1609.34 meters).
+    double distanceInMiles = distanceInMeters / 1609.34;
+
+    // 2) Construct a date string in "YYYY-MM-DD" format.
     String currentDate = DateTime.now().toIso8601String().substring(0, 10);
 
     // 3) POST to the server
