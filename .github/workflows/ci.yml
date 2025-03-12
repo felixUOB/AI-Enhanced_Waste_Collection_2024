@@ -38,15 +38,20 @@ jobs:
           flutter analyze
           flutter test --coverage
           genhtml coverage/lcov.info -o coverage/html
+          dart doc 
 
-  
       - name: Upload Coverage HTML Report
         uses: actions/upload-artifact@v4
         with:
           name: flutter-coverage-html
           path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/coverage/html
 
-
+      - name: Upload Documentation HTML
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-html
+          path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/doc/api/index.html 
+      
   django_test:
     name: Run Django Tests & Analyze Coverage
     runs-on: ubuntu-latest
