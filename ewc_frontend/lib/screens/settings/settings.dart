@@ -39,8 +39,6 @@ class _SettingPageState extends State<SettingPage> {
 
   /// Helper method to build each settings item to avoid repeating
   /// Padding → Card → ListTile. (pass the icon, color, title, etc.)
-  /// Helper method to build each settings item to avoid repeating
-  /// Padding → Card → ListTile. (pass the icon, color, title, etc.)
 
   Widget _buildSettingsItem({
     required IconData icon,
