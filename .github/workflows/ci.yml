@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: documentation-html
-          path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/doc/api/index.html 
+          path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/doc/api/ 
       
   django_test:
     name: Run Django Tests & Analyze Coverage
