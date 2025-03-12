@@ -4,6 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/services/stops_service.dart';
 
+/// This file manages the state of the stops and provides
+/// functionality to interact with the list of stops.
+///
+/// Functions:
+/// - `initialiseStops()`: Initializes and fetches stops from the service.
+/// - `setVisited(int stopID)`: Marks a stop as visited by its ID.
+
 class StopsProvider extends ChangeNotifier {
   List<Stop> _stops = [];
   final StopsService _stopsService = getIt<StopsService>();

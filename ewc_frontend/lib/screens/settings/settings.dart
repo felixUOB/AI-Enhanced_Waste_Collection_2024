@@ -4,6 +4,13 @@ import 'package:ewc/main.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 
+/// This file manages the settings page and displays various user settings.
+///
+/// Functions:
+/// - `build()`: Builds the UI for the settings page.
+/// - `_logout()`: Logs the user out of the app.
+/// - `_buildSettingsItem()`: Helper method to build each settings item.
+
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
 
