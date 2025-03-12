@@ -118,7 +118,7 @@ class _MetricsPageState extends State<MetricsPage> {
         JourneyRoute(date: "2025-01-26", distance: 30, mpg: 8, filler: false),
       ];
     }
-    return await _metricsService.fetchAllRoutes();
+    return await _metricsService.fetchLast30Days();
   }
 
   // calculate the total routes, total distance and average Mpg and add to lists
@@ -152,7 +152,7 @@ class _MetricsPageState extends State<MetricsPage> {
         }
       }
       if (totalRoutes >0 ){
-        averageMpg = cumulativeMpg / totalRoutes;
+        averageMpg = (cumulativeMpg / totalRoutes).truncateToDouble();
       }
     }
   }
@@ -197,7 +197,7 @@ class _MetricsPageState extends State<MetricsPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Column(children: [
-                                Text('Carbon Footprint Bar Graph',
+                                Text('Summary of last 30 days:',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium),
@@ -281,7 +281,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Column(children: [
-                                    Text('MPG over time',
+                                    Text('MPG over last 30 days',
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium),
@@ -309,7 +309,7 @@ class _MetricsPageState extends State<MetricsPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Column(children: [
-                                  Text('Distance Over Time',
+                                  Text('Distance Over the last 30 days',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium),

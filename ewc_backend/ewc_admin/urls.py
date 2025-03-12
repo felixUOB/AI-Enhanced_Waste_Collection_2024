@@ -27,7 +27,6 @@ from ewc_core.management.commands.run_prediction import Command
 from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view
 
 
-
 # Router configuration for REST API endpoints
 router = routers.DefaultRouter()
 router.register(r'user_profiles', UserProfileViewSet, basename='userprofile')
@@ -42,7 +41,13 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
+    
+    # ----- endpoint for route-env-data table ------
+    
     path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
+    path('api/route-env-data-30-days/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data_30_days'})),
+    
+    # ------- endpoint for model -------- #
     path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
 
 # -----------Stops HTML Form URLs------------------

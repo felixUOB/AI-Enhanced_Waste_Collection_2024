@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta
 from rest_framework import viewsets, permissions, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from .models import UserProfile, StopCollection, Stops, RouteEnvData
 from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, UserSerializer
@@ -14,7 +16,6 @@ from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetVi
 from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import StopsForm
-from .models import Stops
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 
@@ -43,6 +44,13 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
     def get_route_env_data(self, request):
         return Response({"message"})
 
+    @action(detail=False, methods=['get'])
+    def get_route_env_data_30_days(self, request):
+        end_time = datetime.now() - timedelta(days=30)
+        routes = RouteEnvData.objects.filter(date__gte =end_time)
+        data = list(routes.values('distance', 'mpg', 'date'))
+        return JsonResponse(data, safe=False)
+
 # Waste Prediction ViewSet
 class StopsViewSet(viewsets.ModelViewSet):
     queryset = Stops.objects.all()
@@ -60,21 +68,16 @@ class CheckEmailView(APIView):
 
     def get(self, request):
         email = request.query_params.get('email')
-    
-
         if not email:
             return Response({'success': False, 'message': 'Email is required'})
 
         # Check if the email exists in the User model
         email_exists = User.objects.filter(email=email).exists()
-        print(email)
-        print(email_exists)
         # Return JSON response indicating whether the email exists
         return Response({'exists': email_exists})
     
 def is_staff_user(user):
     return user.is_staff
-# python manage.py createsuperuser
 
 @login_required
 @user_passes_test(is_staff_user)
