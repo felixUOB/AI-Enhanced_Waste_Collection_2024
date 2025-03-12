@@ -1,5 +1,15 @@
 import 'package:encrypt/encrypt.dart' as encrypt;
 
+
+/// This file manages encryption and decryption of user credentials.
+/// 
+/// Functions:
+/// - `EncryptionNotInitializedException()`: Exception thrown when encryption key is not initialized.
+/// - `EncryptionService()`: Constructor for the encryption service.
+/// - `init(String keyString)`: Initializes the encryption key.
+/// - `encryptData(String plainText)`: Encrypts the given plaintext.
+/// - `decryptData(String encryptedData)`: Decrypts the given encrypted data.
+
 class EncryptionNotInitializedException implements Exception {
   final String message;
 
