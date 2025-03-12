@@ -12,6 +12,9 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.graphics.charts.lineplots import LinePlot
 from reportlab.graphics.charts.axes import XValueAxis, YValueAxis
 from reportlab.graphics.widgets.markers import makeMarker
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 
 def create_line_chart(db_data):
     '''
@@ -87,7 +90,7 @@ def create_line_chart(db_data):
     lp.yValueAxis.valueMax = round(max_value + 50, -2)  # Adding 50 before rounding for better scaling
     lp.yValueAxis.valueStep = 100
     lp.yValueAxis.visibleGrid = 1
-    y_axis_label = String(-40, 110, "Carbon Emissions (lbs)", fontSize=9, fillColor=colors.black)
+    y_axis_label = String(-40, 110, "Carbon Emissions (kg)", fontSize=9, fillColor=colors.black)
     drawing.add(y_axis_label)  # Add label to the drawing
 
     # Add manual month labels below X-axis
@@ -95,13 +98,13 @@ def create_line_chart(db_data):
         drawing.add(String(50 + (i * 80), 30, month, fontSize=10, fillColor=colors.black))
 
     drawing.add(lp)
-    
+
     return drawing
 
 def get_last_6_months():
     """Returns a list of last 6 months in 'MMM YYYY' format (e.g., 'Mar 2024')."""
     today = datetime.today()
-    months = [(today - timedelta(days=30 * i)).strftime("%b %Y") for i in range(5, -1, -1)]
+    months = [(today - relativedelta(months=i)).strftime("%b %Y") for i in range(5, -1, -1)]
     return months
 
 def calculate_percentage_change(old_value, new_value):
@@ -116,7 +119,7 @@ def calculate_carbon_emissions_per_route(distance, mpg):
     '''
     Calculate carbon emissions based on distance and fuel efficiency.
     '''
-    carbon_emissions = distance / mpg * 19.6  # 19.6 lbs of CO2 per gallon of gasoline
+    carbon_emissions = distance / mpg * 8.89041  # 8.89041 kg of CO2 per gallon of gasoline
     return carbon_emissions
 
 def calculate_energy_consumption_per_route(distance, mpg):
@@ -282,10 +285,10 @@ def generate_pdf():
     aggregated_data_temp = [
         (f"Total Distance Traveled: {total_distance_current_month:.2f} miles", f"{calculate_percentage_change(total_distance_last_month, total_distance_current_month)}% change"),
         (f"Total Fuel Consumption: {total_fuel_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_fuel_consumption_last_month, total_fuel_consumption_current_month)}% change"),
-        (f"Total Carbon Emissions: {total_carbon_emissions_current_month:.2f} lbs", f"{calculate_percentage_change(total_carbon_emissions_last_month, total_carbon_emissions_current_month)}% change"),
+        (f"Total Carbon Emissions: {total_carbon_emissions_current_month:.2f} kg", f"{calculate_percentage_change(total_carbon_emissions_last_month, total_carbon_emissions_current_month)}% change"),
         (f"Total Energy Consumption: {total_energy_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_energy_consumption_last_month, total_energy_consumption_current_month)}% change"),
         (f"Average Miles per Gallon (MPG): {avg_mpg_current_month:.2f}", f"{calculate_percentage_change(avg_mpg_last_month, avg_mpg_current_month)}% change"),
-        (f"Average Carbon Emissions per Mile: {avg_carbon_emissions_current_month:.2f} lbs/mile", f"{calculate_percentage_change(avg_carbon_emissions_last_month, avg_carbon_emissions_current_month)}% change"),
+        (f"Average Carbon Emissions per Mile: {avg_carbon_emissions_current_month:.2f} kg/mile", f"{calculate_percentage_change(avg_carbon_emissions_last_month, avg_carbon_emissions_current_month)}% change"),
         (f"Average Cost per Mile: {avg_cost_per_mile_current_month:.2f} dollars/mile", f"{calculate_percentage_change(avg_cost_per_mile_last_month, avg_cost_per_mile_current_month)}% change")
     ]
 
@@ -315,10 +318,10 @@ def generate_pdf():
     aggregated_data = [
         [f"Total Distance Traveled: {total_distance_year:.2f} miles"],
         [f"Total Fuel Consumption: {total_fuel_consumption_year:.2f} gallons"],
-        [f"Total Carbon Emissions: {total_carbon_emissions_year:.2f} lbs"],
+        [f"Total Carbon Emissions: {total_carbon_emissions_year:.2f} kg"],
         [f"Total Energy Consumption: {total_energy_consumption_year:.2f} gallons"],
         [f"Average Miles per Gallon (MPG): {avg_mpg_year:.2f}"],
-        [f"Average Carbon Emissions per Mile: {avg_carbon_emissions_year:.2f} lbs/mile"],
+        [f"Average Carbon Emissions per Mile: {avg_carbon_emissions_year:.2f} kg/mile"],
         [f"Average Cost per Mile: {avg_cost_per_mile_year:.2f} dollars/mile"]
     ]
 
@@ -338,7 +341,7 @@ def generate_pdf():
     elements.append(carbon_emmision_graph)
 
 # ========================================================================================================
-# ================================== Route Table ==============================================================
+# ================================== Route Table =========================================================
 # ========================================================================================================
 
     # Make table stretch across the page
