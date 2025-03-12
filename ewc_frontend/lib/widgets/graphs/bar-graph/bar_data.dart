@@ -1,6 +1,9 @@
 import 'package:ewc/widgets/graphs/bar-graph/individual_bar.dart';
 
-// class storing the structure of the data in the graph 
+/// This file manages the bar data for the bar graph.
+///
+/// Functions:
+/// - `initializeBarData()`: Initializes the bar data.
 
 class BarData {
   final double monAmount;

@@ -1,5 +1,4 @@
-
-// class for each individual bar
+/// This file contains the class `IndividualBarm which holds information for a single bar in a bar_graph`.
 
 class IndividualBar {
   final int x; // position on x

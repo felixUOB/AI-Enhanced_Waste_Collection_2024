@@ -1,7 +1,10 @@
 
-import 'package:ewc/widgets/graphs/line-graph/chart_data.dart';
+import 'package:ewc/widgets/graphs/line-graph/individual_line_data.dart';
 
-// class storing the structure of the data in the graph 
+/// This file contains the line data for the line graph.
+///
+/// Functions:
+/// - `initializeBarData()`: Initializes the line data.
 
 class LineData {
   final double monAmount;
@@ -25,8 +28,8 @@ class LineData {
 
   List<IndividualLineData> lineData = [];
 
-  // initaiise the bar data
-  void initializeBarData(){
+  // initialise the line data
+  void initializeLineData(){
     lineData = [
       IndividualLineData(x: 0, y: monAmount),
       IndividualLineData(x: 1, y: tueAmount),

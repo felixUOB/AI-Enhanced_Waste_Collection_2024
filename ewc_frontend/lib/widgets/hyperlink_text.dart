@@ -2,6 +2,11 @@ import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 
+/// This file manages the hyperlink text widget.
+///
+/// Functions:
+/// - `build()`: Builds the hyperlink text.
+
 class HyperLinkText extends StatelessWidget {
   final String string1;
   final String hyperString;

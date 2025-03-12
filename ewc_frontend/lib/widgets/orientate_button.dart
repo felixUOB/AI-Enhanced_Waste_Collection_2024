@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// This file manages the orientate button widget.
+///
+/// Functions:
+/// - `onPressed`: Callback function when the button is pressed.
+/// - `north`: Indicates whether the button indicates north direction.
+
 class OrientateButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool north;

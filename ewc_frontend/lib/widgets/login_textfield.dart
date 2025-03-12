@@ -1,6 +1,11 @@
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 
+/// This file manages the login textfield widget.
+///
+/// Functions:
+/// - `build()`: Builds the login textfield component.
+
 class LoginTextfield extends StatelessWidget {
   final dynamic controller;
   final String hintText;

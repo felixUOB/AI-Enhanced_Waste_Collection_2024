@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+/// This file manages the route polyline layer widget.
+///
+/// Functions:
+/// - `build()`: Builds the route polyline layer.
+
 class RoutePolylineLayer extends StatelessWidget{
   final List<LatLng> routePoints;
 
