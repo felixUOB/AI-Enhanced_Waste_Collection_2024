@@ -42,7 +42,7 @@ jobs:
         working-directory: "./ewc_frontend"
         run: |
           genhtml coverage/lcov.info -o coverage/html
-          dartdoc
+          dart doc
 
       - name: Upload Coverage HTML Report
         uses: actions/upload-artifact@v4

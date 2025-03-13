@@ -1,32 +1,21 @@
 from rest_framework import viewsets, permissions, generics
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
 from .models import UserProfile, StopCollection, Stops, RouteEnvData
-from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, UserSerializer
-
+from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.contrib.auth import views as auth_views
-from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetView
 from django.shortcuts import render, get_object_or_404, redirect
-
 from .forms import StopsForm
 from .models import Stops
 from django.contrib.auth.decorators import login_required, user_passes_test
-
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="EWC API",
+        title="AI-Enhanced Waste Collection API",
         default_version="v1",
         description="API documentation",
         license=openapi.License(name="Apache License"),
