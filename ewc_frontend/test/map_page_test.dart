@@ -288,4 +288,16 @@ void main() {
     });
   });
 
+  // Increase Flutter Coverage %
+  testWidgets('map page shows error dialog on fetchAllStops exception', (WidgetTester tester) async {
+    // Throw exception in mock
+    when(getIt<StopsService>().fetchAllStops()).thenThrow(Exception('Mock Error'));
+
+    await tester.pumpWidget(pumpMap());
+    await tester.pumpAndSettle();
+
+    // expect: AlertDialog with "Error" title
+    expect(find.text('Error'), findsOneWidget);
+  });
+
 }
