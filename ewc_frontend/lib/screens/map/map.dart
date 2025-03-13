@@ -474,21 +474,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     userAgentPackageName: 'dev.fleaflet.flutter_map.example',
   );
 
-  void _showStartJourneyDialog() {
-    StartJourneyDialog.show(context, (double mileage, double mpg) {
-      // Start tracking distance travelled as journey is now active
-      Provider.of<LocationProvider>(context, listen: false).setTracking(true);
-      setState(() {
-        _startMileage = mileage;
-        _startMpg = mpg;
-        _journeyActive = true;
-        _automaticRecentre = true;
-      });
-      debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
-    });
-    debugPrint('Start Mileage: $_startMileage, Start MPG: $_startMpg');
-  }
-
   /// Shows a dialog to end the journey and then processes the final route data.
 /// 1. Retrieves the tracked distance from `LocationProvider` (in meters).
 /// 2. Converts meters to miles (1 mile ≈ 1609.34 m).
