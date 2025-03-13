@@ -37,8 +37,12 @@ jobs:
           flutter pub get
           flutter analyze
           flutter test --coverage
+          
+      - name: Generate Code Report and Documentation
+        working-directory: "./ewc_frontend"
+        run: |
           genhtml coverage/lcov.info -o coverage/html
-          dart doc 
+          dartdoc
 
       - name: Upload Coverage HTML Report
         uses: actions/upload-artifact@v4
@@ -49,7 +53,7 @@ jobs:
       - name: Upload Documentation HTML
         uses: actions/upload-artifact@v4
         with:
-          name: documentation-html
+          name: flutter-documentation-html
           path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/doc/api/ 
       
   django_test:

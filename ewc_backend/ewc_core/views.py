@@ -17,10 +17,23 @@ from .forms import StopsForm
 from .models import Stops
 from django.contrib.auth.decorators import login_required, user_passes_test
 
-
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="EWC API",
+        default_version="v1",
+        description="API documentation",
+        license=openapi.License(name="Apache License"),
+    ),
+    public=True,
+    permission_classes=[permissions.IsAuthenticated],
+)
 
 # User Profile ViewSet
 class UserProfileViewSet(viewsets.ModelViewSet):
@@ -54,23 +67,6 @@ class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]  # Accessible to anyone    
-
-class CheckEmailView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def get(self, request):
-        email = request.query_params.get('email')
-    
-
-        if not email:
-            return Response({'success': False, 'message': 'Email is required'})
-
-        # Check if the email exists in the User model
-        email_exists = User.objects.filter(email=email).exists()
-        print(email)
-        print(email_exists)
-        # Return JSON response indicating whether the email exists
-        return Response({'exists': email_exists})
     
 def is_staff_user(user):
     return user.is_staff
