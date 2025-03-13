@@ -137,19 +137,24 @@ void main() {
     */
 
     testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
+      // 1) Pump map
       await tester.pumpWidget(pumpMap());
+      await tester.pumpAndSettle();
 
+      // 2) Start journey (no text fields for start journey)
       await tester.tap(find.text('Start Journey'));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '10');
-      await tester.enterText(find.byType(TextField).last, '20');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+
+      // 3) Directly open End Journey
       await tester.tap(find.text('End Journey'));
       await tester.pumpAndSettle();
+
+      // 4) Now we enter invalid input in EndJourneyDialog (assuming 1 textfield)
       await tester.enterText(find.byType(TextField).first, 'invalid');
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
+
+      // 5) Expect "Invalid Input" or similar
       expect(find.text('Invalid Input'), findsOneWidget);
     });
 
