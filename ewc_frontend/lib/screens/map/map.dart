@@ -492,13 +492,16 @@ void _showEndJourneyDialog() {
     // Convert meters to miles (approx. 1 mile = 1609.34 meters).
     double distanceInMiles = distanceInMeters / 1609.34;
 
+    // Rounds to two decimal places (e.g. 12.34)
+    double roundedDistance = double.parse(distanceInMiles.toStringAsFixed(2));
+
     // 2) Construct a date string in "YYYY-MM-DD" format.
     String currentDate = DateTime.now().toIso8601String().substring(0, 10);
 
     // 3) Try sending route data to the server.
     try {
       await getIt<MetricsService>().postRouteData(
-        distance: distanceInMiles,
+        distance: roundedDistance,
         mpg: endMpg,
         date: currentDate,
       );
