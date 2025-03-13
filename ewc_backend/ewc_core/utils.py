@@ -188,19 +188,16 @@ def generate_pdf():
     total_distance_current_month = 0
     total_fuel_consumption_current_month = 0
     total_carbon_emissions_current_month = 0
-    total_energy_consumption_current_month = 0
     total_cost_current_month = 0
 
     total_distance_year = 0
     total_fuel_consumption_year = 0
     total_carbon_emissions_year = 0
-    total_energy_consumption_year = 0
     total_cost_year = 0
 
     total_distance_last_month = 0
     total_fuel_consumption_last_month = 0
     total_carbon_emissions_last_month = 0
-    total_energy_consumption_last_month = 0
     total_cost_last_month = 0
 
     for obj in db_data:
@@ -211,7 +208,6 @@ def generate_pdf():
         total_distance_year += distance
         total_fuel_consumption_year += (distance / mpg)  # Fuel consumption = Distance / MPG
         total_carbon_emissions_year += calculate_carbon_emissions_per_route(distance, mpg)
-        total_energy_consumption_year += calculate_energy_consumption_per_route(distance, mpg)
         total_cost_year += calculate_cost_per_route(distance, mpg, 3.095)  
 
         # Calculate aggregated values for the current month
@@ -219,7 +215,6 @@ def generate_pdf():
             total_distance_current_month += distance
             total_fuel_consumption_current_month += (distance / mpg)
             total_carbon_emissions_current_month += calculate_carbon_emissions_per_route(distance, mpg)
-            total_energy_consumption_current_month += calculate_energy_consumption_per_route(distance, mpg)
             total_cost_current_month += calculate_cost_per_route(distance, mpg, 3.095)
 
             row = [str(getattr(obj, field.name)) for field in RouteEnvData._meta.fields]
@@ -231,7 +226,6 @@ def generate_pdf():
             total_distance_last_month += distance
             total_fuel_consumption_last_month += (distance / mpg)  # Fuel consumption = Distance / MPG
             total_carbon_emissions_last_month += calculate_carbon_emissions_per_route(distance, mpg)
-            total_energy_consumption_last_month += calculate_energy_consumption_per_route(distance, mpg)
             total_cost_last_month += calculate_cost_per_route(distance, mpg, 3.095)
 
     # Calculate averages
@@ -286,7 +280,6 @@ def generate_pdf():
         (f"Total Distance Traveled: {total_distance_current_month:.2f} miles", f"{calculate_percentage_change(total_distance_last_month, total_distance_current_month)}% change"),
         (f"Total Fuel Consumption: {total_fuel_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_fuel_consumption_last_month, total_fuel_consumption_current_month)}% change"),
         (f"Total Carbon Emissions: {total_carbon_emissions_current_month:.2f} kg", f"{calculate_percentage_change(total_carbon_emissions_last_month, total_carbon_emissions_current_month)}% change"),
-        (f"Total Energy Consumption: {total_energy_consumption_current_month:.2f} gallons", f"{calculate_percentage_change(total_energy_consumption_last_month, total_energy_consumption_current_month)}% change"),
         (f"Average Miles per Gallon (MPG): {avg_mpg_current_month:.2f}", f"{calculate_percentage_change(avg_mpg_last_month, avg_mpg_current_month)}% change"),
         (f"Average Carbon Emissions per Mile: {avg_carbon_emissions_current_month:.2f} kg/mile", f"{calculate_percentage_change(avg_carbon_emissions_last_month, avg_carbon_emissions_current_month)}% change"),
         (f"Average Cost per Mile: {avg_cost_per_mile_current_month:.2f} dollars/mile", f"{calculate_percentage_change(avg_cost_per_mile_last_month, avg_cost_per_mile_current_month)}% change")
@@ -319,7 +312,6 @@ def generate_pdf():
         [f"Total Distance Traveled: {total_distance_year:.2f} miles"],
         [f"Total Fuel Consumption: {total_fuel_consumption_year:.2f} gallons"],
         [f"Total Carbon Emissions: {total_carbon_emissions_year:.2f} kg"],
-        [f"Total Energy Consumption: {total_energy_consumption_year:.2f} gallons"],
         [f"Average Miles per Gallon (MPG): {avg_mpg_year:.2f}"],
         [f"Average Carbon Emissions per Mile: {avg_carbon_emissions_year:.2f} kg/mile"],
         [f"Average Cost per Mile: {avg_cost_per_mile_year:.2f} dollars/mile"]
