@@ -159,3 +159,30 @@ jobs:
           flutter clean
           flutter build ios --no-codesign
 
+  deploy_docs:
+    name: Deploy Flutter Docs to Django Static
+    runs-on: ubuntu-latest
+    needs: [flutter_test, django_test]
+
+    steps:
+      - name: Checkout Django Backend
+        uses: actions/checkout@v4
+
+      - name: Download Flutter Docs Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: flutter-documentation-html
+          path: ewc_backend/static/flutter_docs/
+
+      - name: Verify Files
+        run: ls -R ewc_backend/static/flutter_docs/  # Check that files are correctly placed
+
+      - name: Commit & Push Updated Docs
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add ewc_backend/static/flutter_docs/
+          git commit -m "Updated Flutter documentation"
+          git push
+
+
