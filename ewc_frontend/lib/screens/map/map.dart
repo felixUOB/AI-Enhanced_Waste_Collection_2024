@@ -17,7 +17,6 @@ import 'package:ewc/widgets/marker_widget.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/widgets/recentre_button.dart';
-import 'package:ewc/widgets/start_journey_dialog.dart';
 import 'package:ewc/widgets/end_journey_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
@@ -58,9 +57,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   bool _journeyActive = false; // false means the journey hasn't started yet, true means it has.
   bool _automaticRecentre = false; // True when user has centred on location, meaning camera should follow
 
-  // User inputs (mileage / MPG)
-  double _startMileage = 0;
-  double _startMpg = 0;
   double _endMpg = 0;
 
   // State initialisation
@@ -268,9 +264,16 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               ),
               onPressed: () {
                 if (_journeyActive) {
+                  // End journey
                   _showEndJourneyDialog();
                 } else {
-                  _showStartJourneyDialog();
+                  // Start journey automatically
+                   Provider.of<LocationProvider>(context, listen: false).setTracking(true);
+                   setState(() {
+                     _journeyActive = true;
+                     _automaticRecentre = true;
+                   });
+                   debugPrint('Journey started.');
                 }
               },
             ),
