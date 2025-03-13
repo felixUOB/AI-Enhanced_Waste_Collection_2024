@@ -179,7 +179,7 @@ def generate_pdf():
 # ========================================================================================================
 
     # Extract field names (table headers)
-    field_names = [field.verbose_name if field.verbose_name else field.name for field in RouteEnvData._meta.fields]
+    field_names = ['ID', 'Distance (mi)', 'MPG', 'Date']
 
     # Prepare table data (headers + records)
     route_table_data = [field_names]  # Add headers as the first row
