@@ -1,4 +1,5 @@
 import 'package:ewc/screens/route-schedule/schedule_tile.dart';
+import 'package:ewc/screens/route-schedule/stop_view.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/route_service.dart';
@@ -99,7 +100,18 @@ class _Schedule extends State<Schedule> {
                     eventCard: ScheduleTile(
                       name: route[index].name,
                       visited: route[index].visited,
-                      minutes: (!route[index].visited && _stopTimes != null) ? _stopTimes![index] : 0
+                      minutes: (!route[index].visited && _stopTimes != null) ? _stopTimes![index] : 0,
+                      onPressed: () {
+                        Navigator.push(context,
+                          MaterialPageRoute(
+                            builder: (context) => StopView(
+                              id: route[index].id,
+                              name: route[index].name,
+                              visited: route[index].visited,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   );
                 }

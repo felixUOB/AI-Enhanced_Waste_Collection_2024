@@ -31,10 +31,10 @@ class StopsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setVisited(int stopID) {
+  void setVisited(int stopID, bool value) {
     for (Stop stop in _stops) {
       if (stop.id == stopID) {
-        stop.visited = true;
+        stop.visited = value;
         notifyListeners();
         return;
       }

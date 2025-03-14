@@ -8,7 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  final String siteUrl = 'http://127.0.0.1:8000';
+  final String siteUrl = 'https://devnest.software';
   final String adminUrl = 'http://127.0.0.1:8000/admin';
 
   Future<void> initializeAuthService() async {

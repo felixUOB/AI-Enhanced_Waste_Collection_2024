@@ -309,7 +309,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                 LogStopDialog.show(context,
                   (int stopID, int wasteCollected) {
                     _stopsService.postStopCollection(stopID, wasteCollected);
-                    Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
+                    Provider.of<StopsProvider>(context, listen: false).setVisited(stopID, true);
                     _fetchOptimizedRoute(); // Recalculate route with visited stop removed
                   }
                 );
