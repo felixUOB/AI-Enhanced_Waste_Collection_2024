@@ -5,6 +5,14 @@
   {% if stop %}Edit Stop: {{ stop.location_name }}{% else %}Create New Stop{% endif %} | SpaceNXT Labs-EWC
 {% endblock %}
 
+{% block extra_css %}
+  <link rel="stylesheet" href="{% static 'css/stops_form.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{% static 'js/stops_form.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <!--
   Heading changes depending on whether a 'stop' object already exists
@@ -36,9 +44,12 @@
             Django's security token to prevent cross-site request forgery (CSRF)
           -->
           <!-- Input field and button for fetching coordinates -->
-          <div class="mb-3">
+          <div class="mb-3 position-relative">
             <label for="stop_name" class="form-label">Stop Name</label>
-            <input type="text" class="form-control" id="stop_name" name="stop_name">
+            <div class="input-group">
+              <input type="text" class="form-control search-field" id="stop_name" name="stop_name" placeholder="Search">
+              <span class="input-group-text"><i class="bi bi-search"></i></span>
+            </div>
             <button type="button" class="btn btn-primary mt-2" onclick="fetchCoordinates()">Fetch Coordinates</button>
           </div>
 
@@ -88,19 +99,4 @@
     </div>
   </div>
 </div>
-<script>
-  function fetchCoordinates() {
-    const stopName = document.getElementById('stop_name').value;
-    fetch(`/stops/get_coordinates/?name=${stopName}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          alert(data.error);
-        } else {
-          document.getElementById('id_latitude').value = data.latitude;
-          document.getElementById('id_longitude').value = data.longitude;
-        }
-      });
-  }
-</script>
 {% endblock %}
