@@ -20,6 +20,7 @@ void main() {
 
   // Group of tests for the Splash Page
   group('Splash Page Widget Tests', () {
+     String today = DateTime.now().toString().split(' ')[0];
     testWidgets("Auto Login Success Functions as Expected",
         (WidgetTester tester) async {
       when(getIt<AuthService>().loadUserCredentials())
@@ -31,7 +32,7 @@ void main() {
       when(getIt<AuthService>().login("mockUsername", "mockPassword"))
           .thenAnswer((_) async {});
 
-      when(getIt<AuthService>().makeAuthenticatedRequest("route_env_data/"))
+      when(getIt<AuthService>().makeAuthenticatedRequest("route-env-data/"))
           .thenAnswer((_) async => Future.value(
                 Response(
                   '[{"route_env_data_id": 1, "distance": 10.5, "mpg": 8.2, "date": "2023-10-01"}]', // JSON array string body

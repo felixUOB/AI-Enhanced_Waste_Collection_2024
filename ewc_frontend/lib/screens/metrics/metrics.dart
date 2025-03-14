@@ -113,12 +113,15 @@ class _MetricsPageState extends State<MetricsPage> {
 
     // if its in testing mode return fake data instead of the stuff from the db
     if (isTesting){
+      String today = DateTime.now().toString().split(' ')[0];
+      String yesterday = (DateTime.now().subtract(Duration(days: 1))).toString().split(' ')[0];
       return [
-        JourneyRoute(date: "2025-01-25", distance: 50, mpg: 10, filler: false),
-        JourneyRoute(date: "2025-01-26", distance: 30, mpg: 8, filler: false),
+        JourneyRoute(date: today, distance: 50, mpg: 10, filler: false),
+        JourneyRoute(date: yesterday, distance: 30, mpg: 8, filler: false),
       ];
     }
     return await _metricsService.fetchLast30Days();
+    //return await _metricsService.fetchAllRoutes();
   }
 
   // calculate the total routes, total distance and average Mpg and add to lists
