@@ -37,15 +37,20 @@ jobs:
           flutter pub get
           flutter analyze
           flutter test --coverage
+
+      - name: Static Analysis & Unit Tests (Flutter)
+        working-directory: "./ewc_frontend"
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test --coverage
           
       - name: Generate Code Report and Documentation
         working-directory: "./ewc_frontend"
         run: |
           genhtml coverage/lcov.info -o coverage/html
-          dart doc --output ewc_frontend/doc/api/
-          ls -R ewc_frontend/doc/api/
-
-
+          dart doc 
+    
       - name: Upload Coverage HTML Report
         uses: actions/upload-artifact@v4
         with:
@@ -55,23 +60,9 @@ jobs:
       - name: Upload Documentation HTML
         uses: actions/upload-artifact@v4
         with:
-          name: flutter-documentation-html
+          name: documentation-html
           path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/doc/api/ 
-    
-      - name: Ensure Static Directory Exists
-        run: |
-          mkdir -p ../ewc_backend/static/
-
-      # - name: Remove Existing Flutter Docs
-      #   run: |
-      #     rm -rf ../ewc_backend/static/flutter_docs/
-
-      - name: Copy Flutter Docs to Django Static Directory
-        run: |
-          cp -r doc/api/ ../ewc_backend/static/flutter_docs/  # Corrected path
-
-      - name: Verify Files
-        run: ls -R ../ewc_backend/static/flutter_docs/
+      
       
   django_test:
     name: Run Django Tests & Analyze Coverage
