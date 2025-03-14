@@ -43,6 +43,8 @@ jobs:
         run: |
           genhtml coverage/lcov.info -o coverage/html
           dart doc --output ewc_frontend/doc/api/
+          ls -R ewc_frontend/doc/api/
+
 
       - name: Upload Coverage HTML Report
         uses: actions/upload-artifact@v4
@@ -56,14 +58,20 @@ jobs:
           name: flutter-documentation-html
           path: /home/runner/work/2024-AIEnhancedWasteCollection/2024-AIEnhancedWasteCollection/ewc_frontend/doc/api/ 
     
+      - name: Ensure Static Directory Exists
+        run: |
+          mkdir -p ../ewc_backend/static/
+
+      # - name: Remove Existing Flutter Docs
+      #   run: |
+      #     rm -rf ../ewc_backend/static/flutter_docs/
 
       - name: Copy Flutter Docs to Django Static Directory
-        working-directory: "./ewc_frontend"
         run: |
-          cp -r doc/api/ ../ewc_backend/static/flutter_docs/
+          cp -r doc/api/ ../ewc_backend/static/flutter_docs/  # Corrected path
 
       - name: Verify Files
-        run: ls -R ewc_backend/static/flutter_docs/
+        run: ls -R ../ewc_backend/static/flutter_docs/
       
   django_test:
     name: Run Django Tests & Analyze Coverage
