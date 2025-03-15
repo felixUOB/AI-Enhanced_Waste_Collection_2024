@@ -23,11 +23,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
 from ewc_core import views
 from django.contrib.auth import views as auth_views
-# from ewc_core.ml_model.data import export_routeenvdata_csv
-# from ewc_core.ml_model.data import export_stopdata_csv
-# from ewc_core.ml_model.data import export_userdata_csv
-from ewc_core.ml_model.model import generate_csv_files
+from ewc_core.management.commands.run_prediction import Command
 from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name
+
 
 
 # Router configuration for REST API endpoints
@@ -45,7 +43,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
     path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
-    path('api/runmodel', generate_csv_files ,name='runmodel'), #Run Machine Learning Model
+    path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
 
 # -----------Stops HTML Form URLs------------------
     path('stops/', stops_list_view, name='stops_list'),                # List
