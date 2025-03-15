@@ -1,5 +1,4 @@
 import 'package:ewc/screens/login/login.dart';
-import 'package:ewc/screens/metrics/route_data.dart';
 import 'package:ewc/screens/splash/splash.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/services/metrics_service.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
-import 'mocks/mocks.mocks.dart';
 
 void main() {
   setUp(() async {

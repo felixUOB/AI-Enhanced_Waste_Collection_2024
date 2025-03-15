@@ -28,7 +28,6 @@ class MetricsService {
   // fetch the last 30 days from the route env table
   Future<List<JourneyRoute>> fetchLast30Days() async {
     final response = await getIt<AuthService>().makeAuthenticatedRequest('route-env-data-30-days/');
-    List<JourneyRoute> routeList = [];
     // if the request is successful
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as List;
