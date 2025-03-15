@@ -255,9 +255,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           Positioned.fill(child: content()),
           // Overlay the NavigationBanner at the top of the map
           Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
+            top: 8.0,
+            left: 8.0,
+            right: 8.0,
             child: NavigationBanner(
               visible: _journeyActive,
               instruction: _routeInstructions.values.length > 1
@@ -266,8 +266,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             ),
           ),
           Positioned(
-            left: 12.0,
-            right: 12.0,
+            left: 8.0,
+            right: 8.0,
             bottom: 8.0,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -308,8 +308,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               onPressed: () {
                 LogStopDialog.show(context,
                   (int stopID, int wasteCollected) {
-                    _stopsService.postStopCollection(stopID, wasteCollected);
-                    Provider.of<StopsProvider>(context, listen: false).setVisited(stopID, true);
+                    StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
+                    stopProvider.addStopCollection(stopID, wasteCollected);
+                    stopProvider.setVisited(stopID, true);
                     _fetchOptimizedRoute(); // Recalculate route with visited stop removed
                   }
                 );
@@ -508,6 +509,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     EndJourneyDialog.show(context, (double mpg) {
       // Stop tracking distance travelled as journey has been stopped
       Provider.of<LocationProvider>(context, listen: false).setTracking(false);
+      var stopCollections = Provider.of<StopsProvider>(context, listen:false).stopCollectionLog;
+
+      // Post each stop collection now that journey has been
+      for (var stopCollection in stopCollections.entries) {
+        _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
+      }
       setState(() {
         _endMpg = mpg;
         _journeyActive = false;

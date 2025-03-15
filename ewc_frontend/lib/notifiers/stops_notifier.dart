@@ -8,7 +8,22 @@ class StopsProvider extends ChangeNotifier {
   List<Stop> _stops = [];
   final StopsService _stopsService = getIt<StopsService>();
 
+  // Map which keeps track of each stop collection
+  // Data gets sent to backend when user clicks end journey
+  final Map<int, int> _stopCollectionLog = {};
+
   List<Stop> get stops => _stops;
+  Map<int, int> get stopCollectionLog => _stopCollectionLog;
+
+  // Adds a stop collection to the stop collection log
+  void addStopCollection(int id, int weight) {
+    _stopCollectionLog[id] = weight;
+  }
+
+  // Removes a stop collection from the stop collection log
+  void removeStopCollection(int id) {
+    _stopCollectionLog.remove(id);
+  }
 
   Future<void> initialiseStops() async {
     // Fetch stops from backend

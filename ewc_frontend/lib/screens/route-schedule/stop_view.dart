@@ -1,4 +1,5 @@
 import 'package:ewc/notifiers/stops_notifier.dart';
+import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -43,9 +44,17 @@ class _StopView extends State<StopView> {
               widget.visited ?
               ElevatedButton(
                 onPressed: () {
-                  Provider.of<StopsProvider>(
-                    context, listen: false).setVisited(widget.id, false);
+                  StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
+                  stopProvider.setVisited(widget.id, false);
+                  stopProvider.removeStopCollection(widget.id);
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: spaceNXTGreen,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                ),
                 child: Text("Mark as unvisited")
               ) : SizedBox.shrink()
             ],
