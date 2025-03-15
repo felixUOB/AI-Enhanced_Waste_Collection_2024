@@ -103,12 +103,12 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
           as _i3.FlutterSecureStorage);
 
   @override
-  String get apiUrl =>
+  String get siteUrl =>
       (super.noSuchMethod(
-            Invocation.getter(#apiUrl),
+            Invocation.getter(#siteUrl),
             returnValue: _i10.dummyValue<String>(
               this,
-              Invocation.getter(#apiUrl),
+              Invocation.getter(#siteUrl),
             ),
           )
           as String);
