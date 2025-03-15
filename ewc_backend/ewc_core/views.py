@@ -41,8 +41,10 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
     serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
+    @action(detail=False, methods=['get'])
     def get_route_env_data(self, request):
-        return Response({"message"})
+        data = list(RouteEnvData.objects.values('distance', 'mpg', 'date'))
+        return JsonResponse(data, safe=False)
 
     @action(detail=False, methods=['get'])
     def get_route_env_data_30_days(self, request):

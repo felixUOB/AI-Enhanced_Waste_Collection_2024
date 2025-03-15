@@ -44,7 +44,7 @@ urlpatterns = [
     
     # ----- endpoint for route-env-data table ------
     
-    path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
+    path('api/route-env-data/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data'})),
     path('api/route-env-data-30-days/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data_30_days'})),
     
     # ------- endpoint for model -------- #

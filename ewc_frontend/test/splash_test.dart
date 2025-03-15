@@ -1,4 +1,5 @@
 import 'package:ewc/screens/login/login.dart';
+import 'package:ewc/screens/metrics/route_data.dart';
 import 'package:ewc/screens/splash/splash.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/services/metrics_service.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
+import 'mocks/mocks.mocks.dart';
 
 void main() {
   setUp(() async {
@@ -20,9 +22,8 @@ void main() {
 
   // Group of tests for the Splash Page
   group('Splash Page Widget Tests', () {
-     String today = DateTime.now().toString().split(' ')[0];
     testWidgets("Auto Login Success Functions as Expected",
-        (WidgetTester tester) async {
+ (WidgetTester tester) async {
       when(getIt<AuthService>().loadUserCredentials())
           .thenAnswer((_) async => <String, String?>{
                 "username": "mockUsername",
@@ -35,11 +36,18 @@ void main() {
       when(getIt<AuthService>().makeAuthenticatedRequest("route-env-data/"))
           .thenAnswer((_) async => Future.value(
                 Response(
-                  '[{"route_env_data_id": 1, "distance": 10.5, "mpg": 8.2, "date": "2023-10-01"}]', // JSON array string body
+                  '[{"route_env_data_id": 1, "distance": 10.5, "mpg": 8.2, "date": "2025-03-14"}]', // JSON array string body
                   200, // Status code
                 ),
               ));
-      when(getIt<MetricsService>().fetchAllRoutes()).thenAnswer((_) async => []);
+      when(getIt<AuthService>().makeAuthenticatedRequest("route-env-data-30-days/"))
+          .thenAnswer((_) async => Future.value(
+                Response(
+                  '[{"route_env_data_id": 1, "distance": 10.5, "mpg": 8.2, "date": "2025-03-14"}]', // JSON array string body
+                  200, // Status code
+                ),
+              ));
+      when(getIt<MetricsService>().fetchLast30Days()).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
         MaterialApp(
