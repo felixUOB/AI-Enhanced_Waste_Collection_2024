@@ -387,6 +387,16 @@ class MockMetricsService extends _i1.Mock implements _i13.MetricsService {
             ),
           )
           as _i11.Future<List<_i14.JourneyRoute>>);
+
+  @override
+  _i11.Future<List<_i14.JourneyRoute>> fetchLast30Days() =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchAllRoutes, []),
+            returnValue: _i11.Future<List<_i14.JourneyRoute>>.value(
+              <_i14.JourneyRoute>[],
+            ),
+          )
+          as _i11.Future<List<_i14.JourneyRoute>>);
 }
 
 /// A class which mocks [Config].

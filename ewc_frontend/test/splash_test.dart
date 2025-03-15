@@ -33,13 +33,6 @@ void main() {
       when(getIt<AuthService>().login("mockUsername", "mockPassword"))
           .thenAnswer((_) async {});
 
-      when(getIt<AuthService>().makeAuthenticatedRequest("route-env-data/"))
-          .thenAnswer((_) async => Future.value(
-                Response(
-                  '[{"route_env_data_id": 1, "distance": 10.5, "mpg": 8.2, "date": "2025-03-14"}]', // JSON array string body
-                  200, // Status code
-                ),
-              ));
       when(getIt<AuthService>().makeAuthenticatedRequest("route-env-data-30-days/"))
           .thenAnswer((_) async => Future.value(
                 Response(
@@ -150,8 +143,7 @@ void main() {
 
       when(getIt<MetricsService>().fetchAllRoutes()).thenAnswer((_) async => []);
 
-      
-
+    
       // Build the SplashPage with the mocked authService
       await tester.pumpWidget(
         MaterialApp(

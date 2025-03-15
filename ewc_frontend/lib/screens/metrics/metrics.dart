@@ -56,7 +56,6 @@ class _MetricsPageState extends State<MetricsPage> {
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
     
     fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
-    print(fetchedRoutes);
     // fill in the spare days
     if (fetchedRoutes.length >1){
       // loop around all of the days currently in the array and fill in any blank days
@@ -64,10 +63,8 @@ class _MetricsPageState extends State<MetricsPage> {
       for (int i=0; i<len; i++){
         // get the first day
         DateTime current = DateTime.parse(fetchedRoutes[i].date);
-        print(current);
         // get the day after
         DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
-        print(next);
         // see if the day after current is the next day or identify if there is a gap
         if (current != next){
           while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
@@ -80,7 +77,6 @@ class _MetricsPageState extends State<MetricsPage> {
     }
     fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
     routeList = fetchedRoutes;
-    print(fetchedRoutes);
     _calculateDetails();
     thisWeeksJoruneys = _calculateThisWeek();
     // update the state of the graphs

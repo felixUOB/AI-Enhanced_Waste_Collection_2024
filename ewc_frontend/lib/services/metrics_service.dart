@@ -43,7 +43,6 @@ class MetricsService {
       return routeList;
       // distance, mpg, date
     } else {
-      return routeList;
       throw Exception('Failed to load statistics data.');
       
     }
