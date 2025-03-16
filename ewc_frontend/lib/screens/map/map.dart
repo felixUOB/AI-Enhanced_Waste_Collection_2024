@@ -81,17 +81,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
+    final stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+    final locationProvider = Provider.of<LocationProvider>(context, listen: false);
+
     try {
-      if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-      if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+      if (!mounted) return;
+      await stopsProvider.initialiseStops();
+
+      if (!mounted) return;
+      await locationProvider.initialiseLocationServices();
+
       await _drawStopsMarker(Colors.blue);
-      //Depot location marker
       _marker.add(
-          MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+        MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black),
+      );
+
     } catch (e) {
-      // Log the error and provide feedback
-      _showErrorDialog(
-          "Failed to initialize map service. Please check API key and network connection.");
+      if (!mounted) return;
+      _showErrorDialog("Failed to initialize map service. Please check API key and network connection.");
     }
   }
 
