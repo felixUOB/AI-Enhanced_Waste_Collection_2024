@@ -141,7 +141,8 @@ def get_coordinates_by_name(request):
         location = data['features'][0]['geometry']['coordinates']
         return JsonResponse({
             'latitude': location[1],
-            'longitude': location[0]
+            'longitude': location[0],
+            'location_name': ','.join(data.get('features')[0].get('properties').get('label').split(',')[:2]) if data.get('features')[0].get('properties').get('label') else ''
         })
     else:
         return JsonResponse({'error': 'Location not found'}, status=404)
