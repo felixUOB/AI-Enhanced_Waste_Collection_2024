@@ -217,6 +217,13 @@ void main() {
       // Fill in waste collected
       await tester.enterText(find.byKey(const Key('waste collected')), '10');
 
+      // Check that the actual TextField is reflected as ‘10’ after the user enters 10
+      expect(
+        find.widgetWithText(TextField, '10'),
+        findsOneWidget,
+        reason: 'TextField should display "10" after first input',
+      );
+
       // Select from dropdown
       expect(find.byKey(Key('dropdown')), findsOneWidget);
 
@@ -227,12 +234,16 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('test').last);
       await tester.pumpAndSettle();
+
+      // Select the dropdown and see how the UI changes
+      expect(find.text('Selected: test'), findsOneWidget);
       
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
 
-      // expect(find.byKey(Key('invalid dialog')), findsNothing);
-      // expect(find.byKey(Key('register collection dialog')), findsNothing);
+      // Make sure no invalid dialogs have popped up and that the register collection dialog is closed
+      expect(find.byKey(Key('invalid dialog')), findsNothing);
+      expect(find.byKey(Key('register collection dialog')), findsNothing);
 
       // Check stop is now visited
       expect(stopsProvider.stops.first.visited, true);
