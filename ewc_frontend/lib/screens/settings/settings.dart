@@ -2,7 +2,9 @@ import 'package:ewc/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/main.dart';
 import 'package:ewc/screens/login/login.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 /// This file manages the settings page and displays various user settings.
 ///
@@ -19,7 +21,7 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-
+  //Helper for logout
   Future<void> _logout() async {
     await getIt<AuthService>().clearCredentials();
     if (!mounted) return;
@@ -28,6 +30,17 @@ class _SettingPageState extends State<SettingPage> {
       MaterialPageRoute(builder: (context) => LoginPage()),
       (route) => false,
     );
+  }
+
+  //Helper for feedback form, contact us and privacy policy
+  void _launchUrlFromInput(String url) async {
+    final Uri uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      throw "Could not launch $url";
+    }
   }
 
   /// Helper method to build each settings item to avoid repeating
@@ -61,128 +74,112 @@ class _SettingPageState extends State<SettingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          // 1) Change Theme item
-          _buildSettingsItem(
-            icon: Icons.dark_mode_outlined,
-            iconColor: Colors.green,
-            title: "Change Theme",
-            subtitle: "Switch to Dark/Light Mode",
-            trailing: Switch(
-              value: themeManager.themeMode == ThemeMode.dark,
-              onChanged: (onChanged) {
-                themeManager.toggleTheme(onChanged);
-              },
-            ),
-          ),
-
-          // 2) Feedback
-          _buildSettingsItem(
-            icon: Icons.feedback,
-            iconColor: Colors.blue,
-            title: "Feedback",
-            subtitle: "Share your feedback with us",
-            onTap: () {
-              // TODO: Implement feedback page navigation
-              showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: Text("Feedback"),
-                  content: Text("This feature is under construction."),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text("OK"),
-                    )
-                  ],
-                ),
-              );
-            },
-          ),
-
-          // 3) Privacy Policy
-          _buildSettingsItem(
-            icon: Icons.privacy_tip_outlined,
-            iconColor: Colors.yellow,
-            title: "Privacy Policy",
-            onTap: () {
-              // TODO: Implement privacy policy page
-            },
-          ),
-
-          // 4) Share app
-          _buildSettingsItem(
-            icon: Icons.share,
-            iconColor: Colors.green,
-            title: "Share app",
-            subtitle: "Share this app with your friends",
-            onTap: () {
-              // TODO: Implement share logic
-            },
-          ),
-
-          // 5) Contact us
-          _buildSettingsItem(
-            icon: Icons.help,
-            iconColor: Colors.blue,
-            title: "Contact us",
-            subtitle: "Contact if you need help",
-            onTap: () {
-              // TODO: Implement contact
-            },
-          ),
-
-          // 6) Reset Password
-          _buildSettingsItem(
-            icon: Icons.lock_reset,
-            iconColor: Colors.deepOrange,
-            title: "Reset Password",
-            onTap: () {
-              getIt<AuthService>().launchPasswordReset();
-            },
-          ),
-
-          // 7) Logout
-          _buildSettingsItem(
-            icon: Icons.logout,
-            iconColor: Colors.red,
-            title: "Logout",
-            subtitle: "Sign out of your account",
-            onTap: () async {
-              bool confirmLogout = await showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text("Are you sure you want to logout?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.red,
-                        textStyle: const TextStyle(fontSize: 16),
-                      ),
-                      child: Text("No"),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.green,
-                        textStyle: const TextStyle(fontSize: 16),
-                      ),
-                      child: Text("Yes"),
-                    ),
-                  ],
-                ),
-              );
-              if (confirmLogout == true) {
-                await _logout();
-              }
-            },
-          ),
-        ],
+        body: ListView(children: [
+      // 1) Change Theme item
+      _buildSettingsItem(
+        icon: Icons.dark_mode_outlined,
+        iconColor: Colors.green,
+        title: "Change Theme",
+        subtitle: "Switch to Dark/Light Mode",
+        trailing: Switch(
+          value: themeManager.themeMode == ThemeMode.dark,
+          onChanged: (onChanged) {
+            themeManager.toggleTheme(onChanged);
+          },
+        ),
       ),
-    );
+
+      // 2) Feedback
+      _buildSettingsItem(
+        icon: Icons.feedback,
+        iconColor: Colors.blue,
+        title: "Feedback",
+        subtitle: "Share your feedback with us",
+        onTap: () => _launchUrlFromInput(
+            "https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxUNlRDNjZNVk9OUFVFRUlQT0szVDFKR1VNNi4u"),
+      ),
+
+      // 3) Privacy Policy
+      _buildSettingsItem(
+        icon: Icons.privacy_tip_outlined,
+        iconColor: Colors.yellow,
+        title: "Privacy Policy",
+        // TODO app link to be added when deployed in iOS store or app store...
+        onTap: () => _launchUrlFromInput("https://recyclenxt.com/"),
+      ),
+
+      // 4) Share app
+      _buildSettingsItem(
+        icon: Icons.share,
+        iconColor: Colors.green,
+        title: "Share app",
+        subtitle: "Share this app with your friends",
+        onTap: () {
+          Share.share(
+            "Check out this awesome app: https://play.google.com/store/apps/details?id=com.example.app",
+            subject: "Try this amazing app!",
+          );
+        },
+      ),
+
+      // 5) Contact us
+      _buildSettingsItem(
+        icon: Icons.help,
+        iconColor: Colors.blue,
+        title: "Contact us",
+        subtitle: "Contact if you need help",
+        onTap: () => _launchUrlFromInput(
+            "https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxURDgzSVVSRUZZTjhaMU5YMU05RllDRFNITi4u"),
+      ),
+
+      // 6) Reset Password
+      _buildSettingsItem(
+        icon: Icons.lock_reset,
+        iconColor: Colors.deepOrange,
+        title: "Reset Password",
+        onTap: () {
+          getIt<AuthService>().launchPasswordReset();
+        },
+      ),
+
+      // 7) Logout
+      _buildSettingsItem(
+        icon: Icons.logout,
+        iconColor: Colors.red,
+        title: "Logout",
+        subtitle: "Sign out of your account",
+        onTap: () async {
+          bool confirmLogout = await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Are you sure you want to logout?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.red,
+                    textStyle: const TextStyle(fontSize: 16),
+                  ),
+                  child: Text("No"),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green,
+                    textStyle: const TextStyle(fontSize: 16),
+                  ),
+                  child: Text("Yes"),
+                ),
+              ],
+            ),
+          );
+          if (confirmLogout == true) {
+            await _logout();
+          }
+        },
+      ),
+    ]));
   }
 }

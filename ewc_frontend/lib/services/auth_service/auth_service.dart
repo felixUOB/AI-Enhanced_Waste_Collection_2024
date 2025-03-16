@@ -235,8 +235,10 @@ class AuthService {
     }
   }
 
-  void launchPasswordReset() async {
-    final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
+
+
+void launchPasswordReset() async {
+  final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);
