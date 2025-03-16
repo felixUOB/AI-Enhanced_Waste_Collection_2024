@@ -88,8 +88,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-      if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+      await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+      if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(

@@ -24,30 +24,27 @@ class _Schedule extends State<Schedule> {
   @override
   void initState() {
     super.initState();
-    initialiseStops();
+    Provider.of<StopsProvider>(context, listen: false).addListener(calculateStopTimes);
   }
 
-  Future<void> initialiseStops() async {
+  Future<void> calculateStopTimes() async {
     try {
       // The next block of code creates a list _stopTimes where each element
       // is the amount of time in minutes from the user's location to that stop
       // while following the route
-      if (mounted) {
-        List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
-        LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-        if (location != null) {
-          // SelectedStops filters out already visited stops from the route calculation
-          
-          var selectedStops = route.where((route) => !route.visited).map(
-            (route) => route.location).toList();
-          _stopTimes = [];
-          for (var _ in route.where((route) => route.visited)) {
-            // Pad out the stop times with 0s when some stops have been visited
-            _stopTimes?.add(0);
-          }
-          _stopTimes?.addAll(
-              await _routeService.getStopTimes(location, selectedStops));
+      List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
+      LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+      if (location != null) {
+        // SelectedStops filters out already visited stops from the route calculation
+        var selectedStops = route.where((route) => !route.visited).map((route) => route.location).toList();
+        List<int> newStops = [];
+        for (var _ in route.where((route) => route.visited)) {
+          newStops.add(0); // Pad out the stop times with 0s when some stops have been visited
         }
+        newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
+        setState(() {
+          _stopTimes = newStops; // Force reload of widget with new stop times
+        });
       }
     } catch (e) {
       // Log the error and provide feedback
@@ -64,21 +61,7 @@ class _Schedule extends State<Schedule> {
       body: RefreshIndicator(
 
         onRefresh: () async {
-          // When user refreshes, recalculate stop times based off of location and set new state
-          List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
-          LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-          if (location != null) {
-            // SelectedStops filters out already visited stops from the route calculation
-            var selectedStops = route.where((route) => !route.visited).map((route) => route.location).toList();
-            List<int> newStops = [];
-            for (var _ in route.where((route) => route.visited)) {
-              newStops.add(0); // Pad out the stop times with 0s when some stops have been visited
-            }
-            newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
-            setState(() {
-              _stopTimes = newStops; // Force reload of widget with new stop times
-            });
-          }
+          calculateStopTimes();
         },
 
         child: Padding(
