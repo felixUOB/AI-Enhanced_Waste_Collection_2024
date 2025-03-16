@@ -553,6 +553,37 @@ void _showEndJourneyDialog() {
                   } catch (retryError) {
                     debugPrint('Retry failed: $retryError');
 
+                    // If the retry also fails, show another AlertDialog or SnackBar
+                    if (mounted) {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Error'),
+                            content: const Text('Retry also failed. Please try again later.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.of(context).pop(),
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  }
+                },
+                child: const Text('Try Again'),
+              ),
+
+              // "OK" button
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
       );
     }
 
