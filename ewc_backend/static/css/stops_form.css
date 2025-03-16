@@ -1,7 +1,7 @@
 .search-field {
-    border-radius: 25px;
-    padding-left: 40px;
-    height: 45px;
+    border-radius: 15px;
+    padding-left: 30px;
+    height: 35px;
 }
 .input-group-text {
     background: none;
@@ -14,3 +14,120 @@
 .input-group-text i {
     font-size: 1.2em;
 }
+
+/* Card styling */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .card-body {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  /* Heading */
+  h2.mb-4 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Labels for form fields */
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  
+  /* Search field spacing */
+  .search-field {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  /* Input elements*/
+  .form-control {
+    border: 1px solid #ccc;
+    border-radius: 60px;
+    border-top-right-radius: 60px !important;
+    border-bottom-right-radius: 60px !important;
+    transition: border-color 0.2s;
+  }
+  
+  .form-control:focus {
+    border-color: #1d7dcf;
+    box-shadow: none;
+  }
+  
+  /* Buttons*/
+  .btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  /* Primary button (used for Search & Autofill) */
+  .btn-primary {
+    background-color: #1d7dcf;
+    border-color: #1d7dcf;
+  }
+  .btn-primary:hover {
+    background-color: #1662a1;
+    border-color: #1662a1;
+  }
+  
+  /* Save button */
+  .btn-success {
+    background-color: #2d9c45;
+    border-color: #2d9c45;
+  }
+  .btn-success:hover {
+    background-color: #237c35;
+    border-color: #237c35;
+  }
+  
+  /* Cancel button */
+  .btn-secondary {
+    background-color: #c3c3c3;
+    border-color: #363535;
+    color: #000000;
+  }
+  .btn-secondary:hover {
+    background-color: #555;
+    border-color: #555;
+  }
+  
+  /* The info text for "next_collection_due_date" help text */
+  .red-help-text {
+    color: #357bdc !important;
+    gap: 0.25rem;
+  }
+  
+  .bi-info-circle-fill {
+    font-size: 0.9rem;
+  }
+  
+  /* Validation error messages */
+  .text-danger {
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+  
+
+  #map {
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* Spacing adjustments */
+  .mb-3.position-relative {
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Responsive: ensure columns stack on smaller screens */
+  @media (max-width: 768px) {
+    .row > .col-md-6 {
+      margin-bottom: 1.5rem;
+    }
+  }
+  
