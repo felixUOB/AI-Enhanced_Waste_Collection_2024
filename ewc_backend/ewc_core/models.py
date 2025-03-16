@@ -1,6 +1,31 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+"""
+This file defines the backend data models for the Django application, managing user profiles,  
+waste collection stops, and environmental data related to routes.
+
+Models:
+
+1. UserProfile:
+   - Extends the built-in Django `User` model.
+   - Stores additional user details such as phone number, address, waste pickup frequency, 
+     waste type preference, carbon savings, and notification preferences.
+
+2. Stops:
+   - Represents collection points with location details (latitude, longitude).
+   - Tracks the next collection due date and the maximum weight capacity for waste collection.
+
+3. StopCollection:
+   - Links to the `Stops` model to track collected waste.
+   - Stores weight collected and the date of collection.
+
+4. RouteEnvData:
+   - Records environmental metrics for waste collection routes, including distance traveled and 
+     fuel efficiency (miles per gallon).
+   - Helps in assessing the environmental impact of waste collection operations.
+"""
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Linked User model

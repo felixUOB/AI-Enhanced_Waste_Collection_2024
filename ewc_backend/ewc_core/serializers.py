@@ -2,6 +2,40 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import UserProfile, StopCollection, Stops, RouteEnvData
 
+"""
+This file defines serializers for converting Django models into JSON format for API responses  
+using Django REST Framework (DRF). It facilitates data exchange between the backend and frontend  
+by serializing and deserializing model instances.
+
+Serializers:
+
+1. UserProfileSerializer:
+   - Serializes all fields in the `UserProfile` model.
+   - Handles user-related data including phone number, address, and waste management preferences.
+
+2. StopCollectionSerializer:
+   - Serializes all fields in the `StopCollection` model.
+   - Represents waste collection events at various stops.
+
+3. StopsSerializer:
+   - Serializes all fields in the `Stops` model.
+   - Provides location and scheduling data for waste collection points.
+
+4. RouteEnvDataSerializer:
+   - Serializes all fields in the `RouteEnvData` model.
+   - Captures environmental impact data, such as distance traveled and fuel efficiency.
+
+5. UserSerializer:
+   - Serializes basic user information (`id`, `email`, `password`).
+
+6. UserRegistrationSerializer:
+   - Extends `UserSerializer` to handle user registration.
+   - Accepts additional fields for phone number, address, pickup frequency, waste type preference,  
+     and notification preferences.
+   - Implements a `create()` method to generate new user accounts and associated `UserProfile` instances.
+"""
+
+
 # Serializer for UserProfile model
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:

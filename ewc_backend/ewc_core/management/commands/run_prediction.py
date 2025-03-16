@@ -6,6 +6,37 @@ from ...models import Stops
 from ewc_core.management.commands.prediction_model.import_data import generate_data, get_threshold
 from ewc_core.management.commands.prediction_model.profet_model import run_prediction_model
 
+"""
+This file defines a custom Django management command for running a waste prediction model  
+on a specified waste collection stop.
+
+Command: `run_waste_prediction`
+
+### Key Responsibilities:
+
+1. **Data Retrieval and Processing**:
+   - Uses `generate_data(stop_id)` to fetch historical waste collection data.
+   - Calls `get_threshold(stop_id)` to determine the waste threshold for prediction.
+
+2. **Running the Prediction Model**:
+   - Executes `run_prediction_model(file_path, threshold)` to generate a predicted  
+     collection date based on collected waste data.
+
+3. **Database Update**:
+   - Updates the `next_collection_due_date` for the specified stop in the database.
+
+### Methods:
+
+- `write_to_db(stopid, date)`: Saves the predicted collection date to the `Stops` model.
+- `model(stopid)`: Runs the entire prediction workflow and stores the result.
+- `add_arguments(parser)`: Defines `stop_id` as a required command argument.
+- `handle(*args, **kwargs)`: Orchestrates the process, executing the prediction model for  
+  the given stop ID.
+
+This command allows for automated scheduling of waste collection based on predictive analytics,  
+improving efficiency in waste management operations.
+"""
+
 class Command(BaseCommand):
     help = "Run Waste Prediction"
 

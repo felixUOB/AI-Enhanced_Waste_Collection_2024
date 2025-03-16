@@ -1,6 +1,23 @@
 from django import forms
 from .models import Stops
 
+"""
+This file defines Django forms for handling user input related to waste collection stops.
+
+Forms:
+
+1. StopsForm:
+   - A `ModelForm` for the `Stops` model, allowing users to create or update stop locations.
+   - Includes fields for:
+     - `location_name`: Name of the collection stop.
+     - `latitude` & `longitude`: Geographical coordinates of the stop.
+     - `max_weight`: Maximum waste capacity at the stop.
+     - `next_collection_due_date`: The predicted or manually set next collection date.
+   - Provides a help text for `next_collection_due_date`, explaining that it is usually  
+     set automatically by the system and should only be changed in special cases.
+"""
+
+
 class StopsForm(forms.ModelForm):
     class Meta:
         model = Stops
