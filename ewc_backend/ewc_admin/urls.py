@@ -45,8 +45,6 @@ urlpatterns = [
     path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
     path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
     path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
-    # path('api/flutter_docs/', TemplateView.as_view(template_name='flutter_docs/index.html'), name='flutter-docs'),
-
 
 # -----------Stops HTML Form URLs------------------
 

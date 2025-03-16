@@ -13,6 +13,61 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.response import Response
 
+"""
+This file defines API views and web views for managing waste collection-related data  
+using Django REST Framework (DRF) and Django's built-in authentication system.
+
+API ViewSets:
+
+1. UserProfileViewSet:
+   - Manages user profile data.
+   - Requires authentication.
+
+2. StopCollectionViewSet:
+   - Handles collection point records (waste collection at stops).
+   - Requires authentication.
+
+3. RouteEnvDataViewSet:
+   - Provides access to environmental data related to waste collection routes.
+   - Requires authentication.
+
+4. StopsViewSet**:
+   - Manages waste collection stops.
+   - Requires authentication.
+
+5. UserRegistrationView:
+   - Allows user registration via API.
+   - Open to all users (`permissions.AllowAny`).
+
+Django Web Views:
+
+1. stops_list_view(request):
+   - Displays a list of stops for staff/admin users.
+   - Requires login and staff/admin access.
+
+2. stops_create_view(request):
+   - Allows staff/admin users to create new waste collection stops.
+   - Uses `StopsForm` for input validation.
+
+3. stops_delete_view(request, pk):
+   - Deletes an existing stop record.
+   - Requires confirmation before deletion.
+
+4. stops_edit_view(request, pk):
+   - Allows staff/admin users to edit stop details.
+
+Additional Features:
+
+- API Schema Documentation:
+  - Uses `drf-yasg` to generate API documentation (`schema_view`).
+  - Provides OpenAPI documentation for the AI-Enhanced Waste Collection API.
+
+- Permissions & Authentication:
+  - Most views require authentication (`IsAuthenticated`).
+  - Web views are restricted to staff/admin users.
+"""
+
+
 schema_view = get_schema_view(
     openapi.Info(
         title="AI-Enhanced Waste Collection API",
@@ -59,7 +114,6 @@ class UserRegistrationView(generics.CreateAPIView):
     
 def is_staff_user(user):
     return user.is_staff
-# python manage.py createsuperuser
 
 @login_required
 @user_passes_test(is_staff_user)

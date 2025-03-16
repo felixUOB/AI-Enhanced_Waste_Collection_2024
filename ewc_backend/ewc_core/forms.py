@@ -17,7 +17,6 @@ Forms:
      set automatically by the system and should only be changed in special cases.
 """
 
-
 class StopsForm(forms.ModelForm):
     class Meta:
         model = Stops
