@@ -78,25 +78,6 @@ void main() {
       expect(find.byType(FloatingActionButton), findsExactly(4));
     });
 
-    // ====== START JOURNEY DIALOG REMOVED ======
-    /* @Skip('No longer using Start Journey dialog')
-    testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
-
-      // Open the journey dialog.
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget);
-    
-      // Tap the Cancel button within the dialog.
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-    
-      // Expect the dialog to be dismissed.
-      expect(find.byType(AlertDialog), findsNothing);
-    });
-    */
-
     testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
       // Currently, tapping Start Journey starts the journey without a popup,
       // Tap on ‘Start Journey’ to make it true:
@@ -119,22 +100,6 @@ void main() {
 
       expect(find.byType(AlertDialog), findsNothing);
     });
-
-    // --- REMOVED ---
-    /*
-    testWidgets('Invalid input on Start Journey dialog shows error dialog', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
-
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, 'invalid');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      expect(find.text('Invalid Input'), findsOneWidget);
-    });
-      // Originally: After confirming invalid input in the "Start Journey" pop-up, an error dialog would appear.
-      // Now: The pop-up is skipped entirely.
-    */
 
     testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
       // 1) Pump map
