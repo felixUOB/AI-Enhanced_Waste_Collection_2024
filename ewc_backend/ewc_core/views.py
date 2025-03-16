@@ -146,3 +146,10 @@ def get_coordinates_by_name(request):
         })
     else:
         return JsonResponse({'error': 'Location not found'}, status=404)
+    
+@login_required
+@user_passes_test(is_staff_user)
+def get_stops_list(request):
+    stops = Stops.objects.all()
+    serializer = StopsSerializer(stops, many=True)
+    return JsonResponse(serializer.data, safe=False)
