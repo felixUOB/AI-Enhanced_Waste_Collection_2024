@@ -42,6 +42,7 @@ jobs:
             --secret id=postgres_host,env=POSTGRES_HOST \
             --secret id=postgres_port,env=POSTGRES_PORT \
             --secret id=sendgrid_secret_key,env=SENDGRID_SECRET_KEY \
+            --secret id=openrouteservice_api_key,env=OPENROUTESERVICE_API_KEY \
             -t $REPO_URI:$IMAGE_TAG .
 
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
