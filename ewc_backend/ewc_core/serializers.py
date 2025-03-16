@@ -38,35 +38,60 @@ Serializers:
 
 # Serializer for UserProfile model
 class UserProfileSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class converts the UserProfile model into JSON format for API responses.
+    It includes all fields from the UserProfile model.
+    '''
     class Meta:
         model = UserProfile
         fields = '__all__'  # Serialize all fields in the UserProfile model
 
 # Serializer for CollectionPoint model
 class StopCollectionSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class converts the StopCollection model into JSON format for API responses.
+    It includes all fields from the StopCollection model.
+    '''
     class Meta:
         model = StopCollection
         fields = '__all__'  # Serialize all fields in the CollectionPoint model
 
 # Serializer for JourneyMetric model
 class StopsSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class converts the Stops model into JSON format for API responses.
+    It includes all fields from the Stops model.
+    '''
     class Meta:
         model = Stops
         fields = '__all__'  # Serialize all fields in the JourneyMetric model
 
 # Serializer for WastePrediction model
 class RouteEnvDataSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class converts the RouteEnvData model into JSON format for API responses.
+    It includes all fields from the RouteEnvData model.
+    '''
     class Meta:
         model = RouteEnvData
         fields = '__all__'  # Serialize all fields in the WastePrediction model
 
 class UserSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class converts the User model into JSON format for API responses.
+    It includes basic user information such as id, email, and password.
+    '''
     class Meta:
         model = User
         fields = ('id', 'email', 'password')
 
 # Register set-up
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class extends the UserSerializer to handle user registration.
+    It includes additional fields for phone number, address, pickup frequency, waste type preference,
+    and notification preferences.
+    '''
     password = serializers.CharField(write_only=True)
     phone_number = serializers.CharField(write_only=True, required=False)
     address = serializers.CharField(write_only=True, required=False)

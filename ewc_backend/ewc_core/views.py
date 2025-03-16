@@ -81,18 +81,27 @@ schema_view = get_schema_view(
 
 # User Profile ViewSet
 class UserProfileViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows user profiles to be viewed or edited.
+    '''
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Collection Point ViewSet
 class StopCollectionViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows collection points to be viewed or edited.'
+    '''
     queryset = StopCollection.objects.all()
     serializer_class = StopCollectionSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Journey Metric ViewSet
 class RouteEnvDataViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows journey metrics to be viewed or edited.
+    '''
     queryset = RouteEnvData.objects.all()
     serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
@@ -102,17 +111,24 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
 
 # Waste Prediction ViewSet
 class StopsViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows stops to be viewed or edited.
+    '''
     queryset = Stops.objects.all()
     serializer_class = StopsSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Registration view
 class UserRegistrationView(generics.CreateAPIView):
+    '''
+    API endpoint that allows user registration.
+    '''
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]  # Accessible to anyone    
     
 def is_staff_user(user):
+    """Check if the user is a staff member."""
     return user.is_staff
 
 @login_required

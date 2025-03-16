@@ -18,6 +18,9 @@ Forms:
 """
 
 class StopsForm(forms.ModelForm):
+    '''
+    A form for creating or updating waste collection stops.
+    '''
     class Meta:
         model = Stops
         # Can select field
