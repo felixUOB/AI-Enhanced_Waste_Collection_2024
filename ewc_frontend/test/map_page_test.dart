@@ -201,7 +201,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Select the dropdown and see how the UI changes
-      expect(find.text('Selected: test'), findsOneWidget);
+      expect(find.text('test'), findsOneWidget);
       
       await tester.tap(find.text('Confirm'));
       await tester.pumpAndSettle();
