@@ -1,23 +1,37 @@
-document.addEventListener('DOMContentLoaded', (event) => {
-  console.log('DOM loaded, initializing map');
-  // Initialize the map
-  var map = L.map('map').setView([51.505, -0.09], 13); // Default coordinates and zoom level
+var map = L.map('map').setView([51.505, -0.09], 13);
 
-  // Add OpenStreetMap tiles
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
 
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 100);
+// Initialize marker with default position
+var marker;
 
-  // Function to update the map with new coordinates
-  window.updateMap = function(lat, lon) {
-    map.setView([lat, lon], 13);
-    L.marker([lat, lon]).addTo(map);
-  };
-});
+// Function to update the marker
+function updateMarker() {
+  var lat = parseFloat(document.getElementById('id_latitude').value);
+  var lng = parseFloat(document.getElementById('id_longitude').value);
+
+  if (!isNaN(lat) && !isNaN(lng)) {
+    if (marker) {
+      marker.setLatLng([lat, lng]).update();
+    } else {
+      marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup('Selected Location.')
+        .openPopup();
+    }
+    map.setView([lat, lng], 13);
+  }
+}
+
+// Event listeners for changes in the fields
+document.getElementById('id_latitude').addEventListener('input', updateMarker);
+document.getElementById('id_longitude').addEventListener('input', updateMarker);
+
+// Initial marker set (optional, if fields are pre-filled)
+updateMarker();
+
 
 function fetchCoordinates() {
     const stopName = document.getElementById('stop_name').value;
@@ -29,6 +43,7 @@ function fetchCoordinates() {
         } else {
           document.getElementById('id_latitude').value = data.latitude;
           document.getElementById('id_longitude').value = data.longitude;
+          updateMarker();
         }
       });
   }
