@@ -521,10 +521,38 @@ void _showEndJourneyDialog() {
       if (!mounted) return;
 
       // Show a user-friendly message without exposing the raw error.
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Failed to save journey data. Please try again.'),
-        ),
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Error'),
+            content: const Text('Failed to save journey data. Please try again.'),
+            actions: [
+              // "Try Again" button
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(context).pop(); // Close the dialog
+
+                  // Retry logic: call postRouteData again
+                  try {
+                    await getIt<MetricsService>().postRouteData(
+                      distance: roundedDistance,
+                      mpg: endMpg,
+                      date: currentDate,
+                    );
+
+                    // If successful, show a snackbar/notification
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Journey data successfully saved on retry.'),
+                        ),
+                      );
+                    }
+
+                  } catch (retryError) {
+                    debugPrint('Retry failed: $retryError');
+
       );
     }
 
