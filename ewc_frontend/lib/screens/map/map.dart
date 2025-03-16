@@ -87,7 +87,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       await _fetchOptimizedRoute();
       //Depot location marker
       _marker.add(
-          MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+          MarkerWidget.createMarker(context, LatLng(51.4533, -2.6257), Colors.black));
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -120,7 +120,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _drawStopsMarker(Color color) async {
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
-      _marker.add(MarkerWidget.createMarker(stops[i].location, color));
+      _marker.add(MarkerWidget.createMarker(context, stops[i].location, color));
     }
   }
 
