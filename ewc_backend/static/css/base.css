@@ -1,81 +1,116 @@
+/* Base CSS for a clean, modern layout */
+
+:root {
+  --brand-green: #2e7d32;
+  --dark-green: #1b5e20;
+  --light-green: #cfff95;
+  --text-color: #333;
+  --destructive-red: #dc3545;
+  --font-family: 'Poppins', sans-serif;
+  --background-color: #f9fafb;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f1f9f2;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .navbar {
-    background-color: #2e7d32;
-  }
-  
-  .navbar-brand {
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: #ffffff !important;
-    display: flex;
-    align-items: center;
-  }
-  
-  .navbar-brand i {
-    margin-right: 8px;
-    color: #cfff95;
-  }
-  
-  .hero-section {
-    background: url('https://images.unsplash.com/photo-1604793511209-3d114d6d42aa') center/cover no-repeat;
-    position: relative;
-    padding: 100px 0;
-    color: #fff;
-  }
-  
-  .hero-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-  }
-  
-  .hero-content {
-    position: relative;
-    z-index: 1;
-  }
-  
-  .hero-title {
-    font-size: 3rem;
-    font-weight: 700;
-  }
-  
-  .hero-text {
-    font-size: 1.25rem;
-  }
-  
-  .footer {
-    background-color: #1b5e20;
-    color: #fff;
-    padding: 30px 0;
-    margin-top: 60px;
-    text-align: center;
-  }
-  
-  .footer p {
-    margin: 0;
-  }
-  
-  .btn-eco {
-    background-color: #4caf50;
-    border: none;
-  }
-  
-  .btn-eco:hover {
-    background-color: #43a047;
-  }
-  
-  .red-help-text {
-    color: blue;
-  }
-  
-  .blue-help-text .bi-info-circle-fill {
-    color: black;
-    margin-right: 5px;
-  }
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Navbar */
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  color: #fff !important;
+}
+.navbar-brand i {
+  color: var(--light-green);
+}
+.bg-brand-green {
+  background-color: var(--brand-green) !important;
+}
+.navbar.shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero Section */
+.hero {
+  background-color: #fff;
+}
+.hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.hero-text {
+  font-size: 1rem;
+  max-width: 650px;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* Footer */
+.bg-dark-green {
+  background-color: var(--dark-green) !important;
+}
+.footer p,
+.footer small {
+  margin: 0;
+}
+
+/* Buttons */
+.custom-btn {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease-in-out;
+  border: none;
+}
+
+.btn-add {
+  background-color: var(--brand-green);
+  color: #fff;
+}
+.btn-add:hover,
+.btn-add:focus {
+  background-color: #27672a;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: #212529;
+}
+.btn-edit:hover,
+.btn-edit:focus {
+  background-color: #e0a800;
+}
+
+.btn-delete {
+  background-color: var(--destructive-red);
+  color: #fff;
+}
+.btn-delete:hover,
+.btn-delete:focus {
+  background-color: #bd2130;
+}
+
+/* Utility Classes */
+.red-help-text {
+  color: #3c75e7;
+}
+.blue-help-text .bi-info-circle-fill {
+  color: #007bff;
+  margin-right: 5px;
+}

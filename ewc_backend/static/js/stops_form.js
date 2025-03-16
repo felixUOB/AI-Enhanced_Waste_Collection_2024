@@ -45,7 +45,7 @@ document.getElementById('id_latitude').addEventListener('input', updateMarker);
 document.getElementById('id_longitude').addEventListener('input', updateMarker);
 document.getElementById('id_location_name').addEventListener('input', updateMarker);
 
-// Initial marker set (optional, if fields are pre-filled)
+// Initial marker set
 updateMarker();
 
 
