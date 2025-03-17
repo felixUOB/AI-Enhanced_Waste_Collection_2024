@@ -13,7 +13,7 @@ class MarkerWidget {
           () => showDialog<String>(
             context: context, 
             builder: 
-              (BuildContext context) => AlertDialog(
+              (BuildContext coopntext) => AlertDialog(
                 title: Text(name),
                 content: Text("Latitude: " + location.latitude.toString() + 
                               "\n" + "Longitude: " + location.longitude.toString() + 
