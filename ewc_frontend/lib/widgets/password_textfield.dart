@@ -1,6 +1,11 @@
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 
+/// This file manages the password textfield widget.
+///
+/// Functions:
+/// - `build()`: Builds the password textfield widget.
+
 class PasswordTextfield extends StatefulWidget {
   final dynamic controller;
   final String hintText;

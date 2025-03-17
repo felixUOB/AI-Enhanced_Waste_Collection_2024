@@ -1,42 +1,108 @@
 from datetime import datetime, timedelta
 from rest_framework import viewsets, permissions, generics
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 
 from .models import UserProfile, StopCollection, Stops, RouteEnvData
-from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, UserSerializer
-
+from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer
 from django.contrib.auth.models import User
-from django.http import JsonResponse
-from django.contrib.auth import views as auth_views
-from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetView
 from django.shortcuts import render, get_object_or_404, redirect
-
 from .forms import StopsForm
 from django.contrib.auth.decorators import login_required, user_passes_test
-
-
-
-from rest_framework.decorators import api_view
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 from rest_framework.response import Response
+
+"""
+This file defines API views and web views for managing waste collection-related data  
+using Django REST Framework (DRF) and Django's built-in authentication system.
+
+API ViewSets:
+
+1. UserProfileViewSet:
+   - Manages user profile data.
+   - Requires authentication.
+
+2. StopCollectionViewSet:
+   - Handles collection point records (waste collection at stops).
+   - Requires authentication.
+
+3. RouteEnvDataViewSet:
+   - Provides access to environmental data related to waste collection routes.
+   - Requires authentication.
+
+4. StopsViewSet**:
+   - Manages waste collection stops.
+   - Requires authentication.
+
+5. UserRegistrationView:
+   - Allows user registration via API.
+   - Open to all users (`permissions.AllowAny`).
+
+Django Web Views:
+
+1. stops_list_view(request):
+   - Displays a list of stops for staff/admin users.
+   - Requires login and staff/admin access.
+
+2. stops_create_view(request):
+   - Allows staff/admin users to create new waste collection stops.
+   - Uses `StopsForm` for input validation.
+
+3. stops_delete_view(request, pk):
+   - Deletes an existing stop record.
+   - Requires confirmation before deletion.
+
+4. stops_edit_view(request, pk):
+   - Allows staff/admin users to edit stop details.
+
+Additional Features:
+
+- API Schema Documentation:
+  - Uses `drf-yasg` to generate API documentation (`schema_view`).
+  - Provides OpenAPI documentation for the AI-Enhanced Waste Collection API.
+
+- Permissions & Authentication:
+  - Most views require authentication (`IsAuthenticated`).
+  - Web views are restricted to staff/admin users.
+"""
+
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="AI-Enhanced Waste Collection API",
+        default_version="v1",
+        description="API documentation",
+        license=openapi.License(name="Apache License"),
+    ),
+    public=True,
+    permission_classes=[permissions.IsAuthenticated],
+)
 
 # User Profile ViewSet
 class UserProfileViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows user profiles to be viewed or edited.
+    '''
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Collection Point ViewSet
 class StopCollectionViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows collection points to be viewed or edited.'
+    '''
     queryset = StopCollection.objects.all()
     serializer_class = StopCollectionSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Journey Metric ViewSet
 class RouteEnvDataViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows journey metrics to be viewed or edited.
+    '''
     queryset = RouteEnvData.objects.all()
     serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
@@ -55,30 +121,24 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
 
 # Waste Prediction ViewSet
 class StopsViewSet(viewsets.ModelViewSet):
+    '''
+    API endpoint that allows stops to be viewed or edited.
+    '''
     queryset = Stops.objects.all()
     serializer_class = StopsSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
 # Registration view
 class UserRegistrationView(generics.CreateAPIView):
+    '''
+    API endpoint that allows user registration.
+    '''
     queryset = User.objects.all()
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]  # Accessible to anyone    
-
-class CheckEmailView(APIView):
-    permission_classes = [permissions.AllowAny]
-
-    def get(self, request):
-        email = request.query_params.get('email')
-        if not email:
-            return Response({'success': False, 'message': 'Email is required'})
-
-        # Check if the email exists in the User model
-        email_exists = User.objects.filter(email=email).exists()
-        # Return JSON response indicating whether the email exists
-        return Response({'exists': email_exists})
     
 def is_staff_user(user):
+    """Check if the user is a staff member."""
     return user.is_staff
 
 @login_required

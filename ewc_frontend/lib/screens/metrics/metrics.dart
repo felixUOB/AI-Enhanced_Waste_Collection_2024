@@ -6,6 +6,16 @@ import 'package:ewc/widgets/graphs/line-graph/line_graph.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 
+/// This file manages the metrics page and displays the user's journey metrics.
+///
+/// Functions:
+/// - `_fetchMetricsDate()`: Fetches the metrics data from the database.
+/// - `_initialiseMetricData()`: Initializes the metrics data.
+/// - `_calculateDetails()`: Calculates the total routes, total distance, and average MPG.
+/// - `_calculateThisWeek()`: Calculates the journeys that occurred in the current week.
+/// - `build()`: Builds the UI for the metrics page.
+/// - `_buildTile()`: Builds a widget box for each of the graphs.
+
 class MetricsPage extends StatefulWidget {
 
   final bool testingMode;
@@ -406,14 +416,14 @@ class _MetricsPageState extends State<MetricsPage> {
 // widget box for each of the graphs
 Widget _buildTile(Widget child, BuildContext context, String hoverMessage ) {
   return Material(
-    elevation: 14.0,
-    borderRadius: BorderRadius.circular(12.0),
-    shadowColor: Theme.of(context).shadowColor,
-    child: Tooltip(
-          message: hoverMessage,
-          margin: const EdgeInsets.all(24.0),
-          preferBelow: false,
-          child: child,
-        ),
+      elevation: 14.0,
+      borderRadius: BorderRadius.circular(12.0),
+      shadowColor: Theme.of(context).shadowColor,
+      child: Tooltip(
+            message: hoverMessage,
+            margin: const EdgeInsets.all(24.0),
+            preferBelow: false,
+            child: child,
+          ),
   );
 }

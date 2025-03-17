@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+/// This file manages the destination marker layer.
+///
+/// Functions:
+/// - `build()`: Builds the destination marker layer.
+
 class DestinationMarker extends StatelessWidget{
   final LatLng location;
 
