@@ -1,5 +1,5 @@
 
-// a class to represent the data in the graph for each point
+/// This file contains the class `IndividualLineData` which holds information for a single line in a line graph.
 
 class IndividualLineData {
   final int x; // position on x

@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+/// This file manages the marker widget.
+///
+/// Functions:
+/// - `createMarker()`: Creates a marker at the specified location.
+
 class MarkerWidget {
   static Marker createMarker(String name, BuildContext context, LatLng location, Color color, bool visited) {
     return Marker(

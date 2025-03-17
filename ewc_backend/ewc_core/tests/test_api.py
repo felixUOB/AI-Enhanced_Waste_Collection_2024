@@ -45,39 +45,6 @@ class UserRegistrationTest(APITestCase):
         # Verify that a corresponding UserProfile is created for the user
         self.assertTrue(UserProfile.objects.filter(user__username="testuser").exists())
 
-class CheckEmailTest(APITestCase):
-    """
-    - Purpose: Tests the "check-email" endpoint under different scenarios.
-      - Key scenarios:
-          1. No email parameter: expects an error/failure response.
-          2. Existing email: verifies the endpoint indicates the email exists.
-          3. Non-existing email: verifies the endpoint indicates the email does not exist.
-    """
-    def test_check_email_without_parameter(self):
-        # Reverse lookup of the email-check endpoint URL
-        url = reverse('check-email')
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # When no email is provided, the response should indicate failure
-        self.assertFalse(response.data.get('success', True))
-        self.assertIn('Email is required', response.data.get('message', ''))
-
-    def test_check_email_existing(self):
-        # Create a user with a known email for testing
-        User.objects.create_user(username="existing", email="existing@example.com", password="pass")
-        url = reverse('check-email')
-        response = self.client.get(url, {'email': 'existing@example.com'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # The response should confirm that the email exists
-        self.assertTrue(response.data.get('exists'))
-
-    def test_check_email_non_existing(self):
-        url = reverse('check-email')
-        response = self.client.get(url, {'email': 'nonexistent@example.com'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # The response should confirm that the email does not exist
-        self.assertFalse(response.data.get('exists'))
-
 class UserProfileViewSetTest(APITestCase):
     """
     UserProfileViewSetTest

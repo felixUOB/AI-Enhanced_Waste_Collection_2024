@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// This file manages the end journey dialog.
+///
+/// Functions:
+/// - `show()`: Displays the end journey dialog.
+/// - `showInvalidInputDialog()`: Shows a dialog for invalid input notifications.
+
 class EndJourneyDialog {
   static void show(BuildContext context, Function(double) onConfirm) {
     String mpgInput = '';

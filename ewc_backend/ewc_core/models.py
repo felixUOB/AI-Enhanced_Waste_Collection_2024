@@ -1,8 +1,38 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+"""
+This file defines the backend data models for the Django application, managing user profiles,  
+waste collection stops, and environmental data related to routes.
+
+Models:
+
+1. UserProfile:
+   - Extends the built-in Django `User` model.
+   - Stores additional user details such as phone number, address, waste pickup frequency, 
+     waste type preference, carbon savings, and notification preferences.
+
+2. Stops:
+   - Represents collection points with location details (latitude, longitude).
+   - Tracks the next collection due date and the maximum weight capacity for waste collection.
+
+3. StopCollection:
+   - Links to the `Stops` model to track collected waste.
+   - Stores weight collected and the date of collection.
+
+4. RouteEnvData:
+   - Records environmental metrics for waste collection routes, including distance traveled and 
+     fuel efficiency (miles per gallon).
+   - Helps in assessing the environmental impact of waste collection operations.
+"""
+
 
 class UserProfile(models.Model):
+    '''
+    This model extends the built-in Django User model to include additional user details
+    such as phone number, address, waste pickup frequency, waste type preference,
+    carbon savings, and notification preferences.
+    '''
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Linked User model
     phone_number = models.CharField(max_length=15, blank=True)  # User's phone number
     address = models.TextField(blank=True)  # User's address
@@ -28,6 +58,10 @@ class UserProfile(models.Model):
 
 # Stop Collection
 class StopCollection(models.Model):
+    '''
+    This model links to the Stops model to track collected waste.
+    It stores the weight collected and the date of collection.
+    '''
     stop_collection_id = models.BigAutoField(primary_key=True)
     stop = models.ForeignKey(
         'Stops',  # referenced table model stops
@@ -45,6 +79,11 @@ class StopCollection(models.Model):
     
 # Stops
 class Stops(models.Model):
+    '''
+    This model represents the collection points for waste management.
+    It includes location details such as latitude and longitude, the next
+    collection due date, and the maximum weight capacity for waste collection.
+    '''
     stop_id = models.BigAutoField(primary_key=True)
     location_name = models.CharField(max_length=255, blank=True, null=True)
     latitude = models.FloatField()
@@ -64,6 +103,11 @@ class Stops(models.Model):
 # Route Env Data
 
 class RouteEnvData(models.Model):
+    '''
+    This model records environmental metrics for waste collection routes,
+    including distance traveled and fuel efficiency (miles per gallon).
+    It helps in assessing the environmental impact of waste collection operations.
+    '''
     route_env_data_id = models.BigAutoField(primary_key=True)
     distance = models.FloatField(null=False)
     mpg = models.FloatField(null=False)

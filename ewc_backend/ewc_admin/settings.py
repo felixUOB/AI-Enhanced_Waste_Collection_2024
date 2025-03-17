@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'ewc_core',
     'corsheaders',  # Added for CORS configuration
+    'drf_yasg',
     'whitenoise.runserver_nostatic'
 ]
 
