@@ -6,8 +6,16 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:ewc/services/location_service.dart';
 
+/// This file manages the state of the stops and provides
+/// functionality to interact with the list of stops.
+///
+/// Functions:
+/// - `initialiseLocationServices()`: Initializes the location services.
+/// - `setTracking(bool setting)`: Enables or disables tracking.
+/// - `resetDistance()`: Resets the distance travelled.
+/// - `initialisePositionStream()`: Initializes the location stream.
+/// - `dispose()`: Disposes the location stream.
 
-// This class provides location updates to any consumers which may require them
 class LocationProvider extends ChangeNotifier {
   LatLng? _latestLocation;
   StreamSubscription<Position>? _locationStream;
@@ -30,6 +38,7 @@ class LocationProvider extends ChangeNotifier {
   }
 
   Future<void> initialiseLocationServices() async {
+
     // Ask user for location permissions
     _latestLocation = null;
     bool locationAccessible = await getLocationPermissions();

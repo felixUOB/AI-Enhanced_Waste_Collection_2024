@@ -6,6 +6,12 @@ import 'package:ewc/services/auth_service/auth_service.dart';
 /// A service class for handling route-related data.
 /// Includes methods to fetch all existing routes from the server
 /// and send new route data (distance, MPG, date) when a journey finishes.
+
+/// This file manages the metrics service and provides functionality to fetch
+///
+/// Functions:
+/// - `fetchAllRoutes()`: Fetches all the routes from the backend.
+
 class MetricsService {
 
   /// Fetches all route records from the server.

@@ -3,6 +3,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
+/// This file manages the pie chart widget.
+///
+/// Functions:
+/// - `build()`: Builds the pie chart.
+/// - `_makeSectors()`: Makes the sectors for the pie chart.
+
 class MyPieChart extends StatelessWidget {
   final List<double> sectors;
 

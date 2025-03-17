@@ -2,6 +2,11 @@ import 'package:ewc/widgets/schedule_stoplist.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:flutter/material.dart';
 
+/// This file manages the custom timeline tile widget.
+///
+/// Functions:
+/// - `build()`: Builds the custom timeline tile widget.
+
 class CustomTimelineTile extends StatelessWidget{
   final bool isFirst;
   final bool isLast;

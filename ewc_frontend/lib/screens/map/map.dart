@@ -23,7 +23,18 @@ import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/widgets/navigation_banner.dart';
 import 'package:ewc/services/metrics_service.dart';
 
-// MapPage is a stateful widget displaying a map and plotting a route
+/// This file manages the map display and route plotting functionality.
+///
+/// Functions:
+/// - `build()`: Builds the UI for the map page.
+/// - `initState()`: Initializes the map and services when the widget is created.
+/// - `_initialiseLocationStatusStream()`: Initializes the location status stream.
+/// - `_initializeEnvAndService()`: Initializes the environment and services.
+/// - `_drawCompleteRoute()`: Draws a complete route between all stops.
+/// - `_drawStopsMarker(Color color)`: Draws markers for all stops.
+/// - `_fetchRoute(int firstStopID, int secondStopID)`: Fetches a route between two stops.
+/// - `_fetchOptimizedRoute()`: Fetches an optimized route between stops. 
+
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
@@ -32,7 +43,6 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPage();
 }
 
-// Private State class for MapPage, manages state and map interactions
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];

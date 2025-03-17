@@ -1,6 +1,12 @@
 import 'package:geolocator/geolocator.dart';
 
-// Function that returns true/false depending on if ewc can access device's location
+
+/// This file manages the location services and provides functions to interact with the device's location.
+///
+/// Functions:
+/// - `getLocationPermissions()`: Checks if the app has location permissions.
+/// - `requestLocationPermissions()`: Requests permission to access the device's location.
+
 Future<bool> getLocationPermissions() async {
   // Test if location services are enabled
   bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
