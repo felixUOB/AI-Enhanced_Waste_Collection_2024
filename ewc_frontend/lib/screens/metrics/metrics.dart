@@ -38,7 +38,7 @@ class _MetricsPageState extends State<MetricsPage> {
   };
 
   // holds the journeys that have occured on this week
-  List<JourneyRoute> thisWeeksJoruneys = [];
+  List<JourneyRoute> thisWeeksJourneys = [];
   List<Map<String, dynamic>> overallMpg = [];
   List<Map<String, dynamic>> overallDistance = [];
   List<Map<String, dynamic>> fuelConsumed = [];
@@ -54,35 +54,50 @@ class _MetricsPageState extends State<MetricsPage> {
 
   Future<void> _fetchMetricsDate() async{
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
-    
-    fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
+    List<JourneyRoute> updatedRoutes = [];
     // fill in the spare days
     if (fetchedRoutes.length >1){
+      // sort the data
+      fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
+
       // loop around all of the days currently in the array and fill in any blank days
       int len = fetchedRoutes.length-1;
-      for (int i=0; i<len; i++){
+      int i =0;
+      while (i<len){
         // get the first day
         DateTime current = DateTime.parse(fetchedRoutes[i].date);
-        // get the day after
+        
+        // combine entries that were on the same day
+        double totalDistance = fetchedRoutes[i].distance;
+        var mpg = [fetchedRoutes[i].mpg];
+        
+        while(fetchedRoutes[i].date == fetchedRoutes[i+1].date){
+          totalDistance += fetchedRoutes[i+1].distance;
+          mpg.add(fetchedRoutes[i+1].mpg);
+          i++;
+        }
+        double avgMpg = mpg.reduce((a,b) => (a+b)) / mpg.length;
+        updatedRoutes.add(JourneyRoute(distance: totalDistance, mpg: avgMpg, date: current.toString(), filler: false));
+
+        // fill in any gaps
         DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
         // see if the day after current is the next day or identify if there is a gap
-        if (current != next){
-          while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
+        while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
             current = current.add(Duration(days: 1));
             // add a filler day
-            fetchedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
-          }
+            updatedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
         }
+        i ++;
       }
     }
-    fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
-    routeList = fetchedRoutes;
+    updatedRoutes.sort((a,b) => a.date.compareTo(b.date));
+    routeList = updatedRoutes;
     _calculateDetails();
-    thisWeeksJoruneys = _calculateThisWeek();
+    thisWeeksJourneys = _calculateThisWeek();
     // update the state of the graphs
     setState((){
       //  put the dates into a nice format
-      for (var route in thisWeeksJoruneys){
+      for (var route in thisWeeksJourneys){
         DateTime d = DateTime.parse(route.date);
         int dayOfWeek = d.weekday;
         if (dayOfWeek == 1){

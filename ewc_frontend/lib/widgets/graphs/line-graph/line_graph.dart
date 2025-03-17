@@ -132,7 +132,7 @@ Widget getLeftTitles(double value, TitleMeta meta){
       child: Text(text, style:style),
     );
   }else{
-    return Container(); // dont display just have a space 
+    return Container(); // don't display just have a space 
   }
   
 }
