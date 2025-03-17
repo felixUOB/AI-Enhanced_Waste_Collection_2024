@@ -4,7 +4,7 @@ import 'package:ewc/widgets/graphs/line-graph/individual_line_data.dart';
 /// This file contains the line data for the line graph.
 ///
 /// Functions:
-/// - `initializeBarData()`: Initializes the line data.
+/// - `initializeLineData()`: Initializes the line data.
 
 class LineData {
   final double monAmount;

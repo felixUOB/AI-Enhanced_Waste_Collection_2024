@@ -22,8 +22,8 @@ class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
   final String apiUrl = 'https://devnest.software/api';
-  final String adminUrl = 'http://devnest.software/admin';
-  final String rootUrl = 'http://devnest.software';
+  final String adminUrl = 'https://devnest.software/admin';
+  final String rootUrl = 'https://devnest.software';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
