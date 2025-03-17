@@ -13,12 +13,9 @@ class MarkerWidget {
           () => showDialog<String>(
             context: context, 
             builder: 
-              (BuildContext coopntext) => AlertDialog(
+              (BuildContext context) => AlertDialog(
                 title: Text(name),
-                content: Text("Latitude: " + location.latitude.toString() + 
-                              "\n" + "Longitude: " + location.longitude.toString() + 
-                              "\n" + "Visited: " + visited.toString()
-                        ),
+                content: Text("Latitude: ${location.latitude}\nLongitude: ${location.longitude}\nVisited: $visited"),
                 actions: <Widget>[
                   TextButton(
                     // clear the notification
