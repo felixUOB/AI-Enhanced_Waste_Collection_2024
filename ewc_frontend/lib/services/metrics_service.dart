@@ -3,6 +3,11 @@ import 'package:ewc/screens/metrics/route_data.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 
+/// This file manages the metrics service and provides functionality to fetch
+///
+/// Functions:
+/// - `fetchAllRoutes()`: Fetches all the routes from the backend.
+
 class MetricsService {
   Future<List<JourneyRoute>> fetchAllRoutes() async {
     final response =

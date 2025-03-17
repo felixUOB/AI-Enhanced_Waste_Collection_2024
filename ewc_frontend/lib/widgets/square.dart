@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// This file manages the square widget.
+///
+/// Functions:
+/// - `build()`: Builds the square widget.
+
 class MySquare extends StatelessWidget{
   final Widget child;
   final String title;

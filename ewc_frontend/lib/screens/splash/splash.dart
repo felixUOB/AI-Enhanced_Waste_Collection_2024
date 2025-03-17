@@ -4,8 +4,12 @@ import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 
-// SplashPage is the initial screen that attempts auto-login
-// ignore: must_be_immutable
+/// This file manages the splash screen and facilitates user authentication.
+///
+/// Functions:
+/// - `build()`: Builds the UI for the splash page.
+/// - `_attemptAutoLogin()`: Attempts to automatically log in the user if credentials are available.
+
 class SplashPage extends StatefulWidget {
   final bool isTesting;
   const SplashPage({

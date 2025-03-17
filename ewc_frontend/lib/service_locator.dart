@@ -5,6 +5,11 @@ import 'package:ewc/services/route_service.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:get_it/get_it.dart';
 
+/// This file manages the service locator for the application.
+///
+/// Functions:
+/// - `setupLocator()`: Sets up the dependency injection for the services.
+
 final getIt = GetIt.instance;
 
 Future<void> setupLocator() async {

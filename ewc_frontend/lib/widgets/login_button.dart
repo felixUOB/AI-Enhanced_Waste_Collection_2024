@@ -1,6 +1,11 @@
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 
+/// This file manages the login button widget.
+///
+/// Functions:
+/// - `build()`: Builds the login button.
+
 class LoginButton extends StatelessWidget {
   final String text1;
   final VoidCallback onPressed; // Added onPressed parameter

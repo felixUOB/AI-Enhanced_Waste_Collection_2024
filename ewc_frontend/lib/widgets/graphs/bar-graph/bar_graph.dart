@@ -2,7 +2,12 @@ import 'package:ewc/widgets/graphs/bar-graph/bar_data.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-// class storing the structure of how the bar graph looks
+/// This file manages the bar graph widget.
+///
+/// Functions:
+/// - `build()`: Builds the bar graph widget.
+/// - `getBottomTitles()`: Gets the bottom titles for the bar graph.
+/// - `getLeftTitles()`: Gets the left titles for the bar graph.
 
 class MyBarGraph extends StatelessWidget{
 

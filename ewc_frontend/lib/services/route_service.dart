@@ -6,7 +6,15 @@ import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 
-// A class to store the result of a route planning request.
+/// This file manages the route service and provides functionality to fetch
+///
+/// Functions:
+/// - `create()`: Creates a new RouteService instance.
+/// - `getRoute(double startLat, double startLng, double endLat, double endLng)`: Fetches the route between two points.
+/// - `routePlanning(LatLng userLocation, List<Stop> stops)`: Plans the optimized route between a list of stops.
+/// - `getStopTimes(LatLng source, List<LatLng> stopLocations)`: Fetches the time it takes to get from source to each stop.
+/// - `distanceFromSegment(LatLng location, LatLng startPoint, LatLng endPoint)`: Calculates the perpendicular distance of the user from the line between startPoint and endPoint.
+
 class RouteResult {
   // A list of LatLng objects representing the route
   final List<LatLng> routeCoordinates;
