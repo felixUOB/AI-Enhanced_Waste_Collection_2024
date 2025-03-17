@@ -42,6 +42,7 @@ jobs:
         working-directory: "./ewc_frontend"
         run: |
           flutter pub get
+          flutter pub run build_runner build --delete-conflicting-outputs
           flutter analyze
           flutter test --coverage
           
