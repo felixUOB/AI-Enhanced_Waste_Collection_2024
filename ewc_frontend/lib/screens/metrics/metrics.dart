@@ -406,16 +406,14 @@ class _MetricsPageState extends State<MetricsPage> {
 // widget box for each of the graphs
 Widget _buildTile(Widget child, BuildContext context, String hoverMessage ) {
   return Material(
-      elevation: 14.0,
-      borderRadius: BorderRadius.circular(12.0),
-      shadowColor: Theme.of(context).shadowColor,
-      child: Tooltip(
-            message: hoverMessage,
-            margin: const EdgeInsets.all(24.0),
-            preferBelow: false,
-            child: child,
-          ),
-        
-      
+    elevation: 14.0,
+    borderRadius: BorderRadius.circular(12.0),
+    shadowColor: Theme.of(context).shadowColor,
+    child: Tooltip(
+          message: hoverMessage,
+          margin: const EdgeInsets.all(24.0),
+          preferBelow: false,
+          child: child,
+        ),
   );
 }
