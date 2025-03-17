@@ -21,36 +21,11 @@ class MyLineGraph extends StatelessWidget{
 
     for (int i = 0 ; i<dataPoints.length; i++){
       Map<String, dynamic> point = dataPoints[i];
-      print(point);
-      print(point['value']);
       double value = (point['value'] as num).toDouble();
       if (value != 0){
         points.add(FlSpot(i.toDouble(), value));
       }
     }
-
-    // for (Map<String, dynamic> i in dataPoints){
-    //   double value = (i.values as num).toDouble();
-    //   if (value != 0){ 
-    //     dataPoints[i]
-    //     points.add(FlSpot(i.keys.first.toDouble(), value));
-    //   }
-    // }
-   // print(dataPoints);
-
-  //   List<FlSpot> points = dataPoints.asMap().entries.map((entry) {
-  //       int index = entry.key;
-  //       print(index);
-        
-  //       if (entry.value['value'] != 0){
-  //         print(entry.value['value']);
-  //         double value = (entry.value['value'] as num).toDouble();
-  //         return FlSpot(index.toDouble(), value);
-  //       } 
-  //       else{
-  //         return FlSpot.nullSpot;
-  //       }
-  // }).toList();
 
     // work out the maxY based on the data
     double maxY = (dataPoints.map((e) => (e['value'] as num).toDouble()) //make sure its a number
