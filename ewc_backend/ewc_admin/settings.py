@@ -60,7 +60,7 @@ JAZZMIN_SETTINGS = {
     "site_brand": "EWC",
     "site_logo": "images/RecycleNXT_Logo_No_Text_NoBG.png",
     "login_logo": "images/RecycleNXT-Logo_Update_Black_Small.png",
-    "login_logo_dark": "images/RecycleNXT-Logo_Update_Black.png",
+    "login_logo_dark": "images/RecycleNXT-Logo_Update_Black_Small.png",
     "site_logo_classes": "img-circle",
     "site_icon": None,
     "welcome_sign": "Welcome to the EWC Admin Panel",
