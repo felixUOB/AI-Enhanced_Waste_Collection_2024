@@ -34,7 +34,7 @@ ALLOWED_HOSTS = ['*']
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'ewc_core/static'),  # Ensure Django looks here for static files
+    os.path.join(BASE_DIR, 'ewc_core/static'),
 ]
 
 
@@ -70,13 +70,13 @@ JAZZMIN_SETTINGS = {
 
     "topmenu_links": [
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"name": "Support", "url": "https://github.com/spe-uob/2024-AIEnhancedWasteCollection", "new_window": True},
         {"model": "auth.User"},
         {"app": "ewc_core"},
     ],
 
     "usermenu_links": [
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"name": "Support", "url": "https://github.com/spe-uob/2024-AIEnhancedWasteCollection", "new_window": True},
         {"model": "auth.user"}
     ],
 
@@ -93,29 +93,13 @@ JAZZMIN_SETTINGS = {
 
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
-
-    # Use modals instead of popups
     "related_modal_active": False,
-
-    # Relative paths to custom CSS/JS scripts (must be present in static files)
     "custom_css": "admin/css/custom_admin.css",
     "custom_js": None,
-    # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
     "use_google_fonts_cdn": True,
-    # Whether to show the UI customizer on the sidebar
     "show_ui_builder": True,
-    
-    # Render out the change view as a single form, or in tabs, current options are
-    # - single
-    # - horizontal_tabs (default)
-    # - vertical_tabs
-    # - collapsible
-    # - carousel
     "changeform_format": "horizontal_tabs",
-    # override change forms on a per modeladmin basis
     "changeform_format_overrides": {"auth.user": "collapsible", "auth.group": "vertical_tabs"},
-    # Add a language dropdown into the admin
-    # "language_chooser": True,
 }
 
 JAZZMIN_UI_TWEAKS = {
@@ -126,18 +110,18 @@ JAZZMIN_UI_TWEAKS = {
     "brand_colour": False,
     "accent": "accent-primary",
     "navbar": "navbar-white navbar-light",
-    "no_navbar_border": False,
-    "navbar_fixed": False,
+    "no_navbar_border": True,
+    "navbar_fixed": True,
     "layout_boxed": False,
     "footer_fixed": False,
     "sidebar_fixed": False,
-    "sidebar": "sidebar-dark-primary",
+    "sidebar": "sidebar-dark-warning",
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
     "sidebar_nav_child_indent": False,
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": True,
+    "sidebar_nav_flat_style": False,
     "theme": "cosmo",
     "dark_mode_theme": None,
     "button_classes": {
