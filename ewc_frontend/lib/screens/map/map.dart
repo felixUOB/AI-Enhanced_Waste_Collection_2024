@@ -53,6 +53,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
+  // _currentInstruction holds the current instruction to be displayed on the NavigationBanner
+  String _currentInstruction = "No instructions available";
 
   double _autoBearing = 0; // Bearing set automatically by navigation view
   double _savedBearing = -45; // Bearing set by user rotating map
@@ -235,6 +237,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     return activeRange;
   }
 
+  // Returns the instruction based on the user's current route index
+  String getCurrentInstruction(int userIndex) {
+    for (var range in _routeInstructions.keys) {
+      final int start = range[0].toInt();
+      final int end = range[1].toInt();
+      if (userIndex >= start && userIndex <= end) {
+        return _routeInstructions[range]!;
+      }
+    }
+    return "No instructions available";
+  }
+
   // Builds the main UI for the map screen
   @override
   Widget build(BuildContext context) {
@@ -249,9 +263,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               right: 0,
               child: NavigationBanner(
                 visible: _journeyActive,
-                instruction: _routeInstructions.values.length > 1
-                    ? _routeInstructions.values.elementAt(1)
-                    : "No instructions available",
+                instruction: _currentInstruction,
               ),
             ),
             Positioned(
@@ -663,6 +675,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     setState(() {
       _closestIndex = index;
       _autoBearing = bearing;
+      _currentInstruction = getCurrentInstruction(index);
     });
   }
 
