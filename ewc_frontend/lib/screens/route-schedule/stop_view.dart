@@ -41,6 +41,7 @@ class _StopView extends State<StopView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Text("Status: ${(widget.visited) ? "Collection logged" : "Collection required"}"),
               widget.visited ?
               ElevatedButton(
                 onPressed: () {
@@ -55,7 +56,13 @@ class _StopView extends State<StopView> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12.0),
                 ),
-                child: Text("Mark as unvisited")
+                child: Text(
+                  "Mark as unvisited",
+                  style: const TextStyle(color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  )
+                )
               ) : SizedBox.shrink()
             ],
           ),

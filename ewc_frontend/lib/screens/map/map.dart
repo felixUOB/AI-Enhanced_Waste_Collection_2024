@@ -69,8 +69,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(
         vsync: this, duration: Duration(milliseconds: 1500));
-    Provider.of<LocationProvider>(context, listen: false).addListener(_findNearestRoutePoint);
-    Provider.of<StopsProvider>(context, listen: false).addListener(_updateStopsMarkers);
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
   }
@@ -88,8 +86,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
-      if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
+      await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
+      if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+      if (mounted) Provider.of<LocationProvider>(context, listen: false).addListener(_findNearestRoutePoint);
+      if (mounted) Provider.of<StopsProvider>(context, listen: false).addListener(_updateStopsMarkers);
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
