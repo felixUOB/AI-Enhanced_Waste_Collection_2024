@@ -5,6 +5,13 @@ import 'package:ewc/widgets/login_button.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 
+/// This file manages the register page and handles user registration.
+///
+/// Functions:
+/// - `build()`: Builds the UI for the register page.
+/// - `onPressed()`: Handles the registration logic.
+/// - `onTap()`: Navigates to the login page.
+
 class RegisterPage extends StatelessWidget {
   RegisterPage({super.key});
 

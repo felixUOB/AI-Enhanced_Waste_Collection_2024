@@ -71,225 +71,212 @@ void main() {
   group('Map Page Tests', () {
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
-      await tester.pumpWidget(pumpMap());
+      await tester.runAsync(() async {
+        await tester.pumpWidget(pumpMap());
+        await tester.pumpAndSettle();
 
-      expect(find.byType(MapPage), findsOneWidget);
-      expect(find.byType(FlutterMap), findsOneWidget);
-      expect(find.byType(FloatingActionButton), findsExactly(4));
-    });
+        expect(find.byType(MapPage), findsOneWidget);
+        expect(find.byType(FlutterMap), findsOneWidget);
+        expect(find.byType(FloatingActionButton), findsExactly(4));
+        });
+      });
 
-    testWidgets('Start Journey dialog shows on Start tap and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
-
-      // Open the journey dialog.
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget);
-    
-      // Tap the Cancel button within the dialog.
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-    
-      // Expect the dialog to be dismissed.
-      expect(find.byType(AlertDialog), findsNothing);
-    });
-
-    
     testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
+      await tester.runAsync(() async {
+        // Currently, tapping Start Journey starts the journey without a popup,
+        // Tap on ‘Start Journey’ to make it true:
+        await tester.pumpWidget(pumpMap());
+        await tester.tap(find.text('Start Journey'));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '10');
-      await tester.enterText(find.byType(TextField).last, '20');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('End Journey'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget);
-      // Tap the Cancel button within the dialog.
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-      // Expect the dialog to be dismissed.
-      expect(find.byType(AlertDialog), findsNothing);
-    });
+        // End Journey
+        await tester.tap(find.text('End Journey'));
+        await tester.pumpAndSettle();
 
-    testWidgets('End Journey button accepts correctly entered values', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
+        // assume that the EndJourneyDialog should appear
+        expect(find.byType(AlertDialog), findsOneWidget);
 
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '10');
-      await tester.enterText(find.byType(TextField).last, '20');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('End Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '10');
-      await tester.enterText(find.byType(TextField).last, '20');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsNothing);
-    });
+        // Tap the Cancel button within the dialog
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
 
-    testWidgets('Invalid input on Start Journey dialog shows error dialog', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
-
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, 'invalid');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      expect(find.text('Invalid Input'), findsOneWidget);
+        expect(find.byType(AlertDialog), findsNothing);
+      });
     });
 
     testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
+      await tester.runAsync(() async {
+        // 1) Pump map
+        await tester.pumpWidget(pumpMap());
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '10');
-      await tester.enterText(find.byType(TextField).last, '20');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('End Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, 'invalid');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
-      expect(find.text('Invalid Input'), findsOneWidget);
+        // 2) Start journey (no text fields for start journey)
+        await tester.tap(find.text('Start Journey'));
+        await tester.pumpAndSettle();
+
+        // 3) Directly open End Journey
+        await tester.tap(find.text('End Journey'));
+        await tester.pumpAndSettle();
+
+        // 4) Now we enter invalid input in EndJourneyDialog (assuming 1 textfield)
+        await tester.enterText(find.byType(TextField).first, 'invalid');
+        await tester.tap(find.text('Confirm'));
+        await tester.pumpAndSettle();
+
+        // 5) Expect "Invalid Input" or similar
+        expect(find.text('Invalid Input'), findsOneWidget);
+      });
     });
 
     testWidgets('Ensure buttons load correctly', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
+      await tester.runAsync(() async {
+        await tester.pumpWidget(pumpMap());
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(Key("recentre button")), findsOneWidget);
-      expect(find.byKey(Key("zoom out")), findsOneWidget);
-      expect(find.byKey(Key("zoom in")), findsOneWidget);
-      expect(find.byKey(Key("orientate button")), findsOneWidget);
+        expect(find.byKey(Key("recentre button")), findsOneWidget);
+        expect(find.byKey(Key("zoom out")), findsOneWidget);
+        expect(find.byKey(Key("zoom in")), findsOneWidget);
+        expect(find.byKey(Key("orientate button")), findsOneWidget);
+      });
     });
 
     testWidgets('Ensure orientate button toggles north variable', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
-      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await tester.pumpWidget(pumpMap());
+        await tester.pumpAndSettle();
 
-      OrientateButton orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
-      expect(orientateButton.north, true);
+        OrientateButton orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
+        expect(orientateButton.north, true);
 
-      await tester.tap(find.byKey(Key("orientate button")));
-      await tester.pumpAndSettle();
-      orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
-      expect(orientateButton.north, false);
+        await tester.tap(find.byKey(Key("orientate button")));
+        await tester.pumpAndSettle();
+        orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
+        expect(orientateButton.north, false);
 
-      await tester.tap(find.byKey(Key("orientate button")));
-      await tester.pumpAndSettle();
-      orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
-      expect(orientateButton.north, true);
+        await tester.tap(find.byKey(Key("orientate button")));
+        await tester.pumpAndSettle();
+        orientateButton = tester.widget<OrientateButton>(find.byKey(Key("orientate button")));
+        expect(orientateButton.north, true);
+      });
     });
 
     testWidgets('Ensure register stop shows alters visited attributed of stop', (WidgetTester tester) async {
-      var stopsProvider = StopsProvider();
-      await tester.pumpWidget(MaterialApp(
-        home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider<LocationProvider>(
-              create: (_) => LocationProvider(),
-            ),
-            ChangeNotifierProvider<StopsProvider>
-              .value(value: stopsProvider),
-          ],
-          child: MapPage(),
-        ),
-      ));
-      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        var stopsProvider = StopsProvider();
+        await tester.pumpWidget(MaterialApp(
+          home: MultiProvider(
+            providers: [
+              ChangeNotifierProvider<LocationProvider>(
+                create: (_) => LocationProvider(),
+              ),
+              ChangeNotifierProvider<StopsProvider>
+                .value(value: stopsProvider),
+            ],
+            child: MapPage(),
+          ),
+        ));
+        await tester.pumpAndSettle();
 
-      // Start journey
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '10');
-      await tester.enterText(find.byType(TextField).last, '20');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+        // Start journey (no text fields!)
+        await tester.tap(find.text('Start Journey'));
+        await tester.pumpAndSettle();
 
-      // Ensure stop is not visited before logging result
-      expect(stopsProvider.stops.first.visited, false);
+        // Check visited = false initially
+        expect(stopsProvider.stops.first.visited, false);
 
-      await tester.tap(find.byKey(Key('log visit')));
-      await tester.pumpAndSettle();
+        // Now open "log visit" dialog
+        await tester.tap(find.byKey(Key('log visit')));
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('register collection dialog')), findsOneWidget);
-      expect(find.byKey(Key('waste collected')), findsOneWidget);
-      expect(find.byKey(Key('dropdown')), findsOneWidget);
+        expect(find.byKey(Key('register collection dialog')), findsOneWidget);
 
-      await tester.enterText(find.byKey(Key('waste collected')), '10');
+        // Fill in waste collected
+        await tester.enterText(find.byKey(const Key('waste collected')), '10');
+        expect(find.widgetWithText(TextField, '10'), findsOneWidget);
 
-      await tester.tap(find.byKey(Key('dropdown')));
-      await tester.pumpAndSettle();
+        // Enter collected waste
+        expect(find.byKey(Key('dropdown')), findsOneWidget);
+        await tester.tap(find.byKey(const Key('dropdown')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('test').last);
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('test').last);
-      await tester.pumpAndSettle();
-      
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+        // Confirm
+        await tester.tap(find.text('Confirm'));
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('invalid dialog')), findsNothing);
-      expect(find.byKey(Key('register collection dialog')), findsNothing);
-      // Check stop is now visited
-      expect(stopsProvider.stops.first.visited, true);
+        // Make sure no invalid dialogs have popped up and that the register collection dialog is closed
+        expect(find.byKey(Key('invalid dialog')), findsNothing);
+        expect(find.byKey(Key('register collection dialog')), findsNothing);
+
+        // Check stop is now visited
+        expect(stopsProvider.stops.first.visited, true);
+      });
     });
 
     testWidgets('Ensure entering invalid data brings up invalid dialog', (WidgetTester tester) async {
-      await tester.pumpWidget(pumpMap());
-      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await tester.pumpWidget(pumpMap());
+        await tester.pumpAndSettle();
 
-      // Start journey
-      await tester.tap(find.text('Start Journey'));
-      await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField).first, '10');
-      await tester.enterText(find.byType(TextField).last, '20');
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+        // Start journey
+        await tester.tap(find.text('Start Journey'));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(Key('log visit')));
-      await tester.pumpAndSettle();
+        await tester.tap(find.byKey(Key('log visit')));
+        await tester.pumpAndSettle();
 
-      // Test blank boxes
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+        // Test blank boxes
+        await tester.tap(find.text('Confirm'));
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('invalid dialog')), findsOneWidget);
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
+        expect(find.byKey(Key('invalid dialog')), findsOneWidget);
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
 
-      // Select item from dropdown
-      await tester.tap(find.byKey(Key('dropdown')));
-      await tester.pumpAndSettle();
+        // Select item from dropdown
+        await tester.tap(find.byKey(Key('dropdown')));
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('test').last);
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('test').last);
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Confirm'));
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('invalid dialog')), findsOneWidget);
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
+        expect(find.byKey(Key('invalid dialog')), findsOneWidget);
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
 
-      // Test with invalid weight value
-      await tester.enterText(find.byKey(Key('waste collected')), '-1');
+        // Test with invalid weight value
+        await tester.enterText(find.byKey(Key('waste collected')), '-1');
 
-      await tester.tap(find.text('Confirm'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Confirm'));
+        await tester.pumpAndSettle();
 
-      expect(find.byKey(Key('invalid dialog')), findsOneWidget);
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
+        expect(find.byKey(Key('invalid dialog')), findsOneWidget);
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
 
-      // Cancel dialog
-      await tester.tap(find.text('Cancel'));
-      await tester.pumpAndSettle();
-      expect(find.byKey(Key('register collection dialog')), findsNothing);
+        // Cancel dialog
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+        expect(find.byKey(Key('register collection dialog')), findsNothing);
+      });
     });
   });
 
+  // Increase Flutter Coverage %
+  testWidgets('map page shows error dialog on fetchAllStops exception', (WidgetTester tester) async {
+    await tester.runAsync(() async {
+      // Throw exception in mock
+      when(getIt<StopsService>().fetchAllStops()).thenThrow(Exception('Mock Error'));
+
+      await tester.pumpWidget(pumpMap());
+      await tester.pumpAndSettle();
+
+      // expect: AlertDialog with "Error" title
+      expect(find.text('Error'), findsOneWidget);
+    });
+  });
 }

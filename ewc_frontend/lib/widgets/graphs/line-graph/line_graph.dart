@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart'; // date formatting
 
+/// This file manages the line graph widget.
+
 class MyLineGraph extends StatelessWidget{
   final List<Map<String, dynamic>> dataPoints;
 

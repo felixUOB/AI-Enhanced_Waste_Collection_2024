@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:provider/provider.dart';
 
+/// This file manages the log stop dialog widget.
+///
+/// Functions:
+/// - `showDialog()`: Displays the log stop dialog.
+/// - `_showInvalidInputDialog()`: Shows a dialog for invalid input notifications.
+
 class LogStopDialog {
   static void show(BuildContext context, Function(int, int) onConfirm) {
     int? selectedStop;

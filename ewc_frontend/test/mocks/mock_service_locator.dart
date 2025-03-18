@@ -7,6 +7,11 @@ import 'package:get_it/get_it.dart';
 
 import 'mocks.mocks.dart';
 
+/// This file manages the mock service locator for the testing of the application.
+///
+/// Functions:
+/// - `mockSetupLocator()`: Sets up the mock services for testing.
+
 final getIt = GetIt.instance;
 
 Future<void> mockSetupLocator() async {

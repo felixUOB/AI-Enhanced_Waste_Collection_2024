@@ -17,15 +17,15 @@ Including another URLconf
 
 from django.contrib import admin
 from django.http import JsonResponse
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
-from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list
-
+from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list, schema_view
+from django.views.generic import TemplateView
 
 
 # Router configuration for REST API endpoints
@@ -44,8 +44,10 @@ urlpatterns = [
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
     path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
     path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
+    path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 
 # -----------Stops HTML Form URLs------------------
+
     path('stops/', stops_list_view, name='stops_list'),                # List
     path('stops/new/', stops_create_view, name='stops_create'),        # Create
     path('stops/<int:pk>/edit/', stops_edit_view, name='stops_edit'),  # Edit
@@ -54,9 +56,7 @@ urlpatterns = [
     path('stops/get_stops_list/', get_stops_list, name='get_stops_list'), # get stops list
 
 # -----------PASSWORD RESET ENDPOINTS--------------
-    
-    path('check-email/', views.CheckEmailView.as_view(), name='check-email'), #DEPRECATED BUT LEFT IN FOR LATER USE
-   
+       
     #Default paths for django.contrib.auth package
     path('reset_password/', 
         auth_views.PasswordResetView.as_view(
