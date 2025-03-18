@@ -1,0 +1,8 @@
+.login-box {
+    width: 500px; /* Adjust the width as needed */
+    max-width: 90%; /* set the max-width in order to make it responsive */
+    height: auto; /* Let the height adjust based on content */
+    margin: auto; /* center it */
+    padding: 20px; /* Add some padding inside the box */
+    box-sizing: border-box; /* Include padding in the width calculation */
+}

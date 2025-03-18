@@ -33,6 +33,9 @@ ALLOWED_HOSTS = ['*']
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'ewc_core/static'),  # Ensure Django looks here for static files
+]
 
 
 INSTALLED_APPS = [
@@ -56,7 +59,7 @@ JAZZMIN_SETTINGS = {
     "site_header": "EWC Admin",
     "site_brand": "EWC",
     "site_logo": "images/RecycleNXT_Logo_No_Text_NoBG.png",
-    "login_logo": "images/RecycleNXT-Logo_Update_Black.png",
+    "login_logo": "images/RecycleNXT-Logo_Update_Black_Small.png",
     "login_logo_dark": "images/RecycleNXT-Logo_Update_Black.png",
     "site_logo_classes": "img-circle",
     "site_icon": None,
@@ -95,7 +98,7 @@ JAZZMIN_SETTINGS = {
     "related_modal_active": False,
 
     # Relative paths to custom CSS/JS scripts (must be present in static files)
-    "custom_css": "admin/css/custom_admin.css",  # Add this line
+    "custom_css": "admin/css/custom_admin.css",
     "custom_js": None,
     # Whether to link font from fonts.googleapis.com (use custom_css to supply font otherwise)
     "use_google_fonts_cdn": True,
