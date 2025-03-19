@@ -80,7 +80,6 @@ class _MetricsPageState extends State<MetricsPage> {
         // combine entries that were on the same day
         double totalDistance = fetchedRoutes[i].distance;
         var mpg = [fetchedRoutes[i].mpg];
-        
         while(fetchedRoutes[i].date == fetchedRoutes[i+1].date){
           totalDistance += fetchedRoutes[i+1].distance;
           mpg.add(fetchedRoutes[i+1].mpg);
@@ -98,6 +97,9 @@ class _MetricsPageState extends State<MetricsPage> {
             updatedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
         }
         i ++;
+        if (i==len){
+          updatedRoutes.add(JourneyRoute(distance: fetchedRoutes[i].distance, mpg: fetchedRoutes[i].mpg, date: fetchedRoutes[i].date.toString(), filler: false));
+        }
       }
     }
     updatedRoutes.sort((a,b) => a.date.compareTo(b.date));
