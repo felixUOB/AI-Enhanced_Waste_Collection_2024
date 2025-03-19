@@ -32,13 +32,13 @@ class _PasswordTextfield extends State<PasswordTextfield> {
         child: TextFormField(
           validator: (value) {
             final bool passwordValid = 
-              RegExp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$")
+              RegExp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()0-9])[A-Za-z\d!@#$%^&*()]{8,}$")
                 .hasMatch(value.toString());
 
             if (value == null || value.isEmpty){
                 return 'Please enter some text';
             }else if (!passwordValid){
-                return 'Invalid string';
+                return '8+ characters, 1 capital, 1 lower, a character or number)';
             }
             return null;
           },
