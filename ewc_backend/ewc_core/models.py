@@ -34,24 +34,7 @@ class UserProfile(models.Model):
     carbon savings, and notification preferences.
     '''
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Linked User model
-    phone_number = models.CharField(max_length=15, blank=True)  # User's phone number
-    address = models.TextField(blank=True)  # User's address
-
-    # Waste pickup frequency
-    pickup_frequency = models.CharField(
-        max_length=20,
-        choices=[('weekly', 'Weekly'), ('biweekly', 'Biweekly'), ('monthly', 'Monthly')],
-        default='weekly'
-    )
-
-    # Type of waste managed
-    waste_type_preference = models.CharField(
-        max_length=20,
-        choices=[('general', 'General'), ('recycling', 'Recycling'), ('organic', 'Organic')],
-        default='general'
-    )
-    carbon_savings = models.FloatField(default=0.0)  # Carbon savings (kg)
-    notification_preferences = models.BooleanField(default=True)  # Notification settings
+    email_address = models.TextField(blank=True)  # User's address
 
     def __str__(self):
         return self.user.username

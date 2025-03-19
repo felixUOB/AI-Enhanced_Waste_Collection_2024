@@ -76,10 +76,12 @@ class _MetricsPageState extends State<MetricsPage> {
         // get the day after
         DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
         // see if the day after current is the next day or identify if there is a gap
-        while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
-          current = current.add(Duration(days: 1));
-          // add a filler day
-          fetchedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
+        if (current != next){
+          while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
+            current = current.add(Duration(days: 1));
+            // add a filler day
+            fetchedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
+          }
         }
       }
     }
