@@ -473,7 +473,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       ),
       children: [
         if (!getIt<Config>().inTestMode) openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-        RoutePolylineLayer(routePoints: _routePoints),
+        RoutePolylineLayer(routePoints: _routePoints, closestIndex: _closestIndex),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
         if (_locationStatus != null && location != null)
