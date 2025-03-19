@@ -71,3 +71,29 @@ void main() {
           expect(find.textContaining('mins'), findsNothing);
         });
 
+    testWidgets('Case 2: location != null => getStopTimes is called, times shown',
+            (WidgetTester tester) async {
+          // Provide stops (both unvisited)
+          final stopA = Stop(id: 1, name: 'Stop A', location: LatLng(51.5, -2.0));
+          final stopB = Stop(id: 2, name: 'Stop B', location: LatLng(51.6, -2.1));
+          stopsProvider.setStopsForTest([stopA, stopB]);
+
+          // locationProvider has a valid location
+          locationProvider.setLatestLocationForTest(LatLng(50.0, -2.0));
+
+          // Mock getStopTimes => [5, 8]
+          when(mockRouteService.getStopTimes(any, any)).thenAnswer((_) async => [5, 8]);
+
+          await tester.pumpWidget(createTestWidget());
+          await tester.pumpAndSettle();
+
+          // Ensure getStopTimes was called once
+          verify(mockRouteService.getStopTimes(LatLng(50.0, -2.0), any)).called(1);
+
+          // We see "Stop A" / "Stop B" and "5 mins" / "8 mins"
+          expect(find.text('Stop A'), findsOneWidget);
+          expect(find.text('Stop B'), findsOneWidget);
+          expect(find.text('5 mins'), findsOneWidget);
+          expect(find.text('8 mins'), findsOneWidget);
+        });
+
