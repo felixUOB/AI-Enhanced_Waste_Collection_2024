@@ -6,9 +6,13 @@ import 'package:ewc/services/stops_service.dart';
 
 class StopsProvider extends ChangeNotifier {
   List<Stop> _stops = [];
-  final StopsService _stopsService = getIt<StopsService>();
+  StopsService _stopsService = getIt<StopsService>();
 
   List<Stop> get stops => _stops;
+
+  void setStopsForTest(List<Stop> newStops) {
+    _stops = newStops;
+  }
 
   Future<void> initialiseStops() async {
     // Fetch stops from backend
