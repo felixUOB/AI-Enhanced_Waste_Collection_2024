@@ -34,6 +34,7 @@ import 'package:ewc/services/metrics_service.dart';
 /// - `_drawStopsMarker(Color color)`: Draws markers for all stops.
 /// - `_fetchRoute(int firstStopID, int secondStopID)`: Fetches a route between two stops.
 /// - `_fetchOptimizedRoute()`: Fetches an optimized route between stops. 
+/// - `getInstructionsBinarySearch(int userIndex)`: Gets the instruction based on the user's current route index using binary search.
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -223,11 +224,21 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-  // Returns the instruction based on the user's current route index
-  String getCurrentInstruction(int userIndex) {
-    for (var range in _routeInstructions) {
-      if (userIndex >= range.start && userIndex <= range.end) {
-        return range.instruction;
+  // Returns the instruction based on the user's current route index using binary search
+  String getCurrentInstructionBinarySearch(int userIndex) {
+    int low =0;
+    int high = _routeInstructions.length - 1;
+
+    while (low <= high) {
+      int mid = (low + high) ~/ 2;
+      final rangeInstruction = _routeInstructions[mid];
+
+      if (userIndex < rangeInstruction.start) {
+        high = mid - 1;
+      } else if (userIndex > rangeInstruction.end) {
+        low = mid + 1;
+      } else {
+        return rangeInstruction.instruction;
       }
     }
     return "No instructions available";
@@ -659,7 +670,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     setState(() {
       _closestIndex = index;
       _autoBearing = bearing;
-      _currentInstruction = getCurrentInstruction(index);
+      _currentInstruction = getCurrentInstructionBinarySearch(index);
     });
   }
 
