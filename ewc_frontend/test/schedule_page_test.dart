@@ -49,3 +49,25 @@ void main() {
           final stopA = Stop(id: 1, name: 'Stop A', location: LatLng(51.5, -2.0));
           final stopB = Stop(id: 2, name: 'Stop B', location: LatLng(51.6, -2.1));
 
+          // Use setStopsForTest to inject data
+          stopsProvider.setStopsForTest([stopA, stopB]);
+
+          // location is null
+          locationProvider.setLatestLocationForTest(null);
+
+          // Stub getStopTimes (should NOT be called if location == null)
+          when(mockRouteService.getStopTimes(any, any)).thenAnswer((_) async => [5, 10]);
+
+          // Render the widget
+          await tester.pumpWidget(createTestWidget());
+          await tester.pumpAndSettle();
+
+          // Verify getStopTimes was never called
+          verifyNever(mockRouteService.getStopTimes(any, any));
+
+          // "Stop A" / "Stop B" are shown, but no "mins" text
+          expect(find.text('Stop A'), findsOneWidget);
+          expect(find.text('Stop B'), findsOneWidget);
+          expect(find.textContaining('mins'), findsNothing);
+        });
+
