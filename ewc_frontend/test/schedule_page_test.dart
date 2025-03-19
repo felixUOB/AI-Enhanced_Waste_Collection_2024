@@ -177,3 +177,45 @@ void main() {
           verify(mockRouteService.getStopTimes(LatLng(50.0, -2.0), any)).called(2);
         });
 
+    testWidgets('Case 5: no stops => empty ListView', (WidgetTester tester) async {
+      // Provide an empty list of stops
+      stopsProvider.setStopsForTest([]);
+      locationProvider.setLatestLocationForTest(LatLng(50.0, -2.0));
+
+      // getStopTimes => []
+      when(mockRouteService.getStopTimes(any, any)).thenAnswer((_) async => []);
+
+      await tester.pumpWidget(createTestWidget());
+      await tester.pumpAndSettle();
+
+      // There's a ListView, but no items => no 'mins' text
+      expect(find.byType(ListView), findsOneWidget);
+      expect(find.textContaining('mins'), findsNothing);
+    });
+
+    testWidgets('Case 6: Exception thrown => coverage of catch block',
+            (WidgetTester tester) async {
+          // Provide a single stop
+          final stopA = Stop(
+            id: 1,
+            name: 'Stop A',
+            location: LatLng(51.5, -2.0),
+            visited: false,
+          );
+          stopsProvider.setStopsForTest([stopA]);
+          locationProvider.setLatestLocationForTest(LatLng(50.0, -2.0));
+
+          // Throw an exception in getStopTimes => triggers catch => rethrow
+          when(mockRouteService.getStopTimes(any, any))
+              .thenThrow(Exception('Test route error'));
+
+          await tester.runAsync(() async {
+            // We expect the widget to throw an exception
+            expectLater(
+                  () => tester.pumpWidget(createTestWidget()),
+              throwsA(isA<Exception>()),
+            );
+          });
+        });
+  });
+}
