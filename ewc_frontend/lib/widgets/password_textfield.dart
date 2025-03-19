@@ -31,10 +31,16 @@ class _PasswordTextfield extends State<PasswordTextfield> {
         data: ThemeData.light(),
         child: TextFormField(
           validator: (value) {
+            final bool passwordValid = 
+              RegExp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()])[A-Za-z\d!@#$%^&*()]{8,}$")
+                .hasMatch(value.toString());
+
             if (value == null || value.isEmpty){
                 return 'Please enter some text';
-              }
-              return null;
+            }else if (!passwordValid){
+                return 'Invalid string';
+            }
+            return null;
           },
           controller: widget.controller,
           obscureText: obscured,

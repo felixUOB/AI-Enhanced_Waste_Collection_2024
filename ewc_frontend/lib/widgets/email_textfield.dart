@@ -29,7 +29,7 @@ class EmailTextfield extends StatelessWidget {
 
             validator: (value) {
               final bool emailValid = 
-                RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
                   .hasMatch(value.toString());
               if (value == null || value.isEmpty){
                 return 'Please enter some text';
