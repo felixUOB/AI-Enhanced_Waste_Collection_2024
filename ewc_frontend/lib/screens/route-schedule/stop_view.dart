@@ -38,36 +38,57 @@ class _StopView extends State<StopView> {
 
 
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Text("Status: ${(widget.visited) ? "Collection logged" : "Collection required"}"),
-              widget.visited ?
-              ElevatedButton(
-                onPressed: () {
-                  StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
-                  stopProvider.setVisited(widget.id, false);
-                  stopProvider.removeStopCollection(widget.id);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: spaceNXTGreen,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                ),
+        child: Column(
+          children: [
+
+            // Top half, stop location name
+            Expanded(
+              child: Container(
+                color: Colors.blue[300],
                 child: Text(
-                  "Mark as unvisited",
-                  style: const TextStyle(color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  )
+                  "Test Stop Name",
+                  style: AppTheme().constWhiteTextLarge
+                ),
+              )
+            ),
+
+            // Bottom half, buttons
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+                child: Column(
+                  children: [
+                    Text("Status: ${(widget.visited) ? "Collection logged" : "Collection required"}"),
+                    widget.visited ?
+                    ElevatedButton(
+                      onPressed: () {
+                        StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
+                        stopProvider.setVisited(widget.id, false);
+                        stopProvider.removeStopCollection(widget.id);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: spaceNXTGreen,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20),
+                      ),
+                      child: Text(
+                        "Mark as unvisited",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        )
+                      )
+                    ) : SizedBox.shrink()
+                  ]
                 )
-              ) : SizedBox.shrink()
-            ],
-          ),
+              )
+            )
+          ]
         )
-      ),
+      )
     );
   }
 }
