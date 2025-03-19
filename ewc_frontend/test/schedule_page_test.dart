@@ -42,5 +42,10 @@ void main() {
     locationProvider = LocationProvider();
   });
 
+  group('Schedule widget tests', () {
+    testWidgets('Case 1: location == null => no getStopTimes call',
+            (WidgetTester tester) async {
+          // Provide some stops (two stops, neither visited)
+          final stopA = Stop(id: 1, name: 'Stop A', location: LatLng(51.5, -2.0));
+          final stopB = Stop(id: 2, name: 'Stop B', location: LatLng(51.6, -2.1));
 
-// NO TESTING NEEDED UNTIL API IS LINKED AS ALL IS HARDCODED INTO PAGE AND UNCHANGING
