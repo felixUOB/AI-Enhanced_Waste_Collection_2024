@@ -96,25 +96,6 @@ class RegisterPage extends StatelessWidget {
                   height: 10,
                 ),
 
-                // Additional user information input fields (optional)
-                LoginTextfield(
-                  controller: phoneNumberController,
-                  hintText: "Phone Number",
-                  key: Key("phoneNumberField"),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
-                LoginTextfield(
-                  controller: addressController,
-                  hintText: "Address",
-                  key: Key("addressField"),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
                 // Register button
                 const SizedBox(
                   height: 20,
@@ -140,9 +121,6 @@ class RegisterPage extends StatelessWidget {
                         username: usernameController.text,
                         password: passwordController.text,
                         email: emailController.text,
-                        phoneNumber: phoneNumberController.text,
-                        address: addressController.text,
-                        // Include additional fields if necessary
                       );
                       // Navigate to the login page after registration
                       navigator.pop;

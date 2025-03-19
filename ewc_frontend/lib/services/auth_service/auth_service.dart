@@ -206,8 +206,6 @@ class AuthService {
     required String username,
     required String password,
     required email,
-    required phoneNumber,
-    required address,
     // Additional fields if needed
   }) async {
     final response = await http.post(
@@ -217,12 +215,9 @@ class AuthService {
         'username': username,
         'password': password,
         'email': email ?? '',
-        'phone_number': phoneNumber ?? '',
-        'address': address ?? '',
         // Include additional fields if necessary
       }),
     );
-
     if (response.statusCode == 201) {
       // Perform additional actions upon successful registration
     } else {
