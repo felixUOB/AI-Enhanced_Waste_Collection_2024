@@ -129,26 +129,27 @@ class RegisterPageState extends State<RegisterPage>{
                               email: emailController.text,
                             );
                             // Navigate to the login page after registration
-                            // TODO: a pop up that says registration successful and takes you back a screen
                             navigator.pop;
+                            if (context.mounted){
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Success"),
+                                  content: const Text("Registration successful! Please log in"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        navigator.pop();
+                                        navigator.pop();
+                                      },
+                                      child: const Text('OK')
+                                    )
+                                  ],
+                                )
+                              );
+                            }
                             
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => AlertDialog(
-                                title: const Text("Success"),
-                                content: const Text("Registration successful! Please log in"),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      navigator.pop();
-                                      navigator.pop();
-                                    },
-                                    child: const Text('OK')
-                                  )
-                                ],
-                              )
-                            );
 
                             
                           } catch (e) {
