@@ -46,7 +46,8 @@ class MapPage extends StatefulWidget {
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
-  final Map<List<double>, String> _routeInstructions = {};
+  final List<RangeInstruction> _routeInstructions = [];
+  // final Map<List<double>, String> _routeInstructions = {};
   final List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
@@ -165,12 +166,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       if (location != null) {
         RouteResult result = await _routeService.routePlanning(location, stops);
         List<LatLng> optimizedRoute = result.routeCoordinates;
-        Map<List<double>, String> instructionsMap = result.instructionsMap;
+        // Map<List<double>, String> instructionsMap = result.instructionsMap;
+        List<RangeInstruction> rangeInstructions = result.rangeInstructions;
         setState(() {
           _routePoints.clear();
           _routeInstructions.clear();
           _routePoints.addAll(optimizedRoute);
-          _routeInstructions.addAll(instructionsMap);
+          _routeInstructions.addAll(rangeInstructions);
         });
       }
     } catch (e) {
@@ -221,29 +223,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-  // To be used later with the users location - for modification
-  List<double>? getInstructionRangeKey(int userIndex) {
-    // Find the first instruction range that the user's index falls within the defined range.
-    List<double>? activeRange;
-    _routeInstructions.forEach((range, instruction) {
-      final start = range[0].toInt();
-      final end = range[1].toInt();
-      if (userIndex >= start && userIndex <= end) {
-        activeRange = range;
-      }
-    });
-
-    // Return the range (key) if found
-    return activeRange;
-  }
-
   // Returns the instruction based on the user's current route index
   String getCurrentInstruction(int userIndex) {
-    for (var range in _routeInstructions.keys) {
-      final int start = range[0].toInt();
-      final int end = range[1].toInt();
-      if (userIndex >= start && userIndex <= end) {
-        return _routeInstructions[range]!;
+    for (var range in _routeInstructions) {
+      if (userIndex >= range.start && userIndex <= range.end) {
+        return range.instruction;
       }
     }
     return "No instructions available";
