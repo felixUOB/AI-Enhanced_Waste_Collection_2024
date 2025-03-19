@@ -274,7 +274,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                     ]),
                                   ])),
                           context,
-                          "This graph shows how far you have traveled on your journeys this week.",
+                          "This graph shows how far you have travelled on your journeys this week.",
                           )),
                   StaggeredGridTile.extent(
                       crossAxisCellCount: 2,
