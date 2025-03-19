@@ -97,3 +97,46 @@ void main() {
           expect(find.text('8 mins'), findsOneWidget);
         });
 
+    testWidgets('Case 3: visited stops => times array is padded with 0',
+            (WidgetTester tester) async {
+          // 3 stops: A visited, B/C unvisited
+          final stopA = Stop(
+            id: 1,
+            name: 'Stop A',
+            location: LatLng(51.5, -2.0),
+            visited: true,
+          );
+          final stopB = Stop(
+            id: 2,
+            name: 'Stop B',
+            location: LatLng(51.6, -2.1),
+            visited: false,
+          );
+          final stopC = Stop(
+            id: 3,
+            name: 'Stop C',
+            location: LatLng(51.7, -2.2),
+            visited: false,
+          );
+
+          stopsProvider.setStopsForTest([stopA, stopB, stopC]);
+          locationProvider.setLatestLocationForTest(LatLng(50.0, -2.0));
+
+          // visited=1 => we pad with 0, unvisited=2 => getStopTimes => [5,12]
+          when(mockRouteService.getStopTimes(any, any)).thenAnswer((_) async => [5, 12]);
+
+          await tester.pumpWidget(createTestWidget());
+          await tester.pumpAndSettle();
+
+          // Check we see names A/B/C
+          expect(find.text('Stop A'), findsOneWidget);
+          expect(find.text('Stop B'), findsOneWidget);
+          expect(find.text('Stop C'), findsOneWidget);
+
+          // B => "5 mins", C => "12 mins", A => visited => blank
+          expect(find.text('5 mins'), findsOneWidget);
+          expect(find.text('12 mins'), findsOneWidget);
+          // We only see "mins" exactly 2 times
+          expect(find.textContaining('mins'), findsNWidgets(2));
+        });
+
