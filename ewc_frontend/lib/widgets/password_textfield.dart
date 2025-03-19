@@ -29,7 +29,13 @@ class _PasswordTextfield extends State<PasswordTextfield> {
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Theme(
         data: ThemeData.light(),
-        child: TextField(
+        child: TextFormField(
+          validator: (value) {
+            if (value == null || value.isEmpty){
+                return 'Please enter some text';
+              }
+              return null;
+          },
           controller: widget.controller,
           obscureText: obscured,
           decoration: InputDecoration(

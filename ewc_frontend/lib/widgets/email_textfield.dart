@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 /// Functions:
 /// - `build()`: Builds the login textfield component.
 
-class LoginTextfield extends StatelessWidget {
+class EmailTextfield extends StatelessWidget {
   final dynamic controller;
   final String hintText;
 
   // ignore: prefer_const_constructors_in_immutables
-  LoginTextfield({
+  EmailTextfield({
     super.key,
     required this.controller,
     required this.hintText,
@@ -25,9 +25,16 @@ class LoginTextfield extends StatelessWidget {
       child: Theme(
         data: ThemeData.light(),
         child: TextFormField(
+            // check that it is a valid email
+
             validator: (value) {
+              final bool emailValid = 
+                RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                  .hasMatch(value.toString());
               if (value == null || value.isEmpty){
                 return 'Please enter some text';
+              } else if (!emailValid){
+                return 'Please enter a valid email';
               }
               return null;
             },
