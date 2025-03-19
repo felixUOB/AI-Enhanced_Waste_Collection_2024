@@ -140,3 +140,40 @@ void main() {
           expect(find.textContaining('mins'), findsNWidgets(2));
         });
 
+    testWidgets('Case 4: RefreshIndicator => calls getStopTimes again',
+            (WidgetTester tester) async {
+          // Single stop, unvisited
+          final stopA = Stop(
+            id: 1,
+            name: 'Stop A',
+            location: LatLng(51.5, -2.0),
+            visited: false,
+          );
+          stopsProvider.setStopsForTest([stopA]);
+          locationProvider.setLatestLocationForTest(LatLng(50.0, -2.0));
+
+          // Initial => [5]
+          when(mockRouteService.getStopTimes(any, any)).thenAnswer((_) async => [5]);
+
+          await tester.pumpWidget(createTestWidget());
+          await tester.pumpAndSettle();
+
+          // See "5 mins"
+          expect(find.text('5 mins'), findsOneWidget);
+
+          // Redefine => [10]
+          when(mockRouteService.getStopTimes(any, any)).thenAnswer((_) async => [10]);
+
+          // Pull down the ListView to refresh
+          final listFinder = find.byType(ListView);
+          await tester.drag(listFinder, const Offset(0, 300));
+          await tester.pumpAndSettle();
+
+          // Now we see "10 mins" instead of "5 mins"
+          expect(find.text('10 mins'), findsOneWidget);
+          expect(find.text('5 mins'), findsNothing);
+
+          // getStopTimes is called twice total (initial + refresh)
+          verify(mockRouteService.getStopTimes(LatLng(50.0, -2.0), any)).called(2);
+        });
+
