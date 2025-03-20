@@ -6,7 +6,7 @@ import 'package:ewc/services/stops_service.dart';
 
 class StopsProvider extends ChangeNotifier {
   List<Stop> _stops = [];
-  StopsService _stopsService = getIt<StopsService>();
+  final StopsService _stopsService = getIt<StopsService>();
 
   List<Stop> get stops => _stops;
 
