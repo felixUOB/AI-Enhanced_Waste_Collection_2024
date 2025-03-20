@@ -30,8 +30,7 @@ Serializers:
 
 6. UserRegistrationSerializer:
    - Extends `UserSerializer` to handle user registration.
-   - Accepts additional fields for phone number, address, pickup frequency, waste type preference,  
-     and notification preferences.
+   - Accepts additional fields for email address 
    - Implements a `create()` method to generate new user accounts and associated `UserProfile` instances.
 """
 
@@ -89,8 +88,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
     '''
     This serializer class extends the UserSerializer to handle user registration.
-    It includes additional fields for phone number, address, pickup frequency, waste type preference,
-    and notification preferences.
+    It includes additional fields for email_address
     '''
     password = serializers.CharField(write_only=True)
     email_address = serializers.CharField(write_only=True, required=False)
