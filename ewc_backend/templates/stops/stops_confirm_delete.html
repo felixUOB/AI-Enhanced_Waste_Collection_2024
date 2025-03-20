@@ -2,6 +2,36 @@
 
 {% block title %}Confirm Delete{% endblock %}
 
+{% block extra_css %}
+<style>
+  /* Delete button */
+  .btn-danger {
+      color: red !important;
+      background-color: transparent !important;
+      border: 1px solid red !important;
+      transition: background-color 0.2s, color 0.2s;
+  }
+  .btn-danger:hover {
+      color: #fff !important;
+      background-color: red !important;
+      border-color: red !important;
+  }
+  /* Cancel button */
+  .btn-secondary {
+      color: #343a40 !important;
+      background-color: transparent !important;
+      border: 1px solid #343a40 !important;
+      transition: background-color 0.2s, color 0.2s;
+  }
+  .btn-secondary:hover {
+      color: #fff !important;
+      background-color: #343a40 !important;
+      border-color: #343a40 !important;
+  }
+
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container">
   <h2>Delete Stop</h2>
@@ -12,5 +42,8 @@
     <button type="submit" class="btn btn-danger">Yes, Delete</button>
     <a href="{% url 'stops_list' %}" class="btn btn-secondary">Cancel</a>
   </form>
+</div>
+<div class="extra-space">
+  <p></p>
 </div>
 {% endblock %}

@@ -13,9 +13,19 @@ fetch('/stops/get_stops_list')
   .then(stops => {
     // Iterate over each stop and create a marker
     for (let stop of stops) {
+      // Constructs the popup HTML with edit and delete buttons
+      var popupHtml = `<strong>${stop.location_name || '(No Name)'}</strong><br>
+      <a class="btn btn-sm btn-outline-primary" href="/stops/${stop.stop_id}/edit/">
+        <i class="bi bi-pencil"></i> Edit
+      </a>
+      <a class="btn btn-sm btn-outline-danger ms-2" href="/stops/${stop.stop_id}/delete/">
+        <i class="bi bi-trash"></i> Delete
+      </a>`;
+
+
       L.marker([stop.latitude, stop.longitude])
         .addTo(map)
-        .bindPopup(stop.location_name);
+        .bindPopup(popupHtml);
     }
     if (stops.length > 0) map.setView([stops[0].latitude, stops[0].longitude], 13);
   })
