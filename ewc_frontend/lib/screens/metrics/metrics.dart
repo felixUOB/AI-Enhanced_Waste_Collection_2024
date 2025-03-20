@@ -48,7 +48,7 @@ class _MetricsPageState extends State<MetricsPage> {
   };
 
   // holds the journeys that have occured on this week
-  List<JourneyRoute> thisWeeksJoruneys = [];
+  List<JourneyRoute> thisWeeksJourneys = [];
   List<Map<String, dynamic>> overallMpg = [];
   List<Map<String, dynamic>> overallDistance = [];
   List<Map<String, dynamic>> fuelConsumed = [];
@@ -64,33 +64,52 @@ class _MetricsPageState extends State<MetricsPage> {
 
   Future<void> _fetchMetricsDate() async{
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
-    fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
-
+    List<JourneyRoute> updatedRoutes = [];
     // fill in the spare days
     if (fetchedRoutes.length >1){
+      // sort the data
+      fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
+
       // loop around all of the days currently in the array and fill in any blank days
       int len = fetchedRoutes.length-1;
-      for (int i=0; i<len; i++){
+      int i =0;
+      while (i<len){
         // get the first day
         DateTime current = DateTime.parse(fetchedRoutes[i].date);
-        // get the day after
+        
+        // combine entries that were on the same day
+        double totalDistance = fetchedRoutes[i].distance;
+        var mpg = [fetchedRoutes[i].mpg];
+        while(fetchedRoutes[i].date == fetchedRoutes[i+1].date){
+          totalDistance += fetchedRoutes[i+1].distance;
+          mpg.add(fetchedRoutes[i+1].mpg);
+          i++;
+        }
+        double avgMpg = mpg.reduce((a,b) => (a+b)) / mpg.length;
+        updatedRoutes.add(JourneyRoute(distance: totalDistance, mpg: avgMpg, date: current.toString(), filler: false));
+
+        // fill in any gaps
         DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
         // see if the day after current is the next day or identify if there is a gap
         while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
-          current = current.add(Duration(days: 1));
-          // add a filler day
-          fetchedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
+            current = current.add(Duration(days: 1));
+            // add a filler day
+            updatedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
+        }
+        i ++;
+        if (i==len){
+          updatedRoutes.add(JourneyRoute(distance: fetchedRoutes[i].distance, mpg: fetchedRoutes[i].mpg, date: fetchedRoutes[i].date.toString(), filler: false));
         }
       }
     }
-    fetchedRoutes.sort((a,b) => a.date.compareTo(b.date));
-    routeList = fetchedRoutes;
+    updatedRoutes.sort((a,b) => a.date.compareTo(b.date));
+    routeList = updatedRoutes;
     _calculateDetails();
-    thisWeeksJoruneys = _calculateThisWeek();
+    thisWeeksJourneys = _calculateThisWeek();
     // update the state of the graphs
     setState((){
       //  put the dates into a nice format
-      for (var route in thisWeeksJoruneys){
+      for (var route in thisWeeksJourneys){
         DateTime d = DateTime.parse(route.date);
         int dayOfWeek = d.weekday;
         if (dayOfWeek == 1){
@@ -117,12 +136,15 @@ class _MetricsPageState extends State<MetricsPage> {
 
     // if its in testing mode return fake data instead of the stuff from the db
     if (isTesting){
+      String today = DateTime.now().toString().split(' ')[0];
+      String yesterday = (DateTime.now().subtract(Duration(days: 1))).toString().split(' ')[0];
       return [
-        JourneyRoute(date: "2025-01-25", distance: 50, mpg: 10, filler: false),
-        JourneyRoute(date: "2025-01-26", distance: 30, mpg: 8, filler: false),
+        JourneyRoute(date: today, distance: 50, mpg: 10, filler: false),
+        JourneyRoute(date: yesterday, distance: 30, mpg: 8, filler: false),
       ];
     }
-    return await _metricsService.fetchAllRoutes();
+    return await _metricsService.fetchLast30Days();
+    //return await _metricsService.fetchAllRoutes();
   }
 
   // calculate the total routes, total distance and average Mpg and add to lists
@@ -156,7 +178,7 @@ class _MetricsPageState extends State<MetricsPage> {
         }
       }
       if (totalRoutes >0 ){
-        averageMpg = cumulativeMpg / totalRoutes;
+        averageMpg = (cumulativeMpg / totalRoutes).truncateToDouble();
       }
     }
   }
@@ -201,7 +223,7 @@ class _MetricsPageState extends State<MetricsPage> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Column(children: [
-                                Text('Carbon Footprint Bar Graph',
+                                Text('Summary of last 30 days:',
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium),
@@ -285,7 +307,7 @@ class _MetricsPageState extends State<MetricsPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   Column(children: [
-                                    Text('MPG over time',
+                                    Text('MPG over last 30 days',
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium),
@@ -313,7 +335,7 @@ class _MetricsPageState extends State<MetricsPage> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: <Widget>[
                                 Column(children: [
-                                  Text('Distance Over Time',
+                                  Text('Distance Over the last 30 days',
                                       style: Theme.of(context)
                                           .textTheme
                                           .titleMedium),
