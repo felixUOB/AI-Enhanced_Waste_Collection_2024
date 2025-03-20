@@ -5,7 +5,6 @@ import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 
 import 'package:ewc/screens/route-schedule/schedule.dart';
-import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
@@ -48,7 +47,7 @@ void main() {
     stopsProvider = StopsProvider();
     locationProvider = LocationProvider();
   });
-  
+
 
   group('Schedule widget tests', () {
     testWidgets('Case 1: location == null => no getStopTimes call',
