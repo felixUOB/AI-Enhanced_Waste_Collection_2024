@@ -1,3 +1,24 @@
+/**
+ * Stops Form Map Functionality Script
+ *
+ * This script initializes a Leaflet map and manages a marker that updates based on 
+ * form input values. It also listens for input changes to update the marker location 
+ * and performs a debounced coordinate fetch when the stop name input changes.
+ *
+ * Functions:
+ *   - updateMarker(): Updates or adds the map marker based on the current latitude and longitude.
+ *   - fetchCoordinates(): Fetches coordinates from the server based on the stop name.
+ *
+ * Event Listeners:
+ *   - Listens for input changes on 'id_latitude', 'id_longitude', and 'id_location_name' to update the marker.
+ *   - Debounced listener on 'stop_name' to trigger coordinate fetching after typing.
+ *
+ * Dependencies:
+ *   - Leaflet library for map handling.
+ *   - A backend endpoint '/stops/get_coordinates/' that returns JSON with coordinate data.
+ */
+
+
 var map = L.map('map').setView([51.505, -0.09], 13);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -30,7 +51,7 @@ function updateMarker() {
     map.setView([lat, lng], 13);
   }
 }
-
+//
 let debounceTimer;
 document.getElementById('stop_name').addEventListener('input', function() {
   clearTimeout(debounceTimer);

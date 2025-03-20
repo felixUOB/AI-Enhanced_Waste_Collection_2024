@@ -1,4 +1,11 @@
-/* Base CSS for a clean, modern layout */
+/*
+  File: base.css
+  Description: Base CSS for a clean, modern layout. This file defines global CSS variables,
+               resets, and base styles used across the EWC. It sets up color schemes,
+               typography, and basic component styling.
+  Dependencies:
+      - Google Fonts (Poppins) imported via base.html
+*/
 
 :root {
   --brand-green: #2e7d32;

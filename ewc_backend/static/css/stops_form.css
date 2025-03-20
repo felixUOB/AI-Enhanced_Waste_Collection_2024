@@ -1,3 +1,13 @@
+/*
+  File: stops_form.css
+  Description: Custom styling for the Stops Form page. This file defines styles for the search input,
+               card layout, form controls, buttons, and responsive adjustments.
+  Dependencies:
+      - Bootstrap for layout and form elements.
+      - base.css for global styles.
+      - stops_form.html template.
+*/
+
 .search-field {
     border-radius: 15px;
     padding-left: 30px;

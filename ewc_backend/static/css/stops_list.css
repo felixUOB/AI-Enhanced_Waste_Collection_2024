@@ -1,3 +1,14 @@
+/*
+  File: stops_list.css
+  Description: Custom CSS overrides for the stops list page. This file restyles Bootstrap's default card,
+               list group, and button styles to produce a cleaner, modern look for the stops list. It also includes hover effects
+               and responsive adjustments.
+  Dependencies:
+      - Bootstrap (for base styling of cards, list groups, and buttons)
+      - base.css (for global variables and general layout)
+      - stops_list.html (template using these styles)
+*/
+
 /* Override Bootstrap's default card look with a cleaner style */
 .card {
     border: none;

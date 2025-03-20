@@ -1,3 +1,14 @@
+/**
+ * Stops List Map Script
+ * 
+ * This script initializes a Leaflet map and fetches stops data from a JSON endpoint.
+ * It creates markers for each stop and binds a popup containing Edit and Delete buttons.
+ *
+ * Dependencies:
+ *  - Leaflet library for map handling.
+ *  - A backend endpoint '/stops/get_stops_list' that returns JSON with stop details.
+ */
+
 var map = L.map('map').setView([51.505, -0.09], 13);
 
 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
