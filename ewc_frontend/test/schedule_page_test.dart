@@ -10,6 +10,7 @@ import 'package:ewc/services/route_service.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
+import 'mocks/mock_service_locator.dart';
 
 import 'mocks/mocks.mocks.dart';
 
@@ -31,16 +32,23 @@ void main() {
     );
   }
 
-  setUp(() async {
-    // Reassigning the existing RouteService in the service locator to a mock
+  // 1) Make sure we do mockSetupLocator() at least once
+  setUpAll(() async {
+    await mockSetupLocator();
+  });
+
+  // 2) Then for each test, we can reassign RouteService if we want
+  setUp(() {
     getIt.allowReassignment = true;
+
+    // Replace the existing RouteService in getIt
     mockRouteService = MockRouteService();
     getIt.registerSingleton<RouteService>(mockRouteService);
 
-    // Instantiate real providers
     stopsProvider = StopsProvider();
     locationProvider = LocationProvider();
   });
+  
 
   group('Schedule widget tests', () {
     testWidgets('Case 1: location == null => no getStopTimes call',
