@@ -1,3 +1,4 @@
+import 'package:ewc/services/auth_service/encryption_service.dart';
 import 'package:ewc/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -104,8 +105,7 @@ class RegisterPage extends StatelessWidget {
                   text1: "Register",
                   onPressed: () async {
                     // Add password verification logic
-                    if (passwordController.text !=
-                        confirmPasswordController.text) {
+                    if (passwordController.text != confirmPasswordController.text) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content:
@@ -119,7 +119,7 @@ class RegisterPage extends StatelessWidget {
                     try {
                       await AuthService().register(
                         username: usernameController.text,
-                        password: passwordController.text,
+                        password: EncryptionService().hashData(passwordController.text),
                         email: emailController.text,
                       );
                       // Navigate to the login page after registration
@@ -132,9 +132,10 @@ class RegisterPage extends StatelessWidget {
                       );
                     } catch (e) {
                       // Error handling
+                      debugPrint('$e');
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
-                          content: Text('Registration failed: $e'),
+                          content: Text('Registration failed.'),
                         ),
                       );
                     }
