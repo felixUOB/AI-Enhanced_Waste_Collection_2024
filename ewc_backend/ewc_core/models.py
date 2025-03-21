@@ -9,8 +9,7 @@ Models:
 
 1. UserProfile:
    - Extends the built-in Django `User` model.
-   - Stores additional user details such as phone number, address, waste pickup frequency, 
-     waste type preference, carbon savings, and notification preferences.
+   - Stores additional user details such as email address
 
 2. Stops:
    - Represents collection points with location details (latitude, longitude).
@@ -30,8 +29,7 @@ Models:
 class UserProfile(models.Model):
     '''
     This model extends the built-in Django User model to include additional user details
-    such as phone number, address, waste pickup frequency, waste type preference,
-    carbon savings, and notification preferences.
+    such as email_Address
     '''
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Linked User model
     email_address = models.TextField(blank=True)  # User's address

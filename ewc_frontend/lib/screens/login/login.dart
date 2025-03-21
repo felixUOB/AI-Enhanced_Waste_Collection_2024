@@ -1,4 +1,5 @@
 import 'package:ewc/service_locator.dart';
+import 'package:ewc/services/auth_service/encryption_service.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/login_button.dart';
@@ -115,12 +116,12 @@ class LoginPageState extends State<LoginPage> {
                 final scaffoldMessenger = ScaffoldMessenger.of(context);
                 try {
                   await _authService.login(
-                      usernameController.text, passwordController.text);
+                      usernameController.text, EncryptionService().hashData(passwordController.text));
                   // Navigate to the schedule page after successful login
 
                   if (_rememberMe) {
                     await _authService.saveUserCredentials(
-                        usernameController.text, passwordController.text);
+                        usernameController.text, EncryptionService().hashData(passwordController.text));
                   }
                   // Navigate to home screen
                   navigator.pushReplacement(
