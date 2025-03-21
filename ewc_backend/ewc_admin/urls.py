@@ -17,6 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -26,6 +27,7 @@ from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
 from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, schema_view
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 
 
 # Router configuration for REST API endpoints
@@ -35,6 +37,10 @@ router.register(r'stops', StopsViewSet, basename='stops')
 router.register(r'stop_collection', StopCollectionViewSet, basename='stopcollection')
 router.register(r'route_env_data', RouteEnvDataViewSet, basename='routeenvdata')
 # URL patterns for the application
+
+def redirect_to_admin(request):
+    return redirect('/admin/')
+
 urlpatterns = [
     path('admin/', admin.site.urls),  # Admin site route
     path('api/', include(router.urls)),  # REST API route
@@ -44,7 +50,7 @@ urlpatterns = [
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
     path('api/route-env-data/', RouteEnvDataViewSet.get_route_env_data),
     path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
-    path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),    
 
 # -----------Stops HTML Form URLs------------------
 
@@ -70,4 +76,7 @@ urlpatterns = [
     path('reset_password_complete/', auth_views.PasswordResetCompleteView.as_view(        
         template_name = 'registration/password_reset_complete.html'
     ), name="password_reset_complete"),
+
+    re_path(r'^.*$', redirect_to_admin),  # THIS MUST BE THE LAST URL PATTERN 
+
     ]
