@@ -16,15 +16,16 @@ class MyLineGraph extends StatelessWidget{
   @override
   Widget build(BuildContext context){
     // get the data points in FlSpot format
-    List<FlSpot> points = dataPoints.asMap().entries.map((entry) {
-        int index = entry.key;
-        if (entry.value['value'] != 0){
-          double value = (entry.value['value'] as num).toDouble();
-          return FlSpot(index.toDouble(), value);
-        } else{
-          return FlSpot.nullSpot;
-        }
-      }).toList();
+
+    List<FlSpot> points = [];
+
+    for (int i = 0 ; i<dataPoints.length; i++){
+      Map<String, dynamic> point = dataPoints[i];
+      double value = (point['value'] as num).toDouble();
+      if (value != 0){
+        points.add(FlSpot(i.toDouble(), value));
+      }
+    }
 
     // work out the maxY based on the data
     double maxY = (dataPoints.map((e) => (e['value'] as num).toDouble()) //make sure its a number
@@ -134,7 +135,6 @@ Widget getLeftTitles(double value, TitleMeta meta){
       child: Text(text, style:style),
     );
   }else{
-    return Container(); // dont display just have a space 
+    return Container(); // don't display just have a space 
   }
-  
 }
