@@ -87,7 +87,6 @@ prompt_toolkit==3.0.50
 prophet==1.1.6
 psutil==7.0.0
 psycopg==3.2.4
-psycopg2==2.9.10
 psycopg2-binary==2.9.10
 ptyprocess==0.7.0
 pure_eval==0.2.3

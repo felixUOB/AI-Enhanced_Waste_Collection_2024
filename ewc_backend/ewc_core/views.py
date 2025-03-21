@@ -1,6 +1,9 @@
+from datetime import datetime, timedelta
+from django.http import JsonResponse
 from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
-from rest_framework.response import Response
+from rest_framework.decorators import action, api_view
+
 import requests
 from django.http import JsonResponse
 from django.conf import settings
@@ -9,7 +12,6 @@ from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsS
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import StopsForm
-from .models import Stops
 from django.contrib.auth.decorators import login_required, user_passes_test
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -109,8 +111,17 @@ class RouteEnvDataViewSet(viewsets.ModelViewSet):
     serializer_class = RouteEnvDataSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
 
+    @action(detail=False, methods=['get'])
     def get_route_env_data(self, request):
-        return Response({"message"})
+        data = list(RouteEnvData.objects.values('distance', 'mpg', 'date'))
+        return JsonResponse(data, safe=False)
+
+    @action(detail=False, methods=['get'])
+    def get_route_env_data_30_days(self, request):
+        end_time = datetime.now() - timedelta(days=30)
+        routes = RouteEnvData.objects.filter(date__gte =end_time)
+        data = list(routes.values('distance', 'mpg', 'date'))
+        return JsonResponse(data, safe=False)
 
 # Waste Prediction ViewSet
 class StopsViewSet(viewsets.ModelViewSet):
