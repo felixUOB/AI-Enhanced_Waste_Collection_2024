@@ -1,3 +1,4 @@
+import 'package:ewc/services/auth_service/encryption_service.dart';
 import 'package:ewc/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -96,25 +97,6 @@ class RegisterPage extends StatelessWidget {
                   height: 10,
                 ),
 
-                // Additional user information input fields (optional)
-                LoginTextfield(
-                  controller: phoneNumberController,
-                  hintText: "Phone Number",
-                  key: Key("phoneNumberField"),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
-                LoginTextfield(
-                  controller: addressController,
-                  hintText: "Address",
-                  key: Key("addressField"),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-
                 // Register button
                 const SizedBox(
                   height: 20,
@@ -123,8 +105,7 @@ class RegisterPage extends StatelessWidget {
                   text1: "Register",
                   onPressed: () async {
                     // Add password verification logic
-                    if (passwordController.text !=
-                        confirmPasswordController.text) {
+                    if (passwordController.text != confirmPasswordController.text) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content:
@@ -138,11 +119,8 @@ class RegisterPage extends StatelessWidget {
                     try {
                       await AuthService().register(
                         username: usernameController.text,
-                        password: passwordController.text,
+                        password: EncryptionService().hashData(passwordController.text),
                         email: emailController.text,
-                        phoneNumber: phoneNumberController.text,
-                        address: addressController.text,
-                        // Include additional fields if necessary
                       );
                       // Navigate to the login page after registration
                       navigator.pop;
@@ -154,9 +132,10 @@ class RegisterPage extends StatelessWidget {
                       );
                     } catch (e) {
                       // Error handling
+                      debugPrint('$e');
                       scaffoldMessenger.showSnackBar(
                         SnackBar(
-                          content: Text('Registration failed: $e'),
+                          content: Text('Registration failed.'),
                         ),
                       );
                     }

@@ -30,8 +30,7 @@ Serializers:
 
 6. UserRegistrationSerializer:
    - Extends `UserSerializer` to handle user registration.
-   - Accepts additional fields for phone number, address, pickup frequency, waste type preference,  
-     and notification preferences.
+   - Accepts additional fields for email address 
    - Implements a `create()` method to generate new user accounts and associated `UserProfile` instances.
 """
 
@@ -89,35 +88,18 @@ class UserSerializer(serializers.ModelSerializer):
 class UserRegistrationSerializer(serializers.ModelSerializer):
     '''
     This serializer class extends the UserSerializer to handle user registration.
-    It includes additional fields for phone number, address, pickup frequency, waste type preference,
-    and notification preferences.
+    It includes additional fields for email_address
     '''
     password = serializers.CharField(write_only=True)
-    phone_number = serializers.CharField(write_only=True, required=False)
-    address = serializers.CharField(write_only=True, required=False)
-    pickup_frequency = serializers.ChoiceField(
-        choices=[('weekly', 'Weekly'), ('biweekly', 'Biweekly'), ('monthly', 'Monthly')],
-        default='weekly',
-        write_only=True,
-        required=False
-    )
-    waste_type_preference = serializers.ChoiceField(
-        choices=[('general', 'General'), ('recycling', 'Recycling'), ('organic', 'Organic')],
-        default='general',
-        write_only=True,
-        required=False
-    )
-    notification_preferences = serializers.BooleanField(default=True, write_only=True, required=False)
+    email_address = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'phone_number', 'address',
-                  'pickup_frequency', 'waste_type_preference', 'notification_preferences')
+        fields = ('username', 'password', 'email_address')
 
     def create(self, request):
         user_data = {
             'username': request['username'],
-            'email': request.get('email', '')
         }
         password = request.pop('password')
         user = User(**user_data)
@@ -127,11 +109,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         # UserProfile
         UserProfile.objects.create(
             user=user,
-            phone_number=request.get('phone_number', ''),
-            address=request.get('address', ''),
-            pickup_frequency=request.get('pickup_frequency', 'weekly'),
-            waste_type_preference=request.get('waste_type_preference', 'general'),
-            notification_preferences=request.get('notification_preferences', True)
+            email_address=request.get('email_address', ''),
         )
 
         return user
