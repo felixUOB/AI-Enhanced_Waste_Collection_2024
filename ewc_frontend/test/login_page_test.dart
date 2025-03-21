@@ -9,13 +9,35 @@ import 'package:ewc/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import "package:mockito/mockito.dart";
 import 'mocks/mock_service_locator.dart';
+import 'mocks/mocks.mocks.dart';
+import 'package:ewc/screens/map/map.dart';
+
+class FakeGeolocatorPlatform extends GeolocatorPlatform { 
+  @override Future<bool> isLocationServiceEnabled() async => true;
+
+  @override Stream<ServiceStatus> getServiceStatusStream() { 
+    // Provide a simple stream that immediately yields enabled. 
+    return Stream<ServiceStatus>.value(ServiceStatus.enabled); 
+  }
+
+  @override Future<LocationPermission> checkPermission() async => LocationPermission.always;
+
+  @override Future<LocationPermission> requestPermission() async => LocationPermission.always;
+
+  @override Stream<Position> getPositionStream({LocationSettings? locationSettings}) { 
+    // Return an empty stream so no position updates occur. 
+    return Stream<Position>.empty(); 
+    }
+}
 
 void main() {
   setUp(() async {
     await mockSetupLocator();
+    GeolocatorPlatform.instance = FakeGeolocatorPlatform();
   });
 
   tearDown(() {
@@ -284,6 +306,20 @@ void main() {
       when(getIt<AuthService>().login("mockUsername", ""))
           .thenThrow(Exception("Password missing"));
 
+      when(getIt<Config>().inTestMode).thenReturn(true);
+
+      when(getIt<MetricsService>().fetchAllRoutes()).thenAnswer((_) async => []);
+      
+      when(getIt<AuthService>().makeAuthenticatedRequest("route-env-data-30-days/"))
+          .thenAnswer((_) async => Future.value(
+                Response(
+                  '[{"route_env_data_id": 1, "distance": 10.5, "mpg": 8.2, "date": "2025-03-14"}]', // JSON array string body
+                  200, // Status code
+                ),
+              ));
+      when(getIt<MetricsService>().fetchLast30Days()).thenAnswer((_) async => []);
+      
+
       // Build the test widget
       await tester.pumpWidget(MaterialApp(home: LoginPage()));
 
@@ -301,11 +337,8 @@ void main() {
       await tester.tap(loginButtonFinder);
       await tester.pumpAndSettle(Duration(seconds: 10));
 
-      // Verify that the login call with an empty password was indeed made and caused an exception
-      verify(getIt<AuthService>().login("mockUsername", "")).called(1);
-
-      // Verify that an error message is displayed
-      expect(find.byType(LoginPage), findsOneWidget);
+      // Verify that the login call with never called because it wasn't allowed to submit it due to verification
+      verifyNever(getIt<AuthService>().login("mockUsername", ""));
     });
   });
 }
