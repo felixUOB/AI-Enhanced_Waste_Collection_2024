@@ -4,7 +4,6 @@ import 'package:ewc/widgets/login_textfield.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
-import 'package:ewc/services/auth_service/encryption_service.dart';
 import 'package:ewc/widgets/email_textfield.dart';
 
 /// This file manages the register page and handles user registration.
@@ -150,9 +149,6 @@ class RegisterPageState extends State<RegisterPage>{
                                 )
                               );
                             }
-                            
-
-                            
                           } catch (e) {
                             // Error handling
                             scaffoldMessenger.showSnackBar(
@@ -176,7 +172,6 @@ class RegisterPageState extends State<RegisterPage>{
                   const SizedBox(
                     height: 10,
                   ),
-      
                   // Hyperlink to navigate to the login page
                   HyperLinkText(
                     string1: "Already have an account?",
