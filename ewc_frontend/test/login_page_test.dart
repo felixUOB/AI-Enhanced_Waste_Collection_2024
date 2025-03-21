@@ -13,7 +13,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import "package:mockito/mockito.dart";
 import 'mocks/mock_service_locator.dart';
-import 'mocks/mocks.mocks.dart';
 import 'package:ewc/screens/map/map.dart';
 
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
