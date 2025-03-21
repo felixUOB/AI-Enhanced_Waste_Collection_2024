@@ -21,19 +21,54 @@ class StopView extends StatefulWidget {
 
 class _StopView extends State<StopView> {
 
+  bool? newVisited;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (newVisited == null) {
+              // Visited has not been changed, allow exit
+              Navigator.of(context).pop();
+            } else {
+              // Display save dialog
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Exit stop without saving?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Quit without saving')
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text('Cancel')
+                      )
+                    ],
+                  );
+                }
+              );
+            }
+          }
         ),
-        title: Text(
-          "Stop - ${widget.name}",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              if (newVisited != widget.visited) {
+                // Update stops data if it has changed
+                StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
+                stopProvider.setVisited(widget.id, false);
+                stopProvider.removeStopCollection(widget.id);
+              }
+            },
+            icon: Icon(Icons.save)
+          )
+        ],
       ),
 
 
@@ -62,9 +97,7 @@ class _StopView extends State<StopView> {
                     widget.visited ?
                     ElevatedButton(
                       onPressed: () {
-                        StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
-                        stopProvider.setVisited(widget.id, false);
-                        stopProvider.removeStopCollection(widget.id);
+                        setState(() => newVisited = false);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: spaceNXTGreen,
