@@ -15,7 +15,6 @@ from reportlab.graphics.widgets.markers import makeMarker
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from django.contrib.staticfiles import finders
-from reportlab.lib.utils import ImageReader
 
 
 
