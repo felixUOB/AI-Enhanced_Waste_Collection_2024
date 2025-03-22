@@ -1,15 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart'; // For potential mocking of getLocationPermissions/Geolocator
 import 'package:latlong2/latlong.dart';
-import 'package:geolocator/geolocator.dart';
 
 import 'package:ewc/notifiers/location_notifier.dart';
-import 'package:ewc/services/location_service.dart';
 
-// If mocking is required for getLocationPermissions or requestLocationPermissions,
-// consider creating mock classes or using a platform interface.
-// Here, the real methods are used. In some CI environments,
-// geolocator mocks may be necessary.
 
 void main() {
   group('LocationProvider unit tests', () {
