@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
+import 'mocks/mock_service_locator.dart';
 
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
@@ -9,6 +10,11 @@ import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/models/stop_model.dart';
 
 void main() {
+
+  setUpAll(() async {
+    await mockSetupLocator();
+  });
+
   testWidgets('Minimal coverage test for Schedule', (WidgetTester tester) async {
     // 1) Create providers
     // Instantiate StopsProvider and manually set some test stops.
