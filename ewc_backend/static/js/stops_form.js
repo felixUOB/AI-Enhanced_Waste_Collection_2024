@@ -8,6 +8,13 @@
  * Functions:
  *   - updateMarker(): Updates or adds the map marker based on the current latitude and longitude.
  *   - fetchCoordinates(): Fetches coordinates from the server based on the stop name.
+ * 
+ * Additional Features - Marker Placement Mode:
+ *   - A custom Leaflet control is added that enables a marker placement mode.
+ *   - When in placement mode, a floating semi-transparent marker follows the mouse cursor.
+ *   - Clicking on the map in placement mode updates the form fields with the selected coordinates 
+ *     and drops the marker at the selected location.
+ *   - Pressing the Escape key exits marker placement mode.
  *
  * Event Listeners:
  *   - Listens for input changes on 'id_latitude', 'id_longitude', and 'id_location_name' to update the marker.
@@ -86,3 +93,101 @@ function fetchCoordinates() {
         }
       });
   }
+
+// Adds a control to the map that allows the user to place a marker directly on the map
+const PlaceMarkerControl = L.Control.extend({
+  options: {
+    position: 'topleft'
+  },
+  onAdd: function(map) {
+    // Creates a container with the 'leaflet-bar' class
+    const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+    // Adds a link or a button with a marker icon
+    container.innerHTML = '<a href="#" id="place-marker-btn" title="Place a Marker" style="font-size: 24px; color:rgb(0, 140, 255);"><i class="bi bi-geo-alt"></i></a>';
+    
+    L.DomEvent.disableClickPropagation(container);
+
+    return container;
+  }
+});
+
+// Adds the control to the map
+map.addControl(new PlaceMarkerControl());
+
+// Event listener for the place-marker button
+document.getElementById('place-marker-btn').addEventListener('click', function(e) {
+  e.preventDefault(); 
+  togglePlacementMode();
+});
+
+// Listen for Escape key to disable placement mode.
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && placementMode) {
+    disablePlacementMode();
+  }
+});
+
+let placementMode = false;
+let floatingMarker = null;
+
+// Toggle marker to turn placement mode on/off.
+function togglePlacementMode() {
+  placementMode = !placementMode;
+  if (placementMode) {
+    enablePlacementMode();
+  } else {
+    disablePlacementMode();
+  }
+}
+
+// When placement mode is enabled, add a listeners that updates a floating semi-transparent marker icon.
+function enablePlacementMode() {
+  map.on('mousemove', onMapMouseMove);
+  map.on('click', onMapClick);
+
+  map.getContainer().style.cursor = 'crosshair';
+}
+
+// Remove listeners and semi-transparent floating marker after placement mode is disabled.
+function disablePlacementMode() {
+  map.off('mousemove', onMapMouseMove);
+  map.off('click', onMapClick);
+  map.getContainer().style.cursor = '';
+  if (floatingMarker) {
+    map.removeLayer(floatingMarker);
+    floatingMarker = null;
+  }
+  placementMode = false;
+}
+
+// On mouse move, position a floating semi-transparent marker at the cursor's location.
+function onMapMouseMove(e) {
+  if (!floatingMarker) {
+    floatingMarker = L.marker(e.latlng, {
+      icon: L.icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41]
+      }),
+      interactive: false,
+      opacity: 0.7
+    }).addTo(map);
+  } else {
+    floatingMarker.setLatLng(e.latlng);
+  }
+}
+
+// When the user clicks on the map in placement mode, update the form and place the marker.
+function onMapClick(e) {
+  const lat = e.latlng.lat;
+  const lng = e.latlng.lng;
+  
+  // Update the form fields with lat and lng values.
+  document.getElementById('id_latitude').value = lat;
+  document.getElementById('id_longitude').value = lng;
+  
+ 
+  updateMarker();
+  
+  disablePlacementMode();
+}
