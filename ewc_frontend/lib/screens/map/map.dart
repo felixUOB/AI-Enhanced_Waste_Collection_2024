@@ -48,7 +48,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
   final List<RangeInstruction> _routeInstructions = [];
-  // final Map<List<double>, String> _routeInstructions = {};
   final List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
@@ -167,7 +166,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       if (location != null) {
         RouteResult result = await _routeService.routePlanning(location, stops);
         List<LatLng> optimizedRoute = result.routeCoordinates;
-        // Map<List<double>, String> instructionsMap = result.instructionsMap;
         List<RangeInstruction> rangeInstructions = result.rangeInstructions;
         setState(() {
           _routePoints.clear();
@@ -225,7 +223,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
 
   // Returns the instruction based on the user's current route index using binary search
-  String getCurrentInstructionBinarySearch(int userIndex) {
+  String getCurrentInstructionBinarySearch(double userIndex) {
     int low =0;
     int high = _routeInstructions.length - 1;
 
@@ -666,11 +664,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       );
     }
 
+    // Determine effective index based on whether user is before or after _routePoints[index].
+    double effectiveIndex;
+    if (index > 0 && index < _routePoints.length - 1) {
+      // If distance1 is smaller, user is before reaching _routePoints[index]
+      // Otherwise, user has passed it.
+      if (distance1 < distance2) {
+        effectiveIndex = index - 0.5;
+      } else {
+        effectiveIndex = index + 0.5;
+      }
+    } else {
+      effectiveIndex = index.toDouble();
+    }
     // Update state to reflect new changes
     setState(() {
       _closestIndex = index;
       _autoBearing = bearing;
-      _currentInstruction = getCurrentInstructionBinarySearch(index);
+      _currentInstruction = getCurrentInstructionBinarySearch(effectiveIndex);
     });
   }
 
