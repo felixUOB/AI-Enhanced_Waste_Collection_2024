@@ -23,8 +23,16 @@ void main() {
   });
 
   // Resets the service locator after each test to avoid affecting subsequent tests
-  tearDown(() {
-    getIt.reset();
+  tearDown(() => getIt.reset());
+
+  test('fetchStop returns LatLng on 200', () async {
+    final mockResponse = http.Response(jsonEncode({'latitude': 51.0, 'longitude': -2.0}), 200);
+    when(mockAuthService.makeAuthenticatedRequest('stops/123'))
+        .thenAnswer((_) => Future.value(mockResponse));
+
+    final result = await stopsService.fetchStop(123);
+    expect(result.latitude, 51.0);
+    expect(result.longitude, -2.0);
   });
 
   group('StopsService.fetchStop', () {
