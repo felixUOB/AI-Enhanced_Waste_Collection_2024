@@ -1,32 +1,32 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mockito/mockito.dart';
 import 'package:latlong2/latlong.dart';
 
-import 'package:ewc/screens/route-schedule/schedule.dart';
-import 'package:ewc/services/route_service.dart';
-import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
-import 'mocks/mock_service_locator.dart';
-
-import 'mocks/mocks.mocks.dart';
+import 'package:ewc/screens/route-schedule/schedule.dart';
+import 'package:ewc/models/stop_model.dart';
 
 void main() {
-  late MockRouteService mockRouteService;
-  late StopsProvider stopsProvider;
-  late LocationProvider locationProvider;
+  testWidgets('Minimal coverage test for Schedule', (WidgetTester tester) async {
+    // 1) Create providers
+    // Instantiate StopsProvider and manually set some test stops.
+    // This ensures the widget will have a small dataset to display.
+    final stopsProvider = StopsProvider();
+    stopsProvider.setStopsForTest([
+      Stop(
+        id: 1,
+        name: 'Stop A',
+        location: LatLng(51.5, -2.0),
+      ),
+      Stop(
+        id: 2,
+        name: 'Stop B',
+        location: LatLng(51.6, -2.1),
+      ),
+    ]);
 
-  // Helper: sets up the widget with both providers
-  Widget createTestWidget() {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<StopsProvider>.value(value: stopsProvider),
-        ChangeNotifierProvider<LocationProvider>.value(value: locationProvider),
-      ],
-      child: const MaterialApp(
-        home: Schedule(),
       ),
     );
   }
