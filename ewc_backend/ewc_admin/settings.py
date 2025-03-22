@@ -71,8 +71,7 @@ JAZZMIN_SETTINGS = {
     "topmenu_links": [
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
         {"name": "Support", "url": "https://github.com/spe-uob/2024-AIEnhancedWasteCollection", "new_window": True},
-        {"model": "auth.User"},
-        {"app": "ewc_core"},
+        {"name": "Waste Management", "url": "admin:admin_stops_redirect", "permissions": ["auth.view_user"]},
     ],
 
     "usermenu_links": [
