@@ -21,12 +21,14 @@ void main() {
   setUpAll(() async {
     // 1) Calls mockSetupLocator(), which registers MockStopsService, MockRouteService, etc. in GetIt
     await mockSetupLocator();
+  });
 
-    // 2) Retrieve the registered RouteService and cast it to MockRouteService
+  setUp(() {
+  // (2) Retrieve the registered RouteService and cast it to MockRouteService
+    getIt.allowReassignment = true;
     mockRouteService = getIt<RouteService>() as MockRouteService;
 
-    // 3) Define the behavior of getStopTimes(...) to return [5, 10]
-    //    This matches our test scenario of having exactly two stops
+  // 3) Define the behavior of getStopTimes(...) to return [5, 10]
     when(mockRouteService.getStopTimes(any, any))
         .thenAnswer((_) async => [5, 10]);
   });
@@ -35,13 +37,13 @@ void main() {
     // 4) Create a StopsProvider and provide two test stops
     final stopsProvider = StopsProvider();
     stopsProvider.setStopsForTest([
-      Stop(id: 1, name: 'Stop A', location: LatLng(51.5, -2.0)),
-      Stop(id: 2, name: 'Stop B', location: LatLng(51.6, -2.1)),
+      Stop(id: 1, name: 'Stop A', location: LatLng(51.5, -2.0), visited: false,),
+      Stop(id: 2, name: 'Stop B', location: LatLng(51.6, -2.1), visited: false,),
     ]);
 
     // 5) Create a LocationProvider with a non-null location
     final locationProvider = LocationProvider();
-    locationProvider.setLatestLocationForTest(LatLng(50, -2));
+    locationProvider.setLatestLocationForTest(LatLng(50.0, -2.0));
 
     // 6) Render the Schedule widget within a MultiProvider
     //    This ensures both providers are available to the widget.
