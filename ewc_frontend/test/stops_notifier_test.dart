@@ -1,10 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/services/stops_service.dart';
-import 'package:latlong2/latlong.dart';
+
+import 'mocks/mock_service_locator.dart';
+import 'mocks/mocks.mocks.dart';
 
 // Mock class for StopsService to override fetchAllStops() behavior
 class MockStopsService extends Mock implements StopsService {}
@@ -14,12 +17,13 @@ void main() {
     late StopsProvider stopsProvider;
     late MockStopsService mockStopsService;
 
+    setUpAll(() async  {
+      await mockSetupLocator();
+    });
+
     setUp(() {
-      mockStopsService = MockStopsService();
-      // In the real code, _stopsService is obtained via getIt<StopsService>().
-      // For testing, one typical approach is to replace the service in the service locator.
-      // Another approach might be a custom constructor for StopsProvider that accepts a mock.
-      // Here, just create a new StopsProvider() and rely on setStopsForTest(...) for coverage.
+      mockStopsService = getIt<StopsService>() as MockStopsService;
+
       stopsProvider = StopsProvider();
     });
 
