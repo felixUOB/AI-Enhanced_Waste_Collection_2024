@@ -241,6 +241,7 @@ void main() {
               )),
               throwsA(isA<Exception>()),
             );
+            await tester.pumpAndSettle();
           });
         });
   });
