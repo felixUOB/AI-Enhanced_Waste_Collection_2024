@@ -7,7 +7,6 @@ import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/services/stops_service.dart';
 
 import 'mocks/mock_service_locator.dart';
-import 'mocks/mocks.mocks.dart';
 
 // Mock class for StopsService to override fetchAllStops() behavior
 class MockStopsService extends Mock implements StopsService {}
