@@ -14,7 +14,7 @@ void main() {
       final encryptionService = EncryptionService();
 
       // In a real test, you must ensure a valid ENCRYPTION_KEY is defined in .env.
-      final keyFromEnv = dotenv.env['ENCRYPTION_KEY'] ?? '16CharactersKey1234';
+      final keyFromEnv = dotenv.env['ENCRYPTION_KEY'] ?? '0123456789ABCDEF';
       encryptionService.init(keyFromEnv);
 
       final originalText = 'Hello Encryption';
