@@ -4,108 +4,101 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/services/auth_service/encryption_service.dart';
 
-// The method channel used by flutter_secure_storage.
-const MethodChannel secureStorageChannel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+const MethodChannel secureStorageChannel = MethodChannel('plugins.it_nomads.com/flutter_secure_storage'); // Defines the channel used by flutter_secure_storage
 
-// We define a mock handler function for convenience.
-Future<dynamic> mockSecureStorageHandler(MethodCall methodCall) async {
+final Map<String, String> mockSecureStorage = {}; // In-memory map that simulates secure storage
+
+Future<dynamic> mockSecureStorageHandler(MethodCall methodCall) async { // Handles method calls to the channel in a mock environment
   switch (methodCall.method) {
     case 'write':
-    // Pretend we wrote something successfully.
+      final key = methodCall.arguments['key'] as String?; // Extracts the key to be written
+      final value = methodCall.arguments['value'] as String?; // Extracts the value to be written
+      if (key != null && value != null) {
+        mockSecureStorage[key] = value; // Stores the key-value pair in the mock map
+      }
       return null;
     case 'read':
-    // Return test data if it's "username" or "password".
-      if (methodCall.arguments['key'] == 'username') {
-        return 'testUser';
-      } else if (methodCall.arguments['key'] == 'password') {
-        // Suppose we stored an encrypted password.
-        return 'IV_BASE64:ENCRYPTED_BASE64';
+      final key = methodCall.arguments['key'] as String?; // Extracts the key to be read
+      if (key != null && mockSecureStorage.containsKey(key)) {
+        return mockSecureStorage[key]; // Returns the stored value if it exists
       }
       return null;
     case 'delete':
-    // Pretend we deleted the specified key.
+      final key = methodCall.arguments['key'] as String?; // Extracts the key to be deleted
+      if (key != null && mockSecureStorage.containsKey(key)) {
+        mockSecureStorage.remove(key); // Removes the entry from the mock map
+      }
       return null;
     case 'deleteAll':
-    // Pretend we cleared everything.
+      mockSecureStorage.clear(); // Clears the entire mock map
       return null;
   }
-  return null;
+  return null; // Returns null if the method is not recognized
 }
 
-void main() {
-  // Ensures the Widget test binding is initialized.
-  TestWidgetsFlutterBinding.ensureInitialized();
+void main() { // Entry point for the test suite
+  TestWidgetsFlutterBinding.ensureInitialized(); // Prepares the widget test environment
 
   setUpAll(() async {
-    // Load environment variables, e.g., ENCRYPTION_KEY
-    await dotenv.load(fileName: '.env');
+    await dotenv.load(fileName: '.env'); // Loads environment variables from the .env file
 
-    // Use the recommended approach to set a mock method call handler.
+    // Hooks our mock handler to the secureStorageChannel for all method calls
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(secureStorageChannel, mockSecureStorageHandler);
   });
 
-  group('EncryptionService Tests', () {
+  group('EncryptionService Tests', () { // Tests related to EncryptionService
     test('init, encrypt, decrypt', () {
-      final encryptionService = EncryptionService();
-      final keyFromEnv = dotenv.env['ENCRYPTION_KEY'] ?? '0123456789ABCDEF';
-      encryptionService.init(keyFromEnv);
+      final encryptionService = EncryptionService(); // Creates an instance of EncryptionService
+      final keyFromEnv = dotenv.env['ENCRYPTION_KEY'] ?? '0123456789ABCDEF'; // Retrieves encryption key from .env or uses a default
+      encryptionService.init(keyFromEnv); // Initializes the service with the key
 
-      final originalText = 'Hello Encryption';
-      final encryptedText = encryptionService.encryptData(originalText);
-      final decryptedText = encryptionService.decryptData(encryptedText);
+      final originalText = 'Hello Encryption'; // Example text to encrypt
+      final encryptedText = encryptionService.encryptData(originalText); // Encrypts the text
+      final decryptedText = encryptionService.decryptData(encryptedText); // Decrypts the text
 
-      expect(decryptedText, originalText);
+      expect(decryptedText, originalText); // Checks if the decrypted text matches the original
     });
   });
 
-  group('AuthService Tests', () {
-    late AuthService authService;
+  group('AuthService Tests', () { // Tests related to AuthService
+    late AuthService authService; // Declares a variable for AuthService
 
     setUp(() {
-      authService = AuthService();
+      authService = AuthService(); // Instantiates AuthService before each test
     });
 
     test('initializeAuthService runs without error', () async {
-      await authService.initializeAuthService();
+      await authService.initializeAuthService(); // Verifies that initialization doesn't throw any error
     });
 
     test('saveUserCredentials / loadUserCredentials', () async {
-      await authService.initializeAuthService();
+      await authService.initializeAuthService(); // Ensures the service is initialized
+      await authService.saveUserCredentials('testUser', 'testPassword'); // Saves credentials using the mock storage
 
-      // Store some credentials...
-      await authService.saveUserCredentials('testUser', 'testPassword');
-      // ...then load them back
-      final creds = await authService.loadUserCredentials();
-
-      expect(creds['username'], 'testUser');
-      expect(creds['password'], 'testPassword');
+      final creds = await authService.loadUserCredentials(); // Loads credentials back from mock storage
+      expect(creds['username'], equals('testUser')); // Checks if username matches the saved value
+      expect(creds['password'], equals('testPassword')); // Checks if password matches the saved value
     });
 
     test('loadUserCredentials returns null after clearCredentials', () async {
-      await authService.initializeAuthService();
+      await authService.initializeAuthService(); // Ensures the service is initialized
+      await authService.saveUserCredentials('testUser', 'testPassword'); // Saves credentials
 
-      // Save credentials
-      await authService.saveUserCredentials('testUser', 'testPassword');
-      // Then clear them
-      await authService.clearCredentials();
+      await authService.clearCredentials(); // Clears stored credentials in mock storage
 
-      // After clearing, credentials should be null
-      final creds = await authService.loadUserCredentials();
-      expect(creds['username'], isNull);
-      expect(creds['password'], isNull);
+      final creds = await authService.loadUserCredentials(); // Attempts to load cleared credentials
+      expect(creds['username'], isNull); // Username should be null after clearing
+      expect(creds['password'], isNull); // Password should be null after clearing
     });
 
     test('checkEmail (simple invocation test)', () async {
-      await authService.initializeAuthService();
+      await authService.initializeAuthService(); // Ensures the service is initialized
       try {
-        final exists = await authService.checkEmail('test@example.com');
-        // We don't really care about the actual result here,
-        // just that it doesn't throw an exception and coverage is recorded.
-        expect(exists, anyOf([isTrue, isFalse]));
+        final exists = await authService.checkEmail('test@example.com'); // Calls the checkEmail method
+        expect(exists, anyOf([isTrue, isFalse])); // Accepts either true or false as valid
       } catch (_) {
-        // If it throws (e.g. no real server), we still count coverage.
-        expect(true, isTrue);
+        expect(true, isTrue); // If an error occurs, the test still counts for coverage
       }
     });
   });
