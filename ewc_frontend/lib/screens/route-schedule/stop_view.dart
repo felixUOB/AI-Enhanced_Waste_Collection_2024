@@ -59,11 +59,16 @@ class _StopView extends State<StopView> {
         actions: [
           IconButton(
             onPressed: () {
-              if (newVisited != widget.visited) {
+              if (newVisited != null && newVisited != widget.visited) {
                 // Update stops data if it has changed
                 StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
                 stopProvider.setVisited(widget.id, false);
                 stopProvider.removeStopCollection(widget.id);
+
+                // Successfully updated stops data, show success message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Stop status successfully updated')),
+                );
               }
             },
             icon: Icon(Icons.save)
@@ -79,7 +84,7 @@ class _StopView extends State<StopView> {
             // Top half, stop location name
             Expanded(
               child: Container(
-                color: Colors.blue[300],
+                color: Colors.blue,
                 child: Text(
                   "Test Stop Name",
                   style: AppTheme().constWhiteTextLarge
@@ -93,28 +98,32 @@ class _StopView extends State<StopView> {
                 padding: EdgeInsets.only(left: 20, right: 20, top: 20),
                 child: Column(
                   children: [
-                    Text("Status: ${(widget.visited) ? "Collection logged" : "Collection required"}"),
-                    widget.visited ?
-                    ElevatedButton(
-                      onPressed: () {
-                        setState(() => newVisited = false);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: spaceNXTGreen,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20),
-                      ),
-                      child: Text(
-                        "Mark as unvisited",
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        )
-                      )
-                    ) : SizedBox.shrink()
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Status: ${(widget.visited) ? "Visited" : "Collection required"}"),
+                        widget.visited ?
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() => newVisited = false);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: spaceNXTGreen,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                          ),
+                          child: Text(
+                            "Mark as unvisited",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                            )
+                          )
+                        ) : SizedBox.shrink()
+                      ],
+                    )
                   ]
                 )
               )
