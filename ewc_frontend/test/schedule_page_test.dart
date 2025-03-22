@@ -48,13 +48,10 @@ void main() {
     // 3) Wait for all widgets to settle
     await tester.pumpAndSettle();
 
-          await tester.runAsync(() async {
-            // We expect the widget to throw an exception
-            expectLater(
-                  () => tester.pumpWidget(createTestWidget()),
-              throwsA(isA<Exception>()),
-            );
-          });
-        });
+    // 4) Checks
+    // Verifies that "Stop A" and "Stop B" texts are found in the widget tree
+    // This indirectly confirms that the Schedule widget renders them as expected.
+    expect(find.text('Stop A'), findsOneWidget);
+    expect(find.text('Stop B'), findsOneWidget);
   });
 }
