@@ -5,9 +5,7 @@ import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:http/http.dart' as http;
-
-/// A simple MockAuthService that fakes makeAuthenticatedRequest and makeAuthenticatedPostRequest
-class MockAuthService extends Mock implements AuthService {}
+import 'mocks/mock_auth_service.dart';
 
 void main() {
   late StopsService stopsService; // Declares a variable for the service we're testing
@@ -23,14 +21,23 @@ void main() {
   });
 
   // Resets the service locator after each test to avoid affecting subsequent tests
-  tearDown(() => getIt.reset());
+  tearDown(() {
+    getIt.reset();
+  });
 
   test('fetchStop returns LatLng on 200', () async {
-    final mockResponse = http.Response(jsonEncode({'latitude': 51.0, 'longitude': -2.0}), 200);
+    final mockResponse = http.Response(
+      jsonEncode({'latitude': 51.0, 'longitude': -2.0}),
+      200,
+    );
+    // [1] First, set up the stub
     when(mockAuthService.makeAuthenticatedRequest('stops/123'))
-        .thenAnswer((_) => Future.value(mockResponse));
+        .thenAnswer((_) async => mockResponse);
 
+    // [2] Run
     final result = await stopsService.fetchStop(123);
+
+    // [3] Validation
     expect(result.latitude, 51.0);
     expect(result.longitude, -2.0);
   });
