@@ -219,7 +219,3 @@ def get_stops_list(request):
     stops = Stops.objects.all()
     serializer = StopsSerializer(stops, many=True)
     return JsonResponse(serializer.data, safe=False)
-
-# Redirects the user to the Django admin stops page
-def admin_stops_redirect(request):
-    return redirect('/admin/ewc_core/stops/')

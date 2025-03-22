@@ -24,9 +24,8 @@ from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewS
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
-from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list, schema_view, admin_stops_redirect
+from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list, schema_view
 from django.views.generic import TemplateView
-from django.shortcuts import redirect
 
 # Router configuration for REST API endpoints
 router = routers.DefaultRouter()
@@ -42,7 +41,6 @@ urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Issue JWT tokens
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # Refresh JWT tokens
     path('ewc_web/', include('rest_framework.urls', namespace='rest_framework')),  # Include authentication views
-    path('admin_stops/', admin_stops_redirect, name='admin_stops'),
     
     # ----- endpoint for route-env-data table ------
     

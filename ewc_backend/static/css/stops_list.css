@@ -100,7 +100,9 @@
     padding: 0.3rem 1.0rem;
     color: #ffffff;
   }
-  
+  .d-flex {
+    padding: 0.5rem 1rem;
+  }
   /* On smaller devices, ensure everything is nicely spaced */
   @media (max-width: 576px) {
     .list-group-item {

@@ -121,3 +121,19 @@ body {
   color: #007bff;
   margin-right: 5px;
 }
+
+.hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh; 
+  text-align: center;
+}
+
+.navbar-brand {
+  padding: 0.5rem 1rem;
+}
+
+.mb-4 {
+  padding: 0.5rem 1rem;
+}
