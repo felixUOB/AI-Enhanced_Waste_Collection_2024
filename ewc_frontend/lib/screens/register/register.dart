@@ -1,3 +1,4 @@
+import 'package:ewc/services/auth_service/encryption_service.dart';
 import 'package:ewc/widgets/password_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -124,7 +125,7 @@ class RegisterPageState extends State<RegisterPage>{
                           try {
                             await AuthService().register(
                               username: usernameController.text,
-                              password: passwordController.text,
+                              password: EncryptionService().hashData(passwordController.text),
                               email: emailController.text,
                             );
                             // Navigate to the login page after registration
