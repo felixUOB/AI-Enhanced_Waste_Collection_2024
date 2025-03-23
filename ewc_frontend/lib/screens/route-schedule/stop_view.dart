@@ -1,5 +1,6 @@
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/theme/theme_constants.dart';
+import 'package:ewc/widgets/confirm_leave_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,15 @@ class StopView extends StatefulWidget {
 
 class _StopView extends State<StopView> {
 
-  bool? newVisited;
+  late bool _newVisited;
+  late bool _saved;
+
+  @override
+  void initState() {
+    super.initState();
+    _newVisited = widget.visited;
+    _saved = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,41 +38,30 @@ class _StopView extends State<StopView> {
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            if (newVisited == null) {
+          onPressed: () async {
+            if (_newVisited == widget.visited || _saved) {
               // Visited has not been changed, allow exit
               Navigator.of(context).pop();
             } else {
-              // Display save dialog
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Exit stop without saving?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text('Quit without saving')
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text('Cancel')
-                      )
-                    ],
-                  );
-                }
-              );
+              // Data has changed and has not been saved, display dialog
+              bool shouldPop = await ConfirmLeaveDialog.show(context) ?? false;
+              if (shouldPop && context.mounted) {
+                Navigator.of(context).pop();
+              }
             }
           }
         ),
+
         actions: [
           IconButton(
             onPressed: () {
-              if (newVisited != null && newVisited != widget.visited) {
+              if (_newVisited != widget.visited) {
                 // Update stops data if it has changed
                 StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
                 stopProvider.setVisited(widget.id, false);
                 stopProvider.removeStopCollection(widget.id);
+
+                _saved = true;
 
                 // Successfully updated stops data, show success message
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -78,57 +76,79 @@ class _StopView extends State<StopView> {
 
 
       body: SafeArea(
-        child: Column(
-          children: [
+        // PopScope triggers onPopInvokedWithResult() method when user
+        // performs Android swipe back gesture
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (bool didPop, _) async {
+            if (didPop) {
+              return;
+            }
+            if (_newVisited == widget.visited || _saved) {
+              // Visited has not been changed, allow exit
+              Navigator.of(context).pop();
+            } else {
+              final bool shouldPop = await ConfirmLeaveDialog.show(context) ?? false;
+              if (shouldPop && context.mounted) {
+                Navigator.pop(context);
+              }
+            }
+          },
+          child: Column(
+            children: [
 
-            // Top half, stop location name
-            Expanded(
-              child: Container(
-                color: Colors.blue,
-                child: Text(
-                  "Test Stop Name",
-                  style: AppTheme().constWhiteTextLarge
-                ),
-              )
-            ),
+              // Top half, stop location name
+              Expanded(
+                child: Container(
+                  color: Colors.blue,
+                  child: Text(
+                    "Test Stop Name",
+                    style: AppTheme().constWhiteTextLarge
+                  ),
+                )
+              ),
 
-            // Bottom half, buttons
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Status: ${(widget.visited) ? "Visited" : "Collection required"}"),
-                        widget.visited ?
-                        ElevatedButton(
-                          onPressed: () {
-                            setState(() => newVisited = false);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: spaceNXTGreen,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
+              // Bottom half, buttons
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Status: ${_newVisited ? "Visited" : "Collection required"}"),
+                          _newVisited ?
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _newVisited = false;
+                                _saved = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: spaceNXTGreen,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16.0),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                          ),
-                          child: Text(
-                            "Mark as unvisited",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
+                            child: Text(
+                              "Mark as unvisited",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                              )
                             )
-                          )
-                        ) : SizedBox.shrink()
-                      ],
-                    )
-                  ]
+                          ) : SizedBox.shrink()
+                        ],
+                      )
+                    ]
+                  )
                 )
               )
-            )
-          ]
+            ]
+          )
         )
       )
     );
