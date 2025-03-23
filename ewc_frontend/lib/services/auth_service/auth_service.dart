@@ -205,7 +205,7 @@ class AuthService {
   Future<void> register({
     required String username,
     required String password,
-    required email,
+    required String email,
     // Additional fields if needed
   }) async {
     final response = await http.post(
@@ -214,7 +214,7 @@ class AuthService {
       body: jsonEncode({
         'username': username,
         'password': password,
-        'email': email ?? '',
+        'email_address': email,
         // Include additional fields if necessary
       }),
     );
