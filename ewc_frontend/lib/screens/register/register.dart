@@ -18,7 +18,6 @@ class RegisterPage extends StatefulWidget {
 
   @override
   RegisterPageState createState() {
-    // TODO: implement createState
     return RegisterPageState();
   }
 }
