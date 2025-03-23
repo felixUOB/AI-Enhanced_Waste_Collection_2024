@@ -54,6 +54,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
+  // _isClosestIndexBeforeUserLocation is true if the closest index is before the user's location in other words its ahead of the user/ infront of the user
+  bool _isClosestIndexBeforeUserLocation = true;
   // _currentInstruction holds the current instruction to be displayed on the NavigationBanner
   String _currentInstruction = "No instructions available";
 
@@ -471,7 +473,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       ),
       children: [
         if (!getIt<Config>().inTestMode) openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-        RoutePolylineLayer(routePoints: _routePoints, closestIndex: _closestIndex),
+        RoutePolylineLayer(routePoints: _routePoints, closestIndex: _closestIndex, currentLocation: location, isClosestIndexBeforeUserLocation: _isClosestIndexBeforeUserLocation),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
         if (_locationStatus != null && location != null)
@@ -680,6 +682,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     // Update state to reflect new changes
     setState(() {
       _closestIndex = index;
+      _isClosestIndexBeforeUserLocation = distance1 < distance2;
       _autoBearing = bearing;
       _currentInstruction = getCurrentInstructionBinarySearch(effectiveIndex);
     });
