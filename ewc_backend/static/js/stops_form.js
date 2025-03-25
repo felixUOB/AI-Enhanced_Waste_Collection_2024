@@ -60,10 +60,13 @@ function updateMarker() {
 }
 //
 let debounceTimer;
+const searchContainer = document.querySelector('.input-group');
 document.getElementById('stop_name').addEventListener('input', function() {
   clearTimeout(debounceTimer);
+  searchContainer.classList.add('searching');
   const stopName = document.getElementById('stop_name').value;
   if (stopName.trim().length === 0) {
+    searchContainer.classList.remove('searching');
     return; // Don't trigger anything if input is empty
   }
   debounceTimer = setTimeout(fetchCoordinates, 1000); // Calls fetchCoordinates 1s after typing stops.
@@ -85,11 +88,14 @@ function fetchCoordinates() {
       .then(data => {
         if (data.error) {
           alert(data.error);
+          searchContainer.classList.remove('searching');
+          
         } else {
           document.getElementById('id_latitude').value = data.latitude;
           document.getElementById('id_longitude').value = data.longitude;
           document.getElementById('id_location_name').value = data.location_name;
           updateMarker();
+          searchContainer.classList.remove('searching');
         }
       });
 }

@@ -8,11 +8,51 @@
       - stops_form.html template.
 */
 
+@property --angle{
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.input-group {
+  position: relative;
+  display: inline-flex;
+  border: none;
+  border-radius: 18px;
+  
+  box-shadow: 0 2px 8px rgba(41, 41, 41, 0.1);
+  background-image: conic-gradient(from var( --angle),rgb(255, 67, 67),rgb(255, 163, 35),rgb(255, 235, 81),rgb(88, 163, 255),rgb(164, 52, 255),rgb(255, 67, 67));
+  padding: 4px;
+}
+
+.input-group.searching {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from{
+    --angle: 0deg;
+
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
 .search-field {
     border-radius: 15px;
     padding-left: 30px;
     height: 35px;
+    font-size: 0.9rem; 
+    transition: border-color 0.3s ease;
+    padding: 0.5rem 0.8rem;
 }
+
+.search-field:focus {
+  outline: none;
+  box-shadow: none;
+}
+
 .input-group-text {
     background: none;
     border: none;
@@ -76,20 +116,17 @@
     transition: all 0.2s ease;
   }
   
-  /* Primary button (used for Search & Autofill) */
-  .btn-primary {
-    background-color: #1d7dcf;
-    border-color: #1d7dcf;
-  }
-  .btn-primary:hover {
-    background-color: #1662a1;
-    border-color: #1662a1;
-  }
-  
   /* Save button */
+  .btn.btn-success{
+    margin-top: 2rem;
+  }
+
   .btn-success {
     background-color: #2d9c45;
     border-color: #2d9c45;
+    font-size: 0.85rem; 
+    padding: 0.45rem 1.2rem; 
+    color: #ffffff; 
   }
   .btn-success:hover {
     background-color: #237c35;
@@ -101,6 +138,8 @@
     background-color: #c3c3c3;
     border-color: #363535;
     color: #000000;
+    text-decoration: none;
+    padding: 0.3rem 1rem;
   }
   .btn-secondary:hover {
     background-color: #555;
