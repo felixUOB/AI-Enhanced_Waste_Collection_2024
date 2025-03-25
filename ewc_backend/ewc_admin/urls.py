@@ -24,7 +24,7 @@ from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewS
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
-from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list, schema_view
+from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list, schema_view, reverse_geocode
 from django.views.generic import TemplateView
 
 # Router configuration for REST API endpoints
@@ -58,6 +58,7 @@ urlpatterns = [
     path('stops/<int:pk>/edit/', stops_edit_view, name='stops_edit'),  # Edit
     path('stops/<int:pk>/delete/', stops_delete_view, name='stops_delete'), # delete
     path('stops/get_coordinates/', get_coordinates_by_name, name='get_coordinates_by_name'), # get coordinates by name
+    path ('stops/reverse_geocode/', reverse_geocode, name='reverse_geocode'), # reverse geocode
     path('stops/get_stops_list/', get_stops_list, name='get_stops_list'), # get stops list
 
 # -----------PASSWORD RESET ENDPOINTS--------------

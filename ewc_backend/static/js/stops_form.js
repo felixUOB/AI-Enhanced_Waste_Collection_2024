@@ -92,7 +92,22 @@ function fetchCoordinates() {
           updateMarker();
         }
       });
-  }
+}
+
+// Function that returns the name of the location based on the latitude and longitude values
+function reverseGeocode(lat, lng) {
+  fetch(`/stops/reverse_geocode/?latitude=${lat}&longitude=${lng}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        alert(data.error);
+      } else {
+        document.getElementById('id_location_name').value = data.location_name;
+        updateMarker();
+      }
+    })
+    .catch(err => console.error('Reverse geocoding error:', err));
+}
 
 // Adds a control to the map that allows the user to place a marker directly on the map
 const PlaceMarkerControl = L.Control.extend({
@@ -188,6 +203,9 @@ function onMapClick(e) {
   
  
   updateMarker();
+
+  // Fetch and update the location name automatically when adding a stop on the map.
+  reverseGeocode(lat, lng);
   
   disablePlacementMode();
 }

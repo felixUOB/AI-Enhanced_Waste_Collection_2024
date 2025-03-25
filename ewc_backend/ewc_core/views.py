@@ -205,13 +205,40 @@ def get_coordinates_by_name(request):
 
     if 'features' in data and len(data['features']) > 0:
         location = data['features'][0]['geometry']['coordinates']
+        properties = data.get('features')[0].get('properties', {})
+        label = properties.get('label', '')
+        if label:
+            parts = label.split(',')
+            location_name = ','.join(parts[:2])
+        else:
+            location_name = ''
+
         return JsonResponse({
             'latitude': location[1],
             'longitude': location[0],
-            'location_name': ','.join(data.get('features')[0].get('properties').get('label').split(',')[:2]) if data.get('features')[0].get('properties').get('label') else ''
+            'location_name': location_name
         })
     else:
         return JsonResponse({'error': 'Location not found'}, status=404)
+    
+@login_required
+@user_passes_test(is_staff_user)
+def reverse_geocode(request):
+    latitude = request.GET.get('latitude')
+    longitude = request.GET.get('longitude')
+    api_key = settings.OPENROUTESERVICE_API_KEY
+    url = f'https://api.openrouteservice.org/geocode/reverse?api_key={api_key}&point.lat={latitude}&point.lon={longitude}'
+    response = requests.get(url)
+    data = response.json()
+
+    if data and data.get('features'):
+        label = data['features'][0]['properties'].get('label', '')
+        if label:
+            parts = [p.strip() for p in label.split(',')]
+            label = ', '.join(parts[:2])
+        return JsonResponse({'location_name': label})
+    else:
+        return JsonResponse({'error': 'Reverse geocoding failed'}, status=404)
     
 @login_required
 @user_passes_test(is_staff_user)
