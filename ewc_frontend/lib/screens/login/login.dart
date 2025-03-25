@@ -132,12 +132,26 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   );
                 } catch (e) {
+                  print(e);
                   // Error handling: for example, display a warning message to the user if login fails
-                  scaffoldMessenger.showSnackBar(
-                    SnackBar(
-                      content: Text('Login failed: $e'),
-                    ),
-                  );
+                  if (context.mounted){
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Failed To Login"),
+                        content: Text("$e"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              navigator.pop();
+                            },
+                            child: const Text('OK')
+                          )
+                        ],
+                      )
+                    );
+                  }
                 }
               },
             ),

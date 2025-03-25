@@ -77,28 +77,33 @@ class AuthService {
 
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$apiUrl/token/'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'username': username, 'password': password}),
-      );
+    final response = await http.post(
+      Uri.parse('$apiUrl/token/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'password': password}),
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      String accessToken = data['access'];
+      String refreshToken = data['refresh'];
 
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        String accessToken = data['access'];
-        String refreshToken = data['refresh'];
-
-        // Store access and refresh tokens securely
-        await authStorage.write(key: 'accessToken', value: accessToken);
-        await authStorage.write(key: 'refreshToken', value: refreshToken);
-      } else {
-        throw Exception('Failed to login');
-      }
-    } catch (e) {
-      // Catch network or connectivity issues
-      throw Exception('Network error: Unable to login. Details: $e');
+      // Store access and refresh tokens securely
+      await authStorage.write(key: 'accessToken', value: accessToken);
+      await authStorage.write(key: 'refreshToken', value: refreshToken);
+    } else if (response.statusCode == 400){
+        throw Exception('Bad Request!');
+    }else if (response.statusCode == 401){
+      print("");
+      throw Exception('Username or Password Incorrect!');
+    }else if (response.statusCode == 500){
+      throw Exception('Internal Server Error');
     }
+    else {
+      print(response.statusCode);
+      throw Exception('Failed to login');
+    }
+    
   }
 
 // Access token refresh method: Use refresh token
