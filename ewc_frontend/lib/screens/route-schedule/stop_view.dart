@@ -34,6 +34,8 @@ class _StopView extends State<StopView> {
 
   @override
   Widget build(BuildContext context) {
+    int? amountCollected = Provider.of<StopsProvider>(context, listen: false)
+        .stopCollectionLog[widget.id];
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -94,60 +96,59 @@ class _StopView extends State<StopView> {
               }
             }
           },
-          child: Column(
-            children: [
-
-              // Top half, stop location name
-              Expanded(
-                child: Container(
-                  color: Colors.blue,
-                  child: Text(
-                    "Test Stop Name",
-                    style: AppTheme().constWhiteTextLarge
+          child: Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Column(
+              children: [
+                Container(
+                  constraints: BoxConstraints.expand(height: 100),
+                  decoration: BoxDecoration(
+                    color: _newVisited ? Colors.green : Colors.blue,
+                    borderRadius: BorderRadius.circular(16)
                   ),
-                )
-              ),
-
-              // Bottom half, buttons
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Status: ${_newVisited ? "Visited" : "Collection required"}"),
-                          _newVisited ?
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                _newVisited = false;
-                                _saved = false;
-                              });
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: spaceNXTGreen,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                            ),
-                            child: Text(
-                              "Mark as unvisited",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              )
-                            )
-                          ) : SizedBox.shrink()
-                        ],
-                      )
-                    ]
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      '${widget.name} - ${_newVisited ? 'Visited' : 'Not visited'}',
+                      style: AppTheme().constWhiteTextLarge
+                    ),
                   )
-                )
-              )
-            ]
+                ),
+                SizedBox(height: 20),
+                _newVisited ?
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Collected amount - ${amountCollected!}kg'
+                    ),
+                    // Button to undo stop visit
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _newVisited = false;
+                          _saved = false;
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: spaceNXTGreen,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                      ),
+                      child: Text(
+                        'Mark as unvisited',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                        )
+                      )
+                    )
+                  ],
+                ) : SizedBox.shrink()
+              ],
+            )
           )
         )
       )
