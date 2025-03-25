@@ -37,7 +37,8 @@ class StopsService {
         stopsList.add(Stop(
           id: point['stop_id'],
           name: point['location_name'],
-          location: LatLng(point['latitude'], point['longitude']))
+          location: LatLng(point['latitude'], point['longitude']),
+          description: point['description'])
         );
       }
       return stopsList;

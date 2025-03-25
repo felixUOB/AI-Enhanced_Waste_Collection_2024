@@ -8,12 +8,14 @@ class StopView extends StatefulWidget {
   final int id;
   final String name;
   final bool visited;
+  final String? description;
 
   const StopView({
     super.key,
     required this.id,
     required this.name,
-    required this.visited
+    required this.visited,
+    this.description
   });
 
   @override
@@ -115,6 +117,16 @@ class _StopView extends State<StopView> {
                   )
                 ),
                 SizedBox(height: 20),
+
+                // Stop Description
+                widget.description != null ?
+                Text('Stop Description: ${widget.description}') :
+                SizedBox.shrink(),
+
+                widget.description != null ?
+                SizedBox(height: 20) :
+                SizedBox.shrink(),
+
                 _newVisited ?
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

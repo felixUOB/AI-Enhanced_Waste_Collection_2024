@@ -91,6 +91,7 @@ class _Schedule extends State<Schedule> {
                               id: route[index].id,
                               name: route[index].name,
                               visited: route[index].visited,
+                              description: route[index].description,
                             ),
                           ),
                         );

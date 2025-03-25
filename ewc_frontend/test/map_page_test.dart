@@ -50,7 +50,7 @@ Widget pumpMap() {
 
 Future<List<Stop>> getMockStopList(){
   var completer = Completer<List<Stop>>();
-  completer.complete([Stop(id: 1, name: 'test', location: LatLng(0, 0))]);
+  completer.complete([Stop(id: 1, name: 'test', location: LatLng(0, 0), description: '')]);
   return completer.future;
 }
 

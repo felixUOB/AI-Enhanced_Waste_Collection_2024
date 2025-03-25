@@ -88,7 +88,7 @@ class RouteService {
     final depot = LatLng(51.4533, -2.6257);
 
     // Use map to link id to stop name
-    Map<int, String> nameMapping = {};
+    Map<int, List<String?>> nameMapping = {};
 
     List<VroomJob> jobs = [];
     // Iterate through each stop and create a VroomJob object for it.
@@ -97,7 +97,7 @@ class RouteService {
       if (!stops[idx].visited) {
 
         // Link stop name with stop id in map
-        nameMapping[stops[idx].id] = stops[idx].name;
+        nameMapping[stops[idx].id] = [stops[idx].name, stops[idx].description];
         LatLng stopLocation = stops[idx].location;
         jobs.add(VroomJob(
           id: stops[idx].id,
@@ -131,11 +131,21 @@ class RouteService {
       for (OptimizationRouteStep step in response.routes.first.steps!) {
         if (step.id != null) {
           final location = step.location;
-          newStopOrder.add(Stop(
-            id: step.id!,
-            name: nameMapping[step.id]!,
-            location: LatLng(location.latitude, location.longitude),
-          ));
+          if (nameMapping[step.id]![1] == null) {
+            newStopOrder.add(Stop(
+              id: step.id!,
+              name: nameMapping[step.id]![0]!,
+              location: LatLng(location.latitude, location.longitude),
+              description: null,
+            ));
+          } else {
+            newStopOrder.add(Stop(
+              id: step.id!,
+              name: nameMapping[step.id]![0]!,
+              location: LatLng(location.latitude, location.longitude),
+              description: nameMapping[step.id]![1],
+            ));
+          }
         }
       }
     }
