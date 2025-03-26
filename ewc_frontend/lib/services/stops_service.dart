@@ -12,7 +12,7 @@ import 'package:latlong2/latlong.dart';
 /// - `fetchAllStops()`: Fetches all the stops from the backend.
 
 class StopsService {
-
+  
   Future<void> postStopCollection(int stopID, int weightCollected) async {
     final body = {'stop': stopID, 'weight_collected': weightCollected};
     final response = await getIt<AuthService>().makeAuthenticatedPostRequest('stop_collection/', body);
