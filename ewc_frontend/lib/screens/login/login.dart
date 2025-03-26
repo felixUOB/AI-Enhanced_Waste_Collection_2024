@@ -113,7 +113,6 @@ class LoginPageState extends State<LoginPage> {
               text1: "Sign In",
               onPressed: () async {
                 final navigator = Navigator.of(context);
-                final scaffoldMessenger = ScaffoldMessenger.of(context);
                 try {
                   await _authService.login(
                       usernameController.text, EncryptionService().hashData(passwordController.text));
