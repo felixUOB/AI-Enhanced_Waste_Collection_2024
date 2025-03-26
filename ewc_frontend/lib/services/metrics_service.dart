@@ -13,7 +13,6 @@ import 'package:ewc/services/auth_service/auth_service.dart';
 /// - `fetchAllRoutes()`: Fetches all the routes from the backend.
 
 class MetricsService {
-
   /// Fetches all route records from the server.
   ///
   /// - Uses `makeAuthenticatedRequest` to ensure the request is sent
@@ -27,7 +26,6 @@ class MetricsService {
   Future<List<JourneyRoute>> fetchAllRoutes() async {
     final response = await getIt<AuthService>()
         .makeAuthenticatedRequest('route_env_data/');
-
     if (response.statusCode == 200) {
       // Convert the response body to a List of JSON objects.
       final data = jsonDecode(response.body) as List;
@@ -45,6 +43,39 @@ class MetricsService {
       throw Exception('Failed to load statistics data.');
     }
   }
+
+ /// Fetches only the route conducted in the last 30 days from the server.
+  ///
+  /// - Uses `makeAuthenticatedRequest` to ensure the request is sent
+  ///   with a valid JWT token.
+  /// - If the response is successful (status code 200), it parses
+  ///   the returned JSON into a list of `JourneyRoute` objects.
+  /// - Throws an [Exception] if the request fails or the response
+  ///   contains an error status code.
+  ///
+  /// Returns a list of [JourneyRoute] instances on success.
+  Future<List<JourneyRoute>> fetchLast30Days() async {
+    final response = await getIt<AuthService>().makeAuthenticatedRequest('route-env-data-30-days/');
+    print(response.statusCode);
+    // if the request is successful
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as List;
+      List<JourneyRoute> routeList = [];
+      for (var route in data) {
+        routeList.add(JourneyRoute(
+            distance: route['distance'],
+            mpg: route['mpg'],
+            date: route['date'],
+            filler: false));
+      }
+      return routeList;
+      // distance, mpg, date
+    } else {
+      throw Exception('Failed to load statistics data.');
+      
+    }
+  }
+
 
   /// Sends new driving (route) data (distance, MPG, date) to the server.
   ///
@@ -79,3 +110,4 @@ class MetricsService {
     }
   }
 }
+

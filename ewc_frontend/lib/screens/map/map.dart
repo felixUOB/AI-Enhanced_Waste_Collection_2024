@@ -48,7 +48,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
   final List<RangeInstruction> _routeInstructions = [];
-  final List<Marker> _marker = [];
+  List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
 
@@ -101,8 +101,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
       await _drawStopsMarker(Colors.blue);
       //Depot location marker
-      _marker.add(
-          MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
+      if (mounted){
+        _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
+      }
+      
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -133,10 +135,20 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
 
   Future<void> _drawStopsMarker(Color color) async {
+    _marker.clear();
+    _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
-      _marker.add(MarkerWidget.createMarker(stops[i].location, color));
+      // if the stop has been visited 
+      if (!stops[i].visited){
+        _marker.add(MarkerWidget.createMarker(stops[i].name, context, stops[i].location, color, false));
+      } else{
+        _marker.add(MarkerWidget.createMarker(stops[i].name, context, stops[i].location, Colors.grey, false));
+      }
     }
+    setState((){
+      _marker = _marker; 
+    });
   }
 
   // Fetches route data from the ORS API between the two given stops, entered by their ID.
@@ -313,6 +325,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                               (int stopID, int wasteCollected) {
                             _stopsService.postStopCollection(stopID, wasteCollected);
                             Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
+                            // redraw the stops
+                            _drawStopsMarker(Colors.blue);
                           }
                       );
                     },
@@ -480,6 +494,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           if (_locationStatus!) LocationMarker(location: location),
       ],
     );
+  
   }
 
   // Tile layer for OpenStreetMap tiles

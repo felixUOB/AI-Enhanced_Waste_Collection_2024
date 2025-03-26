@@ -29,7 +29,27 @@ class _PasswordTextfield extends State<PasswordTextfield> {
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Theme(
         data: ThemeData.light(),
-        child: TextField(
+        child: TextFormField(
+          validator: (value) {
+            final bool passwordValid = 
+            // ^ start of string
+            //(?=.*[A-Z]) ensures there is at least one uppercase letter
+            // (?=.*[a-z]) ensures there is at least lower case letter
+            // (?=.*\d) ensures there is at least one digit
+            // (?=.*[!@#$%^&*()0-9]) ensures there is at least one special character
+            // [A-Za-z\d!@#$%^&*()] the valid characters 
+            // {8,} ensures the string is at least 8 characters long
+            // $ end of string
+              RegExp(r"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()0-9])[A-Za-z\d!@#$%^&*()]{8,}$")
+                .hasMatch(value.toString());
+
+            if (value == null || value.isEmpty){
+                return 'Please enter some text';
+            }else if (!passwordValid){
+                return 'Req:8+chars,1upper,1lower,1symbol/number';
+            }
+            return null;
+          },
           controller: widget.controller,
           obscureText: obscured,
           decoration: InputDecoration(

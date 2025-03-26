@@ -24,6 +24,7 @@ decorator==5.2.1
 defusedxml==0.7.1
 Django==5.1.2
 django-cors-headers==4.6.0
+django-jazzmin==3.0.1
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 drf-yasg==1.21.10
@@ -87,7 +88,6 @@ prompt_toolkit==3.0.50
 prophet==1.1.6
 psutil==7.0.0
 psycopg==3.2.4
-psycopg2==2.9.10
 psycopg2-binary==2.9.10
 ptyprocess==0.7.0
 pure_eval==0.2.3
