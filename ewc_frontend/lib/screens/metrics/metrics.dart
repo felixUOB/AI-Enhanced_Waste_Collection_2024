@@ -80,7 +80,7 @@ class _MetricsPageState extends State<MetricsPage> {
         // combine entries that were on the same day
         double totalDistance = fetchedRoutes[i].distance;
         var mpg = [fetchedRoutes[i].mpg];
-        while(fetchedRoutes[i].date == fetchedRoutes[i+1].date){
+        while(i<len && fetchedRoutes[i].date == fetchedRoutes[i+1].date){
           totalDistance += fetchedRoutes[i+1].distance;
           mpg.add(fetchedRoutes[i+1].mpg);
           i++;
@@ -88,15 +88,18 @@ class _MetricsPageState extends State<MetricsPage> {
         double avgMpg = mpg.reduce((a,b) => (a+b)) / mpg.length;
         updatedRoutes.add(JourneyRoute(distance: totalDistance, mpg: avgMpg, date: current.toString(), filler: false));
 
-        // fill in any gaps
-        DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
-        // see if the day after current is the next day or identify if there is a gap
-        while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
-            current = current.add(Duration(days: 1));
-            // add a filler day
-            updatedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
+        if (i<len){
+          // fill in any gaps
+          DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
+          // see if the day after current is the next day or identify if there is a gap
+          while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
+              current = current.add(Duration(days: 1));
+              // add a filler day
+              updatedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
+          }
+          i ++;
         }
-        i ++;
+        
         if (i==len){
           updatedRoutes.add(JourneyRoute(distance: fetchedRoutes[i].distance, mpg: fetchedRoutes[i].mpg, date: fetchedRoutes[i].date.toString(), filler: false));
         }

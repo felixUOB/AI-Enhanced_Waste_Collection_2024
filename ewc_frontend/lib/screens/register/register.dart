@@ -151,20 +151,47 @@ class RegisterPageState extends State<RegisterPage>{
                             }
                           } catch (e) {
                             // Error handling
-                            scaffoldMessenger.showSnackBar(
-                              SnackBar(
-                                content: Text('Registration failed: $e'),
-                              ),
-                            );
+                            if (context.mounted){
+                              final navigator = Navigator.of(context);
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (context) => AlertDialog(
+                                  title: const Text("Failed To Register"),
+                                  content: Text('$e'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        navigator.pop();
+                                      },
+                                      child: const Text('OK')
+                                    )
+                                  ],
+                                )
+                              );
+                            }
                           }
                         }
                       } else{
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content:
-                                Text('Passwords do not match. Please try again.'),
-                          ),
-                        );
+                        final navigator = Navigator.of(context);
+                        if (context.mounted){
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Failed To Register"),
+                              content: Text("Passwords do not match. Please try again."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    navigator.pop();
+                                  },
+                                  child: const Text('OK')
+                                )
+                              ],
+                            )
+                          );
+                        }
                         return;
                       }
                     },

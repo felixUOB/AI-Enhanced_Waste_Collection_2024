@@ -60,7 +60,6 @@ class AuthService {
             .decryptData(encryptedPassword); //Attempts decryption
         return {'username': username, 'password': password};
       } catch (e) {
-        print('Decryption failed: $e');
         return {'username': null, 'password': null};
       }
     } else {
@@ -82,7 +81,6 @@ class AuthService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'username': username, 'password': password}),
     );
-    print(response.statusCode);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       String accessToken = data['access'];
@@ -94,13 +92,12 @@ class AuthService {
     } else if (response.statusCode == 400){
         throw Exception('Bad Request!');
     }else if (response.statusCode == 401){
-      print("");
       throw Exception('Username or Password Incorrect!');
     }else if (response.statusCode == 500){
       throw Exception('Internal Server Error');
     }
     else {
-      print(response.statusCode);
+  
       throw Exception('Failed to login');
     }
     
@@ -223,11 +220,12 @@ class AuthService {
         // Include additional fields if necessary
       }),
     );
+    print(response.statusCode);
     if (response.statusCode == 201) {
       // Perform additional actions upon successful registration
     } else {
         var data = jsonDecode(response.body);
-        throw Exception('Failed to register: ${data.toString()}');
+        throw Exception({data.toString()});
     }
   }
 
