@@ -22,13 +22,14 @@ jobs:
             
             if [[ "$IS_DRAFT" == "true" ]]; then
               echo "Skipping workflow: PR is still a draft."
-              exit 1
+              exit 0
             else
               echo "PR is Ready for Review, proceeding with workflow..."
             fi
 
   flutter_test:
     name: Run Flutter Tests & Analyze Coverage
+    needs: [check_pr_status]
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -82,6 +83,7 @@ jobs:
       
   django_test:
     name: Run Django Tests & Analyze Coverage
+    needs: [check_pr_status]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
