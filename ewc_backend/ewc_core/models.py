@@ -71,6 +71,7 @@ class Stops(models.Model):
     longitude = models.FloatField()
     next_collection_due_date = models.DateField(blank=True, null=True)
     max_weight = models.IntegerField()
+    description = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'ewc_core_stops'
