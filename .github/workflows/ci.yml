@@ -1,10 +1,32 @@
 name: CI - Tests & Build
 
 on:
-  push:
-  
-
+  pull_request_target:
+    types:
+      - synchronize
+    
 jobs:
+  check_pr_status:
+      name: Check PR Status
+      runs-on: ubuntu-latest
+      outputs:
+        is_ready: ${{ steps.check.outputs.is_ready }}
+      steps:
+        - name: Check if PR is Ready for Review
+          id: check
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            PR_URL="${{ github.event.pull_request.url }}"
+            IS_DRAFT=$(curl -s -H "Authorization: token $GH_TOKEN" "$PR_URL" | jq -r .draft)
+            
+            if [[ "$IS_DRAFT" == "true" ]]; then
+              echo "Skipping workflow: PR is still a draft."
+              exit 1
+            else
+              echo "PR is Ready for Review, proceeding with workflow..."
+            fi
+
   flutter_test:
     name: Run Flutter Tests & Analyze Coverage
     runs-on: ubuntu-latest
