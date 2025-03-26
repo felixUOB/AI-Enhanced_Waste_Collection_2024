@@ -102,6 +102,26 @@
   .d-flex {
     padding: 0.5rem 1rem;
   }
+/* Style the filter dropdown */
+#filterDropdown {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+#filterDropdown:focus {
+  border-color: #1d7dcf;
+  outline: none;
+  box-shadow: 0 0 4px rgba(29, 125, 207, 0.5);
+}
+
+.form-label.me-2 {
+  padding-left: 500px;
+}
   /* On smaller devices, ensure everything is nicely spaced */
   @media (max-width: 576px) {
     .list-group-item {
