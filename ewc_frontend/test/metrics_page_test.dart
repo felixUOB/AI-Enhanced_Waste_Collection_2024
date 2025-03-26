@@ -25,10 +25,10 @@ void main() {
       );
 
       // Verify that the key UI elements are present
-      expect(find.text('Carbon Footprint Bar Graph'), findsOneWidget);
+      expect(find.text('Summary of last 30 days:'), findsOneWidget);
       expect(find.text('Weekly Distance Summary'), findsOneWidget);
-      expect(find.text('MPG over time'), findsOneWidget);
-      expect(find.text('Distance Over Time'), findsOneWidget);
+      expect(find.text('MPG over last 30 days'), findsOneWidget);
+      expect(find.text('Distance Over the last 30 days'), findsOneWidget);
       expect(find.text('Gallons of Fuel Consumed'), findsOneWidget);
       expect(find.text('KG of CO2 per Journey'), findsOneWidget);
 

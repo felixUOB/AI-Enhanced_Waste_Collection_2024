@@ -4,10 +4,15 @@ import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
+/// This file manages the main navigation bar widget.
+///
+/// Functions:
+/// - `build()`: Builds the main navigation bar widget.
+/// - 'onDestinationSelected()': Function to handle the navigation bar button presses.
+
 class MainNavigationBar extends StatefulWidget {
-  bool testing;
-  MainNavigationBar({super.key, required this.testing});
+  final bool testing;
+  const MainNavigationBar({super.key, required this.testing});
 
   @override
   State<MainNavigationBar> createState() => _NavigationBarState();

@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
+/// This file contains the theme constants for the app.
+///
+/// Functions:
+/// - `lightTheme`: Returns the light theme for the app.
+/// - `darkTheme`: Returns the dark theme for the app.
+
 const spaceNXTGreen = Color.fromARGB(255, 32, 156, 132);
 const spaceNXTGreenLight = Color.fromARGB(255, 147, 175, 173);
-
-//----------------VARIABLE THEMES - LIGHT AND DARK----------------------------
 
 class AppTheme {
   ThemeData lightTheme = ThemeData(

@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 /// Functions:
 /// - `build()`: Builds the login textfield component.
 
-class LoginTextfield extends StatelessWidget {
+class EmailTextfield extends StatelessWidget {
   final dynamic controller;
   final String hintText;
 
   // ignore: prefer_const_constructors_in_immutables
-  LoginTextfield({
+  EmailTextfield({
     super.key,
     required this.controller,
     required this.hintText,
@@ -25,13 +25,22 @@ class LoginTextfield extends StatelessWidget {
       child: Theme(
         data: ThemeData.light(),
         child: TextFormField(
+            // check that it is a valid email
+
             validator: (value) {
-              // check that the string is valid and contains no forbidden characters
-              final bool stringValid = RegExp(r"^[a-zA-Z._]+$").hasMatch(value.toString());
+              // checks that the email is in the correct form i.e. [any characters]@[any chacters].[any characters]
+              // [a-z0-9!#$%&'*+/=?^_`{|}~-]+ -> matches the part before the @
+              // (?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)* -> allows dot-separated part before the @ e.g. k.p@
+              // @ -> matches the @
+              // (?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+ -> ensures the domain starts with an alphanumerical character and ends with a dot e.g. iCloud.
+              // [a-z0-9](?:[a-z0-9-]*[a-z0-9])? -> ensures it starts with an alphanumerical character, matches the final part of the domain e.g. .com
+              final bool emailValid = 
+                RegExp(r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?")
+                  .hasMatch(value.toString());
               if (value == null || value.isEmpty){
                 return 'Please enter some text';
-              } else if (!stringValid){
-                return 'Invalid string';
+              } else if (!emailValid){
+                return 'Please enter a valid email';
               }
               return null;
             },

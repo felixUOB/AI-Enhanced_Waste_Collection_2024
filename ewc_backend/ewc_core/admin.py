@@ -1,20 +1,39 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import UserProfile, StopCollection, Stops, RouteEnvData
-
-from django.contrib import admin
 from django.urls import path
-from django.shortcuts import redirect
 from django.utils.html import format_html
 from .utils import generate_pdf
+from .views import stops_list_view
 
+"""
+This file registers the application's models with the Django admin interface,  
+allowing administrators to manage waste collection data through the Django admin panel.
+"""
 
-# Register your models here
 admin.site.register(UserProfile)
 admin.site.register(StopCollection)
-admin.site.register(Stops)
+
+class StopAdmin(admin.ModelAdmin):
+    """
+    This Model Admin class customizes the admin interface for the Stops model.
+    It links to custom html which adds a button to redirect to the Stops list view.
+    """
+    change_list_template = "admin/stops_changelist.html"  # Use custom template for the admin list view
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('admin_stops_redirect/', self.admin_site.admin_view(stops_list_view), name="admin_stops_redirect"),
+        ]
+        return custom_urls + urls
+admin.site.register(Stops, StopAdmin)
 
 class RouteEnvDataAdmin(admin.ModelAdmin):
+    """
+    This Model Admin class customizes the admin interface for the RouteEnvData model.
+    It adds a custom button to the admin interface to generate a PDF report.
+    """
     list_display = ['route_env_data_id', 'distance', 'mpg', 'date']  # Customize as needed
     change_list_template = "admin/route_env_data_changelist.html"  # Custom template
 

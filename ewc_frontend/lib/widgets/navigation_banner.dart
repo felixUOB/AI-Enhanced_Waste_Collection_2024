@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-// Navigation banner displayed at the top of the screen with a fixed size and dynamic text.
+/// This file manages the navigation banner widget.
+///
+/// Functions:
+/// - `build()`: Builds the navigation banner widget.
+/// - `getInstructionIcon()`: Returns the appropriate icon based on the given instruction text.
+
 class NavigationBanner extends StatelessWidget {
   // Determines if the banner should be visible.
   final bool visible;

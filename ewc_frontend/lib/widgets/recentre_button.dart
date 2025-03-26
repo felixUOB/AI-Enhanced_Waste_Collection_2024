@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// This file manages the recentre button widget.
+///
+/// Functions:
+/// - `build()`: Builds the recentre button.
+
 class RecentreButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool centred;

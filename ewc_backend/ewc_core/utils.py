@@ -14,6 +14,9 @@ from reportlab.graphics.charts.axes import XValueAxis, YValueAxis
 from reportlab.graphics.widgets.markers import makeMarker
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+from django.contrib.staticfiles import finders
+
+
 
 
 def create_line_chart(db_data):
@@ -245,10 +248,11 @@ def generate_pdf():
 # ============================================= Icon =====================================================
 # ========================================================================================================
 
-    icon_path = "static/images/RecycleNXT-Logo_Update_Black.png" 
+    icon_path = finders.find("images/RecycleNXT-Logo_Update_Black_Small.png")
     aspect_ratio = 2.7
     height = 80
     width = height * aspect_ratio
+ 
     icon = Image(icon_path, width=width, height=height)
 
     elements.append(icon)

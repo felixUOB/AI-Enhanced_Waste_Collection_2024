@@ -9,6 +9,15 @@ import 'package:provider/provider.dart';
 import 'notifiers/location_notifier.dart';
 import 'notifiers/stops_notifier.dart';
 
+
+/// This file manages the main app state and provides the entry point for the app.
+///
+/// Functions:
+/// - `main()`: Initializes the app and runs the material app
+/// - `themeListener()`: Updates the app state on theme changes
+/// - `initState()`: Initializes the app state
+/// - `dispose()`: Disposes the app state
+
 ThemeManager themeManager = ThemeManager();
 
 void main({Completer<void>? setupCompleter}) async {

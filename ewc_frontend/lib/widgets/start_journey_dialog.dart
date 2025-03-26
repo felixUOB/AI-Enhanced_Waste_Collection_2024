@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// This file manages the start journey dialog widget.
+///
+/// Functions:
+/// - `show()`: Shows the start journey dialog.
+/// - `_showInvalidInputDialog()`: Shows an invalid input dialog.
+
 class StartJourneyDialog {
   static void show(BuildContext context, Function(double, double) onConfirm) {
     String mileageInput = '';

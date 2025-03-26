@@ -5,11 +5,23 @@ import 'package:url_launcher/url_launcher.dart';
 import 'encryption_service.dart' as encrypt;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// This file manages user authentication and stores user credentials.
+///
+/// Functions:
+/// - `initializeAuthService()`: Initializes the authentication service.
+/// - `saveUserCredentials(String username, String password)`: Saves user credentials securely.
+/// - `loadUserCredentials()`: Loads user credentials securely.
+/// - `clearCredentials()`: Clears user credentials.
+/// - `login(String username, String password)`: Logs the user in and obtains JWT tokens.
+/// - `refreshAccessToken()`: Refreshes the access token using the refresh token.
+/// - `makeAuthenticatedRequest(String endpoint)`: Makes an authenticated request to the API.
+/// - `register()`: Registers a new user.
+/// - `launchPasswordReset()`: Launches the password reset page in the browser.
+
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
   final String siteUrl = 'https://devnest.software';
-  final String adminUrl = 'http://127.0.0.1:8000/admin';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
@@ -61,21 +73,6 @@ class AuthService {
 
 //====================DJANGO AUTH FUNCTIONS=======================================
 
-  Future<bool> checkEmail(String email) async {
-    final response = await http
-        .get(Uri.parse("$siteUrl/api/check-email/?email=$email"), headers: {
-      'Content-Type': 'application/json',
-    });
-    if (response.statusCode == 500) {
-      throw Exception(
-          "Server Error: If email field is blank please input email.");
-    } else if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['exists'] ?? false;
-    } else {
-      throw Exception('Failed to check email');
-    }
-  }
 
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
@@ -208,8 +205,6 @@ class AuthService {
     required String username,
     required String password,
     required email,
-    required phoneNumber,
-    required address,
     // Additional fields if needed
   }) async {
     final response = await http.post(
@@ -219,21 +214,14 @@ class AuthService {
         'username': username,
         'password': password,
         'email': email ?? '',
-        'phone_number': phoneNumber ?? '',
-        'address': address ?? '',
         // Include additional fields if necessary
       }),
     );
-
     if (response.statusCode == 201) {
       // Perform additional actions upon successful registration
     } else {
-      try {
         var data = jsonDecode(response.body);
         throw Exception('Failed to register: ${data.toString()}');
-      } catch (e) {
-        throw Exception('Invalid server response: $e');
-      }
     }
   }
 

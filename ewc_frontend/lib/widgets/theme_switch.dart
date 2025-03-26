@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ewc/main.dart';
 
+/// This file manages the theme switch widget.
+///
+/// Functions:
+/// - `build()`: Builds the theme switch widget.
+
 class ThemeSwitch extends StatelessWidget {
   const ThemeSwitch({super.key});
 
