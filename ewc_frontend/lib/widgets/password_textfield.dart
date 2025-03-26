@@ -46,7 +46,7 @@ class _PasswordTextfield extends State<PasswordTextfield> {
             if (value == null || value.isEmpty){
                 return 'Please enter some text';
             }else if (!passwordValid){
-                return '8+ chars, 1 upper, 1 lower, 1 symbol/number';
+                return 'Req:8+chars,1upper,1lower,1symbol/number';
             }
             return null;
           },
