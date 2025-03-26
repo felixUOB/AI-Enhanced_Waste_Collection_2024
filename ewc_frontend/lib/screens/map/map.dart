@@ -128,14 +128,15 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   void _drawStopsMarker() {
     _marker.clear();
-    _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
+    Stop depot = Stop(id: -1, name: "Depot", location: LatLng(51.4533, -2.6257));
+    _marker.add(MarkerWidget.createMarker(depot, context, Colors.black));
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
       // if the stop has been visited 
       if (!stops[i].visited){
-        _marker.add(MarkerWidget.createMarker(stops[i].name, context, stops[i].location, Colors.blue, false));
+        _marker.add(MarkerWidget.createMarker(stops[i], context, Colors.blue));
       } else{
-        _marker.add(MarkerWidget.createMarker(stops[i].name, context, stops[i].location, Colors.grey, false));
+        _marker.add(MarkerWidget.createMarker(stops[i], context, Colors.grey));
       }
     }
     setState((){
