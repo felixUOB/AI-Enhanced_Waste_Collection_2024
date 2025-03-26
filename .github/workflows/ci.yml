@@ -21,16 +21,18 @@ jobs:
             IS_DRAFT=$(curl -s -H "Authorization: token $GH_TOKEN" "$PR_URL" | jq -r .draft)
             
             if [[ "$IS_DRAFT" == "true" ]]; then
-              echo "Skipping workflow: PR is still a draft."
-              exit 1
+              echo "PR is still a draft, skipping Flutter tests."
+              echo "is_ready=false" >> $GITHUB_OUTPUT 
             else
-              echo "PR is Ready for Review, proceeding with workflow..."
+              echo "PR is Ready for Review, proceeding with Flutter tests."
+              echo "is_ready=true" >> $GITHUB_OUTPUT 
             fi
 
   flutter_test:
     name: Run Flutter Tests & Analyze Coverage
     needs: [check_pr_status]
     runs-on: ubuntu-latest
+    if: ${{ needs.check_pr_status.outputs.is_ready == 'true' }}
     defaults:
       run:
         working-directory: "./ewc_frontend"
@@ -85,6 +87,7 @@ jobs:
     name: Run Django Tests & Analyze Coverage
     needs: [check_pr_status]
     runs-on: ubuntu-latest
+    if: ${{ needs.check_pr_status.outputs.is_ready == 'true' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
