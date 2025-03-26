@@ -78,31 +78,34 @@
           {% for field in form %}
             <div class="mb-3">
               <label for="{{ field.id_for_label }}" class="form-label">
-                {{ field.label }}
-              </label>
-              <!-- The actual form input (text field, number field, etc.) -->
-              {{ field }}
+              <div class="field-group">
+                  {{ field.label }}
+                </label>
+                <!-- The actual form input (text field, number field, etc.) -->
+                
+                {{ field }}
 
-              <!-- If there's a help text for this field, display it below the input -->
-              {% if field.help_text %}
-              {% if field.name == "next_collection_due_date" %}
-                  <!-- For next_collection_due_date, show a blue info icon + text -->
-                  <small class="form-text red-help-text">
-                    <i class="bi bi-info-circle-fill"></i> {{ field.help_text }}
-                  </small>
-                {% else %}
-                  <!-- For other fields, keep the default muted styling -->
-                  <small class="form-text text-muted">
-                    {{ field.help_text }}
-                  </small>
+                <!-- If there's a help text for this field, display it below the input -->
+                {% if field.help_text %}
+                {% if field.name == "next_collection_due_date" %}
+                    <!-- For next_collection_due_date, show a blue info icon + text -->
+                    <small class="form-text red-help-text">
+                      <i class="bi bi-info-circle-fill"></i> {{ field.help_text }}
+                    </small>
+                  {% else %}
+                    <!-- For other fields, keep the default muted styling -->
+                    <small class="form-text text-muted">
+                      {{ field.help_text }}
+                    </small>
+                  {% endif %}
                 {% endif %}
-              {% endif %}
 
-              {% if field.errors %}
-                <div class="text-danger mt-1">
-                  {{ field.errors }}
-                </div>
-              {% endif %}
+                {% if field.errors %}
+                  <div class="text-danger mt-1">
+                    {{ field.errors }}
+                  </div>
+                {% endif %}
+              </div>
             </div>
           {% endfor %}
 

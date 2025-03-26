@@ -37,3 +37,21 @@ class StopsForm(forms.ModelForm):
                 "Only change this if necessary for unusual scenarios."
             )
         }
+        widgets = {
+            'location_name': forms.TextInput(attrs={
+                'class': 'form-control-modern',
+            }),
+            'latitude': forms.NumberInput(attrs={
+                'class': 'form-control-modern', 
+            }),
+            'longitude': forms.NumberInput(attrs={
+                'class': 'form-control-modern',  
+            }),
+            'max_weight': forms.NumberInput(attrs={
+                'class': 'form-control-modern',  
+            }),
+            'next_collection_due_date': forms.DateInput(attrs={
+                'class': 'form-control-modern',  
+                'type': 'date', 
+            }),
+        }
