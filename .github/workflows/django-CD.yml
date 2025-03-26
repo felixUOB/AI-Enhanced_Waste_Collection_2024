@@ -2,6 +2,8 @@ name: CD - Build and Push Django Docker Image to ECR
 
 on:
   push:
+    branches:
+      - dev
 
       
 jobs:
@@ -26,8 +28,6 @@ jobs:
 
       - name: Build and Tag Docker Image
         run: |
-
-
           REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
           IMAGE_TAG=$(git rev-parse --short HEAD)
 
