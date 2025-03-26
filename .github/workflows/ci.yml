@@ -21,10 +21,10 @@ jobs:
             IS_DRAFT=$(curl -s -H "Authorization: token $GH_TOKEN" "$PR_URL" | jq -r .draft)
             
             if [[ "$IS_DRAFT" == "true" ]]; then
-              echo "PR is still a draft, skipping Flutter tests."
+              echo "PR is still a draft, skipping testing..."
               echo "is_ready=false" >> $GITHUB_OUTPUT 
             else
-              echo "PR is Ready for Review, proceeding with Flutter tests."
+              echo "PR is Ready for Review, proceeding with testing..."
               echo "is_ready=true" >> $GITHUB_OUTPUT 
             fi
 
