@@ -68,7 +68,6 @@ class RouteService {
     if (!_isValidLongitude(startLng) || !_isValidLongitude(endLng)) {
       throw ArgumentError('Longitude must be between -180 and 180 degrees.');
     }
-
     try {
       // Fetch the route coordinates from OpenRouteService API using start and end coordinates
       final List<ORSCoordinate> routeCoordinates = await client.directionsRouteCoordsGet(
@@ -113,7 +112,6 @@ class RouteService {
         ));
       }
     }
-
 
     List<VroomVehicle> vehicles = [];
     // Create a VroomVehicle object for each vehicle.
@@ -210,7 +208,6 @@ class RouteService {
 
   }
 
-
   // This function takes two values, source and destinations and returns
   // a matrix of the time it takes to get from that source to each destination
   Future<List<int>> getStopTimes(LatLng source, List<LatLng> stopLocations) async {
@@ -240,7 +237,6 @@ class RouteService {
         finalDurations.add((stopValue / 60).floor());
         previousStopValue = stopValue; // Keep track of concurrent stop time
       }
-
       // Return as array with each element as time to that stop
       return finalDurations;
     } catch (e) {

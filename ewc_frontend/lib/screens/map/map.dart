@@ -96,7 +96,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
       if (mounted) Provider.of<LocationProvider>(context, listen: false).addListener(_findNearestRoutePoint);
-      if (mounted) Provider.of<StopsProvider>(context, listen: false).addListener(_updateStopsMarkers);
+      if (mounted) Provider.of<StopsProvider>(context, listen: false).addListener(_drawStopsMarker);
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -126,25 +126,20 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
-  // This function runs each time stops is updated in stops provider
-  // i.e each time a stop is marked as visited
-  void _updateStopsMarkers() {
-    List<Marker> markers = [];
+  void _drawStopsMarker() {
+    _marker.clear();
+    _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
-      // Determine colour based on if stop has been visited yet
-      Color colour = Colors.blue;
-      if (stops[i].visited) {
-        colour = Colors.green;
+      // if the stop has been visited 
+      if (!stops[i].visited){
+        _marker.add(MarkerWidget.createMarker(stops[i].name, context, stops[i].location, Colors.blue, false));
+      } else{
+        _marker.add(MarkerWidget.createMarker(stops[i].name, context, stops[i].location, Colors.grey, false));
       }
-      markers.add(MarkerWidget.createMarker(stops[i].location, colour));
     }
-    //Depot location marker
-    markers.add(
-      MarkerWidget.createMarker(LatLng(51.4533, -2.6257), Colors.black));
-
-    setState(() {
-      _marker = markers;
+    setState((){
+      _marker = _marker;
     });
   }
 
@@ -493,6 +488,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           if (_locationStatus!) LocationMarker(location: location),
       ],
     );
+  
   }
 
   // Tile layer for OpenStreetMap tiles
