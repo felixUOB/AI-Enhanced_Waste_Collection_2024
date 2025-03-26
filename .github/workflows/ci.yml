@@ -22,7 +22,7 @@ jobs:
             
             if [[ "$IS_DRAFT" == "true" ]]; then
               echo "Skipping workflow: PR is still a draft."
-              exit 0
+              exit 1
             else
               echo "PR is Ready for Review, proceeding with workflow..."
             fi
