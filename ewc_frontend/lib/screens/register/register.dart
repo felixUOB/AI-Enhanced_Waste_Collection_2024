@@ -121,7 +121,6 @@ class RegisterPageState extends State<RegisterPage>{
                       if (passwordController.text == confirmPasswordController.text ) {
                         if (_formKey.currentState!.validate()){
                           final navigator = Navigator.of(context);
-                          final scaffoldMessenger = ScaffoldMessenger.of(context);
                           try {
                             await AuthService().register(
                               username: usernameController.text,
