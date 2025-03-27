@@ -84,10 +84,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   //MPG alteration function : checking if MPG has a value
   void _checkMPGAfterLogin() async {
-    var box = Hive.box('Settings');
+    print("checking MPG value");
+    var box = await Hive.openBox('Settings');
     double? mpg = box.get('mpg');
-
-    if (mpg == null|| mpg <= 0) {
+    print("MPG value: $mpg");
+    if (mpg == null || mpg <= 0) {
+      print("MPG not set or invalid, showing dialog...");
       _showMPGInputDialog();
     }
   }
