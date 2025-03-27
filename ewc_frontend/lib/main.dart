@@ -27,7 +27,7 @@ void main({Completer<void>? setupCompleter}) async {
   setupCompleter?.complete();
 
   await Hive.initFlutter(); // Initializes Hive for Flutter apps
-  await Hive.openBox('myBox'); // Open a storage box
+  await Hive.openBox('Settings');//open up storage box
 
   runApp(App());
 }

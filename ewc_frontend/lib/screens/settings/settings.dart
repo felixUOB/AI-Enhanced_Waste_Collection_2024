@@ -26,15 +26,22 @@ class _SettingPageState extends State<SettingPage> {
   TextEditingController mpgController = TextEditingController();
 
   //initialise hive box
-  Future<void> _initializeBox() async {
-    try {
-      box = await Hive.openBox("Settings");  // Ensure box is opened here
-      double? mpg = box.get('mpg');
-      if (mpg != null) {
+  void _initializeBox() async {
+    box = await Hive.openBox("Settings"); // Ensure it's opened once
+    _updateMPGValue(); // Load initial value
+
+    // Listen for changes and update UI
+    box.watch(key: 'mpg').listen((event) {
+      _updateMPGValue();
+    });
+  }
+
+  void _updateMPGValue() {
+    double? mpg = box.get('mpg');
+    if (mpg != null) {
+      setState(() {
         mpgController.text = mpg.toString();
-      }
-    } catch (e) {
-      print("Error opening box: $e");
+      });
     }
   }
 
@@ -51,27 +58,27 @@ class _SettingPageState extends State<SettingPage> {
         context: context,
         barrierDismissible: false,
         builder: (context) => AlertDialog(
-          title : Text("Enter you vehicle's Miles per Gallon"),
-          content : TextField(
+          title: Text("Enter your vehicle's Miles per Gallon"),
+          content: TextField(
             controller: mpgController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(hintText: "Miles per Gallon"),
           ),
           actions: [
             TextButton(
-                onPressed: () {
+                onPressed: () async {
                   double? mpgValue = double.tryParse(mpgController.text);
-                  if (mpgValue != null){
-                    var box = Hive.box('Settings');
-                    box.put('mpg', mpgValue);
-                    setState(() {}); //Refresh UI
+                  if (mpgValue != null) {
+                    await box.put('mpg', mpgValue); // Ensure it is stored correctly
+                    setState(() {}); // Refresh UI
+
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content : Text("Current MPG is : $mpgValue"))
+                      SnackBar(content: Text("Current MPG is : $mpgValue")),
                     );
                   }
                 },
-                child: Text('Save')
+                child: Text('Save'),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context),
