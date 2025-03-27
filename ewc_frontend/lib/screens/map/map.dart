@@ -22,8 +22,8 @@ import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/widgets/navigation_banner.dart';
 import 'package:ewc/services/metrics_service.dart';
-// import 'package:hive/hive.dart';
-// import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 /// This file manages the map display and route plotting functionality.
 ///
@@ -78,7 +78,48 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
     _initialiseLocationStatusStream();
     _initializeEnvAndService();
+    _checkMPGAfterLogin();
     Provider.of<LocationProvider>(context, listen: false).addListener(findNearestRoutePoint);
+  }
+
+  //MPG alteration function : checking if MPG has a value
+  void _checkMPGAfterLogin() async {
+    var box = Hive.box('Settings');
+    double? mpg = box.get('mpg');
+
+    if (mpg == null|| mpg <= 0) {
+      _showMPGInputDialog();
+    }
+  }
+
+  //MPG alteration function : typing in MPG if theres no value in it
+  void _showMPGInputDialog() {
+    TextEditingController mpgController = TextEditingController();
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title : Text("Enter you vehicle's Miles per Gallon"),
+          content : TextField(
+            controller: mpgController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(hintText: "Miles per Gallon"),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  double? mpgValue = double.tryParse(mpgController.text);
+                  if (mpgValue != null){
+                    var box = Hive.box('Settings');
+                    box.put('mpg', mpgValue);
+                    Navigator.pop(context);
+                  }
+                },
+                child: Text('Save')
+            )
+          ],
+        )
+    );
   }
 
   void _initialiseLocationStatusStream() async {
