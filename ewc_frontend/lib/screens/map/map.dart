@@ -22,6 +22,8 @@ import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/widgets/navigation_banner.dart';
 import 'package:ewc/services/metrics_service.dart';
+// import 'package:hive/hive.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
 
 /// This file manages the map display and route plotting functionality.
 ///
