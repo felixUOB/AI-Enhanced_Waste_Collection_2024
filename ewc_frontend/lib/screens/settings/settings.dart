@@ -30,6 +30,7 @@ class _SettingPageState extends State<SettingPage> {
     box = await Hive.openBox("Settings"); // Ensure it's opened once
     _updateMPGValue(); // Load initial value
 
+    if (!mounted) return;
     // Listen for changes and update UI
     box.watch(key: 'mpg').listen((event) {
       _updateMPGValue();
@@ -57,7 +58,7 @@ class _SettingPageState extends State<SettingPage> {
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
+        builder: (dialogContext) => AlertDialog(
           title: Text("Enter your vehicle's Miles per Gallon"),
           content: TextField(
             controller: mpgController,
@@ -71,11 +72,12 @@ class _SettingPageState extends State<SettingPage> {
                   if (mpgValue != null) {
                     await box.put('mpg', mpgValue); // Ensure it is stored correctly
                     setState(() {}); // Refresh UI
-
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
+                    if (!dialogContext.mounted) return;
+                    Navigator.pop(dialogContext);
+                    ScaffoldMessenger.of(dialogContext).showSnackBar(
                       SnackBar(content: Text("Current MPG is : $mpgValue")),
                     );
+
                   }
                 },
                 child: Text('Save'),

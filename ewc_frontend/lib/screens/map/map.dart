@@ -105,7 +105,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => AlertDialog(
+        builder: (dialogContext) => AlertDialog(
               title: Text("Enter your vehicle's Miles per Gallon"),
               content: TextField(
                 controller: mpgController,
@@ -131,10 +131,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                         setState(
                             () {}); // Update the UI if MPG is displayed somewhere
 
-                        Navigator.pop(context); // Close the dialog
+                        if (!dialogContext.mounted) return;
+                        Navigator.pop(dialogContext); // Close the dialog
                       } else {
                         // Show an error message if the input is invalid
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(dialogContext).showSnackBar(SnackBar(
                             content: Text("Please enter a valid MPG value.")));
                       }
                     },
@@ -591,11 +592,16 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   /// 6. Stops tracking, resets distance, and updates local state (`_journeyActive`).
   /// 7. MPG is saved in hive so no change.
   void _showEndJourneyDialog() async {
+    if (!mounted) return; // Ensure widget is still active before starting async
+
     var box = await Hive.openBox('Settings'); // Open Hive box
     double currentMpg = box.get('mpg'); //Get MPG
 
+    if (!mounted) return; // Ensure widget is still active after await
+
     // Show a confirmation dialog before ending journey
     bool confirmEnd = await showDialog(
+
       context: context,
       barrierDismissible: false,
       builder: (context) {
@@ -618,6 +624,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     // If user cancels, do nothing
     if (confirmEnd == false) return;
+    if (!mounted) return;
 
 
     // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
