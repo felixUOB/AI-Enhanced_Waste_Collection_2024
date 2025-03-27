@@ -5,6 +5,7 @@ import 'package:ewc/screens/login/login.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:hive/hive.dart';
 
 /// This file manages the settings page and displays various user settings.
 ///
@@ -21,6 +22,66 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
+  late Box box;
+  TextEditingController mpgController = TextEditingController();
+
+  //initialise hive box
+  Future<void> _initializeBox() async {
+    try {
+      box = await Hive.openBox("Settings");  // Ensure box is opened here
+      double? mpg = box.get('mpg');
+      if (mpg != null) {
+        mpgController.text = mpg.toString();
+      }
+    } catch (e) {
+      print("Error opening box: $e");
+    }
+  }
+
+  // initialise settings
+  @override
+  void initState() {
+    super.initState();
+    _initializeBox();
+  }
+
+  //Helper for saving mpg
+  void _inputMPG() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title : Text("Enter you vehicle's Miles per Gallon"),
+          content : TextField(
+            controller: mpgController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(hintText: "Miles per Gallon"),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  double? mpgValue = double.tryParse(mpgController.text);
+                  if (mpgValue != null){
+                    var box = Hive.box('Settings');
+                    box.put('mpg', mpgValue);
+                    setState(() {}); //Refresh UI
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content : Text("Current MPG is : $mpgValue"))
+                    );
+                  }
+                },
+                child: Text('Save')
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel"),
+            )
+          ],
+        )
+    );
+  }
+
   //Helper for logout
   Future<void> _logout() async {
     await getIt<AuthService>().clearCredentials();
@@ -132,7 +193,18 @@ class _SettingPageState extends State<SettingPage> {
             "https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxURDgzSVVSRUZZTjhaMU5YMU05RllDRFNITi4u"),
       ),
 
-      // 6) Reset Password
+          // 6) Alter MPG
+          _buildSettingsItem(
+              icon: Icons.local_gas_station,
+              iconColor: Colors.deepOrange,
+              title: "Miles Per Gallon",
+              subtitle: "Current : ${mpgController.text}, Miles Per Gallon",
+              onTap : () {
+                _inputMPG();
+              }
+          ),
+
+      // 7) Reset Password
       _buildSettingsItem(
         icon: Icons.lock_reset,
         iconColor: Colors.deepOrange,
@@ -142,7 +214,7 @@ class _SettingPageState extends State<SettingPage> {
         },
       ),
 
-      // 7) Logout
+      // 8) Logout
       _buildSettingsItem(
         icon: Icons.logout,
         iconColor: Colors.red,
