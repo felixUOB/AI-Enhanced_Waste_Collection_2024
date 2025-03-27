@@ -589,76 +589,100 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   /// 3. Creates a date string (format: YYYY-MM-DD).
   /// 4. Sends the data (distance in miles, mpg, date) to the backend using `postRouteData()`.
   /// 5. Displays success or error messages via `ScaffoldMessenger`.
-  /// 6. Stops tracking, resets distance, and updates local state (`_endMpg`, `_journeyActive`).
+  /// 6. Stops tracking, resets distance, and updates local state (`_journeyActive`).
+  /// 7. MPG is saved in hive so no change.
   void _showEndJourneyDialog() async {
-
     var box = await Hive.openBox('Settings'); // Open Hive box
     double currentMpg = box.get('mpg'); //Get MPG
 
-    EndJourneyDialog.show(context, (double endMpg) async {
-      // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
-      final locProvider = Provider.of<LocationProvider>(context, listen: false);
-
-      // 1) Distance is stored in meters. Let's get it from `locProvider`.
-      double distanceInMeters = locProvider.distanceTravelled;
-
-      // Convert meters to miles (approx. 1 mile = 1609.34 meters).
-      double distanceInMiles = distanceInMeters / 1609.34;
-
-      // Rounds to two decimal places (e.g. 12.34)
-      double roundedDistance = double.parse(distanceInMiles.toStringAsFixed(2));
-
-      // 2) Construct a date string in "YYYY-MM-DD" format.
-      String currentDate = DateTime.now().toIso8601String().substring(0, 10);
-
-      // 3) Try sending route data to the server.
-      try {
-        await getIt<MetricsService>().postRouteData(
-          distance: roundedDistance,
-          mpg: currentMpg,
-          date: currentDate,
+    // Show a confirmation dialog before ending journey
+    bool confirmEnd = await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("End Journey?"),
+          content: Text("Your vehicle's MPG: $currentMpg\nIf this is not the right MPG cancel and change MPG in settings!!\nDo you want to end the journey?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false), // Cancel journey ending
+              child: Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true), // Confirm journey ending
+              child: Text("End Journey"),
+            ),
+          ],
         );
+      },
+    );
 
-        // After the async call, check if this widget is still mounted.
-        // If the widget was disposed, we shouldn't access context or setState.
-        if (!mounted) return;
+    // If user cancels, do nothing
+    if (confirmEnd == false) return;
 
-        // Successfully saved data to the server, show a success message.
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Journey data successfully saved.')),
-        );
-      } catch (e) {
-        // Log the exception in the debug console for developers.
-        debugPrint('Error saving journey data: $e');
 
-        if (!mounted) return;
+    // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
+    final locProvider = Provider.of<LocationProvider>(context, listen: false);
 
-        // Show a user-friendly message without exposing the raw error.
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to save journey data. Please try again.'),
-          ),
-        );
-      }
+    // 1) Distance is stored in meters. Let's get it from `locProvider`.
+    double distanceInMeters = locProvider.distanceTravelled;
 
-      // Check again before modifying any state or provider data.
+    // Convert meters to miles (approx. 1 mile = 1609.34 meters).
+    double distanceInMiles = distanceInMeters / 1609.34;
+
+    // Rounds to two decimal places (e.g. 12.34)
+    double roundedDistance = double.parse(distanceInMiles.toStringAsFixed(2));
+
+    // 2) Construct a date string in "YYYY-MM-DD" format.
+    String currentDate = DateTime.now().toIso8601String().substring(0, 10);
+
+    // 3) Try sending route data to the server.
+    try {
+      await getIt<MetricsService>().postRouteData(
+        distance: roundedDistance,
+        mpg: currentMpg,
+        date: currentDate,
+      );
+
+      // After the async call, check if this widget is still mounted.
+      // If the widget was disposed, we shouldn't access context or setState.
       if (!mounted) return;
 
-      // 4) Stop tracking location updates since the journey has ended.
-      locProvider.setTracking(false);
+      // Successfully saved data to the server, show a success message.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Journey data successfully saved.')),
+      );
+    } catch (e) {
+      // Log the exception in the debug console for developers.
+      debugPrint('Error saving journey data: $e');
 
-      // Reset the distance in `LocationProvider` for the next journey.
-      locProvider.resetDistance();
+      if (!mounted) return;
 
-      // 5) Update local state variables.
-      setState(() {
-        _endMpg = currentMpg;
-        _journeyActive = false;
-      });
+      // Show a user-friendly message without exposing the raw error.
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Failed to save journey data. Please try again.'),
+        ),
+      );
+    }
 
-      // For debugging: confirm in the console what the final MPG is.
-      debugPrint('End MPG: $_endMpg');
+    // Check again before modifying any state or provider data.
+    if (!mounted) return;
+
+    // 4) Stop tracking location updates since the journey has ended.
+    locProvider.setTracking(false);
+
+    // Reset the distance in `LocationProvider` for the next journey.
+    locProvider.resetDistance();
+
+    // 5) Update local state variables.
+    setState(() {
+      _endMpg = currentMpg;
+      _journeyActive = false;
     });
+
+    // For debugging: confirm in the console what the final MPG is.
+    debugPrint('End MPG: $_endMpg');
   }
 
   // This function finds the nearest point to on the route to the user's location
