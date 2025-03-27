@@ -5,6 +5,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from ewc_core.models import RouteEnvData, UserProfile, Stops
 from ewc_core.models import StopCollection
+from datetime import datetime
 
 # this file imports the data from the database and saves them as csv files
 
@@ -54,10 +55,12 @@ def export_routeenvdata_csv () :
 #Exporting stop collection data
 def export_stopdata_csv(stopid) :
     try:
+        exclude_after_date = datetime.today().date()
+        queryset = StopCollection.objects.filter(stop_id=stopid, date__lte=exclude_after_date)
         file_path = generate_csv(
             filename="stopdata.csv",
             headers=["Date","Weight Collected"],
-            queryset=StopCollection.objects.all().filter(stop_id = stopid),
+            queryset=queryset,
             data_extractor=lambda stopdata :
                 [
                     stopdata.date,
