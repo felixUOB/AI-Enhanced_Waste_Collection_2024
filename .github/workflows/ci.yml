@@ -1,13 +1,38 @@
 name: CI - Tests & Build
 
 on:
-  push:
-  
-
+  pull_request:
+    types:
+      - synchronize
+    
 jobs:
+  check_pr_status:
+      name: Check PR Status
+      runs-on: ubuntu-latest
+      outputs:
+        is_ready: ${{ steps.check.outputs.is_ready }}
+      steps:
+        - name: Check if PR is Ready for Review
+          id: check
+          env:
+            GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          run: |
+            PR_URL="${{ github.event.pull_request.url }}"
+            IS_DRAFT=$(curl -s -H "Authorization: token $GH_TOKEN" "$PR_URL" | jq -r .draft)
+            
+            if [[ "$IS_DRAFT" == "true" ]]; then
+              echo "PR is still a draft, skipping testing..."
+              echo "is_ready=false" >> $GITHUB_OUTPUT 
+            else
+              echo "PR is Ready for Review, proceeding with testing..."
+              echo "is_ready=true" >> $GITHUB_OUTPUT 
+            fi
+
   flutter_test:
     name: Run Flutter Tests & Analyze Coverage
+    needs: [check_pr_status]
     runs-on: ubuntu-latest
+    if: ${{ needs.check_pr_status.outputs.is_ready == 'true' }}
     defaults:
       run:
         working-directory: "./ewc_frontend"
@@ -60,7 +85,9 @@ jobs:
       
   django_test:
     name: Run Django Tests & Analyze Coverage
+    needs: [check_pr_status]
     runs-on: ubuntu-latest
+    if: ${{ needs.check_pr_status.outputs.is_ready == 'true' }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
