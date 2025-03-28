@@ -125,6 +125,17 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
           as String);
 
   @override
+  String get rootUrl =>
+      (super.noSuchMethod(
+            Invocation.getter(#rootUrl),
+            returnValue: _i10.dummyValue<String>(
+              this,
+              Invocation.getter(#rootUrl),
+            ),
+          )
+          as String);
+
+  @override
   _i11.Future<void> initializeAuthService() =>
       (super.noSuchMethod(
             Invocation.method(#initializeAuthService, []),
@@ -160,14 +171,6 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
             returnValueForMissingStub: _i11.Future<void>.value(),
           )
           as _i11.Future<void>);
-
-  @override
-  _i11.Future<bool> checkEmail(String? email) =>
-      (super.noSuchMethod(
-            Invocation.method(#checkEmail, [email]),
-            returnValue: _i11.Future<bool>.value(false),
-          )
-          as _i11.Future<bool>);
 
   @override
   _i11.Future<void> login(String? username, String? password) =>
@@ -224,16 +227,12 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
     required String? username,
     required String? password,
     required dynamic email,
-    required dynamic phoneNumber,
-    required dynamic address,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#register, [], {
               #username: username,
               #password: password,
               #email: email,
-              #phoneNumber: phoneNumber,
-              #address: address,
             }),
             returnValue: _i11.Future<void>.value(),
             returnValueForMissingStub: _i11.Future<void>.value(),
@@ -387,6 +386,33 @@ class MockMetricsService extends _i1.Mock implements _i13.MetricsService {
             ),
           )
           as _i11.Future<List<_i14.JourneyRoute>>);
+
+  @override
+  _i11.Future<List<_i14.JourneyRoute>> fetchLast30Days() =>
+      (super.noSuchMethod(
+            Invocation.method(#fetchLast30Days, []),
+            returnValue: _i11.Future<List<_i14.JourneyRoute>>.value(
+              <_i14.JourneyRoute>[],
+            ),
+          )
+          as _i11.Future<List<_i14.JourneyRoute>>);
+
+  @override
+  _i11.Future<void> postRouteData({
+    required double? distance,
+    required double? mpg,
+    required String? date,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#postRouteData, [], {
+              #distance: distance,
+              #mpg: mpg,
+              #date: date,
+            }),
+            returnValue: _i11.Future<void>.value(),
+            returnValueForMissingStub: _i11.Future<void>.value(),
+          )
+          as _i11.Future<void>);
 }
 
 /// A class which mocks [Config].

@@ -1,4 +1,16 @@
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:crypto/crypto.dart';
+import 'dart:convert';
+
+/// This file manages encryption and decryption of user credentials.
+/// 
+/// Functions:
+/// - `EncryptionNotInitializedException()`: Exception thrown when encryption key is not initialized.
+/// - `EncryptionService()`: Constructor for the encryption service.
+/// - `init(String keyString)`: Initializes the encryption key.
+/// - `encryptData(String plainText)`: Encrypts the given plaintext.
+/// - `decryptData(String encryptedData)`: Decrypts the given encrypted data.
+/// - 'hashData(String plainText)' : Hashes the given plaintext with 
 
 class EncryptionNotInitializedException implements Exception {
   final String message;
@@ -64,4 +76,11 @@ class EncryptionService {
 
     return decrypted;
   }
+
+  String hashData(String plainText){
+    var bytes = utf8.encode(plainText);
+    var digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
 }

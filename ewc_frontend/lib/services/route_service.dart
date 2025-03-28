@@ -6,15 +6,33 @@ import 'package:latlong2/latlong.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/models/stop_model.dart';
 
-// A class to store the result of a route planning request.
+/// This file manages the route service and provides functionality to fetch
+///
+/// Functions:
+/// - `create()`: Creates a new RouteService instance.
+/// - `getRoute(double startLat, double startLng, double endLat, double endLng)`: Fetches the route between two points.
+/// - `routePlanning(LatLng userLocation, List<Stop> stops)`: Plans the optimized route between a list of stops.
+/// - `getStopTimes(LatLng source, List<LatLng> stopLocations)`: Fetches the time it takes to get from source to each stop.
+/// - `distanceFromSegment(LatLng location, LatLng startPoint, LatLng endPoint)`: Calculates the perpendicular distance of the user from the line between startPoint and endPoint.
+
 class RouteResult {
   // A list of LatLng objects representing the route
   final List<LatLng> routeCoordinates;
-  // A map of instructions with the key as a list of coordinates(that are the range between which the instruction should be displayed) 
-  // and the value as the instruction message.
-  final Map<List<double>, String> instructionsMap;
+ 
+  // A list of RangeInstruction objects representing the instructions for each range of coordinates
+  final List<RangeInstruction> rangeInstructions;
 
-  RouteResult(this.routeCoordinates, this.instructionsMap);
+  RouteResult(this.routeCoordinates, this.rangeInstructions);
+}
+
+class RangeInstruction {
+  // The start and end index of the range of coordinates for which the instruction is applicable
+  final int start;
+  final int end;
+  // The instruction message
+  final String instruction;
+
+  RangeInstruction(this.start, this.end, this.instruction);
 }
 
 // A service class to manage route fetching from OpenRouteService API
@@ -47,9 +65,6 @@ class RouteService {
     return longitude >= -180.0 && longitude <= 180.0;
   }
 
-
-
-
   // Form Route between coordinates returning a list of LatLng objects representing the route
   Future<List<LatLng>> getRoute(double startLat, double startLng, double endLat, double endLng) async {
     // Input Validation
@@ -59,7 +74,6 @@ class RouteService {
     if (!_isValidLongitude(startLng) || !_isValidLongitude(endLng)) {
       throw ArgumentError('Longitude must be between -180 and 180 degrees.');
     }
-
     try {
       // Fetch the route coordinates from OpenRouteService API using start and end coordinates
       final List<ORSCoordinate> routeCoordinates = await client.directionsRouteCoordsGet(
@@ -96,7 +110,6 @@ class RouteService {
         location: ORSCoordinate(latitude: stop.latitude, longitude: stop.longitude),
       ));
     }
-
 
     List<VroomVehicle> vehicles = [];
     // Create a VroomVehicle object for each vehicle.
@@ -141,26 +154,25 @@ class RouteService {
       profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
       instructions: true,
     );
-    // Initialize an empty map to store instructions with waypoints as keys and instruction messages as values.
-    final Map<List<double>, String> instructionsMap = {};
 
-    //Extract the instructions from the response
-    final route = directionsDataResponse.first;
-    for (var segment in route.segments) {
-      for (var step in (segment.steps)) {
-        // Map the waypoints to the corresponding instruction message.
-        instructionsMap[step.wayPoints] = step.instruction;
+    final routeData = directionsDataResponse.first;
+    // Extract the navigation instructions and their applicable range indexes for the route.
+    final List<RangeInstruction> rangeInstructions = [];
+    for (var segment in routeData.segments) {
+      for (var step in segment.steps) {
+        int startIndex = step.wayPoints[0].toInt();
+        int endIndex = step.wayPoints[1].toInt();
+        String instruction = step.instruction;
+        rangeInstructions.add(RangeInstruction(startIndex, endIndex, instruction));
       }
     }
   
-
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
     List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
 
-    return RouteResult(routeCoordinates, instructionsMap);
+    return RouteResult(routeCoordinates, rangeInstructions);
 
   }
-
 
   // This function takes two values, source and destinations and returns
   // a matrix of the time it takes to get from that source to each destination
@@ -192,7 +204,6 @@ class RouteService {
         finalDurations.add((stopValue / 60).floor());
         previousStopValue = stopValue; // Keep track of concurrent stop time
       }
-
       // Return as array with each element as time to that stop
       return finalDurations;
     } catch (e) {

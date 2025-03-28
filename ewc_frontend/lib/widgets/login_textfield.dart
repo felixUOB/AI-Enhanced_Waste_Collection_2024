@@ -1,6 +1,11 @@
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:flutter/material.dart';
 
+/// This file manages the login textfield widget.
+///
+/// Functions:
+/// - `build()`: Builds the login textfield component.
+
 class LoginTextfield extends StatelessWidget {
   final dynamic controller;
   final String hintText;
@@ -19,7 +24,17 @@ class LoginTextfield extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Theme(
         data: ThemeData.light(),
-        child: TextField(
+        child: TextFormField(
+            validator: (value) {
+              // check that the string is valid and contains no forbidden characters
+              final bool stringValid = RegExp(r"^[a-zA-Z._]+$").hasMatch(value.toString());
+              if (value == null || value.isEmpty){
+                return 'Please enter some text';
+              } else if (!stringValid){
+                return 'Invalid string';
+              }
+              return null;
+            },
             controller: controller,
             decoration: InputDecoration(
               enabledBorder: const OutlineInputBorder(

@@ -5,11 +5,25 @@ import 'package:url_launcher/url_launcher.dart';
 import 'encryption_service.dart' as encrypt;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+/// This file manages user authentication and stores user credentials.
+///
+/// Functions:
+/// - `initializeAuthService()`: Initializes the authentication service.
+/// - `saveUserCredentials(String username, String password)`: Saves user credentials securely.
+/// - `loadUserCredentials()`: Loads user credentials securely.
+/// - `clearCredentials()`: Clears user credentials.
+/// - `login(String username, String password)`: Logs the user in and obtains JWT tokens.
+/// - `refreshAccessToken()`: Refreshes the access token using the refresh token.
+/// - `makeAuthenticatedRequest(String endpoint)`: Makes an authenticated request to the API.
+/// - `register()`: Registers a new user.
+/// - `launchPasswordReset()`: Launches the password reset page in the browser.
+
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  final String apiUrl = 'http://127.0.0.1:8000/api';
-  final String adminUrl = 'http://127.0.0.1:8000/admin';
+  final String apiUrl = 'https://devnest.software/api';
+  final String adminUrl = 'https://devnest.software/admin';
+  final String rootUrl = 'https://devnest.software';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
@@ -46,7 +60,6 @@ class AuthService {
             .decryptData(encryptedPassword); //Attempts decryption
         return {'username': username, 'password': password};
       } catch (e) {
-        print('Decryption failed: $e');
         return {'username': null, 'password': null};
       }
     } else {
@@ -61,46 +74,33 @@ class AuthService {
 
 //====================DJANGO AUTH FUNCTIONS=======================================
 
-  Future<bool> checkEmail(String email) async {
-    final response = await http
-        .get(Uri.parse("$apiUrl/check-email/?email=$email"), headers: {
-      'Content-Type': 'application/json',
-    });
-    if (response.statusCode == 500) {
-      throw Exception(
-          "Server Error: If email field is blank please input email.");
-    } else if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['exists'] ?? false;
-    } else {
-      throw Exception('Failed to check email');
-    }
-  }
-
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$apiUrl/token/'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'username': username, 'password': password}),
-      );
+    final response = await http.post(
+      Uri.parse('$apiUrl/token/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'password': password}),
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      String accessToken = data['access'];
+      String refreshToken = data['refresh'];
 
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        String accessToken = data['access'];
-        String refreshToken = data['refresh'];
-
-        // Store access and refresh tokens securely
-        await authStorage.write(key: 'accessToken', value: accessToken);
-        await authStorage.write(key: 'refreshToken', value: refreshToken);
-      } else {
-        throw Exception('Failed to login');
-      }
-    } catch (e) {
-      // Catch network or connectivity issues
-      throw Exception('Network error: Unable to login. Details: $e');
+      // Store access and refresh tokens securely
+      await authStorage.write(key: 'accessToken', value: accessToken);
+      await authStorage.write(key: 'refreshToken', value: refreshToken);
+    } else if (response.statusCode == 400){
+        throw Exception('Bad Request!');
+    }else if (response.statusCode == 401){
+      throw Exception('Username or Password Incorrect!');
+    }else if (response.statusCode == 500){
+      throw Exception('Internal Server Error');
     }
+    else {
+  
+      throw Exception('Failed to login');
+    }
+    
   }
 
 // Access token refresh method: Use refresh token
@@ -207,9 +207,7 @@ class AuthService {
   Future<void> register({
     required String username,
     required String password,
-    required email,
-    required phoneNumber,
-    required address,
+    required String email,
     // Additional fields if needed
   }) async {
     final response = await http.post(
@@ -218,27 +216,23 @@ class AuthService {
       body: jsonEncode({
         'username': username,
         'password': password,
-        'email': email ?? '',
-        'phone_number': phoneNumber ?? '',
-        'address': address ?? '',
+        'email_address': email,
         // Include additional fields if necessary
       }),
     );
-
+    print(response.statusCode);
     if (response.statusCode == 201) {
       // Perform additional actions upon successful registration
     } else {
-      try {
         var data = jsonDecode(response.body);
-        throw Exception('Failed to register: ${data.toString()}');
-      } catch (e) {
-        throw Exception('Invalid server response: $e');
-      }
+        throw Exception({data.toString()});
     }
   }
 
-  void launchPasswordReset() async {
-    final Uri resetUri = Uri.parse("http://127.0.0.1:8000/reset_password/");
+
+
+void launchPasswordReset() async {
+  final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);

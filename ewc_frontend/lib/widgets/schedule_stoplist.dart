@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// This file manages the schedule stop list widget.
+///
+/// Functions:
+/// - `build()`: Builds the schedule stop list.
+
 class ScheduleStopList extends StatelessWidget {
 
   final bool inPast;

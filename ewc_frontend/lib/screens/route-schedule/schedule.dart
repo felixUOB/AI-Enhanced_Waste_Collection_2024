@@ -9,6 +9,12 @@ import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 
+/// This file manages the route schedule and provides functionality to interact with the list of stops.
+///
+///// Functions:
+/// - `initialiseStops()`: Initializes the stops and fetches them from the service.
+/// - `build()`: Builds the UI for the route schedule.
+
 class Schedule extends StatefulWidget {
   const Schedule({super.key});
 

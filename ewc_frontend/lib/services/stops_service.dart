@@ -4,8 +4,15 @@ import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:latlong2/latlong.dart';
 
-class StopsService {
+/// This file manages the stops service and provides functionality to interact with the list of stops.
+///
+/// Functions:
+/// - `postStopCollection(int stopID, int weightCollected)`: Posts the stop collection to the backend.
+/// - `fetchStop(int stopID)`: Fetches a stop from the backend.
+/// - `fetchAllStops()`: Fetches all the stops from the backend.
 
+class StopsService {
+  
   Future<void> postStopCollection(int stopID, int weightCollected) async {
     final body = {'stop': stopID, 'weight_collected': weightCollected};
     final response = await getIt<AuthService>().makeAuthenticatedPostRequest('stop_collection/', body);
