@@ -21,9 +21,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  final String apiUrl = 'http://127.0.0.1:8000/api';
-  final String adminUrl = 'http://127.0.0.1:8000/admin';
-  final String rootUrl = 'http://127.0.0.1:8000/';
+  final String apiUrl = 'https://devnest.software/api';
+  final String adminUrl = 'https://devnest.software/admin';
+  final String rootUrl = 'https://devnest.software';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
@@ -43,7 +43,7 @@ class AuthService {
     await authStorage.write(key: 'username', value: username); // Store username
 
     var encryptedPassword =
-        encryptionService.encryptData(password); // Encrypt Password
+    encryptionService.encryptData(password); // Encrypt Password
 
     await authStorage.write(
         key: 'password', value: encryptedPassword); // Store password
@@ -60,7 +60,6 @@ class AuthService {
             .decryptData(encryptedPassword); //Attempts decryption
         return {'username': username, 'password': password};
       } catch (e) {
-        print('Decryption failed: $e');
         return {'username': null, 'password': null};
       }
     } else {
@@ -77,28 +76,31 @@ class AuthService {
 
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$apiUrl/token/'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'username': username, 'password': password}),
-      );
+    final response = await http.post(
+      Uri.parse('$apiUrl/token/'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'username': username, 'password': password}),
+    );
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      String accessToken = data['access'];
+      String refreshToken = data['refresh'];
 
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        String accessToken = data['access'];
-        String refreshToken = data['refresh'];
-
-        // Store access and refresh tokens securely
-        await authStorage.write(key: 'accessToken', value: accessToken);
-        await authStorage.write(key: 'refreshToken', value: refreshToken);
-      } else {
-        throw Exception('Failed to login');
-      }
-    } catch (e) {
-      // Catch network or connectivity issues
-      throw Exception('Network error: Unable to login. Details: $e');
+      // Store access and refresh tokens securely
+      await authStorage.write(key: 'accessToken', value: accessToken);
+      await authStorage.write(key: 'refreshToken', value: refreshToken);
+    } else if (response.statusCode == 400){
+      throw Exception('Bad Request!');
+    }else if (response.statusCode == 401){
+      throw Exception('Username or Password Incorrect!');
+    }else if (response.statusCode == 500){
+      throw Exception('Internal Server Error');
     }
+    else {
+
+      throw Exception('Failed to login');
+    }
+
   }
 
 // Access token refresh method: Use refresh token
@@ -170,12 +172,12 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.post(
-      Uri.parse('$apiUrl/$endpoint'),
-      headers: {
-        'Authorization': 'Bearer $accessToken',
-        'Content-Type': 'application/json',
-      },
-      body: body != null ? jsonEncode(body) : null
+        Uri.parse('$apiUrl/$endpoint'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body != null ? jsonEncode(body) : null
     );
 
     if (response.statusCode == 401) {
@@ -186,12 +188,12 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.post(
-          Uri.parse('$apiUrl/$endpoint'),
-          headers: {
-            'Authorization': 'Bearer $newAccessToken',
-            'Content-Type': 'application/json',
-          },
-          body: body != null ? jsonEncode(body) : null
+            Uri.parse('$apiUrl/$endpoint'),
+            headers: {
+              'Authorization': 'Bearer $newAccessToken',
+              'Content-Type': 'application/json',
+            },
+            body: body != null ? jsonEncode(body) : null
         );
       } else {
         throw Exception('Failed to obtain new access token');
@@ -205,7 +207,7 @@ class AuthService {
   Future<void> register({
     required String username,
     required String password,
-    required email,
+    required String email,
     // Additional fields if needed
   }) async {
     final response = await http.post(
@@ -214,22 +216,23 @@ class AuthService {
       body: jsonEncode({
         'username': username,
         'password': password,
-        'email': email ?? '',
+        'email_address': email,
         // Include additional fields if necessary
       }),
     );
+    print(response.statusCode);
     if (response.statusCode == 201) {
       // Perform additional actions upon successful registration
     } else {
-        var data = jsonDecode(response.body);
-        throw Exception('Failed to register: ${data.toString()}');
+      var data = jsonDecode(response.body);
+      throw Exception({data.toString()});
     }
   }
 
 
 
-void launchPasswordReset() async {
-  final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
+  void launchPasswordReset() async {
+    final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);

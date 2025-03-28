@@ -59,36 +59,48 @@ class _SettingPageState extends State<SettingPage> {
         context: context,
         barrierDismissible: false,
         builder: (dialogContext) => AlertDialog(
-          title: Text("Enter your vehicle's Miles per Gallon"),
-          content: TextField(
-            controller: mpgController,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(hintText: "Miles per Gallon"),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () async {
-                  double? mpgValue = double.tryParse(mpgController.text);
-                  if (mpgValue != null) {
-                    await box.put('mpg', mpgValue); // Ensure it is stored correctly
+              title: Text("Enter your vehicle's Miles per Gallon"),
+              content: TextField(
+                controller: mpgController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: "Miles per Gallon",
+                  errorText: (mpgController.text.isNotEmpty &&
+                          double.tryParse(mpgController.text) != null &&
+                          double.parse(mpgController.text) < 0)
+                      ? "MPG cannot be negative"
+                      : null,
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    double? mpgValue = double.tryParse(mpgController.text);
+                    if (mpgValue == null || mpgValue < 0) {
+                      ScaffoldMessenger.of(dialogContext).showSnackBar(
+                        SnackBar(
+                            content: Text("MPG must be a positive number and cannot be empty!")),
+                      );
+                      return;
+                    }
+
+                    await box.put(
+                        'mpg', mpgValue); // Ensure it is stored correctly
                     setState(() {}); // Refresh UI
                     if (!dialogContext.mounted) return;
                     Navigator.pop(dialogContext);
                     ScaffoldMessenger.of(dialogContext).showSnackBar(
                       SnackBar(content: Text("Current MPG is : $mpgValue")),
                     );
-
-                  }
-                },
-                child: Text('Save'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("Cancel"),
-            )
-          ],
-        )
-    );
+                  },
+                  child: Text('Save'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Cancel"),
+                )
+              ],
+            ));
   }
 
   //Helper for logout
@@ -202,16 +214,15 @@ class _SettingPageState extends State<SettingPage> {
             "https://forms.office.com/Pages/ResponsePage.aspx?id=MH_ksn3NTkql2rGM8aQVG46lEh417JBEtdhuAjVqOHxURDgzSVVSRUZZTjhaMU5YMU05RllDRFNITi4u"),
       ),
 
-          // 6) Alter MPG
-          _buildSettingsItem(
-              icon: Icons.local_gas_station,
-              iconColor: Colors.deepOrange,
-              title: "Miles Per Gallon",
-              subtitle: "Current : ${mpgController.text}, Miles Per Gallon",
-              onTap : () {
-                _inputMPG();
-              }
-          ),
+      // 6) Alter MPG
+      _buildSettingsItem(
+          icon: Icons.local_gas_station,
+          iconColor: Colors.deepOrange,
+          title: "Miles Per Gallon",
+          subtitle: "Current : ${mpgController.text}, Miles Per Gallon",
+          onTap: () {
+            _inputMPG();
+          }),
 
       // 7) Reset Password
       _buildSettingsItem(
