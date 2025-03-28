@@ -216,4 +216,15 @@
       margin-bottom: 1.5rem;
     }
   }
-  
+
+/* Ensure the label and textarea are aligned correctly */
+.form-label {
+  display: inline-flex;
+  margin-bottom: 0.5rem; 
+}
+
+textarea.form-control-modern {
+  display: block; 
+  width: 100%; 
+  margin-top: 0; 
+}

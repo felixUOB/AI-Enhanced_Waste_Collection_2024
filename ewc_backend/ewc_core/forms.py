@@ -30,6 +30,7 @@ class StopsForm(forms.ModelForm):
             'longitude',
             'max_weight',
             'next_collection_due_date',
+            'description',
         ]
         help_texts = {
             'next_collection_due_date': (
@@ -53,5 +54,9 @@ class StopsForm(forms.ModelForm):
             'next_collection_due_date': forms.DateInput(attrs={
                 'class': 'form-control-modern',  
                 'type': 'date', 
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control-modern',  
+                'rows': 2,
             }),
         }
