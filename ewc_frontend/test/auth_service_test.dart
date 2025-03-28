@@ -91,15 +91,5 @@ void main() { // Entry point for the test suite
       expect(creds['username'], isNull); // Username should be null after clearing
       expect(creds['password'], isNull); // Password should be null after clearing
     });
-
-    test('checkEmail (simple invocation test)', () async {
-      await authService.initializeAuthService(); // Ensures the service is initialized
-      try {
-        final exists = await authService.checkEmail('test@example.com'); // Calls the checkEmail method
-        expect(exists, anyOf([isTrue, isFalse])); // Accepts either true or false as valid
-      } catch (_) {
-        expect(true, isTrue); // If an error occurs, the test still counts for coverage
-      }
-    });
   });
 }
