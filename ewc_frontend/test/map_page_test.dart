@@ -14,6 +14,7 @@ import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:provider/provider.dart';
 
+
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
   @override Future<bool> isLocationServiceEnabled() async => true;
 

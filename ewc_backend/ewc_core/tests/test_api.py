@@ -30,12 +30,7 @@ class UserRegistrationTest(APITestCase):
         payload = {
             "username": "testuser",
             "password": "testpass123",
-            "email": "test@example.com",
-            "phone_number": "01012345678",
-            "address": "UK, Bristol",
-            "pickup_frequency": "weekly",
-            "waste_type_preference": "general",
-            "notification_preferences": True
+            "email_address": "test@example.com",
         }
         response = self.client.post(url, payload, format='json')
         # Expect HTTP 201 CREATED if registration is successful

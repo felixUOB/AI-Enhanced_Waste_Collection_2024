@@ -227,16 +227,12 @@ class MockAuthService extends _i1.Mock implements _i9.AuthService {
     required String? username,
     required String? password,
     required dynamic email,
-    required dynamic phoneNumber,
-    required dynamic address,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#register, [], {
               #username: username,
               #password: password,
               #email: email,
-              #phoneNumber: phoneNumber,
-              #address: address,
             }),
             returnValue: _i11.Future<void>.value(),
             returnValueForMissingStub: _i11.Future<void>.value(),
@@ -400,6 +396,23 @@ class MockMetricsService extends _i1.Mock implements _i13.MetricsService {
             ),
           )
           as _i11.Future<List<_i14.JourneyRoute>>);
+
+  @override
+  _i11.Future<void> postRouteData({
+    required double? distance,
+    required double? mpg,
+    required String? date,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#postRouteData, [], {
+              #distance: distance,
+              #mpg: mpg,
+              #date: date,
+            }),
+            returnValue: _i11.Future<void>.value(),
+            returnValueForMissingStub: _i11.Future<void>.value(),
+          )
+          as _i11.Future<void>);
 }
 
 /// A class which mocks [Config].

@@ -5,7 +5,6 @@ on:
     branches:
       - dev
 
-      
 jobs:
   build-and-push:
     name: Build and Push Backend Docker Image
@@ -28,21 +27,19 @@ jobs:
 
       - name: Build and Tag Docker Image
         run: |
-
-
           REPO_URI=713881812987.dkr.ecr.eu-west-2.amazonaws.com/ewc-django-docker
           IMAGE_TAG=$(git rev-parse --short HEAD)
 
           cd ewc_backend
           DOCKER_BUILDKIT=1 docker build \
-            --secret id=django_secret_key,env=DJANGO_SECRET_KEY \
-            --secret id=postgres_db,env=POSTGRES_DB \
-            --secret id=postgres_user,env=POSTGRES_USER \
-            --secret id=postgres_password,env=POSTGRES_PASSWORD \
-            --secret id=postgres_host,env=POSTGRES_HOST \
-            --secret id=postgres_port,env=POSTGRES_PORT \
-            --secret id=sendgrid_secret_key,env=SENDGRID_SECRET_KEY \
-            --secret id=openrouteservice_api_key,env=OPENROUTESERVICE_API_KEY \
+            --build-arg DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }} \
+            --build-arg POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+            --build-arg POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+            --build-arg POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+            --build-arg POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+            --build-arg POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+            --build-arg SENDGRID_SECRET_KEY=${{ secrets.SENDGRID_SECRET_KEY }} \
+            --build-arg OPENROUTESERVICE_API_KEY=${{ secrets.OPENROUTESERVICE_API_KEY }} \
             -t $REPO_URI:$IMAGE_TAG .
 
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest

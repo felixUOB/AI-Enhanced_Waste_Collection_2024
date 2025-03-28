@@ -9,8 +9,7 @@ Models:
 
 1. UserProfile:
    - Extends the built-in Django `User` model.
-   - Stores additional user details such as phone number, address, waste pickup frequency, 
-     waste type preference, carbon savings, and notification preferences.
+   - Stores additional user details such as email address
 
 2. Stops:
    - Represents collection points with location details (latitude, longitude).
@@ -30,28 +29,10 @@ Models:
 class UserProfile(models.Model):
     '''
     This model extends the built-in Django User model to include additional user details
-    such as phone number, address, waste pickup frequency, waste type preference,
-    carbon savings, and notification preferences.
+    such as email_Address
     '''
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # Linked User model
-    phone_number = models.CharField(max_length=15, blank=True)  # User's phone number
-    address = models.TextField(blank=True)  # User's address
-
-    # Waste pickup frequency
-    pickup_frequency = models.CharField(
-        max_length=20,
-        choices=[('weekly', 'Weekly'), ('biweekly', 'Biweekly'), ('monthly', 'Monthly')],
-        default='weekly'
-    )
-
-    # Type of waste managed
-    waste_type_preference = models.CharField(
-        max_length=20,
-        choices=[('general', 'General'), ('recycling', 'Recycling'), ('organic', 'Organic')],
-        default='general'
-    )
-    carbon_savings = models.FloatField(default=0.0)  # Carbon savings (kg)
-    notification_preferences = models.BooleanField(default=True)  # Notification settings
+    email_address = models.TextField(blank=True)  # User's address
 
     def __str__(self):
         return self.user.username
@@ -90,6 +71,7 @@ class Stops(models.Model):
     longitude = models.FloatField()
     next_collection_due_date = models.DateField(blank=True, null=True)
     max_weight = models.IntegerField()
+    description = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = 'ewc_core_stops'
