@@ -1,3 +1,5 @@
+import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
@@ -12,6 +14,7 @@ import 'package:ewc/widgets/login_button.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
 import "package:mockito/mockito.dart";
+import 'package:provider/provider.dart';
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/map/map.dart';
 
@@ -320,7 +323,17 @@ void main() {
       
 
       // Build the test widget
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<LocationProvider>(create: (_) => LocationProvider()),
+            ChangeNotifierProvider<StopsProvider>(create: (_) => StopsProvider())
+          ],
+          child: MaterialApp(
+            home: LoginPage(),
+          )
+        )
+      );
 
       // Find the text fields and enter only the username
       final usernameFieldFinder = find.byKey(const Key('usernameField'));
