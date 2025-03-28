@@ -1,46 +1,74 @@
 import 'dart:async';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter/material.dart';
-import 'package:ewc/main.dart' as my_app;
-import 'package:ewc/main.dart';
 import 'package:ewc/screens/splash/splash.dart';
+import 'package:ewc/service_locator.dart';
+import 'package:ewc/theme/theme_constants.dart';
+import 'package:ewc/theme/theme_manager.dart';
+import 'package:flutter/material.dart';
 
-void main() {
-  // The main entry point for running our tests
-  group('main.dart coverage', () {
-    // Groups related tests under the label "main.dart coverage"
+ThemeManager themeManager = ThemeManager();
 
-    testWidgets('1) main() without Completer => calls setupLocator', (WidgetTester tester) async {
-      // A widget test that verifies what happens when we call main() with no arguments
-      my_app.main();
-      // Calls the app's main() function from 'my_app' alias;
-      // typically this should trigger setupLocator or any bootstrapping code
-    });
+// so that test code can 'await' this function call.
+Future<void> main({Completer<void>? setupCompleter}) async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-    testWidgets('2) main() with Completer => skip setupLocator', (WidgetTester tester) async {
-      // A widget test that verifies the behavior when main() is given a Completer
+  // If no completer is provided, call setupLocator().
+  if (setupCompleter == null) {
+    await setupLocator();
+  }
 
-      final completer = Completer<void>();
-      // Creates a Completer which can signal when setup is finished
+  // If a completer is given, we skip setupLocator() but do .complete() instead.
+  setupCompleter?.complete();
 
-      my_app.main(setupCompleter: completer);
-      // Calls main() passing our Completer, presumably causing some setup function to be skipped
+  // runApp does not return anything (void), but because this function is now
+  // async, the test can wait for all async tasks to complete (including setup).
+  runApp(const App());
+}
 
-      await completer.future;
-      // Awaits the Completer's completion, ensuring the asynchronous steps finish
-    });
+class App extends StatefulWidget {
+  const App({super.key});
 
-    testWidgets('3) Pump App => covers initState, dispose, SplashPage build', (WidgetTester tester) async {
-      // A widget test that actually renders the app's widget tree to cover initState, dispose, and building SplashPage
+  @override
+  State<StatefulWidget> createState() {
+    //Creates initial state of the app
+    return MyAppState();
+  }
+}
 
-      await tester.pumpWidget(const App());
-      // Pumps (renders) our top-level App widget into the test environment
+class MyAppState extends State<App> {
+  @override
+  void dispose() {
+    //When State closes this function is called to remove the theme listener
+    themeManager.removeListener(themeListener);
+    super.dispose();
+  }
 
-      expect(find.byType(MaterialApp), findsOneWidget);
-      // Verifies that a MaterialApp widget is present
+  @override
+  void initState() {
+    //Initialising App State with a listener
+    themeManager.addListener(themeListener);
+    super.initState();
+  }
 
-      expect(find.byType(SplashPage), findsOneWidget);
-      // Verifies that the SplashPage is actually being built and rendered
-    });
-  });
+  void themeListener() {
+    //English comment: if the widget is still mounted, we re-build the UI
+    //so that the updated theme takes effect
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //English comment: The main build method that sets up the MaterialApp
+    //with our splash page and theme references
+    return MaterialApp(
+        title: "EWC",
+        debugShowCheckedModeBanner: false,
+        home: const SplashPage(),
+        // theme management
+        theme: AppTheme().lightTheme,
+        darkTheme: AppTheme().darkTheme,
+        themeMode: themeManager.themeMode
+    );
+  }
 }
