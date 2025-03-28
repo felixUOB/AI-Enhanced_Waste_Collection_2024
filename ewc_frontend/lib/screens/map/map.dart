@@ -34,6 +34,7 @@ import 'package:ewc/services/metrics_service.dart';
 /// - `_drawStopsMarker(Color color)`: Draws markers for all stops.
 /// - `_fetchRoute(int firstStopID, int secondStopID)`: Fetches a route between two stops.
 /// - `_fetchOptimizedRoute()`: Fetches an optimized route between stops. 
+/// - `getInstructionsBinarySearch(int userIndex)`: Gets the instruction based on the user's current route index using binary search.
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -46,13 +47,17 @@ class MapPage extends StatefulWidget {
 class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Route variables
   final List<LatLng> _routePoints = [];
-  final Map<List<double>, String> _routeInstructions = {};
+  final List<RangeInstruction> _routeInstructions = [];
   List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
+  // _isClosestIndexBeforeUserLocation is true if the closest index is before the user's location in other words its ahead of the user/ infront of the user
+  bool _isClosestIndexBeforeUserLocation = true;
+  // _currentInstruction holds the current instruction to be displayed on the NavigationBanner
+  String _currentInstruction = "No instructions available";
 
   // Map rotation variables
   double _autoBearing = 0; // Bearing set automatically by navigation view
@@ -177,12 +182,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         if (mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(result.optimisedOrder);
 
         List<LatLng> optimizedRoute = result.routeCoordinates;
-        Map<List<double>, String> instructionsMap = result.instructionsMap;
+        List<RangeInstruction> rangeInstructions = result.rangeInstructions;
         setState(() {
           _routePoints.clear();
           _routeInstructions.clear();
           _routePoints.addAll(optimizedRoute);
-          _routeInstructions.addAll(instructionsMap);
+          _routeInstructions.addAll(rangeInstructions);
         });
       }
     } catch (e) {
@@ -233,20 +238,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-  // To be used later with the users location - for modification
-  List<double>? getInstructionRangeKey(int userIndex) {
-    // Find the first instruction range that the user's index falls within the defined range.
-    List<double>? activeRange;
-    _routeInstructions.forEach((range, instruction) {
-      final start = range[0].toInt();
-      final end = range[1].toInt();
-      if (userIndex >= start && userIndex <= end) {
-        activeRange = range;
-      }
-    });
+  // Returns the instruction based on the user's current route index using binary search
+  String getCurrentInstructionBinarySearch(double userIndex) {
+    int low =0;
+    int high = _routeInstructions.length - 1;
 
-    // Return the range (key) if found
-    return activeRange;
+    while (low <= high) {
+      int mid = (low + high) ~/ 2;
+      final rangeInstruction = _routeInstructions[mid];
+
+      if (userIndex < rangeInstruction.start) {
+        high = mid - 1;
+      } else if (userIndex > rangeInstruction.end) {
+        low = mid + 1;
+      } else {
+        return rangeInstruction.instruction;
+      }
+    }
+    return "No instructions available";
   }
 
   // Builds the main UI for the map screen
@@ -263,9 +272,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
               right: 8.0,
               child: NavigationBanner(
                 visible: _journeyActive,
-                instruction: _routeInstructions.values.length > 1
-                    ? _routeInstructions.values.elementAt(1)
-                    : "No instructions available",
+                instruction: _currentInstruction,
               ),
             ),
             Positioned(
@@ -482,7 +489,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       ),
       children: [
         if (!getIt<Config>().inTestMode) openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-        RoutePolylineLayer(routePoints: _routePoints),
+        RoutePolylineLayer(routePoints: _routePoints, closestIndex: _closestIndex, currentLocation: location, isClosestIndexBeforeUserLocation: _isClosestIndexBeforeUserLocation),
         MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
         if (_locationStatus != null && location != null)
@@ -683,10 +690,25 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       );
     }
 
+    // Determine effective index based on whether user is before or after _routePoints[index].
+    double effectiveIndex;
+    if (index > 0 && index < _routePoints.length - 1) {
+      // If distance1 is smaller, user is before reaching _routePoints[index]
+      // Otherwise, user has passed it.
+      if (distance1 < distance2) {
+        effectiveIndex = index - 0.5;
+      } else {
+        effectiveIndex = index + 0.5;
+      }
+    } else {
+      effectiveIndex = index.toDouble();
+    }
     // Update state to reflect new changes
     setState(() {
       _closestIndex = index;
+      _isClosestIndexBeforeUserLocation = distance1 < distance2;
       _autoBearing = bearing;
+      _currentInstruction = getCurrentInstructionBinarySearch(effectiveIndex);
     });
   }
 

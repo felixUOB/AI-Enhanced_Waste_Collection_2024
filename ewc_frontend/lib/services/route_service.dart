@@ -22,11 +22,21 @@ class RouteResult {
 
   // A list of LatLng objects representing the route
   final List<LatLng> routeCoordinates;
-  // A map of instructions with the key as a list of coordinates(that are the range between which the instruction should be displayed) 
-  // and the value as the instruction message.
-  final Map<List<double>, String> instructionsMap;
+ 
+  // A list of RangeInstruction objects representing the instructions for each range of coordinates
+  final List<RangeInstruction> rangeInstructions;
 
-  RouteResult(this.optimisedOrder, this.routeCoordinates, this.instructionsMap);
+  RouteResult(this.optimisedOrder, this.routeCoordinates, this.rangeInstructions);
+}
+
+class RangeInstruction {
+  // The start and end index of the range of coordinates for which the instruction is applicable
+  final int start;
+  final int end;
+  // The instruction message
+  final String instruction;
+
+  RangeInstruction(this.start, this.end, this.instruction);
 }
 
 // A service class to manage route fetching from OpenRouteService API
@@ -189,22 +199,23 @@ class RouteService {
       profileOverride: ORSProfile.drivingHgv, // Set profile to heavy goods vehicle
       instructions: true,
     );
-    // Initialize an empty map to store instructions with waypoints as keys and instruction messages as values.
-    final Map<List<double>, String> instructionsMap = {};
 
-    //Extract the instructions from the response
-    final route = directionsDataResponse.first;
-    for (var segment in route.segments) {
-      for (var step in (segment.steps)) {
-        // Map the waypoints to the corresponding instruction message.
-        instructionsMap[step.wayPoints] = step.instruction;
+    final routeData = directionsDataResponse.first;
+    // Extract the navigation instructions and their applicable range indexes for the route.
+    final List<RangeInstruction> rangeInstructions = [];
+    for (var segment in routeData.segments) {
+      for (var step in segment.steps) {
+        int startIndex = step.wayPoints[0].toInt();
+        int endIndex = step.wayPoints[1].toInt();
+        String instruction = step.instruction;
+        rangeInstructions.add(RangeInstruction(startIndex, endIndex, instruction));
       }
     }
 
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
     List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
 
-    return RouteResult(newStopOrder, routeCoordinates, instructionsMap);
+    return RouteResult(newStopOrder, routeCoordinates, rangeInstructions);
 
   }
 
