@@ -1,5 +1,6 @@
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/depo_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -20,6 +21,7 @@ Future<void> mockSetupLocator() async {
   getIt.registerSingleton<StopsService>(MockStopsService());
   getIt.registerSingleton<MetricsService>(MockMetricsService());
   getIt.registerSingleton<Config>(MockConfig());
+  getIt.registerSingleton<DepoService>(MockDepoService());
   
   await getIt.allReady();
 }

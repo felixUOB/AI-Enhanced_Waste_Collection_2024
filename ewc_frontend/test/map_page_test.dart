@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:ewc/models/depo_model.dart';
 import 'package:ewc/models/stop_model.dart';
+import 'package:ewc/services/depo_service.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/widgets/orientate_button.dart';
 import 'package:latlong2/latlong.dart';
@@ -72,6 +74,7 @@ void main() {
   group('Map Page Tests', () {
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
+      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -83,6 +86,7 @@ void main() {
       });
 
     testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
+      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
       await tester.runAsync(() async {
         // Currently, tapping Start Journey starts the journey without a popup,
         // Tap on ‘Start Journey’ to make it true:
@@ -106,6 +110,7 @@ void main() {
     });
 
     testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
+      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
       await tester.runAsync(() async {
         // 1) Pump map
         await tester.pumpWidget(pumpMap());
@@ -130,6 +135,7 @@ void main() {
     });
 
     testWidgets('Ensure buttons load correctly', (WidgetTester tester) async {
+      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -142,6 +148,7 @@ void main() {
     });
 
     testWidgets('Ensure orientate button toggles north variable', (WidgetTester tester) async {
+      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -162,6 +169,7 @@ void main() {
     });
 
     testWidgets('Ensure register stop shows alters visited attributed of stop', (WidgetTester tester) async {
+      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
       await tester.runAsync(() async {
         var stopsProvider = StopsProvider();
         await tester.pumpWidget(MaterialApp(
@@ -216,6 +224,7 @@ void main() {
     });
 
     testWidgets('Ensure entering invalid data brings up invalid dialog', (WidgetTester tester) async {
+      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -269,6 +278,7 @@ void main() {
 
   // Increase Flutter Coverage %
   testWidgets('map page shows error dialog on fetchAllStops exception', (WidgetTester tester) async {
+    when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
     await tester.runAsync(() async {
       // Throw exception in mock
       when(getIt<StopsService>().fetchAllStops()).thenThrow(Exception('Mock Error'));
