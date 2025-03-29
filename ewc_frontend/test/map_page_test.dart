@@ -14,7 +14,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:provider/provider.dart';
-import 'package:hive/hive.dart';
 
 
 
