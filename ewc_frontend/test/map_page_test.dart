@@ -104,6 +104,31 @@ void main() {
         });
       });
 
+    testWidgets('MPGInputDialog saves valid MPG input and retrieves it', (WidgetTester tester) async {
+      await tester.runAsync(() async {
+        // Set up the widget
+        await tester.pumpWidget(
+          MaterialApp(home: Scaffold(body: MPGInputDialog())),
+        );
+        await tester.pumpAndSettle();
+
+        // Enter a valid MPG value
+        await tester.enterText(find.byKey(Key('mpg_input')), '25.5');
+        await tester.tap(find.text('Save'));
+        await tester.pumpAndSettle();
+
+        // Expect the dialog to close
+        expect(find.byType(MPGInputDialog), findsNothing);
+
+        // Retrieve the saved value from Hive
+        var box = await Hive.openBox('Settings');
+        double? savedMPG = box.get('mpg');
+
+        // Check if the saved value matches the input
+        expect(savedMPG, 25.5); // Ensure the value saved is correct
+      });
+    });
+
     testWidgets('MPGInputDialog shows error for invalid input', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(home: Scaffold(body: MPGInputDialog())),
