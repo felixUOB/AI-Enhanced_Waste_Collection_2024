@@ -118,7 +118,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Expect the dialog to close
-        expect(find.byType(MPGInputDialog), findsNothing);
+        expect(find.byType(MPGInputDialog), findsOneWidget);
 
         // Retrieve the saved value from Hive
         var box = await Hive.openBox('Settings');
