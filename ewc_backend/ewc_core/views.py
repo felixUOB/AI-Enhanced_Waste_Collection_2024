@@ -4,6 +4,9 @@ from rest_framework import viewsets, permissions, generics
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view
 
+import requests
+from django.http import JsonResponse
+from django.conf import settings
 from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depo
 from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, DepoSerializer
 from django.contrib.auth.models import User
@@ -204,3 +207,57 @@ class DepoViewSet(viewsets.ModelViewSet):
     def get_depo_location(self, request):
         data = list(Depo.objects.values('latitude', 'longitude'))
         return JsonResponse(data, safe=False)
+
+
+@login_required
+@user_passes_test(is_staff_user)
+def get_coordinates_by_name(request):
+    stop_name = request.GET.get('name')
+    api_key = settings.OPENROUTESERVICE_API_KEY
+    url = f'https://api.openrouteservice.org/geocode/search?api_key={api_key}&text={stop_name}'
+    response = requests.get(url)
+    data = response.json()
+
+    if 'features' in data and len(data['features']) > 0:
+        location = data['features'][0]['geometry']['coordinates']
+        properties = data.get('features')[0].get('properties', {})
+        label = properties.get('label', '')
+        if label:
+            parts = label.split(',')
+            location_name = ','.join(parts[:2])
+        else:
+            location_name = ''
+
+        return JsonResponse({
+            'latitude': location[1],
+            'longitude': location[0],
+            'location_name': location_name
+        })
+    else:
+        return JsonResponse({'error': 'Location not found'}, status=404)
+    
+@login_required
+@user_passes_test(is_staff_user)
+def reverse_geocode(request):
+    latitude = request.GET.get('latitude')
+    longitude = request.GET.get('longitude')
+    api_key = settings.OPENROUTESERVICE_API_KEY
+    url = f'https://api.openrouteservice.org/geocode/reverse?api_key={api_key}&point.lat={latitude}&point.lon={longitude}'
+    response = requests.get(url)
+    data = response.json()
+
+    if data and data.get('features'):
+        label = data['features'][0]['properties'].get('label', '')
+        if label:
+            parts = [p.strip() for p in label.split(',')]
+            label = ', '.join(parts[:2])
+        return JsonResponse({'location_name': label})
+    else:
+        return JsonResponse({'error': 'Reverse geocoding failed'}, status=404)
+    
+@login_required
+@user_passes_test(is_staff_user)
+def get_stops_list(request):
+    stops = Stops.objects.all()
+    serializer = StopsSerializer(stops, many=True)
+    return JsonResponse(serializer.data, safe=False)

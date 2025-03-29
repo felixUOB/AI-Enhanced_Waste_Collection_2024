@@ -1,6 +1,32 @@
-{% extends "base.html" %}
+<!--
+  File: stops_list.html
+  Description: Template that displays a list of stops in a Bootstrap card along with a Leaflet map.
+               Each stop is rendered with its details and action buttons for editing and deletion.
+  Dependencies:
+      - base.html (for page layout)
+      - stops_list.css (custom styling)
+      - stops_list.js (Leaflet map and marker handling)
+      - Bootstrap (for the responsive grid and button styles)
+      - Leaflet (for the map functionality)
+-->
 
+{% extends "base.html" %}
+{% load static %}
 {% block title %}Stops List | SpaceNXT Labs-EWC{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""/>
+  <link rel="stylesheet" href="{% static 'css/stops_list.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""></script>
+  <script src="{% static 'js/stops_list.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 <!--
@@ -16,6 +42,16 @@
   <a class="btn btn-primary" href="{% url 'stops_create' %}">
     <i class="bi bi-plus-lg"></i> Add New Stop
   </a>
+   <!-- Button to navigate to the admin stops page on EWC Admin Panel-->
+   <a class="btn btn-secondary ms-2 btn-admin-outline" href="/admin">
+    <i class="bi bi-gear"></i> EWC Admin Panel
+  </a>
+    <label for="sortDropdown" class="form-label me-2">Sort By:</label>
+    <select id="sortDropdown" class="form-select">
+      <option value="" disabled selected>Select</option>
+      <option value="alphabetical">Alphabetically</option>
+      <option value="weight">Max Weight</option>
+    </select>
 </div>
 
 <!--
@@ -31,7 +67,7 @@
       <!--
         A list group for each stop. Using Bootstrap list-group styling.
       -->
-      <ul class="list-group list-group-flush">
+      <ul id = "stops-list" class="list-group list-group-flush">
         {% for stop in stops %}
           <!--
             Each "li" represents a single stop item with "location_name" and relevant info
@@ -41,8 +77,8 @@
               <!--
                 Stop name or "(No Name)" if null/blank, plus latitude/longitude and max_weight
               -->
-              <strong>{{ stop.location_name|default:"(No Name)" }}</strong><br>
-              <small class="text-muted">
+                <strong>{{ stop.location_name|default:"(No Name)" }}</strong><br>
+                <small class="text-muted"></small>
                 Lat: {{ stop.latitude }}, Lng: {{ stop.longitude }}
                 &middot; Max Weight: {{ stop.max_weight }}
               </small>
@@ -69,6 +105,9 @@
       -->
       <p class="text-muted">No stops available.</p>
     {% endif %}
+    </div>
+    <div class="col-md-6">
+      <div id="map" style="height: 400px;"></div>
     </div>
   </div>
 </div>
