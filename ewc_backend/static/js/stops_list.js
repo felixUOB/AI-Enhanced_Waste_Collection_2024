@@ -3,6 +3,7 @@
  * 
  * This script initializes a Leaflet map and fetches stops data from a JSON endpoint.
  * It creates markers for each stop and binds a popup containing Edit and Delete buttons.
+ * It also sorts the stos list based on the selected dropdown option.
  *
  * Dependencies:
  *  - Leaflet library for map handling.
@@ -27,29 +28,65 @@ const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/
 
 let currentBaseLayer = cartoLayer.addTo(map);
 
-var marker;
+let markersLayer = L.layerGroup().addTo(map);
+let stopsData = [];
 
-// Fetch the stops data from JSON endpoint
-fetch('/stops/get_stops_list')
-  .then(response => response.json())
-  .then(stops => {
-    // Iterate over each stop and create a marker
-    for (let stop of stops) {
-      // Constructs the popup HTML with edit and delete buttons
-      var popupHtml = `<strong>${stop.location_name || '(No Name)'}</strong><br>
+function renderStops(stopsArray) {
+  markersLayer.clearLayers();
+
+  const stopsListElement = document.getElementById('stops-list');
+  if (stopsListElement) {
+    stopsListElement.innerHTML = '';
+  }
+
+  // Center the map on the first stop, if available
+  if (stopsArray.length > 0) {
+    map.setView([stopsArray[0].latitude, stopsArray[0].longitude], 13);
+  }
+
+  // Add each stop as a marker 
+  stopsArray.forEach(stop => {
+    let popupHtml = `<strong>${stop.location_name || '(No Name)'}</strong><br>
       <a class="btn btn-sm btn-outline-primary" href="/stops/${stop.stop_id}/edit/">
         <i class="bi bi-pencil"></i> Edit
       </a>
       <a class="btn btn-sm btn-outline-danger ms-2" href="/stops/${stop.stop_id}/delete/">
         <i class="bi bi-trash"></i> Delete
       </a>`;
-
-
-      L.marker([stop.latitude, stop.longitude])
-        .addTo(map)
-        .bindPopup(popupHtml);
+    let marker = L.marker([stop.latitude, stop.longitude])
+      .bindPopup(popupHtml);
+    markersLayer.addLayer(marker);
+    // Render list of stops
+    if (stopsListElement) {
+      const listItem = document.createElement('li');
+      listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+      listItem.innerHTML = `
+        <div>
+          <strong>${stop.location_name || '(No Name)'}</strong><br>
+          <span class="text-muted">
+            Lat: ${stop.latitude}, Lng: ${stop.longitude} &middot; Max Weight: ${stop.max_weight}
+          </span>
+        </div>
+        <div>
+          <a class="btn btn-sm btn-outline-primary" href="/stops/${stop.stop_id}/edit/">
+            <i class="bi bi-pencil"></i> Edit
+          </a>
+          <a class="btn btn-sm btn-outline-danger ms-2" href="/stops/${stop.stop_id}/delete/">
+            <i class="bi bi-trash"></i> Delete
+          </a>
+        </div>
+      `;
+      stopsListElement.appendChild(listItem);
     }
-    if (stops.length > 0) map.setView([stops[0].latitude, stops[0].longitude], 13);
+  });
+}
+
+// Fetch stops data from the backend JSON endpoint
+fetch('/stops/get_stops_list/')
+  .then(response => response.json())
+  .then(stops => {
+    stopsData = stops;
+    renderStops(stopsData);
   })
   .catch(error => console.error('Error fetching stops:', error));
 
@@ -84,5 +121,30 @@ document.addEventListener('click', function(e) {
       currentBaseLayer = osmLayer;
     }
     map.addLayer(currentBaseLayer);
+  }
+});
+
+
+// Wait for the DOM to be fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+  const sortDropdown = document.getElementById('sortDropdown');
+  if (sortDropdown) {
+    // Listen to the change event of the dropdown
+    sortDropdown.addEventListener('change', function(e) {
+      let sortOrder = e.target.value;
+      let sortedStops = [...stopsData];
+      // Sort by alphabetical order
+      if (sortOrder === 'alphabetical') {
+        sortedStops.sort((a, b) => {
+          const nameA = a.location_name ? a.location_name.toLowerCase() : '';
+          const nameB = b.location_name ? b.location_name.toLowerCase() : '';
+          return nameA.localeCompare(nameB);
+        });
+      // Sort by weight
+      } else if (sortOrder === 'weight') {
+        sortedStops.sort((a, b) =>b.max_weight- a.max_weight);
+      }
+      renderStops(sortedStops);
+    });
   }
 });
