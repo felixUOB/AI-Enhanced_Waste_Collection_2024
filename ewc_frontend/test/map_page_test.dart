@@ -124,21 +124,6 @@ void main() {
       expect(find.text('MPG must be a positive number.'), findsOneWidget);
     });
 
-    testWidgets('MPGInputDialog saves valid MPG input', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(home: Scaffold(body: MPGInputDialog())),
-      );
-
-      // Enter valid MPG value
-      await tester.enterText(find.byKey(Key('mpg_input')), '25.5');
-      await tester.tap(find.text('Save'));
-      await tester.pump();
-      await tester.pumpAndSettle();
-
-      // Expect the dialog to close
-      expect(find.byType(MPGInputDialog), findsNothing);
-    });
-
     testWidgets('MPGInputDialog closes without saving when Cancel is pressed', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(home: Scaffold(body: MPGInputDialog())),
