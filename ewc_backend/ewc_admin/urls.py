@@ -25,7 +25,7 @@ from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewS
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
-from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list, schema_view, reverse_geocode
+from ewc_core.views import stops_list_view, stops_create_view, stops_edit_view, stops_delete_view, get_coordinates_by_name, get_stops_list, schema_view, reverse_geocode, export_csv_view
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 
@@ -55,7 +55,10 @@ urlpatterns = [
     
     # ------- endpoint for model -------- #
     path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
-    path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),    
+    path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),  
+
+    # ------- endpoint for export csv -------- #
+    path('export/', export_csv_view, name='export_csv'),  
 
 # -----------Stops HTML Form URLs------------------
 
