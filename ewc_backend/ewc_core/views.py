@@ -275,7 +275,7 @@ def export_csv_view(request):
         writer.writerow(["Date", "Weight Collected"])
         for item in StopCollection.objects.all():
             writer.writerow([item.date.strftime("%Y-%m-%d"), item.weight_collected])
-    elif table == "EnvironmentalReport":
+    elif table == "environmentalreport":
         return generate_pdf()
     else:
         return HttpResponse("Invalid option", status=400)
