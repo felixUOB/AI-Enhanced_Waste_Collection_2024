@@ -123,10 +123,12 @@ class _StopView extends State<StopView> {
 
                 // Stop Description
                 widget.description != null ?
-                Text(
-                  key: Key('stop description'),
-                  'Stop Description: \n${widget.description}'
-                ) : SizedBox.shrink(),
+                Align(alignment: Alignment.topLeft,
+                  child: Text(
+                    key: Key('stop description'),
+                    'Stop Description: \n${widget.description}',
+                    style: TextStyle(fontSize: 18),
+                )) : SizedBox.shrink(),
 
                 widget.description != null ?
                 SizedBox(height: 20) :
