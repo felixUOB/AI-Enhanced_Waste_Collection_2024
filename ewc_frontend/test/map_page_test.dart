@@ -132,6 +132,7 @@ void main() {
       // Enter valid MPG value
       await tester.enterText(find.byKey(Key('mpg_input')), '25.5');
       await tester.tap(find.text('Save'));
+      await tester.pump();
       await tester.pumpAndSettle();
 
       // Expect the dialog to close
