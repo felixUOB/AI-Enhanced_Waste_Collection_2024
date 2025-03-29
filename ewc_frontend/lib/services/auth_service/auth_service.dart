@@ -90,7 +90,7 @@ class AuthService {
       await authStorage.write(key: 'accessToken', value: accessToken);
       await authStorage.write(key: 'refreshToken', value: refreshToken);
     } else if (response.statusCode == 400){
-      throw Exception('Bad Request!');
+        throw Exception('Bad Request!');
     }else if (response.statusCode == 401){
       throw Exception('Username or Password Incorrect!');
     }else if (response.statusCode == 500){
@@ -98,8 +98,10 @@ class AuthService {
     }
     else {
 
+  
       throw Exception('Failed to login');
     }
+    
 
   }
 
@@ -224,8 +226,9 @@ class AuthService {
     if (response.statusCode == 201) {
       // Perform additional actions upon successful registration
     } else {
-      var data = jsonDecode(response.body);
-      throw Exception({data.toString()});
+        var data = jsonDecode(response.body);
+        throw Exception({data.toString()});
+
     }
   }
 
