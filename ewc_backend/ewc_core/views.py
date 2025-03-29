@@ -199,3 +199,8 @@ class DepoViewSet(viewsets.ModelViewSet):
     queryset = Depo.objects.all()
     serializer_class = DepoSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
+    
+    @action(detail=False, methods=['get'])
+    def get_depo_location(self, request):
+        data = list(Depo.objects.values('latitude', 'longitude'))
+        return JsonResponse(data, safe=False)

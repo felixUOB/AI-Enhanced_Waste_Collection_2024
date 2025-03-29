@@ -12,13 +12,16 @@ import 'package:latlong2/latlong.dart';
 
 class DepoService {
 
-
   Future<Depo> fetchDepoLocation() async {
-    final response = await getIt<AuthService>().makeAuthenticatedRequest('depo/');
+    final response = await getIt<AuthService>().makeAuthenticatedRequest('get-depo/');
+    print('Status Code: ${response.statusCode}');
+    print('Response Body: ${response.body}');
     if (response.statusCode == 200){
-      final data = jsonDecode((response.body));
-      print(data);
+      final data = jsonDecode((response.body)) as List;
+      return Depo(location: LatLng(data[0]['latitude'], data[0]['longitude']));
+    } else{
+      print(response.statusCode);
     }
-    return new Depo(location: LatLng(0,0));
+    return Depo(location: LatLng(0,0));
   }
 }

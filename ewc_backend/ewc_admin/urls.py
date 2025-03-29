@@ -53,6 +53,9 @@ urlpatterns = [
     path('api/route-env-data/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data'})),
     path('api/route-env-data-30-days/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data_30_days'})),
     
+    # ----- endpoint for depo table ------
+    path('api/get-depo/', DepoViewSet.as_view({'get' : 'get_depo_location'})),
+
     # ------- endpoint for model -------- #
     path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
     path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),    

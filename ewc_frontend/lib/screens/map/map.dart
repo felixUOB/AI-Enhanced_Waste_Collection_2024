@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:ewc/models/depo_model.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/depo_service.dart';
@@ -92,8 +93,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   void _initaliseDepoLocation() async{
     // get the LatLng from the db
-    _depoService.fetchDepoLocation();
-    depo = MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false);
+    Depo d =await _depoService.fetchDepoLocation();
+    depo = MarkerWidget.createMarker("Depot", context, LatLng(d.location.latitude, d.location.longitude), Colors.black, false);
   }
 
   void _initialiseLocationStatusStream() async {
