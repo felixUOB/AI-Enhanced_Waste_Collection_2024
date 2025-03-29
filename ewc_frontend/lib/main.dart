@@ -4,10 +4,6 @@ import 'package:ewc/service_locator.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'notifiers/location_notifier.dart';
-import 'notifiers/stops_notifier.dart';
 
 
 /// This file manages the main app state and provides the entry point for the app.
@@ -29,13 +25,7 @@ void main({Completer<void>? setupCompleter}) async {
 
   setupCompleter?.complete();
 
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider(create: (context) => LocationProvider()),
-      ChangeNotifierProvider(create: (context) => StopsProvider()),
-    ],
-    child: App()
-  ));
+  runApp(App());
 }
 
 class App extends StatefulWidget {

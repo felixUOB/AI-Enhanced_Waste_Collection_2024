@@ -1,3 +1,5 @@
+import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/auth_service/encryption_service.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +11,7 @@ import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:ewc/widgets/password_textfield.dart';
+import 'package:provider/provider.dart';
 
 /// This file manages the user authentication and login functionality.
 ///
@@ -125,9 +128,15 @@ class LoginPageState extends State<LoginPage> {
                   // Navigate to home screen
                   navigator.pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => MainNavigationBar(
-                        testing: false,
-                      ), // Moving pages
+                        builder: (context) => MultiProvider(
+                          providers: [
+                            ChangeNotifierProvider(create: (context) => LocationProvider()),
+                            ChangeNotifierProvider(create: (context) => StopsProvider()),
+                          ],
+                          child: MainNavigationBar(
+                            testing: false,
+                          ),
+                        ) // Moving pages
                     ),
                   );
                 } catch (e) {

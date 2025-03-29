@@ -30,10 +30,10 @@ class _Schedule extends State<Schedule> {
   @override
   void initState() {
     super.initState();
-    Provider.of<StopsProvider>(context, listen: false).addListener(calculateStopTimes);
+    Provider.of<StopsProvider>(context, listen: false).addListener(_calculateStopTimes);
   }
 
-  Future<void> calculateStopTimes() async {
+  Future<void> _calculateStopTimes() async {
     try {
       // The next block of code creates a list _stopTimes where each element
       // is the amount of time in minutes from the user's location to that stop
@@ -67,7 +67,7 @@ class _Schedule extends State<Schedule> {
       body: RefreshIndicator(
 
         onRefresh: () async {
-          calculateStopTimes();
+          _calculateStopTimes();
         },
 
         child: Padding(
