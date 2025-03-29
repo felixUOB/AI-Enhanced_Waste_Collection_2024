@@ -4,7 +4,6 @@ import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
-import 'package:ewc/main.dart';
 
 void main() {
   setUp(() async {
