@@ -31,6 +31,7 @@ import 'package:ewc/services/metrics_service.dart';
 /// - `build()`: Builds the UI for the map page.
 /// - `initState()`: Initializes the map and services when the widget is created.
 /// - `_initialiseLocationStatusStream()`: Initializes the location status stream.
+/// - `_initaliseDepoLocation()`: Initializes the location of the depo.
 /// - `_initializeEnvAndService()`: Initializes the environment and services.
 /// - `_drawCompleteRoute()`: Draws a complete route between all stops.
 /// - `_drawStopsMarker(Color color)`: Draws markers for all stops.
