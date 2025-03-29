@@ -24,6 +24,8 @@ import 'package:ewc/services/metrics_service.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../widgets/mpg_startup_input.dart';
+
 /// This file manages the map display and route plotting functionality.
 ///
 /// Functions:
@@ -95,54 +97,17 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     print("MPG value: $mpg");
     if (mpg == null || mpg <= 0) {
       print("MPG not set or invalid, showing dialog...");
-      _showMPGInputDialog();
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => MPGInputDialog(),
+      );
     }
   }
 
   //MPG alteration function : typing in MPG if theres no value in it
-  void _showMPGInputDialog() {
-    TextEditingController mpgController = TextEditingController();
-    showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialogContext) => AlertDialog(
-              title: Text("Enter your vehicle's Miles per Gallon"),
-              content: TextField(
-                controller: mpgController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(hintText: "Miles per Gallon"),
-              ),
-              actions: [
-                TextButton(
-                    onPressed: () async {
-                      double? mpgValue = double.tryParse(mpgController.text);
 
-                      if (mpgValue != null && mpgValue > 0) {
-                        // Ensure valid input
-                        var box = await Hive.openBox(
-                            'Settings'); // Open box asynchronously
-                        await box.put('mpg', mpgValue); // Save value to Hive
-                        await box.flush(); // Ensure changes are written to disk
-
-                        if (!mounted) {
-                          return; // Prevent UI updates if the widget is gone
-                        }
-
-                        setState(
-                            () {}); // Update the UI if MPG is displayed somewhere
-
-                        if (!dialogContext.mounted) return;
-                        Navigator.pop(dialogContext); // Close the dialog
-                      } else {
-                        // Show an error message if the input is invalid
-                        ScaffoldMessenger.of(dialogContext).showSnackBar(SnackBar(
-                            content: Text("Please enter a valid MPG value.")));
-                      }
-                    },
-                    child: Text('Save'))
-              ],
-            ));
-  }
 
   void _initialiseLocationStatusStream() async {
     _locationStatus = await Geolocator.isLocationServiceEnabled();
@@ -167,10 +132,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       }
       await _drawStopsMarker(Colors.blue);
       //Depot location marker
-      if (mounted) {
-        _marker.add(MarkerWidget.createMarker(
-            "Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
-      }
+
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -607,7 +569,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       builder: (context) {
         return AlertDialog(
           title: Text("End Journey?"),
-          content: Text("Your vehicle's MPG: $currentMpg\nIf this is not the right MPG cancel and change MPG in settings!!\nDo you want to end the journey?"),
+          content: Text("Your vehicle's MPG: $currentMpg\nIf this is not the right MPG cancel and change MPG in settings!\nDo you want to end the journey?"),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false), // Cancel journey ending
