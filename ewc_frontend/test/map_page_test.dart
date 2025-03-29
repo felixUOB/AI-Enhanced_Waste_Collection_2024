@@ -15,7 +15,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:provider/provider.dart';
-
+import 'package:ewc/widgets/mpg_startup_input.dart';
 
 
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
@@ -104,52 +104,51 @@ void main() {
         });
       });
 
-    // testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
-    //   await tester.runAsync(() async {
-    //     // Currently, tapping Start Journey starts the journey without a popup,
-    //     // Tap on ‘Start Journey’ to make it true:
-    //     await tester.pumpWidget(pumpMap());
-    //     await tester.tap(find.text('Start Journey'));
-    //     await tester.pumpAndSettle();
+    testWidgets('MPGInputDialog shows error for invalid input', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: MPGInputDialog())),
+      );
 
-    //     // End Journey
-    //     await tester.tap(find.text('End Journey'));
-    //     await tester.pumpAndSettle();
+      // Tap the "Save" button without entering anything
+      await tester.tap(find.text('Save'));
+      await tester.pump();
 
-    //     // assume that the EndJourneyDialog should appear
-    //     expect(find.byType(AlertDialog), findsOneWidget);
+      // Expect error message
+      expect(find.text('MPG must be a positive number.'), findsOneWidget);
 
-    //     // Tap the Cancel button within the dialog
-    //     await tester.tap(find.text('Cancel'));
-    //     await tester.pumpAndSettle();
+      // Enter invalid input (negative value)
+      await tester.enterText(find.byKey(Key('mpg_input')), '-10');
+      await tester.tap(find.text('Save'));
+      await tester.pump();
 
-    //     expect(find.byType(AlertDialog), findsNothing);
-    //   });
-    // });
+      expect(find.text('MPG must be a positive number.'), findsOneWidget);
+    });
 
-    // testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
-    //   await tester.runAsync(() async {
-    //     // 1) Pump map
-    //     await tester.pumpWidget(pumpMap());
-    //     await tester.pumpAndSettle();
+    testWidgets('MPGInputDialog saves valid MPG input', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: MPGInputDialog())),
+      );
 
-    //     // 2) Start journey (no text fields for start journey)
-    //     await tester.tap(find.text('Start Journey'));
-    //     await tester.pumpAndSettle();
+      // Enter valid MPG value
+      await tester.enterText(find.byKey(Key('mpg_input')), '25.5');
+      await tester.tap(find.text('Save'));
+      await tester.pumpAndSettle();
 
-    //     // 3) Directly open End Journey
-    //     await tester.tap(find.text('End Journey'));
-    //     await tester.pumpAndSettle();
+      // Expect the dialog to close
+      expect(find.byType(MPGInputDialog), findsNothing);
+    });
 
-    //     // 4) Now we enter invalid input in EndJourneyDialog (assuming 1 textfield)
-    //     await tester.enterText(find.byType(TextField).first, 'invalid');
-    //     await tester.tap(find.text('Confirm'));
-    //     await tester.pumpAndSettle();
+    testWidgets('MPGInputDialog closes without saving when Cancel is pressed', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: MPGInputDialog())),
+      );
 
-    //     // 5) Expect "Invalid Input" or similar
-    //     expect(find.text('Invalid Input'), findsOneWidget);
-    //   });
-    // });
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      // Expect dialog to close
+      expect(find.byType(MPGInputDialog), findsNothing);
+    });
 
     testWidgets('Ensure buttons load correctly', (WidgetTester tester) async {
       await tester.runAsync(() async {
