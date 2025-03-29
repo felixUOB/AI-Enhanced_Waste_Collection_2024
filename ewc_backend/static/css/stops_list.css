@@ -1,0 +1,132 @@
+/*
+  File: stops_list.css
+  Description: Custom CSS overrides for the stops list page. This file restyles Bootstrap's default card,
+               list group, and button styles to produce a cleaner, modern look for the stops list. It also includes hover effects
+               and responsive adjustments.
+  Dependencies:
+      - Bootstrap (for base styling of cards, list groups, and buttons)
+      - base.css (for global variables and general layout)
+      - stops_list.html (template using these styles)
+*/
+
+/* Override Bootstrap's default card look with a cleaner style */
+.card {
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .card-body {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .list-group-item {
+    border: none; /* Remove the standard Bootstrap border */
+    border-radius: 8px;
+    margin-bottom: 8px;
+    padding: 1rem 1.25rem;
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Alternate background colors for each item */
+  .list-group-item:nth-child(odd) {
+    background-color: #f7f7f7;
+  }
+  .list-group-item:nth-child(even) {
+    background-color: #ffffff;
+  }
+  
+  /* Subtle hover effect */
+  .list-group-item:hover {
+    background-color: #efefef;
+  }
+  
+  .btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none !important; /* Force remove any underlines */
+  }
+  
+  /* The "Add New Stop" primary button */
+.btn-primary {
+    background-color: #1d7dcf;
+    border-color: #1d7dcf;
+    font-size: 0.85rem; 
+    padding: 0.45rem 1.2rem; 
+    color: #ffffff; 
+
+}
+  .btn-primary:hover {
+    background-color: #1662a1;
+    border-color: #1662a1;
+  }
+  
+  /* Outline button for Edit */
+  .btn-outline-primary {
+    border-color: #1d7dcf;
+    color: #1d7dcf;
+  }
+  .btn-outline-primary:hover {
+    background-color: #1d7dcf;
+    color: #fff;
+  }
+  
+  /* Outline button for Delete */
+  .btn-outline-danger {
+    border-color: #e63946;
+    color: #e63946;
+  }
+  .btn-outline-danger:hover {
+    background-color: #e63946;
+    color: #fff;
+  }
+  
+  /* Slight margin between the edit and delete buttons */
+  .ms-2 {
+    margin-left: 0.5rem !important;
+  }
+
+  .btn-admin-outline:hover {
+    border: none !important;
+    background-color: #585a5a;
+    color: #fff;
+    border: 1px solid #585a5a;
+    transition: all 0.2s ease;
+  }
+
+  .btn-admin-outline {
+    background-color: #94979a;
+    padding: 0.3rem 1.0rem;
+    color: #ffffff;
+  }
+  .d-flex {
+    padding: 0.5rem 1rem;
+  }
+/* Style the sort dropdown */
+#sortDropdown {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+#sortDropdown:focus {
+  border-color: #1d7dcf;
+  outline: none;
+  box-shadow: 0 0 4px rgba(29, 125, 207, 0.5);
+}
+
+.form-label.me-2 {
+  padding-left: 500px;
+}
+  /* On smaller devices, ensure everything is nicely spaced */
+  @media (max-width: 576px) {
+    .list-group-item {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+    }
+  }
+  

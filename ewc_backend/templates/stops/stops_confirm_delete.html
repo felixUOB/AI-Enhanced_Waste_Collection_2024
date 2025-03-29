@@ -1,6 +1,63 @@
+<!--
+  File: stops_confirm_delete.html
+  Description: Confirmation page for deleting a Stop.
+               This template presents a confirmation message, displaying the stop's name,
+               along with buttons to confirm deletion or cancel the operation.
+  Dependencies:
+      - base.html (layout)
+      - Bootstrap CSS for styling
+      - Custom inline CSS for button hover effects
+-->
+
 {% extends "base.html" %}
 
 {% block title %}Confirm Delete{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Delete button */
+  .btn-danger {
+      background-color: #e63946;
+      border: 1px solid #e63946;
+      font-size: 0.85rem;
+      padding: 0.45rem 1.2rem;
+      color: #ffffff;
+      border-radius: 0.25rem;
+      transition: background-color 0.2s, color 0.2s;
+  }
+
+  .btn-danger:hover {
+      background-color: #cc323c;
+      border-color: #cc323c;
+      color: #fff;
+  }
+  
+  /* Cancel button */
+  .btn-secondary {
+      background-color: #1d7dcf;
+      border: 1px solid #1d7dcf;
+      font-size: 0.85rem;
+      padding: 0.45rem 1.2rem;
+      color: #ffffff;
+      border-radius: 0.25rem;
+      transition: background-color 0.2s, color 0.2s;
+      text-decoration: none;
+  }
+
+  .btn-secondary:hover {
+      background-color: #1662a1;
+      border-color: #1662a1;
+      color: #fff;
+  }
+
+  .back-arrow {
+      margin-right: 0.2rem;
+  }
+  .extra-space {
+      margin-bottom: 7rem;
+  }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -10,7 +67,12 @@
   <form method="POST">
     {% csrf_token %}
     <button type="submit" class="btn btn-danger">Yes, Delete</button>
-    <a href="{% url 'stops_list' %}" class="btn btn-secondary">Cancel</a>
+    <a href="{% url 'stops_list' %}" class="btn btn-secondary">
+      <span class="back-arrow">&#8592;</span> Cancel
+    </a>
   </form>
+</div>
+<div class="extra-space">
+  <p></p>
 </div>
 {% endblock %}

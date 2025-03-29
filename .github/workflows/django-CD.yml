@@ -39,6 +39,7 @@ jobs:
             --build-arg POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
             --build-arg POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
             --build-arg SENDGRID_SECRET_KEY=${{ secrets.SENDGRID_SECRET_KEY }} \
+            --build-arg OPENROUTESERVICE_API_KEY=${{ secrets.OPENROUTESERVICE_API_KEY }} \
             -t $REPO_URI:$IMAGE_TAG .
 
           docker tag $REPO_URI:$IMAGE_TAG $REPO_URI:latest
