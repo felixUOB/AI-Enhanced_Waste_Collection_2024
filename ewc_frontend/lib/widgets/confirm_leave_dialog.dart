@@ -8,6 +8,7 @@ class ConfirmLeaveDialog {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          key: Key('unsaved warn dialog'),
           title: const Text('Exit stop without saving?'),
           actions: [
             TextButton(

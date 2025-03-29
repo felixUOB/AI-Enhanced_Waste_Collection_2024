@@ -41,6 +41,7 @@ class _StopView extends State<StopView> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
+          key: Key('back button'),
           icon: Icon(Icons.arrow_back),
           onPressed: () async {
             if (_newVisited == widget.visited || _saved) {
@@ -58,6 +59,7 @@ class _StopView extends State<StopView> {
 
         actions: [
           IconButton(
+            key: Key('save button'),
             onPressed: () {
               if (_newVisited != widget.visited) {
                 // Update stops data if it has changed
@@ -111,6 +113,7 @@ class _StopView extends State<StopView> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Text(
+                      key: Key('stop name'),
                       '${widget.name} - ${_newVisited ? 'Visited' : 'Not visited'}',
                       style: AppTheme().constWhiteTextLarge
                     ),
@@ -120,8 +123,10 @@ class _StopView extends State<StopView> {
 
                 // Stop Description
                 widget.description != null ?
-                Text('Stop Description: ${widget.description}') :
-                SizedBox.shrink(),
+                Text(
+                  key: Key('stop description'),
+                  'Stop Description: \n${widget.description}'
+                ) : SizedBox.shrink(),
 
                 widget.description != null ?
                 SizedBox(height: 20) :
@@ -132,10 +137,12 @@ class _StopView extends State<StopView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+                      key: Key('collected amount'),
                       'Collected amount - ${amountCollected!}kg'
                     ),
                     // Button to undo stop visit
                     ElevatedButton(
+                      key: Key('unvisit button'),
                       onPressed: () {
                         setState(() {
                           _newVisited = false;
