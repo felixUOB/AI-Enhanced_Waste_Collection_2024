@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 class MPGInputDialog extends StatefulWidget {
+  const MPGInputDialog({super.key});
+
   @override
-  _MPGInputDialogState createState() => _MPGInputDialogState();
+  MPGInputDialogState createState() => MPGInputDialogState();
 }
 
-class _MPGInputDialogState extends State<MPGInputDialog> {
+class MPGInputDialogState extends State<MPGInputDialog> {
   TextEditingController mpgController = TextEditingController();
   String? errorText;
 
