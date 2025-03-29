@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
+import 'package:ewc/services/depo_service.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
@@ -51,6 +52,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
+  final DepoService _depoService = getIt<DepoService>();
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
@@ -74,14 +76,24 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   double _endMpg = 0;
 
+  // the location of the depo
+  late Marker depo;
+
   // State initialisation
   @override
   void initState() {
     super.initState();
     _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
     _initialiseLocationStatusStream();
+    _initaliseDepoLocation();
     _initializeEnvAndService();
     Provider.of<LocationProvider>(context, listen: false).addListener(findNearestRoutePoint);
+  }
+
+  void _initaliseDepoLocation() async{
+    // get the LatLng from the db
+    _depoService.fetchDepoLocation();
+    depo = MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false);
   }
 
   void _initialiseLocationStatusStream() async {
@@ -102,7 +114,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       await _drawStopsMarker(Colors.blue);
       //Depot location marker
       if (mounted){
-        _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
+        // change to be the depo
+        _marker.add(depo);
       }
       
     } catch (e) {
@@ -137,6 +150,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _drawStopsMarker(Color color) async {
     _marker.clear();
     _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
+    // Fetch the location of the depo -> need to check there is one otherwise cant plot it (contact admin services)
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
       // if the stop has been visited 

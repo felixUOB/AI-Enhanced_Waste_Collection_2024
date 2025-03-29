@@ -32,6 +32,10 @@ Serializers:
    - Extends `UserSerializer` to handle user registration.
    - Accepts additional fields for email address 
    - Implements a `create()` method to generate new user accounts and associated `UserProfile` instances.
+
+7. DepoSerializer:
+   - Serializes all fields in the 'Depo' model.
+   - Represents the location of the depo.
 """
 
 
@@ -113,3 +117,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
         return user
+    
+class DepoSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class converts the Depo model into JSON format for API responses.
+    It includes all fields from the Depo model.
+    '''
+    class Meta:
+        model = RouteEnvData
+        fields = '__all__'  # Serialize all fields in the WastePrediction model
