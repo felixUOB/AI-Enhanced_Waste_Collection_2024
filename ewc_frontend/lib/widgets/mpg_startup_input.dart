@@ -46,6 +46,7 @@ class MPGInputDialogState extends State<MPGInputDialog> {
             await box.flush();
 
             if (!mounted) return;
+            if (!context.mounted) return;
             Navigator.pop(context, mpgValue); // Close dialog & return value
           },
           child: Text('Save'),
