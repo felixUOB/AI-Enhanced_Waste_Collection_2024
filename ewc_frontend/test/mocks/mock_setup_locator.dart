@@ -6,7 +6,6 @@ import 'package:ewc/services/metrics_service.dart';
 /// This way, we avoid the ".env" / "API_KEY" error.
 Future<void> mockSetupLocator() async {
   // partial or minimal registration so the rest of the app won't crash.
-  // For example, we skip routeService and just register stopsService, metricsService, etc.
 
   getIt.registerSingleton<StopsService>(StopsService());
   getIt.registerSingleton<MetricsService>(MetricsService());

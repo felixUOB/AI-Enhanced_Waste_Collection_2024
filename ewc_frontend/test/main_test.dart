@@ -1,32 +1,43 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-
-import 'package:ewc/main.dart' as my_app;
+import 'package:ewc/main.dart' as app_main;
 import 'package:ewc/main.dart';
 import 'package:ewc/screens/splash/splash.dart';
+import 'package:ewc/service_locator.dart';
+import 'package:ewc/services/stops_service.dart';
+import 'package:ewc/services/metrics_service.dart';
 
-import 'mocks/mock_setup_locator.dart';
+
+Future<void> mockSetupLocator() async {
+  getIt.registerSingleton<StopsService>(StopsService());
+  getIt.registerSingleton<MetricsService>(MetricsService());
+}
 
 void main() {
-  group('main.dart coverage (Mock setupLocator)', () {
-    testWidgets('1) main() without real setupLocator => skip .env', (WidgetTester tester) async {
-      // Create a Completer that, once signaled, indicates "mock setup done"
-      final completer = Completer<void>();
+  group('main.dart test', () {
+    // First test: call main() with a Completer to skip the real setupLocator
+    testWidgets('main() with Completer => skip real setupLocator', (WidgetTester tester) async {
+      // 1) We manually invoke mockSetupLocator(), then complete the mockCompleter when it's done
+      final mockCompleter = Completer<void>();
+      unawaited(mockSetupLocator().then((_) => mockCompleter.complete()));
 
-      // Call 'mockSetupLocator()' before completing.
-      unawaited(mockSetupLocator().then((_) => completer.complete()));
+      // 2) When calling app_main.main(), if (setupCompleter != null),
+      app_main.main(setupCompleter: mockCompleter);
 
-      // Now call main() with the completer
-      my_app.main(setupCompleter: completer);
-      // This triggers "if (setupCompleter == null)" -> false,
+      // Wait for all asynchronous operations to finish
+      await mockCompleter.future;
     });
 
-    testWidgets('2) Pump App => covers initState, dispose, Splash build', (WidgetTester tester) async {
-      // Pump the App widget to cover build + splash
+    // Second test: actually pump the App widget to cover initState, dispose, and the build logic
+    testWidgets('Pump App => covers initState, dispose, Splash build', (WidgetTester tester) async {
+      // Render the top-level App widget in the test environment
       await tester.pumpWidget(const App());
 
+      // Verify a MaterialApp is rendered
       expect(find.byType(MaterialApp), findsOneWidget);
+
+      // Check that the SplashPage is set as the home widget
       expect(find.byType(SplashPage), findsOneWidget);
     });
   });
