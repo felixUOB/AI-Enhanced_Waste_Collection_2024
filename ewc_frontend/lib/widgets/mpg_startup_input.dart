@@ -20,6 +20,7 @@ class MPGInputDialogState extends State<MPGInputDialog> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
+            key: Key('mpg_input'),
             controller: mpgController,
             keyboardType: TextInputType.numberWithOptions(decimal: true),
             decoration: InputDecoration(
