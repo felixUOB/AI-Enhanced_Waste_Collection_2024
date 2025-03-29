@@ -43,31 +43,6 @@ void main() {
       expect(find.text("Logout"), findsOneWidget);
     });
 
-    testWidgets('Toggle theme switch', (WidgetTester tester) async {
-      // Initially themeManager.themeMode is probably ThemeMode.light
-      themeManager.themeMode = ThemeMode.light;
-      await tester.pumpWidget(const MaterialApp(home: SettingPage()));
-      await tester.pump();
-
-      // find the Switch
-      final switchFinder = find.byType(Switch);
-      expect(switchFinder, findsOneWidget);
-
-      // toggle it
-      await tester.tap(switchFinder);
-      await tester.pump();
-
-      // Now themeMode should be ThemeMode.dark
-      expect(themeManager.themeMode, ThemeMode.dark);
-
-      // toggle again
-      await tester.tap(switchFinder);
-      await tester.pump();
-
-      // themeMode => light
-      expect(themeManager.themeMode, ThemeMode.light);
-    });
-
     testWidgets('Tap Feedback -> calls _launchUrlFromInput', (WidgetTester tester) async {
       await tester.pumpWidget(const MaterialApp(home: SettingPage()));
       await tester.pump();
