@@ -72,7 +72,7 @@ void main() {
     when(getIt<StopsService>().postStopCollection(1, 10)).thenAnswer((request) {return Completer<void>().future;});
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
 
-    when(() => Hive.openBox('Settings')).thenAnswer(0 as Answering<Future<Box> Function()>);
+    when(() => Hive.openBox('Settings')).thenAnswer(MockBox() as Answering<Future<Box> Function()>);
   });
 
   tearDown(() async {
@@ -81,27 +81,6 @@ void main() {
   });
 
   group('Map Page Tests', () {
-
-    //test hive init
-    test('Test MPG initialization with mocked Hive', () async {
-      // Open the mocked box
-      final mockBox = await Hive.openBox('Settings');
-
-      // Mock behavior of getting 'mpg' from the mocked box
-      when(() => mockBox.get('mpg')).thenReturn(0 as Function());
-
-      // Get the value from the mock box
-      final mpgValue = mockBox.get('mpg');
-
-      // Assert that 'mpg' is null (as mocked)
-      expect(mpgValue, isNull);
-
-      // If you want to test for a non-null value:
-      when(() => mockBox.get('mpg')).thenReturn(25.0 as Function());  // mock a value like 25 MPG
-
-      final mpgValue2 = mockBox.get('mpg');
-      expect(mpgValue2, 25.0);  // check that we get the mocked value
-    });
 
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
