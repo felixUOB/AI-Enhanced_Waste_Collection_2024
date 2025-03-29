@@ -56,7 +56,6 @@ dependencies:
 
   get_it: ^8.0.3
   crypto: ^3.0.6
-  path_provider: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -66,7 +65,7 @@ dev_dependencies:
   mockito: ^5.4.0
   build_runner: ^2.3.3
   hive_generator: ^2.0.1
-  mocktail: ^1.0.4
+
 
 
 

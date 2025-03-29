@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/widgets/orientate_button.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
@@ -61,8 +62,6 @@ Future<List<Stop>> getMockStopList(){
 
 void main() {
 
-  // Setup a mock channel and mock platform method
-  TestWidgetsFlutterBinding.ensureInitialized();
 
   // Set the fake GeolocatorPlatform before tests run 
   setUp(() async {
@@ -72,7 +71,13 @@ void main() {
     when(getIt<StopsService>().postStopCollection(1, 10)).thenAnswer((request) {return Completer<void>().future;});
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
 
-    when(() => Hive.openBox('Settings')).thenAnswer(MockBox() as Answering<Future<Box> Function()>);
+    // Setup a mock channel and mock platform method
+    WidgetsFlutterBinding.ensureInitialized();
+    await Hive.initFlutter(); // Initialize Hive
+
+
+
+
   });
 
   tearDown(() async {
