@@ -14,7 +14,7 @@ import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
+
 
 
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
@@ -60,6 +60,10 @@ Future<List<Stop>> getMockStopList(){
 }
 
 void main() {
+
+  // Setup a mock channel and mock platform method
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   // Set the fake GeolocatorPlatform before tests run 
   setUp(() async {
     await mockSetupLocator();
@@ -68,8 +72,7 @@ void main() {
     when(getIt<StopsService>().postStopCollection(1, 10)).thenAnswer((request) {return Completer<void>().future;});
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
 
-    final directory = await getTemporaryDirectory(); // Temporary directory for testing
-    Hive.init(directory.path); // Initialize Hive with the temp directory
+    when(() => Hive.openBox('Settings')).thenAnswer(0 as Answering<Future<Box> Function()>);
   });
 
   tearDown(() async {
@@ -78,6 +81,27 @@ void main() {
   });
 
   group('Map Page Tests', () {
+
+    //test hive init
+    test('Test MPG initialization with mocked Hive', () async {
+      // Open the mocked box
+      final mockBox = await Hive.openBox('Settings');
+
+      // Mock behavior of getting 'mpg' from the mocked box
+      when(() => mockBox.get('mpg')).thenReturn(0 as Function());
+
+      // Get the value from the mock box
+      final mpgValue = mockBox.get('mpg');
+
+      // Assert that 'mpg' is null (as mocked)
+      expect(mpgValue, isNull);
+
+      // If you want to test for a non-null value:
+      when(() => mockBox.get('mpg')).thenReturn(25.0 as Function());  // mock a value like 25 MPG
+
+      final mpgValue2 = mockBox.get('mpg');
+      expect(mpgValue2, 25.0);  // check that we get the mocked value
+    });
 
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
