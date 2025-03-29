@@ -13,6 +13,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:provider/provider.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
@@ -32,6 +34,8 @@ class FakeGeolocatorPlatform extends GeolocatorPlatform {
     return Stream<Position>.empty(); 
     }
 }
+
+class MockBox extends Mock implements Box {}
 
 Widget pumpMap() {
   return MaterialApp(
@@ -63,13 +67,18 @@ void main() {
     when(getIt<StopsService>().fetchAllStops()).thenAnswer((request) {return getMockStopList();} );
     when(getIt<StopsService>().postStopCollection(1, 10)).thenAnswer((request) {return Completer<void>().future;});
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
+
+    final directory = await getTemporaryDirectory(); // Temporary directory for testing
+    Hive.init(directory.path); // Initialize Hive with the temp directory
   });
 
   tearDown(() async {
     await getIt.reset();
+    await Hive.deleteFromDisk();
   });
 
   group('Map Page Tests', () {
+
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
       await tester.runAsync(() async {
