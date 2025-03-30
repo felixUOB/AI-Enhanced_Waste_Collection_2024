@@ -21,12 +21,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  // final String apiUrl = 'https://devnest.software/api';
-  // final String adminUrl = 'https://devnest.software/admin';
-  // final String rootUrl = 'https://devnest.software';
-  final String apiUrl = 'http://127.0.0.1/api';
-  final String adminUrl = 'http://127.0.0.1/admin';
-  final String rootUrl = 'http://127.0.0.1';
+  final String apiUrl = 'https://devnest.software/api';
+  final String adminUrl = 'https://devnest.software/admin';
+  final String rootUrl = 'https://devnest.software';
+
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
