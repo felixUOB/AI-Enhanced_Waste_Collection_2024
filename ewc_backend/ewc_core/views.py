@@ -7,8 +7,8 @@ from rest_framework.decorators import action, api_view
 import requests
 from django.http import JsonResponse
 from django.conf import settings
-from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depo
-from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, DepoSerializer
+from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depot
+from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, DepotSerializer
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import StopsForm
@@ -43,8 +43,10 @@ API ViewSets:
 5. UserRegistrationView:
    - Allows user registration via API.
    - Open to all users (`permissions.AllowAny`).
+6. DepotViewSet:
+   - Manages depot information.
+   - Requires authentication.
 
-   
 
 Django Web Views:
 
@@ -195,17 +197,17 @@ def stops_edit_view(request, pk):
         form = StopsForm(instance=stop_obj)
     return render(request, 'stops/stops_form.html', {'form': form, 'stop': stop_obj})
 
-class DepoViewSet(viewsets.ModelViewSet):
+class DepotViewSet(viewsets.ModelViewSet):
     '''
     API endpoint that allows user profiles to be viewed or edited.
     '''
-    queryset = Depo.objects.all()
-    serializer_class = DepoSerializer
+    queryset = Depot.objects.all()
+    serializer_class = DepotSerializer
     permission_classes = [permissions.IsAuthenticated]  # Accessible only by authenticated users
     
     @action(detail=False, methods=['get'])
-    def get_depo_location(self, request):
-        data = list(Depo.objects.values('latitude', 'longitude'))
+    def get_depot_location(self, request):
+        data = list(Depot.objects.values('latitude', 'longitude'))
         return JsonResponse(data, safe=False)
 
 

@@ -165,7 +165,7 @@ The main structure for the project is as followed:
 ## Database Structure
 The structure of the database is as followed:
 
-![database diagram](/docs/images/database-diagram.png)
+![database diagram](/docs/images/database-diagram.jpeg)
 
 During development our database is hosted on Neon, for deployment we host our database on AWS.
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depo
+from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depot
 
 """
 This file defines serializers for converting Django models into JSON format for API responses  
@@ -118,11 +118,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         return user
     
-class DepoSerializer(serializers.ModelSerializer):
+class DepotSerializer(serializers.ModelSerializer):
     '''
     This serializer class converts the Depo model into JSON format for API responses.
     It includes all fields from the Depo model.
     '''
     class Meta:
-        model = Depo
+        model = Depot
         fields = '__all__'  # Serialize all fields in the WastePrediction model

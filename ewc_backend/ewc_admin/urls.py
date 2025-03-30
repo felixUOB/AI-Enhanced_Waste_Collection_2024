@@ -21,7 +21,7 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView, DepoViewSet
+from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView, DepotViewSet
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
@@ -35,7 +35,7 @@ router.register(r'user_profiles', UserProfileViewSet, basename='userprofile')
 router.register(r'stops', StopsViewSet, basename='stops')
 router.register(r'stop_collection', StopCollectionViewSet, basename='stopcollection')
 router.register(r'route_env_data', RouteEnvDataViewSet, basename='routeenvdata')
-router.register(r'depo', DepoViewSet, basename='depo')
+router.register(r'depot', DepotViewSet, basename='depot')
 # URL patterns for the application
 
 def redirect_to_admin(request):
@@ -54,7 +54,7 @@ urlpatterns = [
     path('api/route-env-data-30-days/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data_30_days'})),
     
     # ----- endpoint for depo table ------
-    path('api/get-depo/', DepoViewSet.as_view({'get' : 'get_depo_location'})),
+    path('api/get-depot/', DepotViewSet.as_view({'get' : 'get_depot_location'})),
 
     # ------- endpoint for model -------- #
     path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model

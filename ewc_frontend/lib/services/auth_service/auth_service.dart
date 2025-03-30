@@ -24,9 +24,9 @@ class AuthService {
   // final String apiUrl = 'https://devnest.software/api';
   // final String adminUrl = 'https://devnest.software/admin';
   // final String rootUrl = 'https://devnest.software';
-  final String apiUrl = 'http://127.0.0.1:8000/api';
-  final String adminUrl = 'https://127.0.0.1:8000/admin';
-  final String rootUrl = 'https://127.0.0.1:8000';
+  final String apiUrl = 'http://127.0.0.1/api';
+  final String adminUrl = 'http://127.0.0.1/admin';
+  final String rootUrl = 'http://127.0.0.1';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');

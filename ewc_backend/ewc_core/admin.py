@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depo
+from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depot
 from django.urls import path
 from django.utils.html import format_html
 from .utils import generate_pdf
@@ -13,7 +13,7 @@ allowing administrators to manage waste collection data through the Django admin
 
 admin.site.register(UserProfile)
 admin.site.register(StopCollection)
-admin.site.register(Depo)
+admin.site.register(Depot)
 
 class StopAdmin(admin.ModelAdmin):
     """

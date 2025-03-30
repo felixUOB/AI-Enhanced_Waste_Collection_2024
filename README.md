@@ -329,7 +329,7 @@ You can now access the backend at http://127.0.0.1:8000.
 
 # **Database Diagram**
 
-![database diagram](/docs/images/database-diagram.png)
+![database diagram](/docs/images/database-diagram.jpeg)
 
 ---
 

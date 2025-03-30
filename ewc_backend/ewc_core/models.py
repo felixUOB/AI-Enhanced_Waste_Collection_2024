@@ -106,7 +106,7 @@ class RouteEnvData(models.Model):
         return f"Route Data {self.route_env_data_id}"
     
 # singleton model so that only one depo can ever be saved
-class Depo(models.Model):
+class Depot(models.Model):
     nickname = models.CharField(max_length=255, blank=True, null=True)
     latitude = models.FloatField(null=False)
     longitude = models.FloatField(null=False)
@@ -121,8 +121,8 @@ class Depo(models.Model):
         raise Exception("Deletion not allowed for this model")
     
     class Meta:
-        verbose_name = "Depo Location"
-        verbose_name_plural = "Depo Location"
+        verbose_name = "Depot Location"
+        verbose_name_plural = "Depot Location"
 
     @classmethod
     def load(cls):
