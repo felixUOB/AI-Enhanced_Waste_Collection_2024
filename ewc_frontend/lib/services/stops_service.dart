@@ -44,7 +44,7 @@ class StopsService {
         if (point['next_collection_due_date'] != null) {
           DateTime collectionDueDate = DateTime.parse(point['next_collection_due_date']);
           DateTime currentDate = DateTime.now();
-          if (collectionDueDate.isAfter(currentDate)) {
+          if (collectionDueDate.isBefore(currentDate)) {
             stopsList.add(Stop(
                 id: point['stop_id'],
                 name: point['location_name'],

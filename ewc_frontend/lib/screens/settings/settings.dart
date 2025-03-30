@@ -56,52 +56,67 @@ class _SettingPageState extends State<SettingPage> {
   //Helper for saving mpg
   void _inputMPG() {
     showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialogContext) => AlertDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        String? errorText; // ✅ Error state inside the builder
+        TextEditingController mpgController = TextEditingController();
+
+        return StatefulBuilder(
+          builder: (context, setState) {
+            void validateMPG() {
+              setState(() {
+                String input = mpgController.text.trim();
+                if (input.isEmpty) {
+                  errorText = "MPG cannot be empty!";
+                } else {
+                  double? mpgValue = double.tryParse(input);
+                  if (mpgValue == null || mpgValue <= 0) {
+                    errorText = "MPG must be a positive number!";
+                  } else {
+                    errorText = null; // ✅ No errors, clear message
+                  }
+                }
+              });
+            }
+
+            return AlertDialog(
               title: Text("Enter your vehicle's Miles per Gallon"),
               content: TextField(
                 controller: mpgController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: "Miles per Gallon",
-                  errorText: (mpgController.text.isNotEmpty &&
-                          double.tryParse(mpgController.text) != null &&
-                          double.parse(mpgController.text) < 0)
-                      ? "MPG cannot be negative"
-                      : null,
+                  errorText: errorText, // ✅ Updates dynamically
                 ),
+                onChanged: (value) => validateMPG(), // ✅ Live validation
               ),
               actions: [
                 TextButton(
                   onPressed: () async {
-                    double? mpgValue = double.tryParse(mpgController.text);
-                    if (mpgValue == null || mpgValue < 0) {
-                      ScaffoldMessenger.of(dialogContext).showSnackBar(
-                        SnackBar(
-                            content: Text("MPG must be a positive number and cannot be empty!")),
-                      );
-                      return;
-                    }
+                    validateMPG(); // ✅ Final validation before closing
+                    if (errorText != null) return; // ❌ Prevents closing if invalid
 
-                    await box.put(
-                        'mpg', mpgValue); // Ensure it is stored correctly
-                    setState(() {}); // Refresh UI
+                    double mpgValue = double.parse(mpgController.text);
+                    await box.put('mpg', mpgValue); // ✅ Store the value
+
                     if (!dialogContext.mounted) return;
-                    Navigator.pop(dialogContext);
-                    ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      SnackBar(content: Text("Current MPG is : $mpgValue")),
-                    );
+                    Navigator.pop(dialogContext); // ✅ Close dialog
                   },
                   child: Text('Save'),
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text("Cancel"),
-                )
+                ),
               ],
-            ));
+            );
+          },
+        );
+      },
+    );
   }
+
 
   //Helper for logout
   Future<void> _logout() async {

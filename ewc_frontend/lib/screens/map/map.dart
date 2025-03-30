@@ -24,7 +24,7 @@ import 'package:ewc/services/metrics_service.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../widgets/mpg_startup_input.dart';
+import 'package:ewc/widgets/mpg_startup_input.dart';
 
 /// This file manages the map display and route plotting functionality.
 ///
@@ -78,7 +78,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   bool _automaticRecentre =
       false; // True when user has centred on location, meaning camera should follow
 
-  double _endMpg = 0;
 
   // State initialisation
   @override
@@ -111,9 +110,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       );
     }
   }
-
-  //MPG alteration function : typing in MPG if theres no value in it
-
 
   void _initialiseLocationStatusStream() async {
     _locationStatus = await Geolocator.isLocationServiceEnabled();
@@ -654,12 +650,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     // 5) Update local state variables.
     setState(() {
-      _endMpg = currentMpg;
       _journeyActive = false;
     });
 
-    // For debugging: confirm in the console what the final MPG is.
-    debugPrint('End MPG: $_endMpg');
+
   }
 
   // This function finds the nearest point to on the route to the user's location
