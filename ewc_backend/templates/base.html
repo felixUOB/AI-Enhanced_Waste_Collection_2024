@@ -56,9 +56,9 @@
         SpaceNXT Labs - EWC
       </a>
       <select id="downloadDataDropdown" class="form-select">
-        <option value="" disabled selected>Download</option>
+        <option value="" disabled selected>Download a file</option>
         <option value="routeenvdata">Route Data</option>
-        <option value="stopdata">Stop data</option>
+        <option value="stopdata">Stop Data</option>
         <option value="environmentalreport">Environmental Report</option>
       </select>
         <button class="bi bi-download" id="downloadBtn"></button>
@@ -93,6 +93,9 @@
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
   ></script>
+  
+  <!-- Custom JS -->
+  <script src="{% static 'js/base.js' %}"></script>
 
   <!-- Block for page-specific JS -->
   {% block extra_js %}{% endblock %}

@@ -285,6 +285,6 @@ def export_csv_view(request):
 
     # Create HTTP response with CSV data and force download
     response = HttpResponse(csv_contents, content_type='text/csv')
-    filename = f"{table}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"{table}_{datetime.datetime.now().strftime('%Y_%m_%d')}.csv"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
