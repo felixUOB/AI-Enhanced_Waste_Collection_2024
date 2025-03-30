@@ -1,11 +1,8 @@
-import 'package:ewc/notifiers/location_notifier.dart';
-import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
-import 'package:provider/provider.dart';
 
 /// This file manages the splash screen and facilitates user authentication.
 ///
@@ -51,29 +48,17 @@ class SplashPageState extends State<SplashPage> {
           if (widget.isTesting) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => MultiProvider(
-                  providers: [
-                    ChangeNotifierProvider(create: (context) => LocationProvider()),
-                    ChangeNotifierProvider(create: (context) => StopsProvider()),
-                  ],
-                  child: MainNavigationBar(
-                    testing: true,
-                  ),
-                ) // Moving pages
+                builder: (context) => MainNavigationBar(
+                  testing: true,
+                ), // Moving pages
               ),
             );
           } else {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                  builder: (context) => MultiProvider(
-                    providers: [
-                      ChangeNotifierProvider(create: (context) => LocationProvider()),
-                      ChangeNotifierProvider(create: (context) => StopsProvider()),
-                    ],
-                    child: MainNavigationBar(
-                      testing: false,
-                    ),
-                  ) // Moving pages
+                builder: (context) => MainNavigationBar(
+                  testing: false,
+                ), // Moving pages
               ),
             );
           }

@@ -30,7 +30,7 @@ class _Schedule extends State<Schedule> {
   @override
   void initState() {
     super.initState();
-    Provider.of<StopsProvider>(context, listen: false).addListener(_calculateStopTimes);
+    Provider.of<StopsProvider>(context, listen: false).addCustomListener(_calculateStopTimes);
   }
 
   Future<void> _calculateStopTimes() async {

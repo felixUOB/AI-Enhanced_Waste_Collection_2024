@@ -1,7 +1,10 @@
+import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/main.dart';
 import 'package:ewc/screens/login/login.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -25,6 +28,8 @@ class _SettingPageState extends State<SettingPage> {
   Future<void> _logout() async {
     await getIt<AuthService>().clearCredentials();
     if (!mounted) return;
+    Provider.of<LocationProvider>(context, listen: false).reset();
+    Provider.of<StopsProvider>(context, listen: false).reset();
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => LoginPage()),

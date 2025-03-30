@@ -100,8 +100,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     try {
       await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
-      if (mounted) Provider.of<LocationProvider>(context, listen: false).addListener(_findNearestRoutePoint);
-      if (mounted) Provider.of<StopsProvider>(context, listen: false).addListener(_drawStopsMarker);
+      if (mounted) Provider.of<LocationProvider>(context, listen: false).addCustomListener(_findNearestRoutePoint);
+      if (mounted) Provider.of<StopsProvider>(context, listen: false).addCustomListener(_drawStopsMarker);
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(

@@ -8,12 +8,17 @@ import 'package:ewc/services/stops_service.dart';
 /// functionality to interact with the list of stops.
 ///
 /// Functions:
+/// - `addStopCollection()`: Add stop collection to stopCollectionLog.
+/// - `removeStopCollection()`: Remove stop collection from stopCollectionLog.
 /// - `initialiseStops()`: Initializes and fetches stops from the service.
-/// - `setVisited(int stopID)`: Marks a stop as visited by its ID.
+/// - `setVisited(int stopID, bool value)`: Marks a stop's visited attribute according to value argument.
+/// - `addCustomListener()`: Adds listener to provider.
+/// - `reset()`: Resets provider upon logging out of app.
 
 class StopsProvider extends ChangeNotifier {
   List<Stop> _stops = [];
   final StopsService _stopsService = getIt<StopsService>();
+  final List<VoidCallback> _listeners = [];
 
   // Map which keeps track of each stop collection
   // Data gets sent to backend when user clicks end journey
@@ -61,5 +66,19 @@ class StopsProvider extends ChangeNotifier {
         return;
       }
     }
+  }
+
+  void addCustomListener(VoidCallback listener) {
+    _listeners.add(listener);
+    addListener(listener);
+  }
+
+  void reset() {
+    _stops.clear();
+    _stopCollectionLog.clear();
+    for (final listener in _listeners) {
+      removeListener(listener);
+    }
+    _listeners.clear();
   }
 }

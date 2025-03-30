@@ -14,11 +14,14 @@ import 'package:ewc/services/location_service.dart';
 /// - `setTracking(bool setting)`: Enables or disables tracking.
 /// - `resetDistance()`: Resets the distance travelled.
 /// - `initialisePositionStream()`: Initializes the location stream.
+/// - `addCustomListener()`: Adds listener to provider.
+/// - `reset()`: Resets provider upon logging out of app.
 /// - `dispose()`: Disposes the location stream.
 
 class LocationProvider extends ChangeNotifier {
   LatLng? _latestLocation;
   StreamSubscription<Position>? _locationStream;
+  final List<VoidCallback> _listeners = [];
 
   // Variable to keep track of how far user has travelled
   double _distanceTravelled = 0;
@@ -72,7 +75,19 @@ class LocationProvider extends ChangeNotifier {
       _latestLocation = LatLng(position!.latitude, position.longitude);
       notifyListeners();
     });
+  }
 
+  void addCustomListener(VoidCallback listener) {
+    _listeners.add(listener);
+    addListener(listener);
+  }
+
+  void reset() {
+    _locationStream?.cancel();
+    for (final listener in _listeners) {
+      removeListener(listener);
+    }
+    _listeners.clear();
   }
 
   @override
