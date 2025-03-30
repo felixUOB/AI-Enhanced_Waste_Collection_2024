@@ -2,8 +2,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
-from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData
+from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData, Stops
 from datetime import date
+from unittest.mock import patch
 # python manage.py test ewc_core.tests
 
 # Overall Structure
@@ -182,4 +183,48 @@ class GetStopsListTest(APITestCase):
         self.assertIsInstance(data, list)
         self.assertGreaterEqual(len(data), 1)
         self.assertIn(self.stop.location_name, [stop.get("location_name") for stop in data])
+
+class GetCoordinatesByNameTest(APITestCase):
+    """
+    Tests the get_coordinates_by_name view which retrieves coordinates through ORS API.
+    """
+    def setUp(self):
+        # Create a staff user and authenticate
+        self.user = User.objects.create_user(username="staffuser", password="pass123", is_staff=True)
+        self.client.force_login(user=self.user)
+
+    @patch('ewc_core.views.requests.get')
+    def test_get_coordinates_by_name_success(self, mock_get):
+        # Prepare a mocked API response from OpenRouteService
+        mock_api_response = {
+            "features": [
+                {
+                    "geometry": {"coordinates": [126.9780, 37.5665]},
+                    "properties": {"label": "Test Stop, Seoul, South Korea"}
+                }
+            ]
+        }
+        # Configure the mocked requests.get to return fake API response
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('get_coordinates_by_name')
+        response = self.client.get(url, {'name': 'Test Stop'})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data.get('latitude'), 37.5665)
+        self.assertEqual(data.get('longitude'), 126.9780)
+        # View should extract the first two comma separated parts of the label
+        self.assertEqual(data.get('location_name'), 'Test Stop, Seoul')
+
+    @patch('ewc_core.views.requests.get')
+    def test_get_coordinates_by_name_not_found(self, mock_get):
+        # Simulate a response with no features found
+        mock_api_response = {"features": []}
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('get_coordinates_by_name')
+        response = self.client.get(url, {'name': 'Nonexistent Stop'})
+        self.assertEqual(response.status_code, 404)
+        data = response.json()
+        self.assertIn('error', data)
 
