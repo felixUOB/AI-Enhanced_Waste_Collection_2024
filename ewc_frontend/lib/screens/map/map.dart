@@ -51,6 +51,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
+  Stop? _currentNotificationStop;
+  Set<int> _dismissedStops = {};
+
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
@@ -111,7 +114,41 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           "Failed to initialize map service. Please check API key and network connection.");
     }
   }
+  // This function checks if the user is within 50 meters of a stop
+  void _checkForNearbyStop(LatLng currentLocation) {
+    debugPrint("Current location: ${currentLocation.latitude}, ${currentLocation.longitude}");
+    final stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    Stop? nearbyStop;
+    for (var stop in stops) {
+      // Only checks stops that haven't been dismissed already.
+      if (_dismissedStops.contains(stop.id)) continue;
+      final distance = Geolocator.distanceBetween(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        stop.location.latitude,
+        stop.location.longitude,
+      );
+      debugPrint("Stop ${stop.name} at (${stop.location.latitude}, ${stop.location.longitude}) is $distance meters away");
+      if (distance < 50) {
+        nearbyStop = stop;
+        break;
+      }
+    }
+    setState(() {
+      _currentNotificationStop = nearbyStop;
+    });
+  }
 
+  void _dismissStopNotification() {
+    if (_currentNotificationStop != null) {
+    // Add to dismissed stops so the notification doesn't show again if dismissed.
+      _dismissedStops.add(_currentNotificationStop!.id);
+   }
+    setState(() {
+      _currentNotificationStop = null;
+    });
+  }
+  
   // Function to draw a complete route between all stops
   // ignore: unused_element
   Future<void> _drawCompleteRoute() async {
@@ -701,6 +738,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       _autoBearing = bearing;
       _currentInstruction = getCurrentInstructionBinarySearch(effectiveIndex);
     });
+    // Check for nearby stop based on current location
+    _checkForNearbyStop(location);
+
   }
 
 
