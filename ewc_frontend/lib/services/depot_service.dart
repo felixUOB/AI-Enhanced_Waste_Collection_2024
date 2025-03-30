@@ -8,12 +8,12 @@ import 'package:latlong2/latlong.dart';
 /// This file manages the route service and provides functionality to fetch
 ///
 /// Functions:
-/// - `fetchDepoLocation()`: Creates a new RouteService instance.
+/// - `fetchDepotLocation()`: Creates a new RouteService instance.
 
 class DepotService {
 
   Future<Depot> fetchDepoLocation() async {
-    final response = await getIt<AuthService>().makeAuthenticatedRequest('get-depo/');
+    final response = await getIt<AuthService>().makeAuthenticatedRequest('get-depot/');
     print('Status Code: ${response.statusCode}');
     print('Response Body: ${response.body}');
     if (response.statusCode == 200){

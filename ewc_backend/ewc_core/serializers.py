@@ -33,9 +33,9 @@ Serializers:
    - Accepts additional fields for email address 
    - Implements a `create()` method to generate new user accounts and associated `UserProfile` instances.
 
-7. DepoSerializer:
-   - Serializes all fields in the 'Depo' model.
-   - Represents the location of the depo.
+7. DepotSerializer:
+   - Serializes all fields in the 'Depot' model.
+   - Represents the location of the depot.
 """
 
 
@@ -120,8 +120,8 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     
 class DepotSerializer(serializers.ModelSerializer):
     '''
-    This serializer class converts the Depo model into JSON format for API responses.
-    It includes all fields from the Depo model.
+    This serializer class converts the Depot model into JSON format for API responses.
+    It includes all fields from the Depot model.
     '''
     class Meta:
         model = Depot

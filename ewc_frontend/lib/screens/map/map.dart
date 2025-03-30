@@ -31,7 +31,7 @@ import 'package:ewc/services/metrics_service.dart';
 /// - `build()`: Builds the UI for the map page.
 /// - `initState()`: Initializes the map and services when the widget is created.
 /// - `_initialiseLocationStatusStream()`: Initializes the location status stream.
-/// - `_initaliseDepoLocation()`: Initializes the location of the depo.
+/// - `_initaliseDepotLocation()`: Initializes the location of the depot.
 /// - `_initializeEnvAndService()`: Initializes the environment and services.
 /// - `_drawCompleteRoute()`: Draws a complete route between all stops.
 /// - `_drawStopsMarker(Color color)`: Draws markers for all stops.
@@ -78,7 +78,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   double _endMpg = 0;
 
-  // the location of the depo
+  // the location of the depot
   late Marker depot;
 
   // State initialisation
@@ -87,12 +87,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     super.initState();
     _animatedMapController = AnimatedMapController(vsync: this, duration: Duration(milliseconds: 1500));
     _initialiseLocationStatusStream();
-    _initaliseDepoLocation();
+    _initaliseDepotLocation();
     _initializeEnvAndService();
     Provider.of<LocationProvider>(context, listen: false).addListener(findNearestRoutePoint);
   }
 
-  void _initaliseDepoLocation() async{
+  void _initaliseDepotLocation() async{
     // get the LatLng from the db
     Depot d =await _depotService.fetchDepoLocation();
     depot = MarkerWidget.createMarker("Depot", context, LatLng(d.location.latitude, d.location.longitude), Colors.black, false);
@@ -116,7 +116,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       await _drawStopsMarker(Colors.blue);
       //Depot location marker
       if (mounted){
-        // change to be the depo
+        // change to be the depot
         _marker.add(depot);
       }
       
@@ -152,7 +152,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   Future<void> _drawStopsMarker(Color color) async {
     _marker.clear();
     _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
-    // Fetch the location of the depo -> need to check there is one otherwise cant plot it (contact admin services)
+    // Fetch the location of the depot -> need to check there is one otherwise cant plot it (contact admin services)
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
       // if the stop has been visited 

@@ -24,8 +24,8 @@ Models:
      fuel efficiency (miles per gallon).
    - Helps in assessing the environmental impact of waste collection operations.
 
-5. Depo:
-   - Records the location of the depo (longitude and latitude).
+5. Depot:
+   - Records the location of the depot (longitude and latitude).
    - Is a singleton meaning only one instance can be created at once.
 """
 
@@ -105,7 +105,7 @@ class RouteEnvData(models.Model):
     def __str__(self):
         return f"Route Data {self.route_env_data_id}"
     
-# singleton model so that only one depo can ever be saved
+# singleton model so that only one depot can ever be saved
 class Depot(models.Model):
     nickname = models.CharField(max_length=255, blank=True, null=True)
     latitude = models.FloatField(null=False)
