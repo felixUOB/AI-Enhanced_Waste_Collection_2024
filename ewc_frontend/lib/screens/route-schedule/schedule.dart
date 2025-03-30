@@ -118,8 +118,8 @@ class _Schedule extends State<Schedule> {
                       ),
                       // ------------Minutes text------------
                       Expanded(
-                          child: (!route[index].visited && _stopTimes != null) ?
-                          Text(
+                          child: (!route[index].visited && _stopTimes != null && _stopTimes!.length > index)
+                          ? Text(
                             "${_stopTimes![index]} mins", // display the stop time
                             textAlign: TextAlign.right,
                             style: AppTheme().constWhiteTextLarge,

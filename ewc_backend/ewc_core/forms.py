@@ -30,10 +30,33 @@ class StopsForm(forms.ModelForm):
             'longitude',
             'max_weight',
             'next_collection_due_date',
+            'description',
         ]
         help_texts = {
             'next_collection_due_date': (
                 "This date is usually set automatically by the model's prediction. "
                 "Only change this if necessary for unusual scenarios."
             )
+        }
+        widgets = {
+            'location_name': forms.TextInput(attrs={
+                'class': 'form-control-modern',
+            }),
+            'latitude': forms.NumberInput(attrs={
+                'class': 'form-control-modern', 
+            }),
+            'longitude': forms.NumberInput(attrs={
+                'class': 'form-control-modern',  
+            }),
+            'max_weight': forms.NumberInput(attrs={
+                'class': 'form-control-modern',  
+            }),
+            'next_collection_due_date': forms.DateInput(attrs={
+                'class': 'form-control-modern',  
+                'type': 'date', 
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control-modern',  
+                'rows': 2,
+            }),
         }

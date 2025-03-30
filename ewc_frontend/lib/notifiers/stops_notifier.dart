@@ -17,6 +17,10 @@ class StopsProvider extends ChangeNotifier {
 
   List<Stop> get stops => _stops;
 
+  void setStopsForTest(List<Stop> newStops) {
+    _stops = newStops;
+  }
+
   Future<void> initialiseStops() async {
     // Fetch stops from backend
     _stops = await _stopsService.fetchAllStops();
