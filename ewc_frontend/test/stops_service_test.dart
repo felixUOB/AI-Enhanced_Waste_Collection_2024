@@ -78,7 +78,6 @@ void main() {
             'location_name': 'Stop B',
             'latitude': 52.2,
             'longitude': -3.2,
-            'next_collection_due_date': '2024-03-30T12:00:00Z', // Add a valid date
           }
         ];
 
@@ -93,7 +92,7 @@ void main() {
         final stops = await stopsService.fetchAllStops();
 
         // Check that both stops were returned
-        expect(stops.length, 1);
+        expect(stops.length, 2);
         expect(stops.first.id, 1);
         expect(stops.first.name, 'Stop A');
         expect(stops.first.location.latitude, 51.1);
