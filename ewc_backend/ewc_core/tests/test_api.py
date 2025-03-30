@@ -154,3 +154,32 @@ class RouteEnvDataViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Verify that at least one route environmental data entry is returned
         self.assertGreaterEqual(len(response.data), 1)
+
+class GetStopsListTest(APITestCase):
+    """
+    Test the get_stops_list view which returns all Stops as JSON.
+    """
+    def setUp(self):
+        # Create a staff user and authenticate
+        self.user = User.objects.create_user(username="user2", password="pass123", is_staff=True)
+        self.client.force_login(user=self.user)
+        # Create a sample Stop used for testing
+        self.stop = Stops.objects.create(
+            location_name="Test Stop",
+            latitude=1.0,
+            longitude=2.0,
+            next_collection_due_date=None,
+            max_weight=50
+        )
+
+    def test_get_stops_list(self):
+        # Reverse lookup
+        url = reverse('get_stops_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Checks that a list is returned and contains the test stop
+        data = response.json()
+        self.assertIsInstance(data, list)
+        self.assertGreaterEqual(len(data), 1)
+        self.assertIn(self.stop.location_name, [stop.get("location_name") for stop in data])
+

@@ -11,6 +11,10 @@ document.addEventListener("DOMContentLoaded", function() {
     downloadBtn.addEventListener("click", function() {
       if (selectedTable) {
         window.location.href = `/export/?table=${selectedTable}`;
+        
+      }
+      else {
+        alert("Please select a table to download.");
       }
     });
   });
