@@ -95,7 +95,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   void _initaliseDepotLocation() async{
     // get the LatLng from the db
     Depot d =await _depotService.fetchDepoLocation();
-    depot = MarkerWidget.createMarker("Depot", context, LatLng(d.location.latitude, d.location.longitude), Colors.black, false);
+    if (mounted) depot = MarkerWidget.createMarker("Depot", context, LatLng(d.location.latitude, d.location.longitude), Colors.black, false);
   }
 
   void _initialiseLocationStatusStream() async {
