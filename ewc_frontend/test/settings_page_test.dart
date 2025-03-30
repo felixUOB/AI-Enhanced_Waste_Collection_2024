@@ -127,21 +127,21 @@ void main() {
       final tile = find.text("Logout");
       expect(tile, findsOneWidget);
 
-      // 1) tap the Logout tile
+      // Ensure the "Logout" tile is visible and accessible
+      await tester.scrollUntilVisible(tile, 200);
       await tester.tap(tile);
       await tester.pumpAndSettle();
 
-      // 2) confirm dialog appears
+      // Confirm dialog appears
       expect(find.text("Are you sure you want to logout?"), findsOneWidget);
-      // find the "Yes" button
+
+      // Find and tap "Yes"
       final yesButton = find.text("Yes");
       expect(yesButton, findsOneWidget);
-
-      // 3) tap "Yes"
       await tester.tap(yesButton);
       await tester.pumpAndSettle();
 
-      // coverage: _logout() => authMock.clearCredentials() => Navigator pushAndRemoveUntil => LoginPage
+      // Ensure clearCredentials() is called
       verify(authMock.clearCredentials()).called(1);
     });
 
@@ -154,7 +154,8 @@ void main() {
       final tile = find.text("Logout");
       expect(tile, findsOneWidget);
 
-      // tap logout
+      // Tap logout
+      await tester.scrollUntilVisible(tile, 200);  // Ensure it's visible
       await tester.tap(tile);
       await tester.pumpAndSettle();
 
@@ -163,10 +164,10 @@ void main() {
       await tester.tap(noButton);
       await tester.pumpAndSettle();
 
-      // verify clearCredentials never called
+      // Ensure clearCredentials was never called
       verifyNever(authMock.clearCredentials());
-      // SettingPage still present
       expect(find.byType(SettingPage), findsOneWidget);
     });
+
   });
 }

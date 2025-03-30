@@ -78,6 +78,7 @@ void main() {
             'location_name': 'Stop B',
             'latitude': 52.2,
             'longitude': -3.2,
+            'next_collection_due_date': '2026-03-30T12:00:00Z', // Add a valid date
           }
         ];
 
