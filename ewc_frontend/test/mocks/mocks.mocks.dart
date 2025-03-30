@@ -5,13 +5,13 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i12;
 
-import 'package:ewc/models/depo_model.dart' as _i9;
+import 'package:ewc/models/depot_model.dart' as _i9;
 import 'package:ewc/models/stop_model.dart' as _i13;
 import 'package:ewc/screens/map/map.dart' as _i16;
 import 'package:ewc/screens/metrics/route_data.dart' as _i15;
 import 'package:ewc/services/auth_service/auth_service.dart' as _i10;
 import 'package:ewc/services/auth_service/encryption_service.dart' as _i2;
-import 'package:ewc/services/depo_service.dart' as _i17;
+import 'package:ewc/services/depot_service.dart' as _i17;
 import 'package:ewc/services/metrics_service.dart' as _i14;
 import 'package:ewc/services/route_service.dart' as _i7;
 import 'package:ewc/services/stops_service.dart' as _i6;
@@ -74,7 +74,7 @@ class _FakeLatLng_6 extends _i1.SmartFake implements _i8.LatLng {
     : super(parent, parentInvocation);
 }
 
-class _FakeDepo_7 extends _i1.SmartFake implements _i9.Depo {
+class _FakeDepo_7 extends _i1.SmartFake implements _i9.Depot {
   _FakeDepo_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
@@ -445,18 +445,18 @@ class MockConfig extends _i1.Mock implements _i16.Config {
 /// A class which mocks [DepoService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockDepoService extends _i1.Mock implements _i17.DepoService {
-  MockDepoService() {
+class MockDepotService extends _i1.Mock implements _i17.DepotService {
+  MockDepotService() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i12.Future<_i9.Depo> fetchDepoLocation() =>
+  _i12.Future<_i9.Depot> fetchDepoLocation() =>
       (super.noSuchMethod(
             Invocation.method(#fetchDepoLocation, []),
-            returnValue: _i12.Future<_i9.Depo>.value(
+            returnValue: _i12.Future<_i9.Depot>.value(
               _FakeDepo_7(this, Invocation.method(#fetchDepoLocation, [])),
             ),
           )
-          as _i12.Future<_i9.Depo>);
+          as _i12.Future<_i9.Depot>);
 }

@@ -1,8 +1,8 @@
-import 'package:ewc/models/depo_model.dart';
+import 'package:ewc/models/depot_model.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
-import 'package:ewc/services/depo_service.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -320,7 +320,7 @@ void main() {
                 ),
               ));
       when(getIt<MetricsService>().fetchLast30Days()).thenAnswer((_) async => []);
-      when(getIt<DepoService>().fetchDepoLocation()).thenAnswer((_) async => Depo(location: LatLng(0,0)));
+      when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
     
 
       // Build the test widget

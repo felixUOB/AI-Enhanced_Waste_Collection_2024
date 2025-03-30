@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:ewc/models/depo_model.dart';
+import 'package:ewc/models/depot_model.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
-import 'package:ewc/services/depo_service.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
@@ -54,7 +54,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
-  final DepoService _depoService = getIt<DepoService>();
+  final DepotService _depotService = getIt<DepotService>();
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
@@ -79,7 +79,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   double _endMpg = 0;
 
   // the location of the depo
-  late Marker depo;
+  late Marker depot;
 
   // State initialisation
   @override
@@ -94,8 +94,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   void _initaliseDepoLocation() async{
     // get the LatLng from the db
-    Depo d =await _depoService.fetchDepoLocation();
-    depo = MarkerWidget.createMarker("Depot", context, LatLng(d.location.latitude, d.location.longitude), Colors.black, false);
+    Depot d =await _depotService.fetchDepoLocation();
+    depot = MarkerWidget.createMarker("Depot", context, LatLng(d.location.latitude, d.location.longitude), Colors.black, false);
   }
 
   void _initialiseLocationStatusStream() async {
@@ -117,7 +117,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       //Depot location marker
       if (mounted){
         // change to be the depo
-        _marker.add(depo);
+        _marker.add(depot);
       }
       
     } catch (e) {

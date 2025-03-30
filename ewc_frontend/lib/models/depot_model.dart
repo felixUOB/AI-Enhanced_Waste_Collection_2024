@@ -1,13 +1,13 @@
 import 'package:latlong2/latlong.dart';
 
-/// Represents the depo for the start of the journey.
-/// the depo has 
+/// Represents the depot for the start of the journey.
+/// the depot has 
 /// The location is represented by a [LatLng] object from the `latlong2` package.
 
-class Depo {
+class Depot {
   final LatLng location;
 
-  Depo({
+  Depot({
     required this.location,
   });
 }
