@@ -109,6 +109,7 @@ jobs:
           echo "POSTGRES_HOST=${POSTGRES_HOST}" >> ewc_backend/.env
           echo "POSTGRES_PORT=${POSTGRES_PORT}" >> ewc_backend/.env
           echo "SENDGRID_SECRET_KEY=${SENDGRID_SECRET_KEY}" >> ewc_backend/.env
+          echo "OPENROUTESERVICE_API_KEY=${OPENROUTESERVICE_API_KEY}" >> ewc_backend/.env
         env:
           DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
@@ -117,6 +118,7 @@ jobs:
           POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
           POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
           SENDGRID_SECRET_KEY: ${{ secrets.SENDGRID_SECRET_KEY }}
+          OPENROUTESERVICE_API_KEY: ${{ secrets.OPENROUTESERVICE_API_KEY }}
 
       - name: Install Python dependencies
         run: |
