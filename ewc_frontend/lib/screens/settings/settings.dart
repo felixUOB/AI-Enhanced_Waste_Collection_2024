@@ -59,7 +59,7 @@ class _SettingPageState extends State<SettingPage> {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        String? errorText; // ✅ Error state inside the builder
+        String? errorText;
         TextEditingController mpgController = TextEditingController();
 
         return StatefulBuilder(
@@ -74,7 +74,7 @@ class _SettingPageState extends State<SettingPage> {
                   if (mpgValue == null || mpgValue <= 0) {
                     errorText = "MPG must be a positive number!";
                   } else {
-                    errorText = null; // ✅ No errors, clear message
+                    errorText = null;
                   }
                 }
               });
@@ -87,21 +87,21 @@ class _SettingPageState extends State<SettingPage> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: "Miles per Gallon",
-                  errorText: errorText, // ✅ Updates dynamically
+                  errorText: errorText,
                 ),
-                onChanged: (value) => validateMPG(), // ✅ Live validation
+                onChanged: (value) => validateMPG(),
               ),
               actions: [
                 TextButton(
                   onPressed: () async {
-                    validateMPG(); // ✅ Final validation before closing
-                    if (errorText != null) return; // ❌ Prevents closing if invalid
+                    validateMPG();
+                    if (errorText != null) return;
 
                     double mpgValue = double.parse(mpgController.text);
-                    await box.put('mpg', mpgValue); // ✅ Store the value
+                    await box.put('mpg', mpgValue);
 
                     if (!dialogContext.mounted) return;
-                    Navigator.pop(dialogContext); // ✅ Close dialog
+                    Navigator.pop(dialogContext);
                   },
                   child: Text('Save'),
                 ),
