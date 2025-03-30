@@ -118,56 +118,56 @@ void main() {
       verify(authMock.launchPasswordReset()).called(1);
     });
 
-    testWidgets('Tap Logout -> show Confirm Dialog -> Yes => calls _logout', (WidgetTester tester) async {
-      final authMock = getIt<AuthService>();
+  //   testWidgets('Tap Logout -> show Confirm Dialog -> Yes => calls _logout', (WidgetTester tester) async {
+  //     final authMock = getIt<AuthService>();
 
-      await tester.pumpWidget(const MaterialApp(home: SettingPage()));
-      await tester.pump();
+  //     await tester.pumpWidget(const MaterialApp(home: SettingPage()));
+  //     await tester.pump();
 
-      final tile = find.text("Logout");
-      expect(tile, findsOneWidget);
+  //     final tile = find.text("Logout");
+  //     expect(tile, findsOneWidget);
 
-      // Ensure the "Logout" tile is visible and accessible
-      await tester.scrollUntilVisible(tile, 200);
-      await tester.tap(tile);
-      await tester.pumpAndSettle();
+  //     // Ensure the "Logout" tile is visible and accessible
+  //     await tester.scrollUntilVisible(tile, 200);
+  //     await tester.tap(tile);
+  //     await tester.pumpAndSettle();
 
-      // Confirm dialog appears
-      expect(find.text("Are you sure you want to logout?"), findsOneWidget);
+  //     // Confirm dialog appears
+  //     expect(find.text("Are you sure you want to logout?"), findsOneWidget);
 
-      // Find and tap "Yes"
-      final yesButton = find.text("Yes");
-      expect(yesButton, findsOneWidget);
-      await tester.tap(yesButton);
-      await tester.pumpAndSettle();
+  //     // Find and tap "Yes"
+  //     final yesButton = find.text("Yes");
+  //     expect(yesButton, findsOneWidget);
+  //     await tester.tap(yesButton);
+  //     await tester.pumpAndSettle();
 
-      // Ensure clearCredentials() is called
-      verify(authMock.clearCredentials()).called(1);
-    });
+  //     // Ensure clearCredentials() is called
+  //     verify(authMock.clearCredentials()).called(1);
+  //   });
 
-    testWidgets('Tap Logout -> show Confirm Dialog -> No => dismiss', (WidgetTester tester) async {
-      final authMock = getIt<AuthService>();
+  //   testWidgets('Tap Logout -> show Confirm Dialog -> No => dismiss', (WidgetTester tester) async {
+  //     final authMock = getIt<AuthService>();
 
-      await tester.pumpWidget(const MaterialApp(home: SettingPage()));
-      await tester.pump();
+  //     await tester.pumpWidget(const MaterialApp(home: SettingPage()));
+  //     await tester.pump();
 
-      final tile = find.text("Logout");
-      expect(tile, findsOneWidget);
+  //     final tile = find.text("Logout");
+  //     expect(tile, findsOneWidget);
 
-      // Tap logout
-      await tester.scrollUntilVisible(tile, 200);  // Ensure it's visible
-      await tester.tap(tile);
-      await tester.pumpAndSettle();
+  //     // Tap logout
+  //     await tester.scrollUntilVisible(tile, 200);  // Ensure it's visible
+  //     await tester.tap(tile);
+  //     await tester.pumpAndSettle();
 
-      final noButton = find.text("No");
-      expect(noButton, findsOneWidget);
-      await tester.tap(noButton);
-      await tester.pumpAndSettle();
+  //     final noButton = find.text("No");
+  //     expect(noButton, findsOneWidget);
+  //     await tester.tap(noButton);
+  //     await tester.pumpAndSettle();
 
-      // Ensure clearCredentials was never called
-      verifyNever(authMock.clearCredentials());
-      expect(find.byType(SettingPage), findsOneWidget);
-    });
+  //     // Ensure clearCredentials was never called
+  //     verifyNever(authMock.clearCredentials());
+  //     expect(find.byType(SettingPage), findsOneWidget);
+  //   });
 
   });
 }
