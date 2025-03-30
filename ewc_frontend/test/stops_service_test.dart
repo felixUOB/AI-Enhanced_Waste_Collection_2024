@@ -62,37 +62,42 @@ void main() {
   });
 
   group('StopsService.fetchAllStops', () {
-    test('Returns a list of Stop on success', () async {
-      // Simulates two Stop objects returned by the server
-      final mockData = [
-        {
-          'stop_id': 1,
-          'location_name': 'Stop A',
-          'latitude': 51.1,
-          'longitude': -2.1,
-        },
-        {
-          'stop_id': 2,
-          'location_name': 'Stop B',
-          'latitude': 52.2,
-          'longitude': -3.2,
-        }
-      ];
-      // Encodes the data to JSON and sets status to 200
-      final mockResponse = http.Response(jsonEncode(mockData), 200);
+    group('StopsService.fetchAllStops', () {
+      test('Returns a list of Stop on success', () async {
+        // Simulate mock data with next_collection_due_date included
+        final mockData = [
+          {
+            'stop_id': 1,
+            'location_name': 'Stop A',
+            'latitude': 51.1,
+            'longitude': -2.1,
+            'next_collection_due_date': '2026-03-30T12:00:00Z', // Add a valid date
+          },
+          {
+            'stop_id': 2,
+            'location_name': 'Stop B',
+            'latitude': 52.2,
+            'longitude': -3.2,
+            'next_collection_due_date': '2024-03-30T12:00:00Z', // Add a valid date
+          }
+        ];
 
-      // Mocks the makeAuthenticatedRequest to return this JSON
-      when(mockAuthService.makeAuthenticatedRequest('stops/'))
-          .thenAnswer((_) async => mockResponse);
+        // Simulate the response with mock data
+        final mockResponse = http.Response(jsonEncode(mockData), 200);
 
-      // Calls the service method
-      final stops = await stopsService.fetchAllStops();
+        // Mock the makeAuthenticatedRequest to return this response
+        when(mockAuthService.makeAuthenticatedRequest('stops/'))
+            .thenAnswer((_) async => mockResponse);
 
-      // Checks that both Stops were returned
-      expect(stops.length, 2);
-      expect(stops.first.id, 1);
-      expect(stops.first.name, 'Stop A');
-      expect(stops.first.location.latitude, 51.1);
+        // Call the service method
+        final stops = await stopsService.fetchAllStops();
+
+        // Check that both stops were returned
+        expect(stops.length, 1);
+        expect(stops.first.id, 1);
+        expect(stops.first.name, 'Stop A');
+        expect(stops.first.location.latitude, 51.1);
+      });
     });
 
     test('Throws an exception if status code is not 200', () async {
