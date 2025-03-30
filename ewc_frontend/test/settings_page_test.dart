@@ -4,8 +4,20 @@ import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_test/hive_test.dart';
 
 void main() {
+  setUpAll(() async {
+    await setUpTestHive();
+    var box =  await Hive.openBox('Settings'); // Open a test box
+    await box.put('mpg', 25.5); // Insert test data
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
+
   setUp(() async {
     await mockSetupLocator();
   });
