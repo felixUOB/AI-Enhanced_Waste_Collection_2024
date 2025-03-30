@@ -279,13 +279,13 @@ class ExportCSVViewTest(APITestCase):
         # Create and authenticate a staff user.
         self.user = User.objects.create_user(username="staffuser", password="pass123", is_staff=True)
         self.client.force_login(user=self.user)
-        # Create a RouteEnvData object for CSV export -for option: 'routeenvdata'
+        # Create a RouteEnvData object for CSV export -for option: 'route_env_data'
         self.route_data = RouteEnvData.objects.create(
             distance=150.0,
             mpg=30.0,
             date=date.today()
         )
-        # Create a Stop and StopCollection object for CSV export -for option: 'stopdata'
+        # Create a Stop and StopCollection object for CSV export -for option: 'stop_collections_data'
         self.stop = Stops.objects.create(
             location_name="Test Stop",
             latitude=1.0,
@@ -312,7 +312,7 @@ class ExportCSVViewTest(APITestCase):
         Exports RouteEnvData as a CSV file format and verifies the headers and that there is at least 1 row of data - test obj.
         """
         url = reverse('export_csv')
-        response = self.client.get(url, {'table': 'routeenvdata'})
+        response = self.client.get(url, {'table': 'route_env_data'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/csv')
         content = response.content.decode('utf-8')
@@ -326,7 +326,7 @@ class ExportCSVViewTest(APITestCase):
         Exports StopCollection data as a CSV file format and verifies the headers and that there is 1 row of data - test obj.
         """
         url = reverse('export_csv')
-        response = self.client.get(url, {'table': 'stopdata'})
+        response = self.client.get(url, {'table': 'stop_collections_data'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'text/csv')
         content = response.content.decode('utf-8')

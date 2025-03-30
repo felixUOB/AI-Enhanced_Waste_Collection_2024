@@ -267,15 +267,15 @@ def export_csv_view(request):
     output = io.StringIO()
     writer = csv.writer(output)
 
-    if table == "routeenvdata":
+    if table == "route_env_data":
         writer.writerow(["Date", "Distance", "MPG"])
         for item in RouteEnvData.objects.all():
             writer.writerow([item.date.strftime("%Y-%m-%d"), item.distance, item.mpg])
-    elif table == "stopdata":
+    elif table == "stop_collections_data":
         writer.writerow(["Date", "Weight Collected"])
         for item in StopCollection.objects.all():
             writer.writerow([item.date.strftime("%Y-%m-%d"), item.weight_collected])
-    elif table == "environmentalreport":
+    elif table == "environmental_report":
         return generate_pdf()
     else:
         return HttpResponse("Invalid option", status=400)
@@ -285,6 +285,6 @@ def export_csv_view(request):
 
     # Create HTTP response with CSV data and force download
     response = HttpResponse(csv_contents, content_type='text/csv')
-    filename = f"{table}_{datetime.datetime.now().strftime('%Y_%m_%d')}.csv"
+    filename = f"{table}_{datetime.datetime.now().strftime('%d_%m_%Y')}.csv"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response

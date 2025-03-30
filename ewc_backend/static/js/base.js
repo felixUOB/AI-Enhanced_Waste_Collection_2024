@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
         
       }
       else {
-        alert("Please select a table to download.");
+        alert("Please select a file to download.");
       }
     });
   });
