@@ -204,7 +204,7 @@ class GetCoordinatesByNameTest(APITestCase):
                 }
             ]
         }
-        # Configure the mocked requests.get to return fake API response
+        # Configured the mocked requests.get to return fake API response
         mock_get.return_value.json.return_value = mock_api_response
 
         url = reverse('get_coordinates_by_name')
@@ -228,3 +228,44 @@ class GetCoordinatesByNameTest(APITestCase):
         data = response.json()
         self.assertIn('error', data)
 
+
+class ReverseGeocodeTest(APITestCase):
+    """
+    Tests the reverse_geocode view which retrieves a location name given latitude and longitude values.
+    """
+    def setUp(self):
+        # Create and authenticate a staff user
+        self.user = User.objects.create_user(username="geouser", password="pass123", is_staff=True)
+        self.client.force_login(user=self.user)
+
+    @patch('ewc_core.views.requests.get')
+    def test_reverse_geocode_success(self, mock_get):
+        # Mocked API response from the reverse geocoding service
+        mock_api_response = {
+            "features": [
+                {
+                    "properties": {"label": "Test Location, City, Country"}
+                }
+            ]
+        }
+        # Configured the mocked requests.get to return the fake API response
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('reverse_geocode')
+        response = self.client.get(url, {'latitude': 37.5665, 'longitude': 126.9780})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        # View should extract the first two comma separated parts of the label
+        self.assertEqual(data.get('location_name'), "Test Location, City")
+
+    @patch('ewc_core.views.requests.get')
+    def test_reverse_geocode_not_found(self, mock_get):
+        # Simulate a response with no features
+        mock_api_response = {"features": []}
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('reverse_geocode')
+        response = self.client.get(url, {'latitude': 0, 'longitude': 0})
+        self.assertEqual(response.status_code, 404)
+        data = response.json()
+        self.assertIn("error", data)
