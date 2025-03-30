@@ -25,23 +25,6 @@ void main() {
     getIt.reset();
   });
 
-  test('fetchStop returns LatLng on 200', () async {
-    final mockResponse = http.Response(
-      jsonEncode({'latitude': 51.0, 'longitude': -2.0}),
-      200,
-    );
-    // [1] First, set up the stub
-    when(mockAuthService.makeAuthenticatedRequest('stops/123'))
-        .thenAnswer((_) async => mockResponse);
-
-    // [2] Run
-    final result = await stopsService.fetchStop(123);
-
-    // [3] Validation
-    expect(result.latitude, 51.0);
-    expect(result.longitude, -2.0);
-  });
-
   group('StopsService.fetchStop', () {
     test('Returns LatLng on success', () async {
       // Creates a mock JSON response
