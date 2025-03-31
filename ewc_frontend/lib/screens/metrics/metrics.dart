@@ -59,6 +59,7 @@ class _MetricsPageState extends State<MetricsPage> {
   @override
   void initState(){
     super.initState();
+    print('INITIALISING');
     _fetchMetricsDate();
   }
 

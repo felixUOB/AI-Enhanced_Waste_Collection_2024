@@ -1,0 +1,230 @@
+/*
+  File: stops_form.css
+  Description: Custom styling for the Stops Form page. This file defines styles for the search input,
+               card layout, form controls, buttons, and responsive adjustments.
+  Dependencies:
+      - Bootstrap for layout and form elements.
+      - base.css for global styles.
+      - stops_form.html template.
+*/
+
+@property --angle{
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.input-group {
+  position: relative;
+  display: inline-flex;
+  border: none;
+  border-radius: 18px;
+  
+  box-shadow: 0 2px 8px rgba(41, 41, 41, 0.1);
+  background-image: conic-gradient(from var( --angle),rgb(255, 67, 67),rgb(255, 163, 35),rgb(255, 235, 81),rgb(88, 163, 255),rgb(164, 52, 255),rgb(255, 67, 67));
+  padding: 4px;
+}
+
+.input-group.searching {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from{
+    --angle: 0deg;
+
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+.search-field {
+    border-radius: 15px;
+    padding-left: 30px;
+    height: 35px;
+    font-size: 0.9rem; 
+    transition: border-color 0.3s ease;
+    padding: 0.5rem 0.8rem;
+}
+
+.search-field:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.input-group-text {
+    background: none;
+    border: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.input-group-text i {
+    font-size: 1.2em;
+}
+
+/* Card styling */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .card-body {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  /* Heading */
+  h2.mb-4 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Labels for form fields */
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+  }
+  
+  /* Search field spacing */
+  .search-field {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  
+  /* Input elements*/
+  .form-control {
+    border: 1px solid #ccc;
+    border-radius: 60px;
+    border-top-right-radius: 60px !important;
+    border-bottom-right-radius: 60px !important;
+    transition: border-color 0.2s;
+  }
+  
+  .form-control:focus {
+    border-color: #1d7dcf;
+    box-shadow: none;
+  }
+  
+  /* Buttons*/
+  .btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  /* Save button */
+  .btn.btn-success{
+    margin-top: 2rem;
+  }
+
+  .btn-success {
+    background-color: #2d9c45;
+    border-color: #2d9c45;
+    font-size: 0.85rem; 
+    padding: 0.45rem 1.2rem; 
+    color: #ffffff; 
+  }
+  .btn-success:hover {
+    background-color: #237c35;
+    border-color: #237c35;
+  }
+  
+  /* Cancel button */
+  .btn-secondary {
+    background-color: #94979a;
+    border-color: #363535;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.3rem 1rem;
+  }
+  .btn-secondary:hover {
+    background-color: #585a5a;
+    border-color: #555;
+  }
+  
+  /* The info text for "next_collection_due_date" help text */
+  .red-help-text {
+    color: #357bdc !important;
+    gap: 0.25rem;
+  }
+  
+  .bi-info-circle-fill {
+    font-size: 0.9rem;
+  }
+  
+  /* Validation error messages */
+  .text-danger {
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+  }
+  
+
+  #map {
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* Spacing adjustments */
+  .mb-3.position-relative {
+    margin-bottom: 1.5rem !important;
+  }
+
+
+/* Style for the labels */
+.form-label {
+  font-size: 0.95rem; 
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.2rem;
+}
+
+/* Style for modern input fields */
+.form-control-modern {
+  border: none;   
+  border: 2px solid #ccc; 
+  border-radius: 0;
+  background-color: transparent; 
+  padding: 0.3rem 0.6rem; 
+  font-size: 0.9rem; 
+  font-family: 'Arial', sans-serif; 
+  font-weight: 400; 
+  color: #333; 
+  transition: border-color 0.3s ease, background-color 0.3s ease; 
+  border-radius: 10px;
+  margin-bottom: 3px;
+}
+
+.field-control-modern:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-color: #d0d0d0;
+}
+
+.form-control-modern:focus {
+  border: 2px solid #1d7dcf;
+  background-color: #ffffff; 
+  outline: none;
+}
+
+
+  /* Responsive: ensure columns stack on smaller screens */
+  @media (max-width: 768px) {
+    .row > .col-md-6 {
+      margin-bottom: 1.5rem;
+    }
+  }
+
+/* Ensure the label and textarea are aligned correctly */
+.form-label {
+  display: inline-flex;
+  margin-bottom: 0.5rem; 
+}
+
+textarea.form-control-modern {
+  display: block; 
+  width: 100%; 
+  margin-top: 0; 
+}

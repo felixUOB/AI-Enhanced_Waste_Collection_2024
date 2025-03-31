@@ -7,12 +7,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'mocks/mock_service_locator.dart';
 
 void main() {
+
   setUp(() async {
     await mockSetupLocator();
   });
 
-  tearDown(() {
-    getIt.reset();
+  tearDown(() async {
+    await getIt.reset();
   });
 
   group("Metric page tests", () {

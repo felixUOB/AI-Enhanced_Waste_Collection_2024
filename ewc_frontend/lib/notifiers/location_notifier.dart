@@ -40,6 +40,10 @@ class LocationProvider extends ChangeNotifier {
     _distanceTravelled = 0;
   }
 
+  void setLatestLocationForTest(LatLng? newLoc) {
+    _latestLocation = newLoc;
+  }
+
   Future<void> initialiseLocationServices() async {
 
     // Ask user for location permissions

@@ -1,0 +1,150 @@
+/*
+  File: base.css
+  Description: Base CSS for a clean, modern layout. This file defines global CSS variables,
+               resets, and base styles used across the EWC. It sets up color schemes,
+               typography, and basic component styling.
+  Dependencies:
+      - Google Fonts (Poppins) imported via base.html
+*/
+
+:root {
+  --brand-green: #2e7d32;
+  --dark-green: #1b5e20;
+  --light-green: #cfff95;
+  --text-color: #333;
+  --destructive-red: #dc3545;
+  --font-family: 'Poppins', sans-serif;
+  --background-color: #f9fafb;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Navbar */
+.navbar-brand {
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  color: #fff !important;
+}
+.navbar-brand i {
+  color: var(--light-green);
+}
+.bg-brand-green {
+  background-color: var(--brand-green) !important;
+}
+.navbar.shadow-sm {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero Section */
+.hero {
+  background-color: #fff;
+}
+.hero-title {
+  font-size: 2rem;
+  font-weight: 700;
+}
+.hero-text {
+  font-size: 1rem;
+  max-width: 650px;
+  line-height: 1.5;
+  color: #555;
+}
+
+/* Footer */
+.bg-dark-green {
+  background-color: var(--dark-green) !important;
+}
+.footer p,
+.footer small {
+  margin: 0;
+}
+
+/* Buttons */
+.custom-btn {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease-in-out;
+  border: none;
+}
+
+.btn-add {
+  background-color: var(--brand-green);
+  color: #fff;
+}
+.btn-add:hover,
+.btn-add:focus {
+  background-color: #27672a;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: #212529;
+}
+.btn-edit:hover,
+.btn-edit:focus {
+  background-color: #e0a800;
+}
+
+.btn-delete {
+  background-color: var(--destructive-red);
+  color: #fff;
+}
+.btn-delete:hover,
+.btn-delete:focus {
+  background-color: #bd2130;
+}
+
+/* Utility Classes */
+.red-help-text {
+  color: #3c75e7;
+}
+.blue-help-text .bi-info-circle-fill {
+  color: #007bff;
+  margin-right: 5px;
+}
+
+.hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh; 
+  text-align: center;
+}
+
+.navbar-brand {
+  padding: 0.5rem 1rem;
+}
+
+.mb-4 {
+  padding: 0.5rem 1rem;
+}
+
+.footer {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #fff;
+}
+
+.container {
+  padding: 0.4rem;
+}
