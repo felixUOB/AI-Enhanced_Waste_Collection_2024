@@ -310,6 +310,47 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                 instruction: _currentInstruction,
               ),
             ),
+            // In app Stop Notification overlay
+            if (_currentNotificationStop != null)
+              Positioned(
+                top: 80,
+                left: 20,
+                right: 20,
+                child: Material(
+                  elevation: 6,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Dismissible(
+                    key: ValueKey(_currentNotificationStop!.id),
+                    direction: DismissDirection.up,
+                    onDismissed: (direction) {
+                      _dismissStopNotification();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                      decoration: BoxDecoration(
+                          color: Colors.orange,
+                          borderRadius: BorderRadius.circular(6)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              "Upcoming Stop: ${_currentNotificationStop!.name}",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.close, color: Colors.white),
+                            onPressed: _dismissStopNotification,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             Positioned(
               left: 12.0,
               right: 12.0,
