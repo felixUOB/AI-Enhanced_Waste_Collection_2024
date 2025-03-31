@@ -21,7 +21,7 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
+from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView, run_model_view
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
@@ -54,7 +54,7 @@ urlpatterns = [
     path('api/route-env-data-30-days/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data_30_days'})),
     
     # ------- endpoint for model -------- #
-    path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
+    path('api/run-model/', run_model_view ,name='run-model'), #Run Machine Learning Model   
     path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),    
 
 # -----------Stops HTML Form URLs------------------
