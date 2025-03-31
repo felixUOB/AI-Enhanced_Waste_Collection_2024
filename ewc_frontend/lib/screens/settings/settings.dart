@@ -89,7 +89,6 @@ class _SettingPageState extends State<SettingPage> {
                   hintText: "Miles per Gallon",
                   errorText: errorText,
                 ),
-                onChanged: (value) => validateMPG(),
               ),
               actions: [
                 TextButton(
