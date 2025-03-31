@@ -25,3 +25,5 @@ coverage/
 htmlcov/
 
 /android/app/.cxx/
+
+mocks.mocks.dart
