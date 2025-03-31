@@ -52,7 +52,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
   Stop? _currentNotificationStop;
-  Set<int> _dismissedStops = {};
+  final Set<int> _dismissedStops = {};
 
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
@@ -353,21 +353,53 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                       decoration: BoxDecoration(
                           color: Colors.orange,
                           borderRadius: BorderRadius.circular(6)),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Flexible(
-                            child: Text(
-                              "Upcoming Stop: ${_currentNotificationStop!.name}",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                          // First row: Upcoming stop text and the close icon
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Upcoming Stop: ${_currentNotificationStop!.name}",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.close, color: Colors.white),
+                                onPressed: _dismissStopNotification,
+                              )
+                            ],
                           ),
-                          IconButton(
-                            icon: Icon(Icons.close, color: Colors.white),
-                            onPressed: _dismissStopNotification,
-                          )
+                          const SizedBox(height: 4),
+                          // Second row: Additional instruction message with inline icon
+                          Row(
+                            children: [
+                              Expanded(
+                                child: RichText(
+                                  text: TextSpan(
+                                    text: "Don't forget to log this stop by pressing ",
+                                    style: const TextStyle(color: Colors.white),
+                                    children: [
+                                      WidgetSpan(
+                                        alignment: PlaceholderAlignment.middle,
+                                        child: Icon(
+                                          Icons.where_to_vote,
+                                          size: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
