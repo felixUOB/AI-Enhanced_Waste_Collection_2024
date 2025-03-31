@@ -61,6 +61,6 @@ class Command(BaseCommand):
         stop_id = kwards['stop_id']
         # run the model
         result = self.model(stop_id)
-        self.stdout.write(result)
+        self.stdout.write(str(result))
                 #write it back to the database
         self.write_to_db(stop_id, result)

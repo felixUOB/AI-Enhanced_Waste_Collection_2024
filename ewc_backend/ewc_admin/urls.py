@@ -21,7 +21,7 @@ from django.shortcuts import redirect
 from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView
+from ewc_core.views import UserProfileViewSet, StopsViewSet, StopCollectionViewSet, RouteEnvDataViewSet, UserRegistrationView, run_model_view
 from ewc_core import views
 from django.contrib.auth import views as auth_views
 from ewc_core.management.commands.run_prediction import Command
