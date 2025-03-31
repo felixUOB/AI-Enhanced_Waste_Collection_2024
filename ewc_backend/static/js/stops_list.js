@@ -148,3 +148,41 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
+// Defines a black marker icon stored in the static directory.
+const blackIcon = new L.Icon({
+  iconUrl: '/static/img/marker-icon-black.png',
+  iconSize: [23, 39],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+// Fetch depot data from the backend endpoint
+fetch('/api/get-depot/')
+  .then(response => response.json())
+  .then(data => {
+    if (!data || !data[0] || data[0].latitude === undefined || data[0].longitude === undefined) {
+      console.error('Depot data is missing latitude or longitude.');
+      return;
+    }
+    const depot = data[0];
+
+    const depotCoords = [depot.latitude, depot.longitude];
+
+    // Creates depot marker using the black icon
+    L.marker(depotCoords, {
+      icon: blackIcon,
+      title: 'Depot'
+    })
+      .addTo(map)
+      .bindPopup(`
+        <strong>Depot</strong><br>
+        Lat: ${depot.latitude}, Lng: ${depot.longitude}<br>
+        <a class="btn btn-sm btn-outline-primary" href="/stops/depot/">
+          <i class="bi bi-eye"></i> View
+        </a>
+      `);
+
+  })
+  .catch(error => console.error('Error fetching depot data:', error));
