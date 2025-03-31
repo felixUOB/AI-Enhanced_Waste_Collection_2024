@@ -54,7 +54,7 @@ urlpatterns = [
     path('api/route-env-data-30-days/', RouteEnvDataViewSet.as_view({'get': 'get_route_env_data_30_days'})),
     
     # ------- endpoint for model -------- #
-    path('api/runmodel', Command.model ,name='runmodel'), #Run Machine Learning Model
+    path('api/run-model/', run_model_view ,name='run-model'), #Run Machine Learning Model   
     path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),    
 
 # -----------Stops HTML Form URLs------------------

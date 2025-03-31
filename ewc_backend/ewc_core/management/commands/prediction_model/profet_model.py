@@ -27,7 +27,6 @@ def load_data(path):
 
     # sort the values by date
     df = df.sort_values(by='ds')
-    print("loaded data")
     return df
 
 # plots the forecasted 
@@ -45,8 +44,6 @@ def plot(model, forecast):
     
 # fill in the missing days with the accumulating growth i.e. interpolate the daily waste weight
 def fillInDates(df): 
-    print("filling in data")
-    
     # store the list of accumulated weights
     filled_data=[]
     # get the weight at the first collection
@@ -93,8 +90,6 @@ def train_model(df):
     # generates 30 days in the future
 
     forecast = model.predict(future_dates)
-    print("forecast")
-    print(forecast)
 
     return model, forecast
 
