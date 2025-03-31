@@ -62,7 +62,6 @@ class StopsProvider extends ChangeNotifier {
     for (Stop stop in _stops) {
       if (stop.id == stopID) {
         stop.visited = value;
-        notifyListeners();
         return;
       }
     }

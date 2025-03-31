@@ -58,10 +58,9 @@ void main() {
       
       expect(find.byKey(Key('stop name')), findsOneWidget);
       expect(find.byKey(Key('stop description')), findsOneWidget);
+      expect(find.byKey(Key('visit button')), findsOneWidget);
       expect(find.byKey(Key('save button')), findsOneWidget);
       expect(find.byKey(Key('back button')), findsOneWidget);
-
-      expect(find.byType(ElevatedButton), findsNothing);
     });
 
     testWidgets('Stop View initialises correctly when visited is true', (WidgetTester tester) async {

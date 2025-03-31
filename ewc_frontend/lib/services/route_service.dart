@@ -11,22 +11,19 @@ import 'package:ewc/models/stop_model.dart';
 /// Functions:
 /// - `create()`: Creates a new RouteService instance.
 /// - `getRoute(double startLat, double startLng, double endLat, double endLng)`: Fetches the route between two points.
+/// - `updateOrder(LatLng userLocation, List<Stop> stops)`: Optimises the order of stops using TSP algorithm
 /// - `routePlanning(LatLng userLocation, List<Stop> stops)`: Plans the optimized route between a list of stops.
 /// - `getStopTimes(LatLng source, List<LatLng> stopLocations)`: Fetches the time it takes to get from source to each stop.
 /// - `distanceFromSegment(LatLng location, LatLng startPoint, LatLng endPoint)`: Calculates the perpendicular distance of the user from the line between startPoint and endPoint.
 
 class RouteResult {
-
-  // Optimised order of stops
-  final List<Stop> optimisedOrder;
-
   // A list of LatLng objects representing the route
   final List<LatLng> routeCoordinates;
  
   // A list of RangeInstruction objects representing the instructions for each range of coordinates
   final List<RangeInstruction> rangeInstructions;
 
-  RouteResult(this.optimisedOrder, this.routeCoordinates, this.rangeInstructions);
+  RouteResult(this.routeCoordinates, this.rangeInstructions);
 }
 
 class RangeInstruction {
@@ -100,8 +97,7 @@ class RouteService {
     }
   }
 
-  // Plans and returns the optimized route between a list of stops and the navigation instructions for that route.
-  Future<RouteResult> routePlanning(LatLng userLocation, List<Stop> stops) async {
+  Future<List<Stop>> updateOrder(LatLng userLocation, List<Stop> stops) async {
     final depot = LatLng(51.4533, -2.6257);
 
     // Use map to link id to stop name
@@ -166,8 +162,17 @@ class RouteService {
       }
     }
 
+    return newStopOrder;
+  }
+
+  // Plans and returns the optimized route between a list of stops and the navigation instructions for that route.
+  Future<RouteResult> routePlanning(LatLng userLocation, List<Stop> stops) async {
+    final depot = LatLng(51.4533, -2.6257);
+
+    List<Stop> nonVisited = stops.where((stop) => !stop.visited).toList();
+
     // Convert to list of ORSCoordinates to input back into route finding algorithm
-    List<ORSCoordinate> optimizedOrder = newStopOrder.map((stop) =>
+    List<ORSCoordinate> optimizedOrder = nonVisited.map((stop) =>
       ORSCoordinate(
         latitude: stop.location.latitude,
         longitude: stop.location.longitude)).toList();
@@ -215,7 +220,7 @@ class RouteService {
     // Convert the list of ORSCoordinate objects into LatLng objects representing the route to be display on a map
     List<LatLng> routeCoordinates = directionsResponse.map((coordinate) => LatLng(coordinate.latitude, coordinate.longitude)).toList();
 
-    return RouteResult(newStopOrder, routeCoordinates, rangeInstructions);
+    return RouteResult(routeCoordinates, rangeInstructions);
 
   }
 

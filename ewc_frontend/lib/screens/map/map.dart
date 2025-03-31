@@ -98,10 +98,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
-      if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
-      if (mounted) Provider.of<LocationProvider>(context, listen: false).addCustomListener(_findNearestRoutePoint);
-      if (mounted) Provider.of<StopsProvider>(context, listen: false).addCustomListener(_drawStopsMarker);
+      var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+      var locationProvider = Provider.of<LocationProvider>(context, listen: false);
+      await stopsProvider.initialiseStops();
+      await locationProvider.initialiseLocationServices();
+      stopsProvider.addCustomListener(_fetchOptimizedRoute);
+      locationProvider.addCustomListener(_findNearestRoutePoint);
+      stopsProvider.addCustomListener(_drawStopsMarker);
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -177,9 +180,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
       if (location != null) {
         RouteResult result = await _routeService.routePlanning(location, stops);
-
-        // Update stops list to new order of stops
-        if (mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(result.optimisedOrder);
 
         List<LatLng> optimizedRoute = result.routeCoordinates;
         List<RangeInstruction> rangeInstructions = result.rangeInstructions;
@@ -324,11 +324,15 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                     child: const Icon(Icons.where_to_vote),
                     onPressed: () {
                       LogStopDialog.show(context,
-                        (int stopID, int wasteCollected) {
+                        (int stopID, int wasteCollected) async {
                           StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
+                          LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                           stopProvider.addStopCollection(stopID, wasteCollected);
                           stopProvider.setVisited(stopID, true);
-                          _fetchOptimizedRoute(); // Recalculate route with visited stop removed
+                          if (location != null) {
+                            List<Stop> newOrder = await _routeService.updateOrder(location, stopProvider.stops);
+                            if (context.mounted) stopProvider.updateStopOrder(newOrder);
+                          }
                         }
                       );
                     },
@@ -596,16 +600,20 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     double minDistance = double.infinity;
     int index = 0;
 
-    if (_routePoints.isEmpty) {
-      // Route not yet defined so request new route
-      await _fetchOptimizedRoute();
-    }
-
     LatLng? location;
     if (mounted) location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+
     if (location == null) {
       // Location not defined yet so exit function
       return;
+    }
+
+    if (_routePoints.isEmpty) {
+      // Route not yet defined so request new route
+      List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+      List<Stop> newOrder = await _routeService.updateOrder(location, stops);
+      if (mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(newOrder);
+      await _fetchOptimizedRoute();
     }
 
     // Find new closest route point by searching 3 behind and 6 in front
