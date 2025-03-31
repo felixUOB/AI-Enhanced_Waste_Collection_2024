@@ -1,3 +1,4 @@
+import 'package:ewc/models/depot_model.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
@@ -97,9 +98,7 @@ class RouteService {
   }
 
   // Plans and returns the optimized route between a list of stops and the navigation instructions for that route.
-  Future<RouteResult> routePlanning(LatLng userLocation, List<Stop> stops) async {
-    final depot = LatLng(51.4533, -2.6257);
-    
+  Future<RouteResult> routePlanning(Depot depot, LatLng userLocation, List<Stop> stops) async {    
     List<VroomJob> jobs = [];
     // Iterate through each stop and create a VroomJob object for it.
     // This is used to define the locations that need to be visited.
@@ -117,7 +116,7 @@ class RouteService {
     VroomVehicle vehicle = VroomVehicle(
       id: 1,
       start: ORSCoordinate(latitude: userLocation.latitude, longitude: userLocation.longitude),
-      end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      end: ORSCoordinate(latitude: depot.location.latitude, longitude: depot.location.longitude),
       profile: 'driving-hgv',
     );
 
