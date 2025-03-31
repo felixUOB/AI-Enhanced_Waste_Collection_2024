@@ -170,6 +170,7 @@ The structure of the database is as followed:
 During development our database is hosted on Neon, for deployment we host our database on AWS.
 
 Note: We haven't showed how passwords are saved in the database.
+
 Note: That the Depot Location is a singleton meaning only one value can be stored in there at once.
 
 ## AWS Setup
