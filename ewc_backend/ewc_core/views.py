@@ -11,7 +11,7 @@ from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depot
 from .serializers import UserProfileSerializer, StopCollectionSerializer, StopsSerializer, RouteEnvDataSerializer, UserRegistrationSerializer, DepotSerializer
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import StopsForm
+from .forms import StopsForm, DepotForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
@@ -210,6 +210,18 @@ class DepotViewSet(viewsets.ModelViewSet):
         data = list(Depot.objects.values('latitude', 'longitude'))
         return JsonResponse(data, safe=False)
 
+@login_required
+@user_passes_test(is_staff_user)
+def edit_depot(request):
+    depot_instance = Depot.load()
+    if request.method == 'POST':
+        form = DepotForm(request.POST, instance=depot_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('stops_list')
+    else:
+        form = DepotForm(instance=depot_instance)
+    return render(request, 'stops/edit_depot.html', {'form': form})
 
 @login_required
 @user_passes_test(is_staff_user)
