@@ -11,8 +11,8 @@ import 'package:provider/provider.dart';
 /// - `_showInvalidInputDialog()`: Shows a dialog for invalid input notifications.
 
 class LogStopDialog {
-  static void show(BuildContext context, Function(int, int) onConfirm) {
-    int? selectedStop;
+  static void show(BuildContext context, Function(int, int) onConfirm, {Stop? initialStop}) {
+    int? selectedStop =initialStop?.id;
     String wasteCollectedInput = '';
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
 
@@ -49,6 +49,7 @@ class LogStopDialog {
                   key: Key('dropdown'),
                   enableSearch: false,
                   hintText: 'Select stop',
+                  initialSelection: selectedStop,
                   dropdownMenuEntries:
                     stops.map((stop) => DropdownMenuEntry(value: stop.id, label: stop.name)).toList(),
                   onSelected: (value) => selectedStop = value,

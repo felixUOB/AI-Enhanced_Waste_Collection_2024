@@ -148,6 +148,29 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       _currentNotificationStop = null;
     });
   }
+
+  // This function returns the Stop that is closest to the users current location
+  Stop? _getClosestStop(LatLng currentLocation) {
+    final stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    Stop? closest;
+    double minDistance = double.infinity;
+
+    for (var stop in stops) {
+      final distance = Geolocator.distanceBetween(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        stop.location.latitude,
+        stop.location.longitude,
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        closest = stop;
+      }
+    }
+    return closest;
+  }
+
+
   
   // Function to draw a complete route between all stops
   // ignore: unused_element
@@ -399,13 +422,18 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                     heroTag: "log visit",
                     child: const Icon(Icons.where_to_vote),
                     onPressed: () {
+                      // Retrieve the current location
+                      LatLng? currentLocation = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                      // Compute the closest stop to the current location
+                      Stop? preselectedStop = currentLocation != null ? _getClosestStop(currentLocation) : null;
                       LogStopDialog.show(context,
                               (int stopID, int wasteCollected) {
                             _stopsService.postStopCollection(stopID, wasteCollected);
                             Provider.of<StopsProvider>(context, listen: false).setVisited(stopID);
                             // redraw the stops
                             _drawStopsMarker(Colors.blue);
-                          }
+                          },
+                          initialStop: preselectedStop,
                       );
                     },
                   ) : const SizedBox(),
