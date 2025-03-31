@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Edit Depot | SpaceNXT Labs - EWC
+{% endblock %}
+
+{% block extra_css %}
+  <!-- Load same CSS as stops form to maintain consistency -->
+  <link rel="stylesheet" href="{% static 'css/stops_form.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Edit Depot</h2>
+<p style="padding: 0.2rem 1rem;">Update the depot details below.</p>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <form method="POST">
+          {% csrf_token %}
+          
+          {% for field in form %}
+          <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+              <small class="form-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+              <div class="text-danger">
+                {{ field.errors }}
+              </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+          
+          <button type="submit" class="btn btn-success">
+            <i class="bi bi-check"></i> Set
+          </button>
+          <a href="{% url 'stops_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Cancel
+          </a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

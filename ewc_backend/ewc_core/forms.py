@@ -68,7 +68,7 @@ class DepotForm(forms.ModelForm):
     class Meta:
         model = Depot
         fields = ['nickname', 'latitude', 'longitude']
-        weights = {
+        widgets = {
             'nickname': forms.TextInput(attrs={
                 'class': 'form-control-modern',  
             }),
