@@ -114,12 +114,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
       await _drawStopsMarker(Colors.blue);
-      //Depot location marker
-      if (mounted){
-        // change to be the depot
-        _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(depot.location.latitude, depot.location.longitude), Colors.black, false));
-      }
-      
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
