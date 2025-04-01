@@ -23,7 +23,6 @@ void main() {
           home: MetricsPage(testingMode: true),
         ),
       );
-
       // Verify that the key UI elements are present
       expect(find.text('Summary of last 30 days:'), findsOneWidget);
       expect(find.text('Weekly Distance Summary'), findsOneWidget);
