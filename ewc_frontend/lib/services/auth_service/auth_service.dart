@@ -41,7 +41,7 @@ class AuthService {
     await authStorage.write(key: 'username', value: username); // Store username
 
     var encryptedPassword =
-        encryptionService.encryptData(password); // Encrypt Password
+    encryptionService.encryptData(password); // Encrypt Password
 
     await authStorage.write(
         key: 'password', value: encryptedPassword); // Store password
@@ -96,10 +96,12 @@ class AuthService {
       throw Exception('Internal Server Error');
     }
     else {
+
   
       throw Exception('Failed to login');
     }
     
+
   }
 
 // Access token refresh method: Use refresh token
@@ -225,11 +227,13 @@ class AuthService {
     } else {
         var data = jsonDecode(response.body);
         throw Exception({data.toString()});
+
     }
   }
 
   void launchPasswordReset() async {
     final Uri resetUri = Uri.parse("$siteUrl/reset_password/");
+
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'notifiers/location_notifier.dart';
 import 'notifiers/stops_notifier.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 
 /// This file manages the main app state and provides the entry point for the app.
@@ -27,6 +28,9 @@ void main({Completer<void>? setupCompleter}) async {
   }
 
   setupCompleter?.complete();
+
+  await Hive.initFlutter(); // Initializes Hive for Flutter apps
+  await Hive.openBox('Settings');//open up storage box
 
   runApp(
     MultiProvider(

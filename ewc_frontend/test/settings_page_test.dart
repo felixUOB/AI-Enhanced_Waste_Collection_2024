@@ -7,8 +7,20 @@ import 'package:provider/provider.dart';
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_test/hive_test.dart';
 
 void main() {
+  setUpAll(() async {
+    await setUpTestHive();
+    var box =  await Hive.openBox('Settings'); // Open a test box
+    await box.put('mpg', 25.5); // Insert test data
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
+
   setUp(() async {
     await mockSetupLocator();
   });
@@ -128,21 +140,22 @@ void main() {
       final tile = find.text("Logout");
       expect(tile, findsOneWidget);
 
-      // 1) tap the Logout tile
+      // Ensure the "Logout" tile is visible and accessible
+      await tester.ensureVisible(tile);  // Ensure it's visible
+      await tester.pumpAndSettle();
       await tester.tap(tile);
       await tester.pumpAndSettle();
 
-      // 2) confirm dialog appears
+      // Confirm dialog appears
       expect(find.text("Are you sure you want to logout?"), findsOneWidget);
-      // find the "Yes" button
+
+      // Find and tap "Yes"
       final yesButton = find.text("Yes");
       expect(yesButton, findsOneWidget);
-
-      // 3) tap "Yes"
       await tester.tap(yesButton);
       await tester.pumpAndSettle();
 
-      // coverage: _logout() => authMock.clearCredentials() => Navigator pushAndRemoveUntil => LoginPage
+      // Ensure clearCredentials() is called
       verify(authMock.clearCredentials()).called(1);
     });
 
@@ -155,7 +168,9 @@ void main() {
       final tile = find.text("Logout");
       expect(tile, findsOneWidget);
 
-      // tap logout
+      // Tap logout
+      await tester.ensureVisible(tile);  // Ensure it's visible
+      await tester.pumpAndSettle();
       await tester.tap(tile);
       await tester.pumpAndSettle();
 
@@ -164,10 +179,10 @@ void main() {
       await tester.tap(noButton);
       await tester.pumpAndSettle();
 
-      // verify clearCredentials never called
+      // Ensure clearCredentials was never called
       verifyNever(authMock.clearCredentials());
-      // SettingPage still present
       expect(find.byType(SettingPage), findsOneWidget);
     });
+
   });
 }

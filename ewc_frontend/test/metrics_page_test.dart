@@ -3,10 +3,22 @@ import 'package:ewc/widgets/graphs/bar-graph/bar_graph.dart';
 import 'package:ewc/widgets/graphs/line-graph/line_graph.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_test/hive_test.dart';
 
 import 'mocks/mock_service_locator.dart';
 
 void main() {
+
+   setUpAll(() async {
+    await setUpTestHive(); 
+    var box =  await Hive.openBox('Settings'); // Open a test box
+    await box.put('mpg', 25.5); // Insert test data
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
 
   setUp(() async {
     await mockSetupLocator();

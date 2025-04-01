@@ -14,8 +14,6 @@ class DepotService {
 
   Future<Stop> fetchDepotLocation() async {
     final response = await getIt<AuthService>().makeAuthenticatedRequest('get-depot/');
-    print('Status Code: ${response.statusCode}');
-    print('Response Body: ${response.body}');
     if (response.statusCode == 200){
       final data = jsonDecode((response.body)) as List;
       return Stop(id: -1, name: 'Depot', location: LatLng(data[0]['latitude'], data[0]['longitude']));
