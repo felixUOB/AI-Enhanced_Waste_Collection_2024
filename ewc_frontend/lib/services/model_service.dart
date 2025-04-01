@@ -8,12 +8,11 @@ import 'package:http/http.dart';
 /// - `sendModelRequest()`: Sends a request to the model service to run the model on a specified ID.
 
 class ModelService {
-  final String siteUrl = 'https://devnest.software';
 
   // Function to request permission to access device location
   Future<Response> sendModelRequest(int? id) async {
     if (id != null) {
-      final response = await getIt<AuthService>().makeAuthenticatedRequest('run-model/$id');
+      final response = await getIt<AuthService>().makeAuthenticatedRequest('run-model/?stopid=$id');
 
       if (response.statusCode != 200) {
         throw Exception('Failed to run model.');
