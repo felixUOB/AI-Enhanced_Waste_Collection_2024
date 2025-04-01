@@ -401,3 +401,43 @@ class EditDepotViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         content = response.content.decode('utf-8')
         self.assertIn("Enter a number", content)
+
+class DepotViewSetTest(APITestCase):
+    """
+    Tests the DepotViewSet endpoints for the depot model.
+    """
+
+    def setUp(self):
+        self.staff_user = User.objects.create_user(username="depotapi", password="pass123", is_staff=True)
+        self.client.force_login(self.staff_user)
+        self.depot = Depot.load()
+
+    def test_default_depot_values(self):
+        """
+        Ensure that using Depot.load when retrived for the first time returns the default values.
+        """
+        depot = Depot.load()
+        self.assertEqual(depot.nickname, "Default Depot")
+        self.assertEqual(depot.latitude, 0.0)
+        self.assertEqual(depot.longitude, 0.0)
+
+    def test_get_depot_list(self):
+        """
+        Ensure that retrieving the depot list endpoint returns the depot data.
+        """
+        url = reverse('depot-list') 
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("Default Depot", response.content.decode('utf-8'))
+
+    def test_get_depot_detail(self):
+        """
+        Ensure that retrieving a depot by its pk returns correct data.
+        """
+        url = reverse('depot-detail', args=[self.depot.pk])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(data.get("nickname"), "Default Depot")
+        self.assertEqual(data.get("latitude"), 0.0)
+        self.assertEqual(data.get("longitude"), 0.0)
