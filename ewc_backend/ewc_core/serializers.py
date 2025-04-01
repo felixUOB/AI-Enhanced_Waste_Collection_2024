@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import UserProfile, StopCollection, Stops, RouteEnvData
+from .models import UserProfile, StopCollection, Stops, RouteEnvData, Depot
 
 """
 This file defines serializers for converting Django models into JSON format for API responses  
@@ -32,6 +32,10 @@ Serializers:
    - Extends `UserSerializer` to handle user registration.
    - Accepts additional fields for email address 
    - Implements a `create()` method to generate new user accounts and associated `UserProfile` instances.
+
+7. DepotSerializer:
+   - Serializes all fields in the 'Depot' model.
+   - Represents the location of the depot.
 """
 
 
@@ -113,3 +117,12 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         )
 
         return user
+    
+class DepotSerializer(serializers.ModelSerializer):
+    '''
+    This serializer class converts the Depot model into JSON format for API responses.
+    It includes all fields from the Depot model.
+    '''
+    class Meta:
+        model = Depot
+        fields = '__all__'  # Serialize all fields in the WastePrediction model

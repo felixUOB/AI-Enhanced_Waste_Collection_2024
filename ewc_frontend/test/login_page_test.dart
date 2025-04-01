@@ -1,6 +1,8 @@
+import 'package:ewc/models/depot_model.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -13,6 +15,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hive_test/hive_test.dart';
 import 'package:http/http.dart';
+import 'package:latlong2/latlong.dart';
 import "package:mockito/mockito.dart";
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/map/map.dart';
@@ -330,7 +333,8 @@ void main() {
                 ),
               ));
       when(getIt<MetricsService>().fetchLast30Days()).thenAnswer((_) async => []);
-      
+      when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
+    
 
       // Build the test widget
       await tester.pumpWidget(MaterialApp(home: LoginPage()));

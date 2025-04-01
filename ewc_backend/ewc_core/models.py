@@ -23,6 +23,10 @@ Models:
    - Records environmental metrics for waste collection routes, including distance traveled and 
      fuel efficiency (miles per gallon).
    - Helps in assessing the environmental impact of waste collection operations.
+
+5. Depot:
+   - Records the location of the depot (longitude and latitude).
+   - Is a singleton meaning only one instance can be created at once.
 """
 
 
@@ -100,3 +104,34 @@ class RouteEnvData(models.Model):
 
     def __str__(self):
         return f"Route Data {self.route_env_data_id}"
+    
+# singleton model so that only one depot can ever be saved
+class Depot(models.Model):
+    nickname = models.CharField(max_length=255, blank=True, null=True)
+    latitude = models.FloatField(null=False)
+    longitude = models.FloatField(null=False)
+
+    # any time you save it will do pk = 1 so will either create it or update it 
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+    
+    # doesn't let you delete the instance
+    def delete(self, *args, **kwargs):
+        raise Exception("Deletion not allowed for this model")
+    
+    class Meta:
+        verbose_name = "Depot Location"
+        verbose_name_plural = "Depot Location"
+
+    @classmethod
+    def load(cls):
+        try:
+            obj, created = cls.objects.get(pk=1)
+            return obj
+        except cls.DoesNotExist:
+            return cls()
+        
+    def __str__(self):
+        return self.nickname
+
