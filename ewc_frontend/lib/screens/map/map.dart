@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
+import 'package:ewc/services/model_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
 import 'package:ewc/widgets/log_stop_dialog.dart';
@@ -587,9 +588,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     var stopCollections = Provider.of<StopsProvider>(context, listen:false).stopCollectionLog;
 
-    // Post each stop collection now that journey has been ended
+    // Post each stop collection now that journey has been ended and run model for each entry to assertain next collection date
     for (var stopCollection in stopCollections.entries) {
       _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
+      getIt<ModelService>().sendModelRequest(stopCollection.key);
     }
 
     // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).

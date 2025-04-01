@@ -285,7 +285,7 @@ def run_model_view(request):
 
         output = io.StringIO()  # Capture command output
         call_command("run_prediction", stopid, stdout=output, stderr=output)
-        return JsonResponse({"message": "Command executed", "output": output.getvalue().strip()})
+        return JsonResponse({"message": "Command executed", "output": output.getvalue().strip()}, status=200)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 @login_required
