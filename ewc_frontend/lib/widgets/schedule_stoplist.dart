@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 class ScheduleStopList extends StatelessWidget {
 
   final bool inPast;
-  // ignore: prefer_typing_uninitialized_variables
-  final child;
+  final Widget child;
 
   const ScheduleStopList({
       super.key,
@@ -21,7 +20,7 @@ class ScheduleStopList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.only(left: 20),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: inPast ? Theme.of(context).colorScheme.primary: Theme.of(context).colorScheme.secondary, //different colour depending on if it has already happened or not

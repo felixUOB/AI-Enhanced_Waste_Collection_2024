@@ -1,11 +1,8 @@
-import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/screens/metrics/metrics.dart';
 import 'package:ewc/screens/route-schedule/schedule.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:ewc/notifiers/location_notifier.dart';
 
 /// This file manages the main navigation bar widget.
 ///
@@ -44,44 +41,38 @@ class _NavigationBarState extends State<MainNavigationBar> {
         ),
       ),
       // Set the body of the scaffold to be the selected screen
-      body: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (context) => LocationProvider()),
-          ChangeNotifierProvider(create: (context) => StopsProvider()),
+      body: IndexedStack(
+        index: currentPageIndex,
+        children: [
+          MetricsPage(
+            key: ValueKey("metricsPage"),
+          ),
+          !widget.testing
+          ? MapPage(
+            key: ValueKey("mapPage"),
+          )
+          : Container(
+            key: ValueKey("mapPageReplacement"),
+            color: Colors.green,
+            child: Center(
+              child: Text("TESTING - MAP DISABLED"),
+            ),
+          ),
+          !widget.testing
+          ? Schedule(
+            key: ValueKey("schedulePage"),
+          )
+          : Container(
+            key: ValueKey("schedulePageReplacement"),
+            color: Colors.green,
+            child: Center(
+              child: Text("TESTING - SCHEDULE DISABLED"),
+            ),
+          ),
+          SettingPage(
+            key : ValueKey("settingPage")
+          )
         ],
-        child: IndexedStack(
-          index: currentPageIndex,
-          children: [
-            MetricsPage(
-              key: ValueKey("metricsPage"),
-            ),
-            !widget.testing
-            ? MapPage(
-              key: ValueKey("mapPage"),
-            )
-            : Container(
-              key: ValueKey("mapPageReplacement"),
-              color: Colors.green,
-              child: Center(
-                child: Text("TESTING - MAP DISABLED"),
-              ),
-            ),
-            !widget.testing
-            ? Schedule(
-              key: ValueKey("schedulePage"),
-            )
-            : Container(
-              key: ValueKey("schedulePageReplacement"),
-              color: Colors.green,
-              child: Center(
-                child: Text("TESTING - SCHEDULE DISABLED"),
-              ),
-            ),
-            SettingPage(
-              key : ValueKey("settingPage")
-            )
-          ],
-        )
       ),
       bottomNavigationBar: NavigationBar(
           onDestinationSelected: (int index) {

@@ -2,8 +2,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
-from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData
+from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData, Stops
 from datetime import date
+from unittest.mock import patch
 # python manage.py test ewc_core.tests
 
 # Overall Structure
@@ -154,3 +155,189 @@ class RouteEnvDataViewSetTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # Verify that at least one route environmental data entry is returned
         self.assertGreaterEqual(len(response.data), 1)
+
+class GetStopsListTest(APITestCase):
+    """
+    Test the get_stops_list view which returns all Stops as JSON.
+    """
+    def setUp(self):
+        # Create a staff user and authenticate
+        self.user = User.objects.create_user(username="user2", password="pass123", is_staff=True)
+        self.client.force_login(user=self.user)
+        # Create a sample Stop used for testing
+        self.stop = Stops.objects.create(
+            location_name="Test Stop",
+            latitude=1.0,
+            longitude=2.0,
+            next_collection_due_date=None,
+            max_weight=50
+        )
+
+    def test_get_stops_list(self):
+        # Reverse lookup
+        url = reverse('get_stops_list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        # Checks that a list is returned and contains the test stop
+        data = response.json()
+        self.assertIsInstance(data, list)
+        self.assertGreaterEqual(len(data), 1)
+        self.assertIn(self.stop.location_name, [stop.get("location_name") for stop in data])
+
+class GetCoordinatesByNameTest(APITestCase):
+    """
+    Tests the get_coordinates_by_name view which retrieves coordinates through ORS API.
+    """
+    def setUp(self):
+        # Create a staff user and authenticate
+        self.user = User.objects.create_user(username="staffuser", password="pass123", is_staff=True)
+        self.client.force_login(user=self.user)
+
+    @patch('ewc_core.views.requests.get')
+    def test_get_coordinates_by_name_success(self, mock_get):
+        # Prepare a mocked API response from OpenRouteService
+        mock_api_response = {
+            "features": [
+            {
+                "geometry": {"coordinates": [-2.5879, 51.4492]},
+                "properties": {"label": "Temple Meads, Bristol, United Kingdom"}
+            }
+            ]
+        }
+        # Configured the mocked requests.get to return fake API response
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('get_coordinates_by_name')
+        response = self.client.get(url, {'name': 'Test Stop'})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data.get('latitude'), 51.4492)
+        self.assertEqual(data.get('longitude'), -2.5879)
+        # View should extract the first two comma separated parts of the label
+        self.assertEqual(data.get('location_name'), 'Temple Meads, Bristol')
+
+    @patch('ewc_core.views.requests.get')
+    def test_get_coordinates_by_name_not_found(self, mock_get):
+        # Simulate a response with no features found
+        mock_api_response = {"features": []}
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('get_coordinates_by_name')
+        response = self.client.get(url, {'name': 'Nonexistent Stop'})
+        self.assertEqual(response.status_code, 404)
+        data = response.json()
+        self.assertIn('error', data)
+
+
+class ReverseGeocodeTest(APITestCase):
+    """
+    Tests the reverse_geocode view which retrieves a location name given latitude and longitude values.
+    """
+    def setUp(self):
+        # Create and authenticate a staff user
+        self.user = User.objects.create_user(username="geouser", password="pass123", is_staff=True)
+        self.client.force_login(user=self.user)
+
+    @patch('ewc_core.views.requests.get')
+    def test_reverse_geocode_success(self, mock_get):
+        # Mocked API response from the reverse geocoding service
+        mock_api_response = {
+            "features": [
+                {
+                    "properties": {"label": "Test Location, City, Country"}
+                }
+            ]
+        }
+        # Configured the mocked requests.get to return the fake API response
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('reverse_geocode')
+        response = self.client.get(url, {'latitude': 51.4492, 'longitude': -2.5879})
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        # View should extract the first two comma separated parts of the label
+        self.assertEqual(data.get('location_name'), "Test Location, City")
+
+    @patch('ewc_core.views.requests.get')
+    def test_reverse_geocode_not_found(self, mock_get):
+        # Simulate a response with no features
+        mock_api_response = {"features": []}
+        mock_get.return_value.json.return_value = mock_api_response
+
+        url = reverse('reverse_geocode')
+        response = self.client.get(url, {'latitude': 0, 'longitude': 0})
+        self.assertEqual(response.status_code, 404)
+        data = response.json()
+        self.assertIn("error", data)
+
+
+class ExportCSVViewTest(APITestCase):
+    """
+    Tests the export_csv_view which exports data as a CSV file (or PDF for environmentalreport).
+    """
+    def setUp(self):
+        # Create and authenticate a staff user.
+        self.user = User.objects.create_user(username="staffuser", password="pass123", is_staff=True)
+        self.client.force_login(user=self.user)
+        # Create a RouteEnvData object for CSV export -for option: 'route_env_data'
+        self.route_data = RouteEnvData.objects.create(
+            distance=150.0,
+            mpg=30.0,
+            date=date.today()
+        )
+        # Create a Stop and StopCollection object for CSV export -for option: 'stop_collections_data'
+        self.stop = Stops.objects.create(
+            location_name="Test Stop",
+            latitude=1.0,
+            longitude=2.0,
+            next_collection_due_date=None,
+            max_weight=100
+        )
+        self.stop_collection = StopCollection.objects.create(
+            stop=self.stop,
+            weight_collected=25,
+            date=date.today()
+        )
+
+    def test_export_csv_view_no_table(self):
+        """
+        Should return an error 400 when there was no parameter provided.
+        """
+        url = reverse('export_csv')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 400)
+
+    def test_export_csv_view_routeenvdata(self):
+        """
+        Exports RouteEnvData as a CSV file format and verifies the headers and that there is at least 1 row of data - test obj.
+        """
+        url = reverse('export_csv')
+        response = self.client.get(url, {'table': 'route_env_data'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+        content = response.content.decode('utf-8')
+        self.assertIn("Date,Distance,MPG", content)
+        self.assertIn(date.today().strftime("%Y-%m-%d"), content)
+        self.assertIn("150.0", content)
+        self.assertIn("30.0", content)
+
+    def test_export_csv_view_stopdata(self):
+        """
+        Exports StopCollection data as a CSV file format and verifies the headers and that there is 1 row of data - test obj.
+        """
+        url = reverse('export_csv')
+        response = self.client.get(url, {'table': 'stop_collections_data'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'text/csv')
+        content = response.content.decode('utf-8')
+        self.assertIn("Date,Weight Collected", content)
+        self.assertIn(date.today().strftime("%Y-%m-%d"), content)
+        self.assertIn("25", content)
+
+    def test_export_csv_view_invalid_option(self):
+        """
+        Invalid parameter option should give error 400.
+        """
+        url = reverse('export_csv')
+        response = self.client.get(url, {'table': 'invalid'})
+        self.assertEqual(response.status_code, 400)

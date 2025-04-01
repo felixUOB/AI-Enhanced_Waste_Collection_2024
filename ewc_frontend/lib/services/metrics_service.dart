@@ -11,6 +11,8 @@ import 'package:ewc/services/auth_service/auth_service.dart';
 ///
 /// Functions:
 /// - `fetchAllRoutes()`: Fetches all the routes from the backend.
+/// - `fetchLast30Days()`: Fetches all the routes that have occured in the last 30 days
+/// - `postRouteData()`: Saves the route data to the RouteEnvData table
 
 class MetricsService {
   /// Fetches all route records from the server.
@@ -56,7 +58,6 @@ class MetricsService {
   /// Returns a list of [JourneyRoute] instances on success.
   Future<List<JourneyRoute>> fetchLast30Days() async {
     final response = await getIt<AuthService>().makeAuthenticatedRequest('route-env-data-30-days/');
-    print(response.statusCode);
     // if the request is successful
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as List;

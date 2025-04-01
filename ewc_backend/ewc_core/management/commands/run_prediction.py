@@ -41,7 +41,6 @@ class Command(BaseCommand):
     def write_to_db(self, stopid, date):
         # 
         stop = Stops.objects.get(stop_id=stopid)
-        print(stop.location_name)
         stop.next_collection_due_date = date
         stop.save()
 
@@ -51,9 +50,7 @@ class Command(BaseCommand):
         # file_path = 'ewc_core/management/commands/prediction_model/data/data.csv'
         threshold = get_threshold(stopid)
         result = run_prediction_model(file_path, threshold)
-        print(result)
-        #write it back to the database
-        self.write_to_db(stopid, result)
+
         return result
 
     def add_arguments(self, parser):
@@ -62,7 +59,8 @@ class Command(BaseCommand):
     def handle(self, *args, **kwards):
         # get the stop given as an argument
         stop_id = kwards['stop_id']
-        self.stdout.write("Starting waste prediction...")
         # run the model
-        self.model(stop_id)
-        self.stdout.write("Waste prediction completed!")
+        result = self.model(stop_id)
+        self.stdout.write(str(result))
+                #write it back to the database
+        self.write_to_db(stop_id, result)

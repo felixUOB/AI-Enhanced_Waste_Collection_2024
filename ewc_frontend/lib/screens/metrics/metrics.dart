@@ -61,6 +61,12 @@ class _MetricsPageState extends State<MetricsPage> {
     super.initState();
     _fetchMetricsDate();
   }
+  // check to see if two dates are the same using the date and not the time
+  bool areDatesEqual(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+         date1.month == date2.month &&
+         date1.day == date2.day;
+  }
 
   Future<void> _fetchMetricsDate() async{
     List<JourneyRoute> fetchedRoutes = await _initialiseMetricData();
@@ -92,7 +98,7 @@ class _MetricsPageState extends State<MetricsPage> {
           // fill in any gaps
           DateTime next = DateTime.parse(fetchedRoutes[i+1].date);
           // see if the day after current is the next day or identify if there is a gap
-          while (!current.add(Duration(days: 1)).isAtSameMomentAs(next)){
+          while(!areDatesEqual(current, next)){
               current = current.add(Duration(days: 1));
               // add a filler day
               updatedRoutes.add(JourneyRoute(distance: 0, mpg: 0, date: current.toString(), filler: true));
@@ -100,7 +106,7 @@ class _MetricsPageState extends State<MetricsPage> {
           i ++;
         }
         
-        if (i==len && fetchedRoutes[i].date != fetchedRoutes[i-1].date){
+        if (i==len && !areDatesEqual(DateTime.parse(fetchedRoutes[i].date), DateTime.parse(fetchedRoutes[i-1].date))){
           updatedRoutes.add(JourneyRoute(distance: fetchedRoutes[i].distance, mpg: fetchedRoutes[i].mpg, date: fetchedRoutes[i].date.toString(), filler: false));
         }
       }
@@ -141,9 +147,10 @@ class _MetricsPageState extends State<MetricsPage> {
     if (isTesting){
       String today = DateTime.now().toString().split(' ')[0];
       String yesterday = (DateTime.now().subtract(Duration(days: 1))).toString().split(' ')[0];
+
       return [
-        JourneyRoute(date: today, distance: 50, mpg: 10, filler: false),
-        JourneyRoute(date: yesterday, distance: 30, mpg: 8, filler: false),
+        JourneyRoute(date: yesterday, distance: 50, mpg: 10, filler: false),
+        JourneyRoute(date: today, distance: 30, mpg: 8, filler: false),
       ];
     }
     return await _metricsService.fetchLast30Days();

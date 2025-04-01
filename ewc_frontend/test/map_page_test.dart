@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:ewc/models/stop_model.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:ewc/widgets/orientate_button.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:hive_test/hive_test.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mockito/mockito.dart';
 import 'mocks/mock_service_locator.dart';
@@ -13,6 +16,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:provider/provider.dart';
+import 'package:ewc/widgets/mpg_startup_input.dart';
 
 
 class FakeGeolocatorPlatform extends GeolocatorPlatform { 
@@ -33,6 +37,8 @@ class FakeGeolocatorPlatform extends GeolocatorPlatform {
     }
 }
 
+class MockBox extends Mock implements Box {}
+
 Widget pumpMap() {
   return MaterialApp(
     home: MultiProvider(
@@ -51,18 +57,34 @@ Widget pumpMap() {
 
 Future<List<Stop>> getMockStopList(){
   var completer = Completer<List<Stop>>();
-  completer.complete([Stop(id: 1, name: 'test', location: LatLng(0, 0))]);
+  completer.complete([Stop(id: 1, name: 'test', location: LatLng(0, 0), description: '')]);
   return completer.future;
 }
 
 void main() {
+
+   setUpAll(() async {
+    await setUpTestHive(); 
+    var box =  await Hive.openBox('Settings'); // Open a test box
+    await box.put('mpg', 25.5); // Insert test data
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
+
+
   // Set the fake GeolocatorPlatform before tests run 
   setUp(() async {
     await mockSetupLocator();
     when(getIt<Config>().inTestMode).thenReturn(true);
     when(getIt<StopsService>().fetchAllStops()).thenAnswer((request) {return getMockStopList();} );
     when(getIt<StopsService>().postStopCollection(1, 10)).thenAnswer((request) {return Completer<void>().future;});
+
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
+
+    // Setup a mock channel and mock platform method
+    WidgetsFlutterBinding.ensureInitialized();
   });
 
   tearDown(() async {
@@ -70,8 +92,10 @@ void main() {
   });
 
   group('Map Page Tests', () {
+
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -82,54 +106,65 @@ void main() {
         });
       });
 
-    testWidgets('End Journey dialog shows properly and dismisses on Cancel tap', (WidgetTester tester) async {
+    testWidgets('MPGInputDialog saves valid MPG input and retrieves it', (WidgetTester tester) async {
       await tester.runAsync(() async {
-        // Currently, tapping Start Journey starts the journey without a popup,
-        // Tap on ‘Start Journey’ to make it true:
-        await tester.pumpWidget(pumpMap());
-        await tester.tap(find.text('Start Journey'));
+        // Set up the widget
+        await tester.pumpWidget(
+          MaterialApp(home: Scaffold(body: MPGInputDialog())),
+        );
         await tester.pumpAndSettle();
 
-        // End Journey
-        await tester.tap(find.text('End Journey'));
+        // Enter a valid MPG value
+        await tester.enterText(find.byKey(Key('mpg_input')), '25.5');
+        await tester.tap(find.text('Save'));
         await tester.pumpAndSettle();
 
-        // assume that the EndJourneyDialog should appear
-        expect(find.byType(AlertDialog), findsOneWidget);
+        // Expect the dialog to close
+        expect(find.byType(MPGInputDialog), findsOneWidget);
 
-        // Tap the Cancel button within the dialog
-        await tester.tap(find.text('Cancel'));
-        await tester.pumpAndSettle();
+        // Retrieve the saved value from Hive
+        var box = await Hive.openBox('Settings');
+        double? savedMPG = box.get('mpg');
 
-        expect(find.byType(AlertDialog), findsNothing);
+        // Check if the saved value matches the input
+        expect(savedMPG, 25.5); // Ensure the value saved is correct
       });
     });
 
-    testWidgets('Invalid input on End Journey dialog shows error dialog', (WidgetTester tester) async {
-      await tester.runAsync(() async {
-        // 1) Pump map
-        await tester.pumpWidget(pumpMap());
-        await tester.pumpAndSettle();
+    testWidgets('MPGInputDialog shows error for invalid input', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: MPGInputDialog())),
+      );
 
-        // 2) Start journey (no text fields for start journey)
-        await tester.tap(find.text('Start Journey'));
-        await tester.pumpAndSettle();
+      // Tap the "Save" button without entering anything
+      await tester.tap(find.text('Save'));
+      await tester.pump();
 
-        // 3) Directly open End Journey
-        await tester.tap(find.text('End Journey'));
-        await tester.pumpAndSettle();
+      // Expect error message
+      expect(find.text('MPG must be a positive number.'), findsOneWidget);
 
-        // 4) Now we enter invalid input in EndJourneyDialog (assuming 1 textfield)
-        await tester.enterText(find.byType(TextField).first, 'invalid');
-        await tester.tap(find.text('Confirm'));
-        await tester.pumpAndSettle();
+      // Enter invalid input (negative value)
+      await tester.enterText(find.byKey(Key('mpg_input')), '-10');
+      await tester.tap(find.text('Save'));
+      await tester.pump();
 
-        // 5) Expect "Invalid Input" or similar
-        expect(find.text('Invalid Input'), findsOneWidget);
-      });
+      expect(find.text('MPG must be a positive number.'), findsOneWidget);
+    });
+
+    testWidgets('MPGInputDialog closes without saving when Cancel is pressed', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(home: Scaffold(body: MPGInputDialog())),
+      );
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      // Expect dialog to close
+      expect(find.byType(MPGInputDialog), findsNothing);
     });
 
     testWidgets('Ensure buttons load correctly', (WidgetTester tester) async {
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -142,6 +177,7 @@ void main() {
     });
 
     testWidgets('Ensure orientate button toggles north variable', (WidgetTester tester) async {
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -162,6 +198,7 @@ void main() {
     });
 
     testWidgets('Ensure register stop shows alters visited attributed of stop', (WidgetTester tester) async {
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         var stopsProvider = StopsProvider();
         await tester.pumpWidget(MaterialApp(
@@ -216,6 +253,7 @@ void main() {
     });
 
     testWidgets('Ensure entering invalid data brings up invalid dialog', (WidgetTester tester) async {
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -269,6 +307,7 @@ void main() {
 
   // Increase Flutter Coverage %
   testWidgets('map page shows error dialog on fetchAllStops exception', (WidgetTester tester) async {
+    when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
     await tester.runAsync(() async {
       // Throw exception in mock
       when(getIt<StopsService>().fetchAllStops()).thenThrow(Exception('Mock Error'));

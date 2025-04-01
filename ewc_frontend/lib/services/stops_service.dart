@@ -41,11 +41,18 @@ class StopsService {
       final data = jsonDecode(response.body) as List;
       List<Stop> stopsList = [];
       for (var point in data) {
-        stopsList.add(Stop(
-          id: point['stop_id'],
-          name: point['location_name'],
-          location: LatLng(point['latitude'], point['longitude']))
-        );
+        if (point['next_collection_due_date'] != null) {
+          DateTime collectionDueDate = DateTime.parse(point['next_collection_due_date']);
+          DateTime currentDate = DateTime.now();
+          if (!currentDate.isBefore(collectionDueDate)) {
+            stopsList.add(Stop(
+                id: point['stop_id'],
+                name: point['location_name'],
+                location: LatLng(point['latitude'], point['longitude']),
+                description: point['description'])
+            );
+          }
+        }
       }
       return stopsList;
     } else {

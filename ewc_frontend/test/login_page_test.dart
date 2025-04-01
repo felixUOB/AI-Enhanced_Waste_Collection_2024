@@ -1,6 +1,10 @@
+import 'package:ewc/models/stop_model.dart';
+import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -10,8 +14,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_test/hive_test.dart';
 import 'package:http/http.dart';
+import 'package:latlong2/latlong.dart';
 import "package:mockito/mockito.dart";
+import 'package:provider/provider.dart';
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/map/map.dart';
 
@@ -34,12 +42,23 @@ class FakeGeolocatorPlatform extends GeolocatorPlatform {
 }
 
 void main() {
+
+   setUpAll(() async {
+    await setUpTestHive();
+    var box =  await Hive.openBox('Settings'); // Open a test box
+    await box.put('mpg', 25.5); // Insert test data
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
+  
   setUp(() async {
     await mockSetupLocator();
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
   });
 
-  tearDown(() {
+  tearDown(() async  {
     getIt.reset();
   });
 
@@ -317,10 +336,20 @@ void main() {
                 ),
               ));
       when(getIt<MetricsService>().fetchLast30Days()).thenAnswer((_) async => []);
-      
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
 
       // Build the test widget
-      await tester.pumpWidget(MaterialApp(home: LoginPage()));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<LocationProvider>(create: (_) => LocationProvider()),
+            ChangeNotifierProvider<StopsProvider>(create: (_) => StopsProvider())
+          ],
+          child: MaterialApp(
+            home: LoginPage(),
+          )
+        )
+      );
 
       // Find the text fields and enter only the username
       final usernameFieldFinder = find.byKey(const Key('usernameField'));

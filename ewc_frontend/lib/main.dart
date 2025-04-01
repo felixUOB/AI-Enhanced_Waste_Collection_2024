@@ -4,6 +4,10 @@ import 'package:ewc/service_locator.dart';
 import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'notifiers/location_notifier.dart';
+import 'notifiers/stops_notifier.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 
 /// This file manages the main app state and provides the entry point for the app.
@@ -25,7 +29,18 @@ void main({Completer<void>? setupCompleter}) async {
 
   setupCompleter?.complete();
 
-  runApp(App());
+  await Hive.initFlutter(); // Initializes Hive for Flutter apps
+  await Hive.openBox('Settings');//open up storage box
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => LocationProvider()),
+        ChangeNotifierProvider(create: (context) => StopsProvider()),
+      ],
+      child: App(),
+    )
+  );
 }
 
 class App extends StatefulWidget {

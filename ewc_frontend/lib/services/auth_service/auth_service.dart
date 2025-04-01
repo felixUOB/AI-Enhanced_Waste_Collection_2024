@@ -21,9 +21,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  final String apiUrl = 'https://devnest.software/api';
-  final String adminUrl = 'https://devnest.software/admin';
-  final String rootUrl = 'https://devnest.software';
+  final String siteUrl = 'https://devnest.software';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
@@ -43,7 +41,7 @@ class AuthService {
     await authStorage.write(key: 'username', value: username); // Store username
 
     var encryptedPassword =
-        encryptionService.encryptData(password); // Encrypt Password
+    encryptionService.encryptData(password); // Encrypt Password
 
     await authStorage.write(
         key: 'password', value: encryptedPassword); // Store password
@@ -74,10 +72,11 @@ class AuthService {
 
 //====================DJANGO AUTH FUNCTIONS=======================================
 
+
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/token/'),
+      Uri.parse('$siteUrl/api/token/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'username': username, 'password': password}),
     );
@@ -97,10 +96,12 @@ class AuthService {
       throw Exception('Internal Server Error');
     }
     else {
+
   
       throw Exception('Failed to login');
     }
     
+
   }
 
 // Access token refresh method: Use refresh token
@@ -109,7 +110,7 @@ class AuthService {
 
     if (refreshToken != null) {
       final response = await http.post(
-        Uri.parse('$apiUrl/token/refresh/'),
+        Uri.parse('$siteUrl/api/token/refresh/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refresh': refreshToken}),
       );
@@ -138,7 +139,7 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.get(
-      Uri.parse('$apiUrl/$endpoint'),
+      Uri.parse('$siteUrl/api/$endpoint'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
@@ -153,7 +154,7 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.get(
-          Uri.parse('$apiUrl/$endpoint'),
+          Uri.parse('$siteUrl/api/$endpoint'),
           headers: {
             'Authorization': 'Bearer $newAccessToken',
             'Content-Type': 'application/json',
@@ -172,7 +173,7 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.post(
-      Uri.parse('$apiUrl/$endpoint'),
+      Uri.parse('$siteUrl/api/$endpoint'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
@@ -188,7 +189,7 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.post(
-          Uri.parse('$apiUrl/$endpoint'),
+          Uri.parse('$siteUrl/api/$endpoint'),
           headers: {
             'Authorization': 'Bearer $newAccessToken',
             'Content-Type': 'application/json',
@@ -211,7 +212,7 @@ class AuthService {
     // Additional fields if needed
   }) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/register/'),
+      Uri.parse('$siteUrl/api/register/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
@@ -226,13 +227,13 @@ class AuthService {
     } else {
         var data = jsonDecode(response.body);
         throw Exception({data.toString()});
+
     }
   }
 
+  void launchPasswordReset() async {
+    final Uri resetUri = Uri.parse("$siteUrl/reset_password/");
 
-
-void launchPasswordReset() async {
-  final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);
