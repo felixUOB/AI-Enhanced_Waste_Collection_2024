@@ -13,7 +13,7 @@ class ModelService {
   // Function to request permission to access device location
   Future<Response> sendModelRequest(int? id) async {
     if (id != null) {
-      final response = await getIt<AuthService>().makeAuthenticatedRequest('runmodel?stopid=$id');
+      final response = await getIt<AuthService>().makeAuthenticatedRequest('run-model/$id');
 
       if (response.statusCode != 200) {
         throw Exception('Failed to run model.');

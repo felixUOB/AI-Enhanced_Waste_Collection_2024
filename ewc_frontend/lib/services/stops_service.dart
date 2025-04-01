@@ -18,7 +18,7 @@ class StopsService {
     final response = await getIt<AuthService>().makeAuthenticatedPostRequest('stop_collection/', body);
     if (response.statusCode != 201) {
       throw Exception('Failed to register stop collection.');
-    }
+    } 
   }
 
   Future<LatLng> fetchStop(int stopID) async {

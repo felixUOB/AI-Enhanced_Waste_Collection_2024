@@ -57,7 +57,7 @@ urlpatterns = [
     path('api/get-depot/', DepotViewSet.as_view({'get' : 'get_depot_location'})),
 
     # ------- endpoint for model -------- #
-    path('api/run-model/', run_model_view ,name='run-model'), #Run Machine Learning Model   
+    path('api/run-model/<int:stopid>/', run_model_view, name='run-model'),
     path("api/docs/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),    
 
     # ------- endpoint for export csv -------- #
