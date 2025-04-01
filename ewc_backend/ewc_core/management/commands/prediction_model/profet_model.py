@@ -112,7 +112,7 @@ def main(path, threshold):
 
         return forecast["ds"].iloc[counter]
     else:
-        datetime.now() + timedelta(days=7)
+        return datetime.now() + timedelta(days=7)
 
 
 def run_prediction_model(file_path, threshold):
