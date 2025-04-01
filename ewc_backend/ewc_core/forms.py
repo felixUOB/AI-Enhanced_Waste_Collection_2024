@@ -1,5 +1,5 @@
 from django import forms
-from .models import Stops
+from .models import Stops, Depot
 
 """
 This file defines Django forms for handling user input related to waste collection stops.
@@ -58,5 +58,24 @@ class StopsForm(forms.ModelForm):
             'description': forms.Textarea(attrs={
                 'class': 'form-control-modern',  
                 'rows': 2,
+            }),
+        }
+
+class DepotForm(forms.ModelForm):
+    '''
+    A form for setting the depot lat lng values and its nickname.
+    '''
+    class Meta:
+        model = Depot
+        fields = ['nickname', 'latitude', 'longitude']
+        widgets = {
+            'nickname': forms.TextInput(attrs={
+                'class': 'form-control-modern',  
+            }),
+            'latitude': forms.NumberInput(attrs={
+                'class': 'form-control-modern',  
+            }),
+            'longitude': forms.NumberInput(attrs={
+                'class': 'form-control-modern',  
             }),
         }

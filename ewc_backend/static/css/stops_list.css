@@ -54,11 +54,28 @@
     font-size: 0.85rem; 
     padding: 0.45rem 1.2rem; 
     color: #ffffff; 
+    margin-right: 8px;
 
 }
   .btn-primary:hover {
     background-color: #1662a1;
     border-color: #1662a1;
+  }
+  /* The Depot button */
+  .btn.btn-secondary{
+    background-color: #000000;
+    border-color: #000000;
+    font-size: 0.85rem; 
+    padding: 0.45rem 1.2rem; 
+    color: #ffffff;
+  }
+
+  .btn.btn-secondary:hover {
+    border: none !important;
+    background-color: #2c2c2c;
+    color: #fff;
+    border: 1px solid #2c2c2c;
+    transition: all 0.2s ease;
   }
   
   /* Outline button for Edit */
@@ -88,14 +105,14 @@
 
   .btn-admin-outline:hover {
     border: none !important;
-    background-color: #585a5a;
+    background-color: #2c2c2c;
     color: #fff;
-    border: 1px solid #585a5a;
+    border: 1px solid #2c2c2c;
     transition: all 0.2s ease;
   }
 
   .btn-admin-outline {
-    background-color: #94979a;
+    background-color: #2c2c2c;
     padding: 0.3rem 1.0rem;
     color: #ffffff;
   }
