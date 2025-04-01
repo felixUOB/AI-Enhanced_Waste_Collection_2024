@@ -37,15 +37,28 @@ class StopsService {
   Future<List<Stop>> fetchAllStops() async {
     final response = await getIt<AuthService>().makeAuthenticatedRequest('stops/');
 
+    print("Response: ${response.body}");
+    print("Response code: ${response.statusCode}");
+
     if (response.statusCode == 200) {
+      print("Encoding response");
       final data = jsonDecode(response.body) as List;
+      print("Decoded response: $data");
       List<Stop> stopsList = [];
       for (var point in data) {
-        stopsList.add(Stop(
-          id: point['stop_id'],
-          name: point['location_name'],
-          location: LatLng(point['latitude'], point['longitude']))
-        );
+        if (point['next_collection_due_date'] != null) {
+          DateTime collectionDueDate = DateTime.parse(point['next_collection_due_date']);
+          DateTime currentDate = DateTime.now();
+          print("Current date: $currentDate");
+          print("Collection due date: $collectionDueDate");
+          if (collectionDueDate.isBefore(currentDate) || collectionDueDate.isAtSameMomentAs(currentDate)) {
+            stopsList.add(Stop(
+                id: point['stop_id'],
+                name: point['location_name'],
+                location: LatLng(point['latitude'], point['longitude']))
+            );
+          }
+        }
       }
       return stopsList;
     } else {

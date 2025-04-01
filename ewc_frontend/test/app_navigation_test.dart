@@ -3,18 +3,32 @@ import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/main_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:http/http.dart';
 import 'package:mockito/mockito.dart';
+import 'package:hive_test/hive_test.dart';
+
 
 import 'mocks/mock_service_locator.dart';
 
 // This file contains tests for the App Navigation
 void main() {
+
+  setUpAll(() async {
+    await setUpTestHive(); 
+    var box =  await Hive.openBox('Settings'); // Open a test box
+    await box.put('mpg', 25.5); // Insert test data
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
+
   setUp(() async {
     await mockSetupLocator();
   });
 
-  tearDown(() {
+  tearDown(() async {
     getIt.reset();
   });
 

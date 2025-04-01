@@ -43,7 +43,7 @@ class AuthService {
     await authStorage.write(key: 'username', value: username); // Store username
 
     var encryptedPassword =
-        encryptionService.encryptData(password); // Encrypt Password
+    encryptionService.encryptData(password); // Encrypt Password
 
     await authStorage.write(
         key: 'password', value: encryptedPassword); // Store password
@@ -97,10 +97,12 @@ class AuthService {
       throw Exception('Internal Server Error');
     }
     else {
+
   
       throw Exception('Failed to login');
     }
     
+
   }
 
 // Access token refresh method: Use refresh token
@@ -172,12 +174,12 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.post(
-      Uri.parse('$apiUrl/$endpoint'),
-      headers: {
-        'Authorization': 'Bearer $accessToken',
-        'Content-Type': 'application/json',
-      },
-      body: body != null ? jsonEncode(body) : null
+        Uri.parse('$apiUrl/$endpoint'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body != null ? jsonEncode(body) : null
     );
 
     if (response.statusCode == 401) {
@@ -188,12 +190,12 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.post(
-          Uri.parse('$apiUrl/$endpoint'),
-          headers: {
-            'Authorization': 'Bearer $newAccessToken',
-            'Content-Type': 'application/json',
-          },
-          body: body != null ? jsonEncode(body) : null
+            Uri.parse('$apiUrl/$endpoint'),
+            headers: {
+              'Authorization': 'Bearer $newAccessToken',
+              'Content-Type': 'application/json',
+            },
+            body: body != null ? jsonEncode(body) : null
         );
       } else {
         throw Exception('Failed to obtain new access token');
@@ -226,13 +228,14 @@ class AuthService {
     } else {
         var data = jsonDecode(response.body);
         throw Exception({data.toString()});
+
     }
   }
 
 
 
-void launchPasswordReset() async {
-  final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
+  void launchPasswordReset() async {
+    final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);

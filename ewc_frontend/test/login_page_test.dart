@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hive_test/hive_test.dart';
 import 'package:http/http.dart';
 import 'package:latlong2/latlong.dart';
 import "package:mockito/mockito.dart";
@@ -37,12 +39,23 @@ class FakeGeolocatorPlatform extends GeolocatorPlatform {
 }
 
 void main() {
+
+   setUpAll(() async {
+    await setUpTestHive();
+    var box =  await Hive.openBox('Settings'); // Open a test box
+    await box.put('mpg', 25.5); // Insert test data
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
+  
   setUp(() async {
     await mockSetupLocator();
     GeolocatorPlatform.instance = FakeGeolocatorPlatform();
   });
 
-  tearDown(() {
+  tearDown(() async  {
     getIt.reset();
   });
 
