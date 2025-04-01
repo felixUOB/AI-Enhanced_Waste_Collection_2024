@@ -22,7 +22,6 @@ from django.core.management import call_command
 import io
 import csv
 import io
-import datetime
 from django.http import HttpResponse
 from .utils import generate_pdf
 
@@ -322,6 +321,6 @@ def export_csv_view(request):
 
     # Create HTTP response with CSV data and force download
     response = HttpResponse(csv_contents, content_type='text/csv')
-    filename = f"{table}_{datetime.datetime.now().strftime('%d_%m_%Y')}.csv"
+    filename = f"{table}_{datetime.now().strftime('%d_%m_%Y')}.csv"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response

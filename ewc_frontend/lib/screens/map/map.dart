@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:ewc/models/depot_model.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
-import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/location_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
@@ -25,7 +23,6 @@ import 'package:ewc/widgets/navigation_banner.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import 'package:ewc/widgets/mpg_startup_input.dart';
 
 /// This file manages the map display and route plotting functionality.
@@ -34,12 +31,10 @@ import 'package:ewc/widgets/mpg_startup_input.dart';
 /// - `build()`: Builds the UI for the map page.
 /// - `initState()`: Initializes the map and services when the widget is created.
 /// - `_initialiseLocationStatusStream()`: Initializes the location status stream.
-/// - `_initaliseDepotLocation()`: Initializes the location of the depot.
 /// - `_initializeEnvAndService()`: Initializes the environment and services.
 /// - `_drawCompleteRoute()`: Draws a complete route between all stops.
 /// - `_drawStopsMarker(Color color)`: Draws markers for all stops.
 /// - `_fetchRoute(int firstStopID, int secondStopID)`: Fetches a route between two stops.
-
 /// - `_fetchOptimizedRoute()`: Fetches an optimized route between stops. 
 /// - `getInstructionsBinarySearch(int userIndex)`: Gets the instruction based on the user's current route index using binary search.
 
@@ -58,7 +53,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
-  final DepotService _depotService = getIt<DepotService>();
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
@@ -67,6 +61,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // _currentInstruction holds the current instruction to be displayed on the NavigationBanner
   String _currentInstruction = "No instructions available";
 
+  // Map rotation variables
   double _autoBearing = 0; // Bearing set automatically by navigation view
   double _savedBearing = -45; // Bearing set by user rotating map
   bool _lockedNorth = true; // Whether map rotation is locked to the north
@@ -83,9 +78,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       false; // True when user has centred on location, meaning camera should follow
 
 
-  // the location of the depot
-  late Depot depot;
-
   // State initialisation
   @override
   void initState() {
@@ -93,23 +85,17 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     _animatedMapController = AnimatedMapController(
         vsync: this, duration: Duration(milliseconds: 1500));
     _initialiseLocationStatusStream();
-    _initaliseDepotLocation();
     _initializeEnvAndService();
     _checkMPGAfterLogin();
-    Provider.of<LocationProvider>(context, listen: false)
-        .addListener(findNearestRoutePoint);
   }
 
   //MPG alteration function : checking if MPG has a value
   void _checkMPGAfterLogin() async {
-    print("checking MPG value");
     var box = await Hive.openBox('Settings');
 
     double? mpg = box.get('mpg');
 
-    print("MPG value: $mpg");
     if (mpg == null || mpg <= 0) {
-      print("MPG not set or invalid, showing dialog...");
       if (!mounted) return;
       showDialog(
         context: context,
@@ -119,36 +105,26 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
-  void _initaliseDepotLocation() async{
-    // get the LatLng from the db
-    depot = await _depotService.fetchDepoLocation();
-    // if (mounted) depotMarker = MarkerWidget.createMarker("Depot", context, LatLng(d.location.latitude, d.location.longitude), Colors.black, false);
-  }
-
   void _initialiseLocationStatusStream() async {
     _locationStatus = await Geolocator.isLocationServiceEnabled();
     _locationStatusStream =
         Geolocator.getServiceStatusStream().listen((ServiceStatus status) {
-      setState(() {
-        _locationStatus = status == ServiceStatus.enabled;
-      });
-    });
+          setState(() {
+            _locationStatus = status == ServiceStatus.enabled;
+          });
+        });
   }
 
   // This function loads .env and initializes RouteService asynchronously
   Future<void> _initializeEnvAndService() async {
     try {
-      if (mounted) {
-        await Provider.of<StopsProvider>(context, listen: false)
-            .initialiseStops();
-      }
-      if (mounted) {
-        await Provider.of<LocationProvider>(context, listen: false)
-            .initialiseLocationServices();
-      }
-      await _drawStopsMarker(Colors.blue);
-
-      //Depot location marker
+      var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+      var locationProvider = Provider.of<LocationProvider>(context, listen: false);
+      await stopsProvider.initialiseStops();
+      await locationProvider.initialiseLocationServices();
+      stopsProvider.addCustomListener(_fetchOptimizedRoute);
+      locationProvider.addCustomListener(_findNearestRoutePoint);
+      stopsProvider.addCustomListener(_drawStopsMarker);
     } catch (e) {
       // Log the error and provide feedback
       _showErrorDialog(
@@ -178,21 +154,20 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> _drawStopsMarker(Color color) async {
+  void _drawStopsMarker() {
     _marker.clear();
-     _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(depot.location.latitude, depot.location.longitude), Colors.black, false));
+    Stop depot = Provider.of<StopsProvider>(context, listen: false).depot;
+    _marker.add(MarkerWidget.createMarker(depot, context, Colors.black));
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
-      // if the stop has been visited
-      if (!stops[i].visited) {
-        _marker.add(MarkerWidget.createMarker(
-            stops[i].name, context, stops[i].location, color, false));
-      } else {
-        _marker.add(MarkerWidget.createMarker(
-            stops[i].name, context, stops[i].location, Colors.grey, false));
+      // if the stop has been visited 
+      if (!stops[i].visited){
+        _marker.add(MarkerWidget.createMarker(stops[i], context, Colors.blue));
+      } else{
+        _marker.add(MarkerWidget.createMarker(stops[i], context, Colors.grey));
       }
     }
-    setState(() {
+    setState((){
       _marker = _marker;
     });
   }
@@ -221,10 +196,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Optimized route planning
   Future<void> _fetchOptimizedRoute() async {
     try {
-      List<Stop> stops =
-          Provider.of<StopsProvider>(context, listen: false).stops;
-      LatLng? location =
-          Provider.of<LocationProvider>(context, listen: false).latestLocation;
+      var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+      List<Stop> stops = stopsProvider.stops;
+      Stop depot = stopsProvider.depot;
+      LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
       if (location != null) {
         RouteResult result = await _routeService.routePlanning(depot, location, stops);
         List<LatLng> optimizedRoute = result.routeCoordinates;
@@ -314,17 +289,17 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             Positioned.fill(child: content()),
             // Overlay the NavigationBanner at the top of the map
             Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
+              top: 8.0,
+              left: 8.0,
+              right: 8.0,
               child: NavigationBanner(
                 visible: _journeyActive,
                 instruction: _currentInstruction,
               ),
             ),
             Positioned(
-              left: 12.0,
-              right: 12.0,
+              left: 8.0,
+              right: 8.0,
               bottom: 8.0,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -354,7 +329,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                       _journeyActive = true;
                       _automaticRecentre = true;
                     });
-                    debugPrint('Journey started.');
                   }
                 },
               ),
@@ -363,28 +337,33 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
         ),
         floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 56.0),
-            child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-              (_journeyActive)
-                  ?
+            child: Column(mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  (_journeyActive) ?
                   // Log visit button
                   FloatingActionButton(
-                      key: Key("log visit"),
-                      heroTag: "log visit",
-                      child: const Icon(Icons.where_to_vote),
-                      onPressed: () {
-                        LogStopDialog.show(context,
-                            (int stopID, int wasteCollected) {
-                          _stopsService.postStopCollection(
-                              stopID, wasteCollected);
-                          Provider.of<StopsProvider>(context, listen: false)
-                              .setVisited(stopID);
-                          // redraw the stops
-                          _drawStopsMarker(Colors.blue);
-                        });
-                      },
-                    )
-                  : const SizedBox(),
-              (_journeyActive) ? const SizedBox(height: 10) : const SizedBox(),
+                    key: Key("log visit"),
+                    heroTag: "log visit",
+                    child: const Icon(Icons.where_to_vote),
+                    onPressed: () {
+                      LogStopDialog.show(context,
+                        (int stopID, int wasteCollected) async {
+                          StopsProvider stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+                          stopsProvider.addStopCollection(stopID, wasteCollected);
+                          stopsProvider.setVisited(stopID, true);
+                          LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                          List<Stop> stops = stopsProvider.stops;
+                          Stop depot = stopsProvider.depot;
+                          if (location != null) {
+                            List<Stop> newOrder = await _routeService.updateOrder(depot, location, stops);
+                            if (context.mounted) stopsProvider.updateStopOrder(newOrder);
+                          }
+                        }
+                      );
+                    },
+                  ) : const SizedBox(),
+                  (_journeyActive) ?
+                  const SizedBox(height: 10) : const SizedBox(),
 
               OrientateButton(
                   key: Key("orientate button"),
@@ -606,6 +585,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     if (confirmEnd == false) return;
     if (!mounted) return;
 
+    var stopCollections = Provider.of<StopsProvider>(context, listen:false).stopCollectionLog;
+
+    // Post each stop collection now that journey has been ended
+    for (var stopCollection in stopCollections.entries) {
+      _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
+    }
 
     // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
@@ -672,23 +657,26 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // This function finds the nearest point to on the route to the user's location
   // If the distance to the nearest point > rerouteThreshold then the route is recalculated
   // It also calculates the correct bearing for the camera
-  Future<void> findNearestRoutePoint() async {
+  Future<void> _findNearestRoutePoint() async {
     double minDistance = double.infinity;
     int index = 0;
 
-    if (_routePoints.isEmpty) {
-      // Route not yet defined so request new route
-      await _fetchOptimizedRoute();
-    }
-
     LatLng? location;
-    if (mounted) {
-      location =
-          Provider.of<LocationProvider>(context, listen: false).latestLocation;
-    }
+    if (mounted) location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+
     if (location == null) {
       // Location not defined yet so exit function
       return;
+    }
+
+    if (_routePoints.isEmpty) {
+      // Route not yet defined so request new route
+      var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+      List<Stop> stops = stopsProvider.stops;
+      Stop depot = stopsProvider.depot;
+      List<Stop> newOrder = await _routeService.updateOrder(depot, location, stops);
+      if (mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(newOrder);
+      await _fetchOptimizedRoute();
     }
 
     // Find new closest route point by searching 3 behind and 6 in front

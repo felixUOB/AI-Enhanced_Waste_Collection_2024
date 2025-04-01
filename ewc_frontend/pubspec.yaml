@@ -55,6 +55,7 @@ dependencies:
   hive_flutter: ^1.1.0
 
   get_it: ^8.0.3
+  flutter_launcher_icons: ^0.14.3
   crypto: ^3.0.6
   path_provider: ^2.1.5
   hive_test: ^1.0.1

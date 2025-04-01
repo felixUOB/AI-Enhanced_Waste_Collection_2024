@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:ewc/models/depot_model.dart';
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -58,7 +57,7 @@ Widget pumpMap() {
 
 Future<List<Stop>> getMockStopList(){
   var completer = Completer<List<Stop>>();
-  completer.complete([Stop(id: 1, name: 'test', location: LatLng(0, 0))]);
+  completer.complete([Stop(id: 1, name: 'test', location: LatLng(0, 0), description: '')]);
   return completer.future;
 }
 
@@ -96,7 +95,7 @@ void main() {
 
     // Setup and Initialisation Tests
     testWidgets('Map Page initialises correctly', (WidgetTester tester) async{
-      when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -106,7 +105,6 @@ void main() {
         expect(find.byType(FloatingActionButton), findsExactly(4));
         });
       });
-
 
     testWidgets('MPGInputDialog saves valid MPG input and retrieves it', (WidgetTester tester) async {
       await tester.runAsync(() async {
@@ -132,7 +130,6 @@ void main() {
         expect(savedMPG, 25.5); // Ensure the value saved is correct
       });
     });
-
 
     testWidgets('MPGInputDialog shows error for invalid input', (WidgetTester tester) async {
       await tester.pumpWidget(
@@ -167,7 +164,7 @@ void main() {
     });
 
     testWidgets('Ensure buttons load correctly', (WidgetTester tester) async {
-      when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -180,7 +177,7 @@ void main() {
     });
 
     testWidgets('Ensure orientate button toggles north variable', (WidgetTester tester) async {
-      when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -201,7 +198,7 @@ void main() {
     });
 
     testWidgets('Ensure register stop shows alters visited attributed of stop', (WidgetTester tester) async {
-      when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         var stopsProvider = StopsProvider();
         await tester.pumpWidget(MaterialApp(
@@ -256,7 +253,7 @@ void main() {
     });
 
     testWidgets('Ensure entering invalid data brings up invalid dialog', (WidgetTester tester) async {
-      when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
       await tester.runAsync(() async {
         await tester.pumpWidget(pumpMap());
         await tester.pumpAndSettle();
@@ -310,7 +307,7 @@ void main() {
 
   // Increase Flutter Coverage %
   testWidgets('map page shows error dialog on fetchAllStops exception', (WidgetTester tester) async {
-    when(getIt<DepotService>().fetchDepoLocation()).thenAnswer((_) async => Depot(location: LatLng(0,0)));
+    when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
     await tester.runAsync(() async {
       // Throw exception in mock
       when(getIt<StopsService>().fetchAllStops()).thenThrow(Exception('Mock Error'));

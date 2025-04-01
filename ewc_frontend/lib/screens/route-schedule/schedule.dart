@@ -1,7 +1,8 @@
+import 'package:ewc/screens/route-schedule/schedule_tile.dart';
+import 'package:ewc/screens/route-schedule/stop_view.dart';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/route_service.dart';
-import 'package:ewc/theme/theme_constants.dart';
 import 'package:ewc/widgets/timeline_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:ewc/models/stop_model.dart';
@@ -24,46 +25,37 @@ class Schedule extends StatefulWidget {
 
 class _Schedule extends State<Schedule> {
   List<int>? _stopTimes;
-  late RouteService _routeService;
+  final _routeService = getIt<RouteService>();
 
   @override
   void initState() {
     super.initState();
-    initialiseStops();
+    Provider.of<StopsProvider>(context, listen: false).addCustomListener(_calculateStopTimes);
   }
 
-  Future<void> initialiseStops() async {
+  Future<void> _calculateStopTimes() async {
     try {
-      // Attempt to load the .env file
-
-      // Initialize RouteService with the valid API key
-      _routeService = getIt<RouteService>();
-
       // The next block of code creates a list _stopTimes where each element
       // is the amount of time in minutes from the user's location to that stop
       // while following the route
-      if (mounted) {
-        List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
-
-        LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-        if (location != null) {
-          // SelectedStops filters out already visited stops from the route calculation
-          
-          var selectedStops = route.where((route) => !route.visited).map(
-            (route) => route.location).toList();
-          _stopTimes = [];
-          for (var _ in route.where((route) => route.visited)) {
-            _stopTimes?.add(
-                0); // Pad out the stop times with 0s when some stops have been visited
-          }
-          _stopTimes?.addAll(
-              await _routeService.getStopTimes(location, selectedStops));
+      List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
+      LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+      if (location != null) {
+        // SelectedStops filters out already visited stops from the route calculation
+        var selectedStops = route.where((route) => !route.visited).map((route) => route.location).toList();
+        List<int> newStops = [];
+        for (var _ in route.where((route) => route.visited)) {
+          newStops.add(0); // Pad out the stop times with 0s when some stops have been visited
         }
+        newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
+        setState(() {
+          _stopTimes = newStops; // Force reload of widget with new stop times
+        });
       }
     } catch (e) {
       // Log the error and provide feedback
       throw Exception(
-          "Failed to initialize map service. Please check API key and network connection.");
+          "Failed to initialize stop service.");
     }
   }
 
@@ -75,21 +67,7 @@ class _Schedule extends State<Schedule> {
       body: RefreshIndicator(
 
         onRefresh: () async {
-          // When user refreshes, recalculate stop times based off of location and set new state
-          List<Stop> route = Provider.of<StopsProvider>(context, listen: false).stops;
-          LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-          if (location != null) {
-            // SelectedStops filters out already visited stops from the route calculation
-            var selectedStops = route.where((route) => !route.visited).map((route) => route.location).toList();
-            List<int> newStops = [];
-            for (var _ in route.where((route) => route.visited)) {
-              newStops.add(0); // Pad out the stop times with 0s when some stops have been visited
-            }
-            newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
-            setState(() {
-              _stopTimes = newStops; // Force reload of widget with new stop times
-            });
-          }
+          _calculateStopTimes();
         },
 
         child: Padding(
@@ -108,28 +86,23 @@ class _Schedule extends State<Schedule> {
                     // if it is the first index set the property to true
                     isLast: index == route.length - 1,
                     // checks if its the last in the list
-                    eventCard: Row(children: [
-                      // ------------Stop name text------------
-                      Expanded(
-                          child: Text(route[index].name,
-                              textAlign:
-                              TextAlign.left, // display the stop name
-                              style: AppTheme().constWhiteTextLarge)
-                      ),
-                      // ------------Minutes text------------
-                      Expanded(
-                          child: (!route[index].visited && _stopTimes != null && _stopTimes!.length > index)
-                          ? Text(
-                            "${_stopTimes![index]} mins", // display the stop time
-                            textAlign: TextAlign.right,
-                            style: AppTheme().constWhiteTextLarge,
-                          ) : Text(
-                            "",
-                            textAlign: TextAlign.right,
-                            style: AppTheme().constWhiteTextLarge,
-                          )
-                      )
-                    ]),
+                    eventCard: ScheduleTile(
+                      name: route[index].name,
+                      visited: route[index].visited,
+                      minutes: (!route[index].visited && _stopTimes != null) ? _stopTimes![index] : 0,
+                      onPressed: () {
+                        Navigator.push(context,
+                          MaterialPageRoute(
+                            builder: (context) => StopView(
+                              id: route[index].id,
+                              name: route[index].name,
+                              visited: route[index].visited,
+                              description: route[index].description,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   );
                 }
               );

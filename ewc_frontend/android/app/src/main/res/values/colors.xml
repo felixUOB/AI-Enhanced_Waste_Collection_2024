@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">#FFFFFFFF</color><!-- White background for the app icon -->
+    <color name="transparent">#00000000</color> <!-- Transparent background for splash screen -->
+</resources>

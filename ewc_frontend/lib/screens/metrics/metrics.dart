@@ -106,7 +106,7 @@ class _MetricsPageState extends State<MetricsPage> {
           i ++;
         }
         
-        if (i==len && fetchedRoutes[i].date != fetchedRoutes[i-1].date){
+        if (i==len && !areDatesEqual(DateTime.parse(fetchedRoutes[i].date), DateTime.parse(fetchedRoutes[i-1].date))){
           updatedRoutes.add(JourneyRoute(distance: fetchedRoutes[i].distance, mpg: fetchedRoutes[i].mpg, date: fetchedRoutes[i].date.toString(), filler: false));
         }
       }

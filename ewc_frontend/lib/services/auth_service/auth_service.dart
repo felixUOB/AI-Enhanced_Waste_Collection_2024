@@ -21,9 +21,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AuthService {
   final encryptionService = encrypt.EncryptionService();
   final authStorage = FlutterSecureStorage();
-  final String apiUrl = 'https://devnest.software/api';
-  final String adminUrl = 'https://devnest.software/admin';
-  final String rootUrl = 'https://devnest.software';
+  final String siteUrl = 'https://devnest.software';
 
   Future<void> initializeAuthService() async {
     await dotenv.load(fileName: '.env');
@@ -74,10 +72,11 @@ class AuthService {
 
 //====================DJANGO AUTH FUNCTIONS=======================================
 
+
   // Login method: Obtain JWT access and refresh tokens
   Future<void> login(String username, String password) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/token/'),
+      Uri.parse('$siteUrl/api/token/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'username': username, 'password': password}),
     );
@@ -111,7 +110,7 @@ class AuthService {
 
     if (refreshToken != null) {
       final response = await http.post(
-        Uri.parse('$apiUrl/token/refresh/'),
+        Uri.parse('$siteUrl/api/token/refresh/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refresh': refreshToken}),
       );
@@ -140,7 +139,7 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.get(
-      Uri.parse('$apiUrl/$endpoint'),
+      Uri.parse('$siteUrl/api/$endpoint'),
       headers: {
         'Authorization': 'Bearer $accessToken',
         'Content-Type': 'application/json',
@@ -155,7 +154,7 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.get(
-          Uri.parse('$apiUrl/$endpoint'),
+          Uri.parse('$siteUrl/api/$endpoint'),
           headers: {
             'Authorization': 'Bearer $newAccessToken',
             'Content-Type': 'application/json',
@@ -174,12 +173,12 @@ class AuthService {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.post(
-        Uri.parse('$apiUrl/$endpoint'),
-        headers: {
-          'Authorization': 'Bearer $accessToken',
-          'Content-Type': 'application/json',
-        },
-        body: body != null ? jsonEncode(body) : null
+      Uri.parse('$siteUrl/api/$endpoint'),
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+      body: body != null ? jsonEncode(body) : null
     );
 
     if (response.statusCode == 401) {
@@ -190,12 +189,12 @@ class AuthService {
       String? newAccessToken = await authStorage.read(key: 'accessToken');
       if (newAccessToken != null) {
         return await http.post(
-            Uri.parse('$apiUrl/$endpoint'),
-            headers: {
-              'Authorization': 'Bearer $newAccessToken',
-              'Content-Type': 'application/json',
-            },
-            body: body != null ? jsonEncode(body) : null
+          Uri.parse('$siteUrl/api/$endpoint'),
+          headers: {
+            'Authorization': 'Bearer $newAccessToken',
+            'Content-Type': 'application/json',
+          },
+          body: body != null ? jsonEncode(body) : null
         );
       } else {
         throw Exception('Failed to obtain new access token');
@@ -213,7 +212,7 @@ class AuthService {
     // Additional fields if needed
   }) async {
     final response = await http.post(
-      Uri.parse('$apiUrl/register/'),
+      Uri.parse('$siteUrl/api/register/'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'username': username,
@@ -232,10 +231,9 @@ class AuthService {
     }
   }
 
-
-
   void launchPasswordReset() async {
-    final Uri resetUri = Uri.parse("$rootUrl/reset_password/");
+    final Uri resetUri = Uri.parse("$siteUrl/reset_password/");
+
 
     if (await canLaunchUrl(resetUri)) {
       await launchUrl(resetUri, mode: LaunchMode.externalApplication);

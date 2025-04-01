@@ -19,13 +19,13 @@ void main() {
   tearDownAll(() async {
     await Hive.close();
   });
-  
+
   setUp(() async {
     await mockSetupLocator();
   });
 
   tearDown(() async {
-    getIt.reset();
+    await getIt.reset();
   });
 
   group("Metric page tests", () {

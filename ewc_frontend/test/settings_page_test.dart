@@ -1,6 +1,9 @@
+import 'package:ewc/notifiers/location_notifier.dart';
+import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 import 'mocks/mock_service_locator.dart';
 import 'package:ewc/screens/settings/settings.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
@@ -121,7 +124,17 @@ void main() {
     testWidgets('Tap Logout -> show Confirm Dialog -> Yes => calls _logout', (WidgetTester tester) async {
       final authMock = getIt<AuthService>();
 
-      await tester.pumpWidget(const MaterialApp(home: SettingPage()));
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<LocationProvider>(create: (context) => LocationProvider()),
+            ChangeNotifierProvider<StopsProvider>(create: (context) => StopsProvider())
+          ],
+          child: const MaterialApp(
+            home: SettingPage()
+          )
+        )
+      );
       await tester.pump();
 
       final tile = find.text("Logout");
