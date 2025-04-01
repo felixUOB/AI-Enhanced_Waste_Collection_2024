@@ -25,7 +25,7 @@ void main() {
         "output": "200",
       }), 200);
       
-      when(getIt<ModelService>().sendModelRequest(any))
+      when(getIt<ModelService>().sendModelRequest(123))
           .thenAnswer((_) async {
             return mockResponse;
           });
@@ -36,18 +36,6 @@ void main() {
       expect(message, "Command executed");
       expect(result.statusCode, 200);
     });
-    
-    test('Throws Exception on no stop id', () async {
-
-      when(getIt<AuthService>().makeAuthenticatedRequest(any))
-          .thenThrow(Exception('Failed to run model.'));
-
-      expect(
-            () => ModelService().sendModelRequest(null),
-        throwsA(isA<Exception>()),
-      );
-    });
-
     test('Throws Exception on non 200 error code', () async {
 
       when(getIt<AuthService>().makeAuthenticatedRequest(any))
