@@ -117,6 +117,11 @@ class RouteService {
       }
     }
 
+    // All stops visited, return empty list
+    if (jobs.isEmpty) {
+      return [];
+    }
+
     List<VroomVehicle> vehicles = [];
     // Create a VroomVehicle object for each vehicle.
     // This is used to define the starting and ending locations for each vehicle.

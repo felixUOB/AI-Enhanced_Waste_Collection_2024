@@ -97,8 +97,7 @@ def train_model(df):
 def main(path, threshold):
     # load the data
     df = load_data(path)
-    print(df)
-    if (df.size > 1):
+    if (len(df) > 1):
     # add in the middle days to make it accumulating data
         df_complete = fillInDates(df)
 
