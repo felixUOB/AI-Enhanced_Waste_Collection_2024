@@ -6,10 +6,10 @@ class StopNotificationWidget extends StatelessWidget {
   final VoidCallback onDismiss;
 
   const StopNotificationWidget({
-    Key? key,
+    super.key,
     required this.stop,
     required this.onDismiss,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
