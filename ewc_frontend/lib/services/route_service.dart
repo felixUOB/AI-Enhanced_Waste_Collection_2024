@@ -97,9 +97,7 @@ class RouteService {
     }
   }
 
-  Future<List<Stop>> updateOrder(LatLng userLocation, List<Stop> stops) async {
-    final depot = LatLng(51.4533, -2.6257);
-
+  Future<List<Stop>> updateOrder(Stop depot, LatLng userLocation, List<Stop> stops) async {
     // Use map to link id to stop name
     Map<int, List<String?>> nameMapping = {};
 
@@ -125,7 +123,7 @@ class RouteService {
     VroomVehicle vehicle = VroomVehicle(
       id: 1,
       start: ORSCoordinate(latitude: userLocation.latitude, longitude: userLocation.longitude),
-      end: ORSCoordinate(latitude: depot.latitude, longitude: depot.longitude),
+      end: ORSCoordinate(latitude: depot.location.latitude, longitude: depot.location.longitude),
       profile: 'driving-hgv',
     );
 
@@ -166,9 +164,7 @@ class RouteService {
   }
 
   // Plans and returns the optimized route between a list of stops and the navigation instructions for that route.
-  Future<RouteResult> routePlanning(LatLng userLocation, List<Stop> stops) async {
-    final depot = LatLng(51.4533, -2.6257);
-
+  Future<RouteResult> routePlanning(Stop depot, LatLng userLocation, List<Stop> stops) async {
     List<Stop> nonVisited = stops.where((stop) => !stop.visited).toList();
 
     // Convert to list of ORSCoordinates to input back into route finding algorithm
@@ -185,8 +181,8 @@ class RouteService {
 
     optimizedOrder.add(
       ORSCoordinate(
-        latitude: depot.latitude,
-        longitude: depot.longitude));
+        latitude: depot.location.latitude,
+        longitude: depot.location.longitude));
 
     // Get the detailed route coordinates for the optimized order
     final directionsResponse = await client.directionsMultiRouteCoordsPost(

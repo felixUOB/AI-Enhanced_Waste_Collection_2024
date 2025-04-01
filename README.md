@@ -329,7 +329,7 @@ You can now access the backend at http://127.0.0.1:8000.
 
 # **Database Diagram**
 
-<img width="900" alt="image" src="https://github.com/user-attachments/assets/063dae5e-0fce-4dff-956f-77c55aae6129" />
+![database diagram](/docs/images/database-diagram.jpeg)
 
 ---
 

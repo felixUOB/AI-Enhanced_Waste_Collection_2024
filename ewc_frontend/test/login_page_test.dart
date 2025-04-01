@@ -1,8 +1,10 @@
+import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/login/login.dart';
 import 'package:ewc/screens/register/register.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/widgets/hyperlink_text.dart';
 import 'package:ewc/widgets/login_textfield.dart';
@@ -13,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ewc/widgets/login_button.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart';
+import 'package:latlong2/latlong.dart';
 import "package:mockito/mockito.dart";
 import 'package:provider/provider.dart';
 import 'mocks/mock_service_locator.dart';
@@ -320,7 +323,7 @@ void main() {
                 ),
               ));
       when(getIt<MetricsService>().fetchLast30Days()).thenAnswer((_) async => []);
-      
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
 
       // Build the test widget
       await tester.pumpWidget(

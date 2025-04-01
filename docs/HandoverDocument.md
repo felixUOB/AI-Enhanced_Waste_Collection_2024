@@ -165,9 +165,13 @@ The main structure for the project is as followed:
 ## Database Structure
 The structure of the database is as followed:
 
-![database diagram](/docs/images/database-diagram.png)
+![database diagram](/docs/images/database-diagram.jpeg)
 
 During development our database is hosted on Neon, for deployment we host our database on AWS.
+
+Note: We haven't showed how passwords are saved in the database.
+
+Note: That the Depot Location is a singleton meaning only one value can be stored in there at once.
 
 ## AWS Setup
 

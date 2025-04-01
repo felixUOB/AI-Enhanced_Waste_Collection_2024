@@ -136,7 +136,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   void _drawStopsMarker() {
     _marker.clear();
-    Stop depot = Stop(id: -1, name: "Depot", location: LatLng(51.4533, -2.6257));
+    Stop depot = Provider.of<StopsProvider>(context, listen: false).depot;
     _marker.add(MarkerWidget.createMarker(depot, context, Colors.black));
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
@@ -176,11 +176,12 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   // Optimized route planning
   Future<void> _fetchOptimizedRoute() async {
     try {
-      List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+      var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+      List<Stop> stops = stopsProvider.stops;
+      Stop depot = stopsProvider.depot;
       LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
       if (location != null) {
-        RouteResult result = await _routeService.routePlanning(location, stops);
-
+        RouteResult result = await _routeService.routePlanning(depot, location, stops);
         List<LatLng> optimizedRoute = result.routeCoordinates;
         List<RangeInstruction> rangeInstructions = result.rangeInstructions;
         setState(() {
@@ -325,13 +326,15 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                     onPressed: () {
                       LogStopDialog.show(context,
                         (int stopID, int wasteCollected) async {
-                          StopsProvider stopProvider = Provider.of<StopsProvider>(context, listen: false);
+                          StopsProvider stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+                          stopsProvider.addStopCollection(stopID, wasteCollected);
+                          stopsProvider.setVisited(stopID, true);
                           LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
-                          stopProvider.addStopCollection(stopID, wasteCollected);
-                          stopProvider.setVisited(stopID, true);
+                          List<Stop> stops = stopsProvider.stops;
+                          Stop depot = stopsProvider.depot;
                           if (location != null) {
-                            List<Stop> newOrder = await _routeService.updateOrder(location, stopProvider.stops);
-                            if (context.mounted) stopProvider.updateStopOrder(newOrder);
+                            List<Stop> newOrder = await _routeService.updateOrder(depot, location, stops);
+                            if (context.mounted) stopsProvider.updateStopOrder(newOrder);
                           }
                         }
                       );
@@ -610,8 +613,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     if (_routePoints.isEmpty) {
       // Route not yet defined so request new route
-      List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
-      List<Stop> newOrder = await _routeService.updateOrder(location, stops);
+      var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+      List<Stop> stops = stopsProvider.stops;
+      Stop depot = stopsProvider.depot;
+      List<Stop> newOrder = await _routeService.updateOrder(depot, location, stops);
       if (mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(newOrder);
       await _fetchOptimizedRoute();
     }

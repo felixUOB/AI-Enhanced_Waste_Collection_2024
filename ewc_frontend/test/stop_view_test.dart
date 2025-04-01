@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:ewc/models/stop_model.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/screens/route-schedule/stop_view.dart';
+import 'package:ewc/services/depot_service.dart';
+import 'package:ewc/services/stops_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'mocks/mock_service_locator.dart';
 
@@ -40,6 +45,18 @@ Widget pumpStopsViewVisited(StopsProvider stopsProvider) {
       ),
     )
   );
+}
+
+Future<List<Stop>> getMockStopList(){
+  var completer = Completer<List<Stop>>();
+  completer.complete([Stop(
+    id: 1,
+    name: 'Test stop',
+    visited: true,
+    location: LatLng(0, 0),
+    description: 'This is a stop used for testing'
+  )]);
+  return completer.future;
 }
 
 void main() {
@@ -138,16 +155,10 @@ void main() {
     });
 
     testWidgets('ensure save button alters status of stop', (WidgetTester tester) async {
+      when(getIt<DepotService>().fetchDepotLocation()).thenAnswer((_) async => Stop(id: -1, name: 'Depot', location: LatLng(0,0)));
+      when(getIt<StopsService>().fetchAllStops()).thenAnswer((request) {return getMockStopList();});
       StopsProvider stopsProvider = StopsProvider();
-      stopsProvider.updateStopOrder([
-        Stop(
-          id: 1,
-          name: 'Test stop',
-          visited: true,
-          location: LatLng(0, 0),
-          description: 'This is a stop used for testing'
-        )
-      ]);
+      stopsProvider.initialiseStops();
       stopsProvider.addStopCollection(1, 20);
       await tester.pumpWidget(pumpStopsViewVisited(stopsProvider));
       await tester.pumpAndSettle();

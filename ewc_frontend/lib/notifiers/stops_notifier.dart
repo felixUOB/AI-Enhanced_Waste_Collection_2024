@@ -1,4 +1,5 @@
 import 'package:ewc/service_locator.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:ewc/models/stop_model.dart';
@@ -17,7 +18,9 @@ import 'package:ewc/services/stops_service.dart';
 
 class StopsProvider extends ChangeNotifier {
   List<Stop> _stops = [];
+  late Stop _depot;
   final StopsService _stopsService = getIt<StopsService>();
+  final DepotService _depotService = getIt<DepotService>();
   final List<VoidCallback> _listeners = [];
 
   // Map which keeps track of each stop collection
@@ -25,6 +28,7 @@ class StopsProvider extends ChangeNotifier {
   final Map<int, int> _stopCollectionLog = {};
 
   List<Stop> get stops => _stops;
+  Stop get depot => _depot;
   Map<int, int> get stopCollectionLog => _stopCollectionLog;
 
   // Adds a stop collection to the stop collection log
@@ -44,6 +48,7 @@ class StopsProvider extends ChangeNotifier {
   Future<void> initialiseStops() async {
     // Fetch stops from backend
     _stops = await _stopsService.fetchAllStops();
+    _depot = await _depotService.fetchDepotLocation();
     notifyListeners();
   }
 

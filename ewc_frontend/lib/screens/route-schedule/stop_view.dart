@@ -77,29 +77,29 @@ class _StopView extends State<StopView> {
                 if (!_newVisited) {
                   // _newVisited is false, remove stop collection
                   _oldVisited = _newVisited;
-                  Provider.of<StopsProvider>(context, listen: false)
-                    .setVisited(widget.id, false);
-                  Provider.of<StopsProvider>(context, listen: false)
-                    .removeStopCollection(widget.id);
-                  List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+                  var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+                  stopsProvider.setVisited(widget.id, false);
+                  stopsProvider.removeStopCollection(widget.id);
+                  List<Stop> stops = stopsProvider.stops;
+                  Stop depot = stopsProvider.depot;
                   LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                   if (location != null) {
-                    List<Stop> newOrder = await _routeService.updateOrder(location, stops);
-                    if (context.mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(newOrder);
+                    List<Stop> newOrder = await _routeService.updateOrder(depot, location, stops);
+                    if (context.mounted) stopsProvider.updateStopOrder(newOrder);
                   }
                 } else if (_newWeight != null) {
                   // _newVisited is true, add stop collection to log
                   _oldWeight = _newWeight;
                   _oldVisited = _newVisited;
-                  Provider.of<StopsProvider>(context, listen: false)
-                    .setVisited(widget.id, true);
-                  Provider.of<StopsProvider>(context, listen: false)
-                    .addStopCollection(widget.id, _newWeight!);
-                  List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
+                  var stopsProvider = Provider.of<StopsProvider>(context, listen: false);
+                  stopsProvider.setVisited(widget.id, true);
+                  stopsProvider.addStopCollection(widget.id, _newWeight!);
+                  List<Stop> stops = stopsProvider.stops;
+                  Stop depot = stopsProvider.depot;
                   LatLng? location = Provider.of<LocationProvider>(context, listen: false).latestLocation;
                   if (location != null) {
-                    List<Stop> newOrder = await _routeService.updateOrder(location, stops);
-                    if (context.mounted) Provider.of<StopsProvider>(context, listen: false).updateStopOrder(newOrder);
+                    List<Stop> newOrder = await _routeService.updateOrder(depot, location, stops);
+                    if (context.mounted) stopsProvider.updateStopOrder(newOrder);
                   }
                 } else {
                   // Entered weight is null, cannot save

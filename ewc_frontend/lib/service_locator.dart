@@ -1,5 +1,6 @@
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
+import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/metrics_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/services/stops_service.dart';
@@ -28,6 +29,8 @@ Future<void> setupLocator() async {
   getIt.registerSingleton<MetricsService>(MetricsService());
 
   getIt.registerSingleton<Config>(Config());
+
+  getIt.registerSingleton<DepotService>(DepotService());
 
   await getIt.allReady();
 }
