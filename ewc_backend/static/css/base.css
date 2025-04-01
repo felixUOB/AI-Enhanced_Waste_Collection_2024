@@ -146,5 +146,64 @@ body {
 }
 
 .container {
-  padding: 0.4rem;
+  padding: 0.5rem;
+  position: relative;
+}
+
+/* Style the download dropdown */
+#downloadDataDropdown {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;    
+  border: 2px solid #18581d;
+  border-right: #1b5e20;
+  border-radius: 6px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  background-color: #2e7d32;
+  color: #e1e1e1;
+  transition: border-color 0.3s ease;
+  position: absolute;
+  right: 0;
+  margin-right: 3.7rem;
+}
+
+#downloadDataDropdown:focus {
+  outline: none;
+  box-shadow: 0 0 4px #1b5e20;
+}
+#downloadDataDropdown option {
+  color: black;              
+  background-color: #ffffff;    
+}
+
+#downloadDataDropdown:hover {
+  background-color: #1b5e20;             
+}
+/* Download button styling */
+#downloadBtn {
+  background-color: #2e7d32;
+  border: 2px solid #18581d;
+  /* border-left: none; */
+  border-radius: 0 6px 6px 0; 
+  color: #e1e1e1;
+  position: absolute;
+  right: 1rem;
+  top: 0;
+  height: 100%;
+  padding: 0 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 1rem;
+  -webkit-text-stroke: 0.6px; 
+}
+
+/* Button hover effect */
+#downloadBtn:hover {
+  background-color: #1b5e20;
+}
+
+#downloadDataDropdown, #downloadBtn {
+  height: 2rem;         
+  box-sizing: border-box;  
+  top: 0.3rem;          
 }

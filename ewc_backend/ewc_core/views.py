@@ -20,6 +20,11 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from django.core.management import call_command
 import io
+import csv
+import io
+import datetime
+from django.http import HttpResponse
+from .utils import generate_pdf
 
 """
 This file defines API views and web views for managing waste collection-related data  
@@ -284,3 +289,39 @@ def run_model_view(request):
         return JsonResponse({"message": "Command executed", "output": output.getvalue().strip()})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+@login_required
+@user_passes_test(is_staff_user)
+def export_csv_view(request):
+    """
+    Exports a specified table to a CSV file or generates a pdf report."
+    Accepts a 'table' GET parameter to determine which table to export.
+    """
+
+    table = request.GET.get('table')
+    if not table:
+        return HttpResponse("No table selected", status=400)
+    
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    if table == "route_env_data":
+        writer.writerow(["Date", "Distance", "MPG"])
+        for item in RouteEnvData.objects.all():
+            writer.writerow([item.date.strftime("%Y-%m-%d"), item.distance, item.mpg])
+    elif table == "stop_collections_data":
+        writer.writerow(["Date", "Weight Collected"])
+        for item in StopCollection.objects.all():
+            writer.writerow([item.date.strftime("%Y-%m-%d"), item.weight_collected])
+    elif table == "environmental_report":
+        return generate_pdf()
+    else:
+        return HttpResponse("Invalid option", status=400)
+    
+    csv_contents = output.getvalue()
+    output.close()
+
+    # Create HTTP response with CSV data and force download
+    response = HttpResponse(csv_contents, content_type='text/csv')
+    filename = f"{table}_{datetime.datetime.now().strftime('%d_%m_%Y')}.csv"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
