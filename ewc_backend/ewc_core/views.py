@@ -17,6 +17,9 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework.response import Response
+from django.http import JsonResponse
+from django.core.management import call_command
+import io
 
 """
 This file defines API views and web views for managing waste collection-related data  
@@ -275,3 +278,21 @@ def get_stops_list(request):
     stops = Stops.objects.all()
     serializer = StopsSerializer(stops, many=True)
     return JsonResponse(serializer.data, safe=False)
+
+# to run the model run /api/run-model/?stopid=x
+def run_model_view(request):
+    if request.method == "GET":
+        stopid = request.GET.get("stopid", None)
+        if not stopid:
+            return JsonResponse({"error": "Missing argument"}, status=400)
+
+        try:
+            stopid = int(stopid)
+        except ValueError:
+            return JsonResponse({"error": "Invalid Stop"}, status=400)
+
+        output = io.StringIO()  # Capture command output
+        call_command("run_prediction", stopid, stdout=output, stderr=output)
+        return JsonResponse({"message": "Command executed", "output": output.getvalue().strip()})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)

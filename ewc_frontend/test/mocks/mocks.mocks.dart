@@ -74,8 +74,8 @@ class _FakeLatLng_6 extends _i1.SmartFake implements _i8.LatLng {
     : super(parent, parentInvocation);
 }
 
-class _FakeDepo_7 extends _i1.SmartFake implements _i9.Depot {
-  _FakeDepo_7(Object parent, Invocation parentInvocation)
+class _FakeDepot_7 extends _i1.SmartFake implements _i9.Depot {
+  _FakeDepot_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -298,15 +298,16 @@ class MockRouteService extends _i1.Mock implements _i7.RouteService {
 
   @override
   _i12.Future<_i7.RouteResult> routePlanning(
+    _i9.Depot? depot,
     _i8.LatLng? userLocation,
     List<_i13.Stop>? stops,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#routePlanning, [userLocation, stops]),
+            Invocation.method(#routePlanning, [depot, userLocation, stops]),
             returnValue: _i12.Future<_i7.RouteResult>.value(
               _FakeRouteResult_5(
                 this,
-                Invocation.method(#routePlanning, [userLocation, stops]),
+                Invocation.method(#routePlanning, [depot, userLocation, stops]),
               ),
             ),
           )
@@ -442,7 +443,7 @@ class MockConfig extends _i1.Mock implements _i16.Config {
   );
 }
 
-/// A class which mocks [DepoService].
+/// A class which mocks [DepotService].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockDepotService extends _i1.Mock implements _i17.DepotService {
@@ -455,7 +456,7 @@ class MockDepotService extends _i1.Mock implements _i17.DepotService {
       (super.noSuchMethod(
             Invocation.method(#fetchDepoLocation, []),
             returnValue: _i12.Future<_i9.Depot>.value(
-              _FakeDepo_7(this, Invocation.method(#fetchDepoLocation, [])),
+              _FakeDepot_7(this, Invocation.method(#fetchDepoLocation, [])),
             ),
           )
           as _i12.Future<_i9.Depot>);
