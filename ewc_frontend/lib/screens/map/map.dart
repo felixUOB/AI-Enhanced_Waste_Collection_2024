@@ -111,19 +111,17 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   }
   // This function checks if the user is within 50 meters of a stop
   void _checkForNearbyStop(LatLng currentLocation) {
-    debugPrint("Current location: ${currentLocation.latitude}, ${currentLocation.longitude}");
     final stops = Provider.of<StopsProvider>(context, listen: false).stops;
     Stop? nearbyStop;
     for (var stop in stops) {
-      // Only checks stops that haven't been dismissed already.
-      if (_dismissedStops.contains(stop.id)) continue;
+      // Only checks stops that haven't been dismissed or visited already.
+      if (_dismissedStops.contains(stop.id) || stop.visited) continue;
       final distance = Geolocator.distanceBetween(
         currentLocation.latitude,
         currentLocation.longitude,
         stop.location.latitude,
         stop.location.longitude,
       );
-      debugPrint("Stop ${stop.name} at (${stop.location.latitude}, ${stop.location.longitude}) is $distance meters away");
       if (distance < 50) {
         nearbyStop = stop;
         break;
@@ -146,7 +144,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   // This function returns the Stop that is closest to the users current location
   Stop? _getClosestStop(LatLng currentLocation) {
-    final stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    final stops = Provider.of<StopsProvider>(context, listen: false)
+      .stops
+      .where((stop) => !stop.visited)
+      .toList();
     Stop? closest;
     double minDistance = double.infinity;
 
