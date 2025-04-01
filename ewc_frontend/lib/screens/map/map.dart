@@ -590,10 +590,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     // Post each stop collection now that journey has been ended and run model for each entry to assertain next collection date
     for (var stopCollection in stopCollections.entries) {
-      _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
-      getIt<ModelService>().sendModelRequest(stopCollection.key);
+      await _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
+      await getIt<ModelService>().sendModelRequest(stopCollection.key);
     }
-
+    
     // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
 

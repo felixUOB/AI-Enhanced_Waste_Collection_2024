@@ -1,11 +1,12 @@
 import 'package:ewc/screens/map/map.dart';
 import 'package:ewc/services/depot_service.dart';
 import 'package:ewc/services/metrics_service.dart';
+import 'package:ewc/services/model_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/services/stops_service.dart';
 import 'package:mockito/annotations.dart';
 import 'package:ewc/services/auth_service/auth_service.dart';
 
 // Generate with flutter pub run build_runner build
-@GenerateMocks([AuthService, RouteService, StopsService, MetricsService, Config, DepotService])
+@GenerateMocks([AuthService, RouteService, StopsService, MetricsService, Config, DepotService, ModelService])
 void main() {}
