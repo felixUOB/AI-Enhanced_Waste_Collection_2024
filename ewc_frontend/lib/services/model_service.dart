@@ -10,17 +10,13 @@ import 'package:http/http.dart';
 class ModelService {
 
   // Function to request permission to access device location
-  Future<Response> sendModelRequest(int? id) async {
-    if (id != null) {
+  Future<Response> sendModelRequest(int id) async {
       final response = await getIt<AuthService>().makeAuthenticatedRequest('run-model/?stopid=$id');
 
       if (response.statusCode != 200) {
         throw Exception('Failed to run model.');
       } 
       return response;
-    }
-    else {
-      throw Exception('Failed to run model - no stop ID provided.');
-    }
+   
   }
 }
