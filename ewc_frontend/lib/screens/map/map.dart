@@ -54,6 +54,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
+  final ModelService _modelService = getIt<ModelService>();
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
@@ -591,9 +592,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     // Post each stop collection now that journey has been ended and run model for each entry to assertain next collection date
     for (var stopCollection in stopCollections.entries) {
       await _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
-      await getIt<ModelService>().sendModelRequest(stopCollection.key);
+      await _modelService.sendModelRequest(stopCollection.key);
     }
-    
+
+    if (!mounted) return;
+
     // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
 

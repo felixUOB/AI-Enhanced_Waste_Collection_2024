@@ -164,7 +164,6 @@ class AuthService {
         throw Exception('Failed to obtain new access token');
       }
     }
-
     return response;
   }
 
