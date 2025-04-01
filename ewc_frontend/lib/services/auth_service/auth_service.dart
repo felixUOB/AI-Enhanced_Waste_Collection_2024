@@ -135,7 +135,7 @@ class AuthService {
   }
 
   // Method to make an authenticated request
-  Future<http.Response> makeAuthenticatedRequest(String endpoint) async {
+  Future<http.Response> makeAuthenticatedRequest(String? endpoint) async {
     String? accessToken = await authStorage.read(key: 'accessToken');
 
     final response = await http.get(
