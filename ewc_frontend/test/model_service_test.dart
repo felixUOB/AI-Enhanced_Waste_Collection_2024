@@ -13,7 +13,6 @@ void main() {
     await mockSetupLocator();
   });
 
-  // Resets the service locator after each test to avoid affecting subsequent tests
   tearDown(() {
     getIt.reset();
   });
@@ -26,9 +25,6 @@ void main() {
         "output": "200",
       }), 200);
       
-
-      // When the mock AuthService is called with 'stops/123',
-      // respond with the mock JSON
       when(getIt<ModelService>().sendModelRequest(any))
           .thenAnswer((_) async {
             return mockResponse;
@@ -40,41 +36,27 @@ void main() {
       expect(message, "Command executed");
       expect(result.statusCode, 200);
     });
+    
+    test('Throws Exception on no stop id', () async {
 
-
-    test('Returns failure message on model fail', () async {
-      // Creates a mock JSON response
-
-      // When the mock AuthService is called with 'stops/123',
-      // respond with the mock JSON
       when(getIt<AuthService>().makeAuthenticatedRequest(any))
           .thenThrow(Exception('Failed to run model.'));
-      // Expects an exception when status is not 200
+
       expect(
             () => ModelService().sendModelRequest(null),
         throwsA(isA<Exception>()),
       );
-
     });
 
-// def run_model_view(request):
-//     if request.method == "GET":
-//         stopid = request.GET.get("stopid", None)
-//         if not stopid:
-//             return JsonResponse({"error": "Missing argument"}, status=400)
+    test('Throws Exception on non 200 error code', () async {
 
-//         try:
-//             stopid = int(stopid)
-//         except ValueError:
-//             return JsonResponse({"error": "Invalid Stop"}, status=400)
+      when(getIt<AuthService>().makeAuthenticatedRequest(any))
+          .thenThrow(Exception('Failed to run model.'));
 
-//         output = io.StringIO()  # Capture command output
-//         call_command("run_prediction", stopid, stdout=output, stderr=output)
-//         return JsonResponse({"message": "Command executed", "output": output.getvalue().strip()}, status=200)
-
-//     return JsonResponse({"error": "Invalid request"}, status=400)
-
+      expect(
+            () => ModelService().sendModelRequest(10),
+        throwsA(isA<Exception>()),
+      );
+    });
   });
-
-  
 }
