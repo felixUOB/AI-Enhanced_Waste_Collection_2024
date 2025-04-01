@@ -22,6 +22,7 @@ import 'package:provider/provider.dart';
 import 'package:ewc/notifiers/location_notifier.dart';
 import 'package:ewc/widgets/navigation_banner.dart';
 import 'package:ewc/services/metrics_service.dart';
+import 'package:ewc/widgets/stop_notification_widget.dart';
 
 /// This file manages the map display and route plotting functionality.
 ///
@@ -331,77 +332,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
             ),
             // In app Stop Notification overlay
             if (_currentNotificationStop != null)
-              Positioned(
-                top: 80,
-                left: 20,
-                right: 20,
-                child: Material(
-                  elevation: 6,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Dismissible(
-                    key: ValueKey(_currentNotificationStop!.id),
-                    direction: DismissDirection.up,
-                    onDismissed: (direction) {
-                      _dismissStopNotification();
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                      decoration: BoxDecoration(
-                          color: Colors.orange,
-                          borderRadius: BorderRadius.circular(6)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // First row: Upcoming stop text and the close icon
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Upcoming Stop: ${_currentNotificationStop!.name}",
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.close, color: Colors.white),
-                                onPressed: _dismissStopNotification,
-                              )
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          // Second row: Additional instruction message with inline icon
-                          Row(
-                            children: [
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                    text: "Don't forget to log this stop by pressing ",
-                                    style: const TextStyle(color: Colors.white),
-                                    children: [
-                                      WidgetSpan(
-                                        alignment: PlaceholderAlignment.middle,
-                                        child: Icon(
-                                          Icons.where_to_vote,
-                                          size: 16,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+              StopNotificationWidget(
+                stop: _currentNotificationStop!,
+                onDismiss: _dismissStopNotification,
               ),
+                        
             Positioned(
               left: 12.0,
               right: 12.0,
