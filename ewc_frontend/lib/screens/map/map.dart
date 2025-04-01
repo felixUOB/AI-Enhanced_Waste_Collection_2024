@@ -103,6 +103,11 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     try {
       if (mounted) await Provider.of<StopsProvider>(context, listen: false).initialiseStops();
       if (mounted) await Provider.of<LocationProvider>(context, listen: false).initialiseLocationServices();
+      await _drawStopsMarker(Colors.blue);
+      //Depot location marker
+      if (mounted){
+        _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
+      }
       
     } catch (e) {
       // Log the error and provide feedback
@@ -366,13 +371,6 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                       _journeyActive = true;
                       _automaticRecentre = true;
                     });
-                    // Add the Depot marker once the journey starts
-                    if (mounted) {
-                      _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(51.4533, -2.6257), Colors.black, false));
-                    }
-                    // Plot markers and route once journey has started:
-                    await _drawStopsMarker(Colors.blue);
-                    await _fetchOptimizedRoute();
 
                     debugPrint('Journey started.');
                   }
@@ -564,11 +562,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       ),
       children: [
         if (!getIt<Config>().inTestMode) openStreetMapTileLayer, // Adds the OpenStreetMap tile layer to the map
-        // Only shows the route and markers when a journey is active:
-        if (_journeyActive)
-          RoutePolylineLayer(routePoints: _routePoints, closestIndex: _closestIndex, currentLocation: location, isClosestIndexBeforeUserLocation: _isClosestIndexBeforeUserLocation),
-        if (_journeyActive)  
-          MarkerLayer(markers: _marker),
+        RoutePolylineLayer(routePoints: _routePoints, closestIndex: _closestIndex, currentLocation: location, isClosestIndexBeforeUserLocation: _isClosestIndexBeforeUserLocation),  
+        MarkerLayer(markers: _marker),
         // Only display location marker if app can access location
         if (_locationStatus != null && location != null)
           if (_locationStatus!) LocationMarker(location: location),
