@@ -180,6 +180,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
   Future<void> _drawStopsMarker(Color color) async {
     _marker.clear();
+     _marker.add(MarkerWidget.createMarker("Depot", context, LatLng(depot.location.latitude, depot.location.longitude), Colors.black, false));
     List<Stop> stops = Provider.of<StopsProvider>(context, listen: false).stops;
     for (int i = 0; i < stops.length; i++) {
       // if the stop has been visited
