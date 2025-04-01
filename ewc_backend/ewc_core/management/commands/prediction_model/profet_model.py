@@ -8,7 +8,7 @@ from pandas import read_csv, to_datetime
 from prophet import Prophet
 from prophet.plot import plot_plotly
 import plotly.offline as pyo
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 # make the graph for the input
 def plot_input(df):
@@ -97,18 +97,22 @@ def train_model(df):
 def main(path, threshold):
     # load the data
     df = load_data(path)
+    print(df)
+    if (df.size > 1):
     # add in the middle days to make it accumulating data
-    df_complete = fillInDates(df)
+        df_complete = fillInDates(df)
 
-    # train the model
-    model, forecast = train_model(df_complete)
+        # train the model
+        model, forecast = train_model(df_complete)
 
-    # find the max value before it starts to fall
-    counter = len(df_complete) +1
-    while (forecast["yhat"].iloc[counter] < forecast["yhat"].iloc[counter + 1] and forecast["yhat"].iloc[counter] < threshold and counter < len(forecast) + 30 -1):
-        counter += 1
+        # find the max value before it starts to fall
+        counter = len(df_complete) +1
+        while (forecast["yhat"].iloc[counter] < forecast["yhat"].iloc[counter + 1] and forecast["yhat"].iloc[counter] < threshold and counter < len(forecast) + 30 -1):
+            counter += 1
 
-    return forecast["ds"].iloc[counter]
+        return forecast["ds"].iloc[counter]
+    else:
+        datetime.now() + timedelta(days=7)
 
 
 def run_prediction_model(file_path, threshold):
