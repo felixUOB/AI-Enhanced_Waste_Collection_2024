@@ -47,7 +47,7 @@ class _Schedule extends State<Schedule> {
         for (var _ in route.where((route) => route.visited)) {
           newStops.add(0); // Pad out the stop times with 0s when some stops have been visited
         }
-        newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
+        if (selectedStops.isNotEmpty) newStops.addAll(await _routeService.getStopTimes(location, selectedStops));
         setState(() {
           _stopTimes = newStops; // Force reload of widget with new stop times
         });

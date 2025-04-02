@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:ewc/service_locator.dart';
 import 'package:ewc/notifiers/stops_notifier.dart';
 import 'package:ewc/services/location_service.dart';
+import 'package:ewc/services/model_service.dart';
 import 'package:ewc/services/route_service.dart';
 import 'package:ewc/widgets/location_marker.dart';
 import 'package:ewc/widgets/log_stop_dialog.dart';
@@ -54,9 +55,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   List<Marker> _marker = [];
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
+  final ModelService _modelService = getIt<ModelService>();
   Stop? _currentNotificationStop;
   final Set<int> _dismissedStops = {};
-
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
@@ -135,6 +136,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
           "Failed to initialize map service. Please check API key and network connection.");
     }
   }
+
   // This function checks if the user is within 50 meters of a stop
   void _checkForNearbyStop(LatLng currentLocation) {
     final stops = Provider.of<StopsProvider>(context, listen: false).stops;
@@ -386,7 +388,7 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                     fontSize: 18,
                   ),
                 ),
-                onPressed: () async {
+                onPressed: () {
                   if (_journeyActive) {
                     // End journey
                     _showEndJourneyDialog();
@@ -661,10 +663,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
 
     var stopCollections = Provider.of<StopsProvider>(context, listen:false).stopCollectionLog;
 
-    // Post each stop collection now that journey has been ended
+    // Post each stop collection now that journey has been ended and run model for each entry to assertain next collection date
     for (var stopCollection in stopCollections.entries) {
-      _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
+      await _stopsService.postStopCollection(stopCollection.key, stopCollection.value);
+      await _modelService.sendModelRequest(stopCollection.key);
     }
+
+    if (!mounted) return;
 
     // Retrieve the instance of LocationProvider in a non-listening way (since this is an async operation).
     final locProvider = Provider.of<LocationProvider>(context, listen: false);
