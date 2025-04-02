@@ -38,7 +38,7 @@ void main() {
     });
     test('Throws Exception on non 200 error code', () async {
 
-      when(getIt<AuthService>().makeAuthenticatedRequest(any))
+      when(getIt<AuthService>().makeAuthenticatedRequest('run-model/?stopid=10'))
           .thenThrow(Exception('Failed to run model.'));
 
       expect(
