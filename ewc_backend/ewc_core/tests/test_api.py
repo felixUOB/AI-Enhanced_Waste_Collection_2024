@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
-from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData, Stops
+from ewc_core.models import UserProfile, Stops, StopCollection, RouteEnvData, Stops, Depot
 from datetime import date
 from unittest.mock import patch
 # python manage.py test ewc_core.tests
@@ -341,3 +341,103 @@ class ExportCSVViewTest(APITestCase):
         url = reverse('export_csv')
         response = self.client.get(url, {'table': 'invalid'})
         self.assertEqual(response.status_code, 400)
+
+class EditDepotViewTest(APITestCase):
+    """
+    Tests for the edit_depot view which allows staff to edit depot information.
+    """
+    def setUp(self):
+        # Create and authenticate a staff user.
+        self.staff_user = User.objects.create_user(username="depotuser", password="pass123", is_staff=True)
+        self.client.force_login(self.staff_user)
+
+        # Ensure a Depot instance exists - singelton logic.
+        self.depot = Depot.load()
+        self.depot.nickname = "Initial Depot"
+        self.depot.latitude = 10.0
+        self.depot.longitude = 20.0
+        self.depot.save()
+
+    def test_get_edit_depot(self):
+        """
+        GET request should render the depot edit form with saved data.
+        """
+        url = reverse('edit_depot')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("Initial Depot", response.content.decode('utf-8'))
+
+    def test_post_edit_depot_valid(self):
+        """
+        A valid POST should update the depot and redirect to the stops list page.
+        """
+        url = reverse('edit_depot')
+        data = {
+            'nickname': 'Updated Depot',
+            'latitude': 30.0,
+            'longitude': 40.0,
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertRedirects(response, reverse('stops_list'))
+        self.depot.refresh_from_db()
+        self.assertEqual(self.depot.nickname, 'Updated Depot')
+        self.assertEqual(self.depot.latitude, 30.0)
+        self.assertEqual(self.depot.longitude, 40.0)
+
+    def test_post_edit_depot_invalid(self):
+        """
+        Invalid POST should re render the form with errors.
+        """
+        url = reverse('edit_depot')
+        data = {
+            # Invalid latitude.
+            'nickname': '',
+            'latitude': 'invalid',
+            'longitude': 40.0,
+        }
+        response = self.client.post(url, data)
+        # Expect status 200 since the form should re render.
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        content = response.content.decode('utf-8')
+        self.assertIn("Enter a number", content)
+
+class DepotViewSetTest(APITestCase):
+    """
+    Tests the DepotViewSet endpoints for the depot model.
+    """
+
+    def setUp(self):
+        self.staff_user = User.objects.create_user(username="depotapi", password="pass123", is_staff=True)
+        self.client.force_login(self.staff_user)
+        self.depot = Depot.load()
+
+    def test_default_depot_values(self):
+        """
+        Ensure that using Depot.load when retrived for the first time returns the default values.
+        """
+        depot = Depot.load()
+        self.assertEqual(depot.nickname, "Default Depot")
+        self.assertEqual(depot.latitude, 0.0)
+        self.assertEqual(depot.longitude, 0.0)
+
+    def test_get_depot_list(self):
+        """
+        Ensure that retrieving the depot list endpoint returns the depot data.
+        """
+        url = reverse('depot-list') 
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("Default Depot", response.content.decode('utf-8'))
+
+    def test_get_depot_detail(self):
+        """
+        Ensure that retrieving a depot by its pk returns correct data.
+        """
+        url = reverse('depot-detail', args=[self.depot.pk])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.json()
+        self.assertEqual(data.get("nickname"), "Default Depot")
+        self.assertEqual(data.get("latitude"), 0.0)
+        self.assertEqual(data.get("longitude"), 0.0)

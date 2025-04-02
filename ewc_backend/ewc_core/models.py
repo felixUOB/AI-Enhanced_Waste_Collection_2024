@@ -127,7 +127,7 @@ class Depot(models.Model):
     @classmethod
     def load(cls):
         try:
-            obj, created = cls.objects.get(pk=1)
+            obj, created = cls.objects.get_or_create(pk=1,defaults={'nickname': 'Default Depot', 'latitude': 0.0, 'longitude': 0.0})
             return obj
         except cls.DoesNotExist:
             return cls()

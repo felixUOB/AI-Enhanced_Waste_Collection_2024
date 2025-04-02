@@ -25,6 +25,7 @@ import 'package:ewc/services/metrics_service.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:ewc/widgets/mpg_startup_input.dart';
+import 'package:ewc/widgets/stop_notification_widget.dart';
 
 /// This file manages the map display and route plotting functionality.
 ///
@@ -55,6 +56,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
   final RouteService _routeService = getIt<RouteService>();
   final StopsService _stopsService = getIt<StopsService>();
   final ModelService _modelService = getIt<ModelService>();
+  Stop? _currentNotificationStop;
+  final Set<int> _dismissedStops = {};
 
   // _closestIndex refers to the routePoint index which the user is currently closest to
   int _closestIndex = 0;
@@ -134,6 +137,65 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
     }
   }
 
+  // This function checks if the user is within 50 meters of a stop
+  void _checkForNearbyStop(LatLng currentLocation) {
+    final stops = Provider.of<StopsProvider>(context, listen: false).stops;
+    Stop? nearbyStop;
+    for (var stop in stops) {
+      // Only checks stops that haven't been dismissed or visited already.
+      if (_dismissedStops.contains(stop.id) || stop.visited) continue;
+      final distance = Geolocator.distanceBetween(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        stop.location.latitude,
+        stop.location.longitude,
+      );
+      if (distance < 50) {
+        nearbyStop = stop;
+        break;
+      }
+    }
+    setState(() {
+      _currentNotificationStop = nearbyStop;
+    });
+  }
+
+  void _dismissStopNotification() {
+    if (_currentNotificationStop != null) {
+    // Add to dismissed stops so the notification doesn't show again if dismissed.
+      _dismissedStops.add(_currentNotificationStop!.id);
+   }
+    setState(() {
+      _currentNotificationStop = null;
+    });
+  }
+
+  // This function returns the Stop that is closest to the users current location
+  Stop? _getClosestStop(LatLng currentLocation) {
+    final stops = Provider.of<StopsProvider>(context, listen: false)
+      .stops
+      .where((stop) => !stop.visited)
+      .toList();
+    Stop? closest;
+    double minDistance = double.infinity;
+
+    for (var stop in stops) {
+      final distance = Geolocator.distanceBetween(
+        currentLocation.latitude,
+        currentLocation.longitude,
+        stop.location.latitude,
+        stop.location.longitude,
+      );
+      if (distance < minDistance) {
+        minDistance = distance;
+        closest = stop;
+      }
+    }
+    return closest;
+  }
+
+
+  
   // Function to draw a complete route between all stops
   // ignore: unused_element
   Future<void> _drawCompleteRoute() async {
@@ -299,6 +361,13 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                 instruction: _currentInstruction,
               ),
             ),
+            // In app Stop Notification overlay
+            if (_currentNotificationStop != null)
+              StopNotificationWidget(
+                stop: _currentNotificationStop!,
+                onDismiss: _dismissStopNotification,
+              ),
+                        
             Positioned(
               left: 8.0,
               right: 8.0,
@@ -348,6 +417,10 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                     heroTag: "log visit",
                     child: const Icon(Icons.where_to_vote),
                     onPressed: () {
+                      // Retrieve the current location
+                      LatLng? currentLocation = Provider.of<LocationProvider>(context, listen: false).latestLocation;
+                      // Compute the closest stop to the current location
+                      Stop? preselectedStop = currentLocation != null ? _getClosestStop(currentLocation) : null;
                       LogStopDialog.show(context,
                         (int stopID, int wasteCollected) async {
                           StopsProvider stopsProvider = Provider.of<StopsProvider>(context, listen: false);
@@ -360,7 +433,8 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
                             List<Stop> newOrder = await _routeService.updateOrder(depot, location, stops);
                             if (context.mounted) stopsProvider.updateStopOrder(newOrder);
                           }
-                        }
+                        },
+                          initialStop: preselectedStop,
                       );
                     },
                   ) : const SizedBox(),
@@ -785,6 +859,9 @@ class _MapPage extends State<MapPage> with TickerProviderStateMixin {
       _autoBearing = bearing;
       _currentInstruction = getCurrentInstructionBinarySearch(effectiveIndex);
     });
+    // Check for nearby stop based on current location
+    _checkForNearbyStop(location);
+
   }
 
   @override
