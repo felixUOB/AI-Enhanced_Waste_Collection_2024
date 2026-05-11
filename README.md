@@ -1,4 +1,4 @@
-# 2024-AIEnhancedWasteCollection Public Copy
+# 2024-AIEnhancedWasteCollection
 
 <div align="center">
 
